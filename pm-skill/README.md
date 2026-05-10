@@ -2,7 +2,7 @@
 
 🌐 **语言切换**：[中文版](README.md) | [English](README_en.md)
 
-> 🌟 **推荐**：访问 [PM Skill Galaxy](https://LuckyOneTwoThree.github.io/pm-skill) 体验可视化浏览 —— 星空背景、9大模块星系、完整产品全流程时间线，126个AI Agent Skills一目了然！
+> 🌟 **推荐**：访问 [PM Skill Galaxy](https://LuckyOneTwoThree.github.io/pm-skill) 体验可视化浏览 —— 星空背景、9大模块星系、完整产品全流程时间线，127个AI Agent Skills一目了然！
 
 ## 这是什么
 

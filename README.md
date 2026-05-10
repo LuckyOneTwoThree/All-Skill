@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将软件产品从0到1的全生命周期方法论，提取为 **147 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发**三大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
+将软件产品从0到1的全生命周期方法论，提取为 **153 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发**三大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
 
 每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。三大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
 
@@ -21,7 +21,7 @@
 ├── insight-jtbd/SKILL.md
 ├── api-contract/SKILL.md
 ├── design-token/SKILL.md
-├── ...（147个Skill扁平平铺）
+├── ...（153个Skill扁平平铺）
 └── frontend-performance/SKILL.md
 ```
 
@@ -35,11 +35,11 @@
 
 ## 三大领域总览
 
-| 领域 | 模块数 | 编排器 | Pipeline Skill | 核心定位 |
-|------|--------|--------|---------------|----------|
-| **pm-skill** 产品方法论 | 10 | 31 | 95 | 做正确的事：从探索发现到增长运营 |
-| **ui-skill** UI设计与前端 | 3 | 3 | 11 | 正确地呈现：设计即实现，令牌驱动 |
-| **backend-skill** 后端架构 | 3 | 3 | 9 | 正确地构建：契约驱动，安全内建 |
+| 领域 | 模块数 | 编排器 | Pipeline Skill | 导航 | 核心定位 |
+|------|--------|--------|---------------|------|----------|
+| **pm-skill** 产品方法论 | 10 | 31 | 95 | 1 | 做正确的事：从探索发现到增长运营 |
+| **ui-skill** UI设计与前端 | 3 | 3 | 11 | — | 正确地呈现：设计即实现，令牌驱动 |
+| **backend-skill** 后端架构 | 3 | 3 | 9 | — | 正确地构建：契约驱动，安全内建 |
 
 ## 全局流程与数据流
 
@@ -62,11 +62,11 @@
 │                              │  │                                      │
 │  设计系统 → UI前端生成 → 集成  │  │  API设计 → 数据架构 → 后端架构        │
 │                              │  │                                      │
-│  design-token                │  │  api-contract ←── PRD/数据模型        │
+│  design-token                │  │  api-contract ←── PRD/数据模型(可选) │
 │  component-library           │  │  api-security                        │
-│  page-assembly ←── IA/原型   │  │  auth-design                         │
+│  page-assembly ←── IA/原型/令牌│  │  auth-design                         │
 │  interaction-design          │  │  data-model ←── API契约              │
-│  api-contract-consume ←──────┼──┼── openapi.yaml                       │
+│  api-contract-consume ←──────┼──┼── openapi.yaml + 令牌(可选)           │
 │  frontend-build-deploy       │  │  service-design                      │
 │  frontend-performance        │  │  backend-review                      │
 │                              │  │                                      │
@@ -84,9 +84,10 @@
 | **品牌规范** | pm positioning + 用户提供 | ui design-token | 品牌色彩/字体推导设计令牌 |
 | **IA/路由结构** | pm design-ia | ui page-assembly | 信息架构决定页面路由和导航 |
 | **用户流程** | pm design-userflow | ui interaction-design | 用户流程定义交互状态机 |
-| **原型** | pm design-prototype | ui ui-component-gen | 原型指导组件生成意图 |
+| **原型** | pm design-prototype | ui ui-component-gen / ui page-assembly | 原型指导组件生成和页面组装 |
+| **设计令牌** | ui design-token | ui api-contract-consume / pm design-prototype | 令牌驱动错误样式和一致性检查 |
 | **OpenAPI契约** | backend api-contract | ui api-contract-consume | API契约是前后端联调的桥梁 |
-| **数据模型** | backend data-model | backend api-contract / cache-strategy | 数据模型是API和缓存设计的基础 |
+| **数据模型** | backend data-model | backend api-contract(可选) / cache-strategy | 数据模型是API和缓存设计的基础 |
 | **指标体系** | pm metrics-system | pm analysis / monitoring | 度量体系驱动数据分析和监控 |
 | **埋点方案** | pm tracking-plan | ui page-assembly | 埋点方案指导前端数据采集 |
 | **验收标准** | pm quality-auto-acceptance | backend backend-review | 验收标准是质量保障的基准 |
@@ -151,7 +152,7 @@ All-Skill/
 
 ## 各领域模块详解
 
-### PM 产品方法论（126个Skill）
+### PM 产品方法论（127个Skill）
 
 #### 模块1：产品探索与发现
 
@@ -269,8 +270,8 @@ All-Skill/
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
-| ui-component-gen | 基于设计系统和意图描述生成组件代码 | **输入**：design-token + component-library + pm PRD/原型 |
-| page-assembly | 将组件组装为完整页面 | **输入**：pm design-ia（路由结构）+ pm tracking-plan（埋点） |
+| ui-component-gen | 基于设计系统和意图描述生成组件代码 | **输入**：design-token + component-library + pm PRD/原型(prototype_spec.json) |
+| page-assembly | 将组件组装为完整页面 | **输入**：design-token + pm design-ia（路由结构）+ pm design-prototype（原型规格）+ pm tracking-plan（埋点） |
 | interaction-design | 生成交互状态机、动画规范 | **输入**：pm design-userflow（用户流程）+ design-token |
 | ui-review | 自动审查视觉/无障碍/交互/响应式 | 审查闭环，P0阻塞发布 |
 | frontend-test | 自动生成组件/视觉回归/E2E/无障碍测试 | 核心流程E2E必须100%通过 |
@@ -281,7 +282,7 @@ All-Skill/
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
-| api-contract-consume | 基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-contract（openapi.yaml）← 核心跨领域契约 |
+| api-contract-consume | 基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-contract（openapi.yaml）+ design-token(可选) ← 核心跨领域契约 |
 | frontend-build-deploy | 生成构建配置+CI/CD+CDN | 构建可复现，回滚秒级 |
 | frontend-performance | 分析性能瓶颈，生成优化方案 | LCP≤2.5s + 首屏JS≤200KB 为上线卡口 |
 
@@ -295,7 +296,7 @@ All-Skill/
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
-| api-contract | 设计RESTful/GraphQL接口契约，生成OpenAPI 3.0 | **输入**：pm PRD + data-model → **输出**：openapi.yaml ← 前后端核心契约 |
+| api-contract | 设计RESTful/GraphQL接口契约，生成OpenAPI 3.0 | **输入**：pm PRD + data-model(可选) → **输出**：openapi.yaml ← 前后端核心契约 |
 | api-security | 设计限流/加密/输入校验/CORS/安全头 | **输入**：api-contract |
 | auth-design | 设计JWT/OAuth2/SSO + RBAC/ABAC + 多租户 | **输入**：pm PRD + api-contract |
 
@@ -305,7 +306,7 @@ All-Skill/
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
-| data-model | 设计ER模型+DDL+索引+分库分表 | **输入**：pm PRD + api-contract → **输出**：er_model.json |
+| data-model | 设计ER模型+DDL+索引+分库分表 | **输入**：pm PRD + api-contract → **输出**：er_model.json + Mermaid ER图 |
 | cache-strategy | 设计多级缓存+一致性+穿透/击穿/雪崩防护 | **输入**：data-model + api-contract |
 | data-migration | 设计Schema迁移+数据迁移+回滚方案 | 100%变更有回滚脚本 |
 
@@ -330,7 +331,7 @@ PM探索发现 → PM商业战略 → PM构思设计(PRD) ──┬── UI设�
                                               │         │           │           │
                                               └── API设计 ─────→ 数据架构 → 后端架构 ──┘
                                                        ↑
-                                                    PRD+数据模型
+                                                 PRD+数据模型(可选)
 ```
 
 ### 路径2：已有产品需要优化

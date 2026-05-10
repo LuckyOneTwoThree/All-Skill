@@ -113,6 +113,38 @@ updated_by   BIGINT       NULL
 - 初始数据SQL（枚举表/配置表）
 - ER图（Mermaid格式）
 
+**Mermaid ER图语法模板**：
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : "places"
+    ORDER ||--|{ LINE_ITEM : "contains"
+    CUSTOMER {
+        bigint id PK
+        varchar name
+        varchar email UK
+        datetime created_at
+    }
+    ORDER {
+        bigint id PK
+        bigint customer_id FK
+        decimal total_amount
+        tinyint status
+        datetime created_at
+    }
+    LINE_ITEM {
+        bigint id PK
+        bigint order_id FK
+        bigint product_id FK
+        int quantity
+        decimal unit_price
+    }
+```
+
+**关系语法**：
+- `||--||` 一对一
+- `||--o{` 一对多（一个XX有零到多个YY）
+- `||--|{` 一对多（一个XX有一个到多个YY）
+
 ## 输出
 
 **存储路径**：`output/backend-data-architecture/data-model/`

@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将后端开发的完整流程闭环提取为 9 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
+将后端开发的完整流程闭环提取为 12 个 AI Agent Skill（3个编排器 + 9个Pipeline），兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
 
 ## 快速开始
 
@@ -102,7 +102,7 @@ architecture-pattern → service-design → backend-review
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
-| api-contract | 设计RESTful/GraphQL接口契约，生成OpenAPI 3.0规范 | PRD、数据模型 | openapi.yaml | 🤖→👤 |
+| api-contract | 设计RESTful/GraphQL接口契约，生成OpenAPI 3.0规范 | PRD、数据模型(可选) | openapi.yaml | 🤖→👤 |
 | api-security | 设计限流规则、数据加密、输入校验、CORS和安全头 | API契约、安全等级 | 安全策略文档 | 🤖→👤 |
 | auth-design | 设计JWT/OAuth2/SSO认证、RBAC/ABAC权限、多租户隔离 | PRD、API契约 | 认证鉴权方案 | 🤖→👤 |
 
@@ -119,7 +119,7 @@ architecture-pattern → service-design → backend-review
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
-| data-model | 设计ER模型、表结构、索引策略和分库分表方案 | PRD、API契约、数据量预估 | DDL+数据字典+ER图 | 🤖→👤 |
+| data-model | 设计ER模型、表结构、索引策略和分库分表方案 | PRD、API契约、数据量预估 | DDL+数据字典+ER图(Mermaid) | 🤖→👤 |
 | cache-strategy | 设计多级缓存架构、一致性策略和穿透/击穿/雪崩防护 | 数据模型、API契约、并发量预估 | 缓存方案+Key规范+监控 | 🤖→👤 |
 | data-migration | 设计Schema迁移、数据迁移和回滚方案 | 当前Schema、目标Schema、数据量 | 迁移脚本+回滚脚本+校验方案 | 🤖→👤 |
 

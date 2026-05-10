@@ -30,6 +30,7 @@ metadata:
 | 已生成组件 | JSON | 是 | ui-component-gen → components.json | 已生成的自定义组件 |
 | 设计令牌 | JSON | 是 | design-token → tokens.json | 设计变量 |
 | 路由结构 | JSON | ○ | design-ia → ia_proposals.json | 信息架构定义的路由层级 |
+| 原型规格 | JSON | ○ | design-prototype → prototype_spec.json | 原型定义的页面布局和交互规格 |
 
 ## 执行步骤
 
@@ -155,6 +156,7 @@ metadata:
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
 | 路由结构缺失 | 基于页面需求推导路由 | 路由层级可能与IA不完全一致 |
+| 原型规格缺失 | 基于页面需求推导页面布局 | 页面布局可能不够精准 |
 | 组件库缺失 | 使用通用HTML组件占位 | 页面可运行但视觉不统一 |
 | 设计令牌缺失 | 使用默认布局参数 | 间距/字号可能不符合设计规范 |
 

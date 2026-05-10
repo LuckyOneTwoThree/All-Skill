@@ -26,7 +26,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | markdown | 是 | design-prd → prd.md | 产品需求文档 |
-| 数据模型 | JSON | 是 | data-model → er_model.json | 数据实体和关系定义 |
+| 数据模型 | JSON | ○ | data-model → er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
 | 业务流程 | JSON | ○ | design-userflow → userflow.json | 用户流程定义 |
 
 ## 执行步骤
@@ -143,6 +143,19 @@ metadata:
     "resources": ["courses", "lessons", "users", "enrollments", "progress"]
   },
   "openapi_spec": "openapi.yaml",
+  "openapi_min_structure": {
+    "openapi": "3.0.x",
+    "info": "title + version + description",
+    "servers": "base_url列表",
+    "paths": "每个接口的method+operationId+summary+parameters+requestBody+responses",
+    "components": {
+      "schemas": "请求/响应数据模型",
+      "securitySchemes": "认证方案定义",
+      "responses": "通用错误响应"
+    },
+    "security": "全局认证要求",
+    "tags": "接口分组标签"
+  },
   "error_codes": {
     "total": 30,
     "categories": 7
@@ -179,7 +192,7 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| 数据模型缺失 | 从PRD推导核心实体 | 资源定义可能不完整 |
+| 数据模型缺失 | 从PRD推导核心实体，生成实体关系草案；数据架构阶段基于API契约反向完善数据模型 | 资源定义基于推导，标注"待数据模型确认"；data-model阶段会反向校验和补充 |
 | 业务流程缺失 | 仅设计CRUD接口，不设计流程接口 | 缺少跨资源的业务接口 |
 | PRD缺失 | 无法设计API，需用户提供核心需求 | 输出为空 |
 

@@ -29,6 +29,7 @@ metadata:
 | 设计令牌 | JSON | 是 | design-token → tokens.json | 设计变量定义 |
 | 组件库 | JSON | 是 | component-library → library.json | 可复用的组件清单和规格 |
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
+| 原型规格 | JSON | ○ | design-prototype → prototype_spec.json | 原型定义的组件视觉和交互规格 |
 | PRD | markdown | ○ | design-prd → prd.md | 产品需求上下文 |
 
 ## 执行步骤
@@ -38,6 +39,7 @@ metadata:
 解析用户的组件意图描述：
 
 - 提取组件功能需求（展示/交互/数据/布局）
+- 若有原型规格，从原型中提取组件视觉规格和交互行为
 - 检查组件库中是否有可复用组件
 - 确定需要新建的组件和可复用的组件
 - 生成组件Props接口草案
@@ -152,6 +154,7 @@ metadata:
 | 设计令牌缺失 | 使用内联样式+TODO注释标注需替换为Token | 样式值硬编码，需后续替换 |
 | 组件库缺失 | 全部新建组件，不检查复用 | 可能存在重复组件 |
 | 目标框架未指定 | 默认React + TypeScript | 需手动转换为其他框架 |
+| 原型规格缺失 | 基于意图描述推导组件规格 | 组件视觉细节可能不够精准 |
 
 数据获取说明：
 - 本Skill需要设计令牌和组件库定义，请通过以下方式之一提供：
