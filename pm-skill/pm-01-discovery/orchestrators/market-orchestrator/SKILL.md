@@ -1,11 +1,11 @@
----
+﻿---
 name: market-orchestrator
-description: 市场竞品指挥官。当需要执行完整的市场与竞品分析流程时使用，按顺序调度子Skill执行。关键词：市场分析流程、竞品分析编排、市场研究全流程。
+description: 当需要执行完整的市场与竞品分析流程时使用。市场竞品指挥官，按顺序调度子Skill执行，最终产出可交付的竞品分析报告。关键词：市场分析流程、竞品分析编排、市场研究全流程、竞品分析报告。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 市场竞品指挥官
@@ -39,6 +39,12 @@ metadata:
 - → 加载 `market-competitor-quadrant` 执行
 - ⏸ 等待 competitor-quadrant.json 生成
 
+### 阶段4（报告生成）
+
+- → 加载 `market-competitor-report` 执行
+- ⏸ 等待 competitor-report.md 生成
+- ✅ 完整竞品分析报告已产出
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -51,8 +57,17 @@ metadata:
 - TAM/SAM/SOM已测算关键假设已标注
 - 竞品Feature Matrix已更新
 - 差异化机会已识别
+- 竞品分析报告已生成，执行摘要完整
 
 ## 人类决策点
 
 - TAM/SAM/SOM关键假设验证
 - 竞品战略推断置信度<0.5时升级
+- 差异化策略优先级确认
+- 报告结论与行动建议审批
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 market-competitor-report（竞品分析报告）

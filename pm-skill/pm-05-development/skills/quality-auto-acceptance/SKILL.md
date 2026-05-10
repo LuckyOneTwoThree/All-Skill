@@ -1,6 +1,6 @@
 ---
 name: quality-auto-acceptance
-description: 自动化验收执行。基于Given-When-Then格式的验收标准自动执行验收，包括测试环境准备、自动化执行、结果判定和失败分析。P0/P1失败将阻止上线。🤖 AI自动执行。关键词：自动化验收、验收测试、Given-When-Then、质量门禁、上线检查。
+description: 当需要自动执行验收测试时使用。自动化验收执行，基于Given-When-Then格式的验收标准自动执行验收，包括测试环境准备、自动化执行、结果判定和失败分析。P0/P1失败将阻止上线。🤖 AI自动执行。关键词：自动化验收、验收测试、Given-When-Then、质量门禁、上线检查、自动验收。
 metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"

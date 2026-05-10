@@ -1,6 +1,6 @@
 ---
 name: acquisition-optimize
-description: 获客漏斗自动优化Pipeline。分析获客漏斗数据，识别最大流失节点，自动生成优化方案和A/B测试设计。关键词：获客优化、漏斗优化、转化优化、A/B测试、获客漏斗。
+description: 当需要优化获客漏斗转化率时使用。获客漏斗自动优化Pipeline，分析获客漏斗数据，识别最大流失节点，自动生成优化方案和A/B测试设计。关键词：获客优化、漏斗优化、转化优化、A/B测试、获客漏斗。
 metadata:
   module: "产品增长与运营"
   sub-module: "获客"

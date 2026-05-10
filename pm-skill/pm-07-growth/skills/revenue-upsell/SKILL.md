@@ -1,6 +1,6 @@
 ---
 name: revenue-upsell
-description: 升级转化自动化Pipeline。识别升级信号用户，自动生成个性化升级内容，优化触达时机，设计A/B测试。关键词：升级转化、增购、Upsell、升级策略、交叉销售。
+description: 当需要优化升级转化策略时使用。升级转化自动化Pipeline，识别升级信号用户，自动生成个性化升级内容，优化触达时机，设计A/B测试。关键词：升级转化、增购、Upsell、升级策略、交叉销售。
 metadata:
   module: "产品增长与运营"
   sub-module: "变现"

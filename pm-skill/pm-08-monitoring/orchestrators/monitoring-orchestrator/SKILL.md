@@ -1,11 +1,11 @@
----
+﻿---
 name: monitoring-orchestrator
-description: 监控预警指挥官。当需要建立产品监控体系或处理异常告警时使用，包括监控系统自动构建与配置、异常自动检测与分级告警、监控仪表盘构建、告警升级策略。关键词：监控预警、异常检测、告警分级、监控系统、健康监控、监控仪表盘、告警升级。
+description: 当需要建立产品监控体系或处理异常告警时使用。监控预警指挥官，包括监控系统自动构建与配置、异常自动检测与分级告警、监控仪表盘构建、告警升级策略。关键词：监控预警、异常检测、告警分级、监控系统、健康监控、监控仪表盘、告警升级。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 监控预警指挥官
@@ -29,6 +29,12 @@ metadata:
 monitoring-system → monitoring-anomaly → monitoring-dashboard → monitoring-escalation
 ```
 
+### 附加调度（按需触发）
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 用户反馈闭环分析 | → user-feedback-loop-report（反馈闭环报告） |
+
 ### 调度逻辑
 
 | 触发事件 | 调度动作 |
@@ -38,6 +44,7 @@ monitoring-system → monitoring-anomaly → monitoring-dashboard → monitoring
 | 监控体系构建完成 | → monitoring-dashboard（监控仪表盘构建） |
 | 告警分析完成 + 需升级处理 | → monitoring-escalation（告警升级处理） |
 | 定时批量分析 | → monitoring-anomaly（批量分析） |
+| 用户反馈周期性复盘 | → user-feedback-loop-report（反馈闭环报告） |
 
 ### 数据流转
 
@@ -75,6 +82,7 @@ monitoring-escalation
 | 告警噪音率<15% | 告警中误报和低价值告警占比低于15% | 优化告警规则，提高精准度 |
 | 仪表盘构建完成 | 核心指标已可视化，告警已集成 | 补充缺失指标的可视化配置 |
 | 升级策略已定义 | P0/P1告警有明确升级路径和通知渠道 | 补充升级规则和通知配置 |
+| 反馈闭环报告已审核 | 反馈闭环报告经人类审核确认 | 补充分析或修改改进建议 |
 
 ## 人类决策点
 
@@ -83,3 +91,10 @@ monitoring-escalation
 | 告警阈值调整 | 告警噪音率过高或漏报率过高 | 确认告警阈值调整方案 |
 | 仪表盘布局确认 | 仪表盘构建完成 | 确认核心指标展示和布局 |
 | 升级策略确认 | 升级规则生成完成 | 确认升级路径和通知渠道配置 |
+| 反馈闭环报告确认 | 反馈闭环报告生成完成 | 确认闭环率和改进建议 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 user-feedback-loop-report（用户反馈闭环报告）

@@ -1,11 +1,11 @@
----
+﻿---
 name: growth-orchestrator
-description: 增长策略总指挥官。当需要制定增长策略或系统化推进增长时使用，先诊断增长模式，再分发到获客/激活/留存/变现各环节。关键词：增长策略、增长模式、AARRR、增长飞轮、增长体系。
+description: 当需要制定增长策略或系统化推进增长时使用。增长策略总指挥官，先诊断增长模式，再分发到获客/激活/留存/变现各环节。关键词：增长策略、增长模式、AARRR、增长飞轮、增长体系。
 metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
   type: "orchestrator"
-  version: "1.0"
+  version: "3.0"
 ---
 
 # 增长策略总指挥官
@@ -26,8 +26,15 @@ metadata:
 ## 任务调度
 
 ```
-growth-model → [acquisition-orchestrator | activation-orchestrator | retention-orchestrator | revenue-orchestrator]
+growth-model → [acquisition-orchestrator | activation-orchestrator | retention-orchestrator | revenue-orchestrator] → growth-strategy-report
 ```
+
+### 附加调度（按需触发）
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 产品上市策略制定 | → gtm-strategy（Go-to-Market策略文档） |
+| 运营手册制定 | → product-operations-manual（产品运营手册） |
 
 ### 调度逻辑
 
@@ -39,6 +46,8 @@ growth-model → [acquisition-orchestrator | activation-orchestrator | retention
 | 增长模式诊断完成 + 留存为瓶颈 | → retention-orchestrator（用户留存） |
 | 增长模式诊断完成 + 变现为瓶颈 | → retention-orchestrator（商业化） |
 | 多环节均为瓶颈 | → 按飞轮顺序依次调度（获客→激活→留存→变现） |
+| 各环节优化方案完成 | → growth-strategy-report（增长策略报告汇总） |
+| 新产品上市 / 市场拓展 | → gtm-strategy（Go-to-Market策略文档） |
 
 ### 数据流转
 
@@ -50,6 +59,8 @@ growth-model
        ↓
 [瓶颈环节对应的子编排器]
        ↓ 各环节优化方案
+growth-strategy-report
+       ↓ growth_strategy (growth_model / aarrr_funnel / leverage_strategies / roadmap)
 ```
 
 ## 调度规则
@@ -73,3 +84,12 @@ growth-model
 | 增长模式确认 | AI诊断增长模式后，人类确认最终增长模式（PLG/SLG/MLG/混合） |
 | 瓶颈优先级确认 | AI识别瓶颈环节后，人类确认资源分配优先级 |
 | 飞轮模型确认 | AI构建飞轮模型后，人类确认飞轮节点和因果关系 |
+| 增长策略报告确认 | 增长策略报告生成后，人类确认策略方向和执行路线图 |
+| GTM策略确认 | GTM策略文档生成后，人类确认上市路径和渠道策略 |
+| 运营手册确认 | 运营手册生成后，人类确认运营SOP和应急流程 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 growth-strategy-report（增长策略报告）、gtm-strategy（Go-to-Market策略）、product-operations-manual（产品运营手册）

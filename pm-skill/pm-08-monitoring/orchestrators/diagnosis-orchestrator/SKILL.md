@@ -1,11 +1,11 @@
----
+﻿---
 name: diagnosis-orchestrator
-description: 智能诊断指挥官。当需要诊断产品健康度或追踪竞品动态时使用，包括产品健康度多维度评分与校准、竞品功能变更追踪与应对策略。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR。
+description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，包括产品健康度多维度评分与校准、竞品功能变更追踪与应对策略。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 智能诊断指挥官
@@ -26,8 +26,14 @@ metadata:
 ## 任务调度
 
 ```
-diagnosis-health → diagnosis-competition
+diagnosis-health → diagnosis-competition → competitor-monitoring-report
 ```
+
+### 附加调度（按需触发）
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 产品/功能下线决策 | → product-sunset-plan（产品下线方案） |
 
 ### 调度逻辑
 
@@ -35,6 +41,8 @@ diagnosis-health → diagnosis-competition
 |----------|----------|
 | 每日定时 / 监控异常触发 / 迭代里程碑 | → diagnosis-health（健康度诊断） |
 | 每周定时 / 竞品重大更新 / 市场报告发布 | → diagnosis-competition（竞品动态追踪） |
+| 竞品追踪完成 | → competitor-monitoring-report（竞品监控报告汇总） |
+| 产品下线决策 | → product-sunset-plan（产品下线方案） |
 
 ### 数据流转
 
@@ -47,6 +55,8 @@ diagnosis-health
        ↓
 diagnosis-competition
        ↓ feature_changes / advantage_changes / response_strategy / effect_tracking
+competitor-monitoring-report
+       ↓ competitor_monitoring (dynamics / feature_changes / threat_assessment / response_recommendations)
 ```
 
 ## 调度规则
@@ -62,9 +72,18 @@ diagnosis-competition
 |------|----------|------------|
 | 健康度评分偏差±10% | 健康度评分与实际状态偏差在可控范围内 | 校准评分模型或补充数据 |
 | 竞品动态已追踪 | 竞品功能变更已识别，优劣势分析已完成 | 补充竞品数据源或延长追踪周期 |
+| 竞品监控报告已审核 | 竞品监控报告经人类审核确认 | 补充分析或修改应对建议 |
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
 | 健康度评分校准 | 健康度评分与实际感知偏差超过±10% | 确认评分模型校准方案和权重调整 |
+| 竞品监控报告确认 | 竞品监控报告生成完成 | 确认威胁评估和应对建议 |
+| 产品下线方案确认 | 产品下线方案生成完成 | 确认下线时间线和用户迁移方案 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 competitor-monitoring-report（竞品监控报告）、product-sunset-plan（产品下线方案）

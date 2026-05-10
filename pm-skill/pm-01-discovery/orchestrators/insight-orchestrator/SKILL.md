@@ -1,6 +1,6 @@
 ---
 name: insight-orchestrator
-description: 需求洞察指挥官。当需要执行完整的需求分析流程时使用，按顺序调度子Skill执行。关键词：需求分析流程、需求洞察编排、需求优先级全流程。
+description: 当需要执行完整的需求分析流程时使用。需求洞察指挥官，按顺序调度子Skill执行。关键词：需求分析流程、需求洞察编排、需求优先级全流程。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
@@ -62,3 +62,8 @@ metadata:
 - Emotional/Social Job验证
 - KANO边界判定
 - 优先级权重确认
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

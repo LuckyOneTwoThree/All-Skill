@@ -1,6 +1,6 @@
----
+﻿---
 name: insight-jtbd
-description: JTBD结构化分析。当需要从用户反馈和行为数据中提取功能性、情感性、社会性三层Job时使用。关键词：JTBD、Jobs-to-be-Done、用户任务、功能诉求、情感诉求、社会诉求。
+description: 当需要从用户反馈和行为数据中提取功能性、情感性、社会性三层Job时使用。JTBD结构化分析。关键词：JTBD、Jobs-to-be-Done、用户任务、功能诉求、情感诉求、社会诉求。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"

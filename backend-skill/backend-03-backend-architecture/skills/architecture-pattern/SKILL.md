@@ -1,6 +1,6 @@
 ---
 name: architecture-pattern
-description: 架构模式自动选择与设计。基于业务规模、团队能力和技术约束，自动评估并推荐后端架构模式（单体/微服务/Serverless），输出架构决策记录和系统拓扑图。关键词：架构模式、微服务、单体架构、Serverless、架构决策、系统拓扑。
+description: 当需要选择和设计后端架构模式时使用。架构模式自动选择与设计，基于业务规模、团队能力和技术约束，自动评估并推荐后端架构模式（单体/微服务/Serverless），输出架构决策记录和系统拓扑图。关键词：架构模式、微服务、单体架构、Serverless、架构决策、系统拓扑。
 metadata:
   module: "后端架构与开发"
   sub-module: "后端架构"

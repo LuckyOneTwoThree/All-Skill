@@ -74,7 +74,7 @@ ALL/
 │   │   ├── insight-orchestrator/SKILL.md
 │   │   ├── market-orchestrator/SKILL.md
 │   │   └── opportunity-orchestrator/SKILL.md
-│   └── skills/                         ← Pipeline Skill
+│   └── skills/                         ← Pipeline Skill（18个，含竞品分析报告生成）
 │       ├── user-research-voice-analysis/SKILL.md
 │       ├── insight-jtbd/SKILL.md
 │       └── ...（17个Pipeline）
@@ -144,6 +144,7 @@ output/
 │   ├── market-pest/
 │   ├── market-competitor-intel/
 │   ├── market-competitor-quadrant/
+│   ├── market-competitor-report/
 │   ├── opportunity-scoring/
 │   ├── opportunity-hmw/
 │   ├── opportunity-problem-statement/

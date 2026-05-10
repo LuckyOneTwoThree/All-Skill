@@ -1,11 +1,11 @@
----
+﻿---
 name: business-orchestrator
-description: 商业模式设计子模块指挥官。当需要设计或评估产品商业模式时使用，包括商业模式画布生成、价值主张匹配度评估、定价策略分析。关键词：商业模式设计、商业画布、定价策略、商业化。
+description: 当需要设计或评估产品商业模式时使用。商业模式设计子模块指挥官，包括商业模式画布生成、价值主张匹配度评估、定价策略分析，最终产出商业战略规划报告。关键词：商业模式设计、商业画布、定价策略、商业化、商业战略报告。
 metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 商业模式设计指挥官
@@ -24,7 +24,7 @@ metadata:
 ## 任务调度
 
 ```
-business-model-canvas → business-value-fit → business-pricing
+business-model-canvas → business-value-fit → business-pricing → business-strategy-report
 ```
 
 | 阶段 | 任务 | 执行模式 |
@@ -32,6 +32,7 @@ business-model-canvas → business-value-fit → business-pricing
 | 1 | business-model-canvas | 🤖→👤 AI建议，人类审批 |
 | 2 | business-value-fit | 🤖 AI自动执行 |
 | 3 | business-pricing | 🤖→👤 AI建议，人类审批 |
+| 4 | business-strategy-report | 🤖→👤 AI建议，人类审批 |
 
 ## 调度规则
 
@@ -47,6 +48,7 @@ business-model-canvas → business-value-fit → business-pricing
 | BMC生成完成 | BMC 9格全部填充、假设已标注 | 补充缺失要素，无法填充的标注为待验证假设 |
 | 价值主张匹配完成 | 价值主张匹配度≥3.0 | 匹配度<3.0触发人类决策者介入评估 |
 | 定价方案完成 | 3个定价方案已生成 | 补充缺失方案，确保差异化定位 |
+| 商业战略报告完成 | 报告执行摘要完整，至少2个战略方向 | 补充战略方向或标注"建议补充战略分析" |
 
 ## 人类决策点
 
@@ -54,3 +56,10 @@ business-model-canvas → business-value-fit → business-pricing
 |--------|------|
 | 收入模型选择 | AI生成多个收入模式选项，人类选择最终方案 |
 | 定价数字拍板 | AI提供定价分析和方案，人类决定具体定价数字和套餐结构 |
+| 商业战略方向确认 | AI推荐战略方向，人类确认最终战略选择 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 business-strategy-report（商业战略规划报告）

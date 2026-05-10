@@ -1,6 +1,6 @@
----
+﻿---
 name: stakeholder-map
-description: Stakeholder地图自动生成。识别并分析项目相关利益方，评估其影响力和关注度，分类并制定沟通策略。关键词：Stakeholder识别、影响力评估、利益相关方管理、沟通策略。
+description: 当需要识别和分析项目利益相关方时使用。Stakeholder地图自动生成，识别并分析项目相关利益方，评估其影响力和关注度，分类并制定沟通策略。关键词：Stakeholder识别、影响力评估、利益相关方管理、沟通策略。
 metadata:
   module: "产品商业与战略"
   sub-module: "Stakeholder对齐"

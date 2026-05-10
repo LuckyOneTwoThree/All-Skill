@@ -1,6 +1,6 @@
 ---
 name: decision-orchestrator
-description: 数据驱动决策指挥官。当需要将数据分析结果转化为决策行动时使用，包括DACE决策循环执行、洞察转化为行动方案、数据驱动文化建设。关键词：数据决策、DACE循环、数据洞察、决策框架、数据文化。
+description: 当需要将数据分析结果转化为决策行动时使用。数据驱动决策指挥官，包括DACE决策循环执行、洞察转化为行动方案、数据驱动文化建设。关键词：数据决策、DACE循环、数据洞察、决策框架、数据文化。
 metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
@@ -78,3 +78,8 @@ decision-culture
 | data_decision | 数据明确支持，可自动执行 | AI自动执行 + 事后报告 |
 | data_reference | 数据供参考，人类决策 | 推送洞察，等待决策 |
 | human_decision | 复杂决策，人类主导 | 提供分析，人类决策 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

@@ -1,6 +1,6 @@
 ---
 name: frontend-performance
-description: 前端性能优化自动执行。对前端应用进行性能分析，识别包体积、加载速度和渲染性能瓶颈，生成优化方案和代码级修复建议。关键词：前端性能、Web Vitals、包体积、加载速度、渲染性能、Lighthouse。
+description: 当需要分析和优化前端性能时使用。前端性能优化自动执行，对前端应用进行性能分析，识别包体积、加载速度和渲染性能瓶颈，生成优化方案和代码级修复建议。关键词：前端性能、Web Vitals、包体积、加载速度、渲染性能、Lighthouse。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"

@@ -1,6 +1,6 @@
 ---
 name: activation-onboarding
-description: Onboarding自动优化Pipeline。分析Onboarding数据和用户分群，自动生成个性化引导策略，设计A/B测试方案。关键词：Onboarding、新用户引导、引导优化、个性化引导、用户激活。
+description: 当需要优化用户Onboarding流程时使用。Onboarding自动优化Pipeline，分析Onboarding数据和用户分群，自动生成个性化引导策略，设计A/B测试方案。关键词：Onboarding、新用户引导、引导优化、个性化引导、用户激活。
 metadata:
   module: "产品增长与运营"
   sub-module: "激活"

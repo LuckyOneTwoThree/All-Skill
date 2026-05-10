@@ -1,6 +1,6 @@
 ---
 name: ideation-orchestrator
-description: 创意发散与方案构思子模块指挥官。当需要发散创意或构思解决方案时使用，包括HMW批量生成、SCAMPER结构化方案、思维逆转法、方案收敛与深化。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意。
+description: 当需要发散创意或构思解决方案时使用。创意发散与方案构思子模块指挥官，包括HMW批量生成、SCAMPER结构化方案、思维逆转法、方案收敛与深化。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
@@ -55,3 +55,8 @@ ideation-hmw → ideation-scamper → ideation-inversion → ideation-convergenc
 | 决策点 | 说明 |
 |--------|------|
 | 方案最终选择 | AI生成对比矩阵和推荐，人类做最终方案选择 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

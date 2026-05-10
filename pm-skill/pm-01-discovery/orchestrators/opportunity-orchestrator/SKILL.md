@@ -1,6 +1,6 @@
 ---
 name: opportunity-orchestrator
-description: 机会识别指挥官。当需要执行完整的机会识别与定义流程时使用，按顺序调度子Skill执行。关键词：机会识别流程、机会评估编排、产品机会全流程。
+description: 当需要执行完整的机会识别与定义流程时使用。机会识别指挥官，按顺序调度子Skill执行。关键词：机会识别流程、机会评估编排、产品机会全流程。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
@@ -61,3 +61,8 @@ metadata:
 - 战略契合度判定
 - Problem Statement质量检查3次不通过
 - Opportunity Brief最终决策
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

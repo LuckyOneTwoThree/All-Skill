@@ -1,6 +1,6 @@
 ---
 name: design-token
-description: 设计令牌自动生成。从品牌规范和产品定位提取设计变量，生成色彩体系、字体排版、间距节奏、阴影层级、圆角规范等设计令牌，输出为多平台可消费的Token文件（CSS Variables / Tailwind Config / Figma Tokens）。关键词：设计令牌、Design Token、色彩体系、字体排版、设计变量。
+description: 当需要提取和生成设计令牌时使用。设计令牌自动生成，从品牌规范和产品定位提取设计变量，生成色彩体系、字体排版、间距节奏、阴影层级、圆角规范等设计令牌，输出为多平台可消费的Token文件（CSS Variables / Tailwind Config / Figma Tokens）。关键词：设计令牌、Design Token、色彩体系、字体排版、设计变量。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"

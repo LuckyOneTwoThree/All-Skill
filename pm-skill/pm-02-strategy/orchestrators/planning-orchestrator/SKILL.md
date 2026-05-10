@@ -1,11 +1,11 @@
----
+﻿---
 name: planning-orchestrator
-description: 战略规划与路线图子模块指挥官。当需要进行战略规划、SWOT分析、OKR制定、路线图规划时使用。关键词：战略规划、SWOT、OKR、路线图、战略分析。
+description: 当需要进行产品立项、战略规划、SWOT分析、OKR制定、路线图规划时使用。战略规划与路线图子模块指挥官。关键词：产品立项、战略规划、SWOT、OKR、路线图、战略分析、产品提案。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 战略规划与路线图指挥官
@@ -24,11 +24,12 @@ metadata:
 ## 任务调度
 
 ```
-planning-swot → planning-porter-five-forces → planning-okr → planning-north-star → planning-roadmap → planning-ansoff
+product-proposal → planning-swot → planning-porter-five-forces → planning-okr → planning-north-star → planning-roadmap → planning-ansoff
 ```
 
 | 阶段 | 任务 | 执行模式 |
 |------|------|----------|
+| 0 | product-proposal | 🤖→👤 AI建议，人类审批 |
 | 1 | planning-swot | 🤖→👤 AI建议，人类审批 |
 | 2 | planning-porter-five-forces | 🤖→👤 AI建议，人类审批 |
 | 3 | planning-okr | 🤖→👤 AI建议，人类审批 |
@@ -47,6 +48,7 @@ planning-swot → planning-porter-five-forces → planning-okr → planning-nort
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
+| 产品提案已审批 | 提案书人类已签批 | 补充数据后重新提交 |
 | SWOT完成 | SWOT战略方向人类已选择 | 置信度<0.6的项目升级人类校准 |
 | 行业分析完成 | 波特五力评分完成 | 各力量评分需人类校准确认 |
 | OKR完成 | OKR人类已确认 | 达成概率<0.3升级调整，>0.9升级增加挑战 |
@@ -58,6 +60,13 @@ planning-swot → planning-porter-five-forces → planning-okr → planning-nort
 
 | 决策点 | 说明 |
 |--------|------|
+| 产品立项审批 | AI生成产品提案书，人类决定是否立项 |
 | 战略方向选择 | AI生成SO/ST/WO/WT四种战略方向，人类选择最终方向 |
 | OKR确认 | AI生成OKR候选，人类确认最终OKR |
 | 路线图优先级 | AI计算RICE评分并排序，人类决定最终优先级和资源分配 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 product-proposal（产品提案），新增 Stage 0 产品立项审批决策点

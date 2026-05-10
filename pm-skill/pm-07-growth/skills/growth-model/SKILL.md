@@ -1,6 +1,6 @@
 ---
 name: growth-model
-description: 增长模式自动诊断Pipeline。分析产品特征、用户数据和商业模式，自动匹配最优增长模式（PLG/SLG/MLG/混合），输出增长飞轮模型、关键约束条件和瓶颈分析。关键词：增长模式、PLG、SLG、增长飞轮、增长诊断。
+description: 当需要诊断产品增长模式时使用。增长模式自动诊断Pipeline，分析产品特征、用户数据和商业模式，自动匹配最优增长模式（PLG/SLG/MLG/混合），输出增长飞轮模型、关键约束条件和瓶颈分析。关键词：增长模式、PLG、SLG、增长飞轮、增长诊断。
 metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"

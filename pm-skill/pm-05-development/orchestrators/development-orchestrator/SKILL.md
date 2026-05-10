@@ -1,11 +1,11 @@
----
+﻿---
 name: development-orchestrator
-description: 开发协作指挥官。当需要将PRD转化为开发任务、进行代码审查或保持PRD与开发同步时使用，包括任务分解、自动代码审查、PRD同步检查。关键词：开发协作、任务分解、代码审查、PRD同步、Sprint规划。
+description: 当需要将PRD转化为开发任务、进行代码审查、保持PRD与开发同步、管理需求变更、评估隐私合规、制定安全需求、建立数据字典、管理技术债务或记录架构决策时使用。开发协作指挥官。关键词：开发协作、任务分解、代码审查、PRD同步、需求变更、隐私合规、安全需求、数据字典、技术债务、架构决策。
 metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 开发协作指挥官
@@ -29,13 +29,19 @@ metadata:
 development-task-breakdown → development-auto-review → development-prd-sync
 ```
 
-### 调度逻辑
+### 附加调度（按需触发）
 
 | 触发事件 | 调度动作 |
 |----------|----------|
 | PRD任务分解完成 | → development-task-breakdown |
 | 任务分解完成 | → development-auto-review |
 | PRD内容更新 / 代码合入主干 | → development-prd-sync |
+| 需求变更请求 | → requirements-change-log |
+| 上线前合规检查 | → privacy-compliance-assessment |
+| 安全需求制定 | → security-requirements |
+| 数据标准制定 | → data-dictionary |
+| 技术债务管理 | → tech-debt-register |
+| 架构决策记录 | → architecture-decision-record |
 
 ### 数据流转
 
@@ -64,6 +70,10 @@ development-prd-sync
 | PRD门禁通过 | PRD质量门禁校验通过 | 阻止进入开发，返回PRD Pipeline |
 | 任务分解完整 | Epic→Story→Task结构完整，无遗漏 | 补充分解后重新校验 |
 | Sprint分配合理 | 无资源冲突，依赖关系已解决 | 重新分配或升级人类决策 |
+| 隐私合规通过 | 无P0合规差距 | 阻止上线，优先整改P0项 |
+| 安全需求已制定 | 安全需求清单经人类审核确认 | 阻止开发，补充安全需求 |
+| 数据字典已建立 | 核心数据实体和字段规格已定义 | 补充数据定义 |
+| 技术债务已登记 | 技术债务登记册经人类审核确认 | 补充债务识别 |
 
 ## 人类决策点
 
@@ -71,6 +81,12 @@ development-prd-sync
 |--------|----------|----------|
 | 技术方案确认 | 任务分解涉及架构决策 | 确认技术选型和实现路径 |
 | Sprint分配确认 | 资源冲突无法自动解决 | 确认人力分配和优先级取舍 |
+| 需求变更审批 | 需求变更影响>5个需求或延期>3天 | 确认是否接受变更 |
+| 合规整改确认 | 隐私合规P0差距 | 确认整改方案和上线时间 |
+| 安全需求确认 | 安全需求清单生成完成 | 确认安全功能需求和安全验收标准 |
+| 数据字典确认 | 数据字典生成完成 | 确认数据实体定义和字段规格 |
+| 技术债务优先级确认 | 技术债务登记册生成完成 | 确认债务偿还优先级和计划 |
+| 架构决策确认 | ADR生成完成 | 确认架构决策和权衡取舍 |
 
 ## 异常处理
 
@@ -80,3 +96,9 @@ development-prd-sync
 | 校验失败 | 返回错误原因 |
 | 执行超时 | 重试3次后升级 |
 | 外部系统不可用 | 降级处理+记录 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 requirements-change-log（需求变更记录）、privacy-compliance-assessment（隐私合规评估）、security-requirements（安全需求清单）、data-dictionary（数据字典）、tech-debt-register（技术债务登记册）、architecture-decision-record（架构决策记录）

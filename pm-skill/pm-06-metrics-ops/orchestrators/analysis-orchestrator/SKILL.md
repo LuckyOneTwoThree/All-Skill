@@ -1,11 +1,11 @@
----
+﻿---
 name: analysis-orchestrator
-description: 数据分析指挥官。当需要进行产品数据异常检测、漏斗分析或留存分析时使用，包括异常自动检测与归因、核心业务漏斗转化分析、用户留存与Aha Moment识别。关键词：数据分析、异常检测、漏斗分析、留存分析、Aha Moment。
+description: 当需要进行产品数据异常检测、漏斗分析或留存分析时使用。数据分析指挥官，最终产出可交付的数据洞察报告。关键词：数据分析、异常检测、漏斗分析、留存分析、Aha Moment、数据洞察报告。
 metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 数据分析指挥官
@@ -26,7 +26,7 @@ metadata:
 ## 任务调度
 
 ```
-analysis-anomaly → analysis-funnel → analysis-retention
+analysis-anomaly → analysis-funnel → analysis-retention → data-analysis-report
 ```
 
 ### 调度逻辑
@@ -37,6 +37,7 @@ analysis-anomaly → analysis-funnel → analysis-retention
 | 定时（每日） | → analysis-funnel + analysis-retention（全量分析） |
 | 异常告警触发 | → analysis-anomaly → 定位问题后触发 funnel/retention 下钻 |
 | 手动请求 | → 根据请求内容执行对应Pipeline |
+| 分析完成 | → data-analysis-report（生成数据洞察报告） |
 
 ### 数据流转
 
@@ -49,6 +50,8 @@ analysis-funnel
        ↓ funnel_analysis (steps / overall_conversion / critical_drop)
 analysis-retention
        ↓ retention_analysis (overall / cohort_trend / aha_moment_candidates / churn_risk)
+data-analysis-report
+       ↓ data_analysis_report (executive_summary / key_findings / recommendations)
 ```
 
 ## 调度规则
@@ -65,6 +68,7 @@ analysis-retention
 | 异常检测7×24运行 | 异常检测Pipeline持续运行，无中断 | 立即修复检测Pipeline，启动备用监控 |
 | 漏斗核心路径覆盖 | 核心业务漏斗已定义且数据完整 | 补充漏斗定义，确保核心路径覆盖 |
 | 留存Aha Moment候选已识别 | 至少产出1个Aha Moment候选行为 | 扩大行为搜索范围或延长分析周期 |
+| 数据洞察报告已生成 | 报告执行摘要完整，至少3条行动建议 | 补充分析或标注"建议补充数据" |
 
 ## 人类决策点
 
@@ -80,3 +84,9 @@ analysis-retention
 | P1异常 | 2小时内Slack/企微通知 |
 | P2异常 | 每日汇总报告 |
 | P3波动 | 仅记录，不告警 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 data-analysis-report（数据分析报告）

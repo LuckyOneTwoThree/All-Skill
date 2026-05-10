@@ -1,6 +1,6 @@
 ---
 name: positioning-orchestrator
-description: 产品定位与差异化子模块指挥官。当需要确定产品定位或评估差异化策略时使用，包括定位陈述生成、价值曲线绘制、差异化来源评估、排他决策。关键词：产品定位、差异化、价值曲线、竞争策略。
+description: 当需要确定产品定位或评估差异化策略时使用。产品定位与差异化子模块指挥官，包括定位陈述生成、价值曲线绘制、差异化来源评估、排他决策。关键词：产品定位、差异化、价值曲线、竞争策略。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
@@ -56,3 +56,8 @@ positioning-statement → positioning-value-curve → positioning-differentiatio
 |--------|------|
 | 定位陈述最终选择 | AI生成3-5个候选，人类选择最终定位陈述 |
 | 排他决策 | AI提供排他建议，人类决定不为哪些用户服务 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

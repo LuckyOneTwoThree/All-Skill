@@ -1,6 +1,6 @@
 ---
 name: requirements-orchestrator
-description: 需求管理子模块指挥官。当需要管理产品需求时使用，包括需求收集分类、理解拆解、评估排序。关键词：需求管理、需求收集、需求优先级、需求分析。
+description: 当需要管理产品需求时使用。需求管理子模块指挥官，包括需求收集分类、理解拆解、评估排序。关键词：需求管理、需求收集、需求优先级、需求分析。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
@@ -54,3 +54,8 @@ requirements-collection → requirements-understanding → requirements-prioriti
 |--------|------|
 | 需求分类判定 | AI自动分类并标注置信度，低置信度需求由人类判定分类 |
 | MoSCoW定级 | AI基于RICE评分给出MoSCoW建议，人类确认最终定级 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

@@ -1,6 +1,6 @@
 ---
 name: iteration-retrospective
-description: 迭代复盘自动化。自动收集迭代数据，进行多维度分析，识别问题并生成改进建议。关键词：迭代复盘、Sprint复盘、持续改进、行动项追踪、迭代回顾。
+description: 当需要进行迭代复盘时使用。迭代复盘自动化，自动收集迭代数据，进行多维度分析，识别问题并生成改进建议。关键词：迭代复盘、Sprint复盘、持续改进、行动项追踪、迭代回顾。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"

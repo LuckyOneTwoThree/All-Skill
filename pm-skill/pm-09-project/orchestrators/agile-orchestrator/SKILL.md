@@ -1,11 +1,11 @@
----
+﻿---
 name: agile-orchestrator
-description: 敏捷执行指挥官。当需要管理Sprint周期或追踪敏捷执行时使用，包括Sprint规划与容量分配、每日同步与障碍追踪、Sprint评审与交付检查。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理。
+description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，包括Sprint规划与容量分配、每日同步与障碍追踪、Sprint评审与交付检查。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 敏捷执行指挥官
@@ -25,7 +25,7 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 ## 任务调度
 
 ```
-agile-sprint-planning → agile-daily-sync → agile-review
+agile-sprint-planning → agile-daily-sync → agile-review → sprint-retrospective-report
 ```
 
 ### 调度逻辑
@@ -35,6 +35,7 @@ agile-sprint-planning → agile-daily-sync → agile-review
 | Sprint第一天 | → agile-sprint-planning（Sprint规划） |
 | 每个工作日 | → agile-daily-sync（每日同步） |
 | Sprint最后一天 | → agile-review（Sprint Review + Retro） |
+| Sprint评审完成 | → sprint-retrospective-report（复盘报告生成） |
 
 ### 数据流转
 
@@ -51,6 +52,8 @@ agile-daily-sync
        ↓
 agile-review
        ↓ sprint_review + sprint_retro (deliverables / feedback / improvements)
+sprint-retrospective-report
+       ↓ sprint_retro_report (goal_achievement / quality_metrics / velocity / action_items)
 ```
 
 ## 调度规则
@@ -66,6 +69,7 @@ agile-review
 |------|----------|------------|
 | Sprint计划已确认 | Sprint Goal已定义，Story已分配，容量已确认 | 暂停Sprint启动，补充规划 |
 | Daily Sync障碍已暴露 | 每日障碍已识别并标记，重大障碍已升级 | 加强障碍追踪和升级机制 |
+| 复盘报告已审核 | Sprint复盘报告经人类审核确认 | 补充分析或修改行动项 |
 
 ## 人类决策点
 
@@ -73,3 +77,10 @@ agile-review
 |--------|----------|----------|
 | Sprint Goal确认 | Sprint Planning完成 | 确认Sprint目标的合理性和可达性 |
 | Sprint取消决策 | Sprint目标连续未达成或重大范围变更 | 决定是否取消当前Sprint |
+| 复盘行动项确认 | Sprint复盘报告生成完成 | 确认改进行动项和下一Sprint建议 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 sprint-retrospective-report（Sprint复盘报告）

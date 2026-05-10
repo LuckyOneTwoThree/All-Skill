@@ -1,6 +1,6 @@
 ---
 name: stakeholder-orchestrator
-description: Stakeholder对齐子模块指挥官。当需要进行Stakeholder管理、战略文档编写、战略简报准备时使用。关键词：Stakeholder对齐、战略文档、战略沟通、团队对齐。
+description: 当需要进行Stakeholder管理、战略文档编写、战略简报准备时使用。Stakeholder对齐子模块指挥官。关键词：Stakeholder对齐、战略文档、战略沟通、团队对齐。
 metadata:
   module: "产品商业与战略"
   sub-module: "Stakeholder对齐"
@@ -54,3 +54,8 @@ stakeholder-map → stakeholder-strategy-doc → stakeholder-brief
 |--------|------|
 | 影响力评估校准 | AI评估影响力评分，人类校准涉及人际判断的最终结果 |
 | 战略文档审核 | AI组装战略文档，人类审核内容准确性和表达方式 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

@@ -1,11 +1,11 @@
----
+﻿---
 name: design-orchestrator
-description: 产品设计与原型子模块指挥官。当需要生成PRD、信息架构设计、用户流程设计或原型生成时使用。关键词：产品设计、PRD、信息架构、用户流程、原型设计、IA设计。
+description: 当需要生成PRD、需求规格说明书、信息架构设计、用户流程设计、原型设计、交互设计规范或设计交接时使用。产品设计与原型子模块指挥官。关键词：产品设计、PRD、SRS、需求规格、信息架构、用户流程、原型设计、交互规范、设计交接、Handoff。
 metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "orchestrator"
-  version: "2.0"
+  version: "4.0"
 ---
 
 # 产品设计与原型指挥官
@@ -24,15 +24,18 @@ metadata:
 ## 任务调度
 
 ```
-design-prd → design-ia → design-userflow → design-prototype
+design-prd → requirements-srs → design-ia → design-userflow → design-prototype → interaction-spec → design-handoff-spec
 ```
 
 | 阶段 | 任务 | 执行模式 |
 |------|------|----------|
 | 1 | design-prd | 🤖→👤 AI建议，人类审批 |
-| 2 | design-ia | 🤖→👤 AI建议，人类审批 |
-| 3 | design-userflow | 🤖→👤 AI建议，人类审批 |
-| 4 | design-prototype | 🤖→👤 AI建议，人类审批 |
+| 2 | requirements-srs | 🤖→👤 AI建议，人类审批 |
+| 3 | design-ia | 🤖→👤 AI建议，人类审批 |
+| 4 | design-userflow | 🤖→👤 AI建议，人类审批 |
+| 5 | design-prototype | 🤖→👤 AI建议，人类审批 |
+| 6 | interaction-spec | 🤖→👤 AI建议，人类审批 |
+| 7 | design-handoff-spec | 🤖→👤 AI建议，人类审批 |
 
 ## 调度规则
 
@@ -46,14 +49,26 @@ design-prd → design-ia → design-userflow → design-prototype
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | PRD生成完成 | PRD 4道质量门禁全部通过 | 门禁1或2失败阻塞流程，输出缺失项清单 |
+| SRS生成完成 | 功能需求有唯一编号，非功能需求覆盖5维度 | 补充缺失需求或标注"待确认" |
 | IA设计完成 | IA方案人类已确认 | 生成2-3个候选方案供人类选择 |
 | 用户流程完成 | 用户流程死胡同=0 | 死胡同必须修复后才能进入原型阶段 |
 | 原型完成 | 原型设计规范一致性≥85% | 一致性<85%需人类确认violations |
+| 交互规范完成 | 交互状态机8种基础状态全覆盖 | 补充缺失状态定义 |
+| 设计交接完成 | 交接文档待确认项=0 | 待确认项需逐项确认或标注接受风险 |
 
 ## 人类决策点
 
 | 决策点 | 说明 |
 |--------|------|
 | PRD层级确认 | AI自动分级置信度<0.7时，强制人类确认PRD层级（L/S/X） |
+| SRS需求确认 | AI生成SRS后，人类确认非功能需求指标和约束条件 |
 | IA方案选择 | AI生成2-3个IA候选方案，人类选择最终方案 |
 | 设计规范violation确认 | 设计规范一致性<85%时，人类判断是否接受violation |
+| 交互规范确认 | 交互设计规范生成后，人类确认状态机、动画和手势规范 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 requirements-srs（需求规格说明书）、design-handoff-spec（设计交接文档）
+- v4.0: 新增 interaction-spec（交互设计规范）

@@ -1,6 +1,6 @@
 ---
 name: monitoring-dashboard
-description: 监控 Dashboard 自动配置。根据不同角色需求，自动生成监控指标分组和可视化组件配置。关键词：监控Dashboard、数据看板、实时监控、可视化、监控面板。
+description: 当需要配置监控Dashboard时使用。监控 Dashboard 自动配置，根据不同角色需求，自动生成监控指标分组和可视化组件配置。关键词：监控Dashboard、数据看板、实时监控、可视化、监控面板。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"

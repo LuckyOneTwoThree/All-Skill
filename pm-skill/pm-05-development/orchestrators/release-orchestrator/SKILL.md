@@ -1,6 +1,6 @@
----
+﻿---
 name: release-orchestrator
-description: 发布策略指挥官。当需要制定灰度发布策略或生成发布检查清单时使用，包括灰度发布阶段规划与监控、发布检查清单自动生成与追踪。关键词：灰度发布、发布策略、发布检查清单、Feature Flag、持续部署。
+description: 当需要制定灰度发布策略、生成发布检查清单或版本发布说明时使用。发布策略指挥官。关键词：灰度发布、发布策略、发布检查清单、Feature Flag、持续部署、版本发布说明、Release Notes。
 metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
@@ -26,7 +26,7 @@ metadata:
 ## 任务调度
 
 ```
-release-gradual → release-auto-checklist
+release-gradual → release-auto-checklist → release-notes
 ```
 
 ### 调度逻辑
@@ -37,6 +37,7 @@ release-gradual → release-auto-checklist
 | 灰度阶段完成且指标达标 | → release-gradual（进入下一阶段） |
 | 灰度阶段指标恶化 | → release-gradual（自动回滚） |
 | 发布计划到达检查时间点 | → release-auto-checklist |
+| 全量发布完成 | → release-notes（生成版本发布说明） |
 
 ### 数据流转
 
@@ -47,6 +48,8 @@ release-gradual
        ↓ release_status / phase_transitions / rollback_history / monitoring_metrics
 release-auto-checklist
        ↓ checklist / completion_status / pending_alerts
+release-notes
+       ↓ release-notes-v{version}.md / release-notes-v{version}.json
 ```
 
 ## 调度规则
@@ -62,6 +65,7 @@ release-auto-checklist
 |------|----------|------------|
 | 灰度各阶段指标无恶化 | P0指标稳定，无新增异常 | 暂停灰度或自动回滚 |
 | Checklist P0项全部完成 | 所有P0检查项已通过 | 阻止进入下一发布阶段 |
+| 版本发布说明已生成 | 发布说明覆盖所有变更类型 | 补充遗漏变更 |
 
 ## 人类决策点
 
@@ -78,3 +82,8 @@ release-auto-checklist
 | Feature Flag不可用 | 停止发布，回滚到上一状态 |
 | 自动回滚失败 | 立即告警，触发人工介入 |
 | Checklist未完成 | 阻止进入下一发布阶段 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 新增 release-notes（版本发布说明）

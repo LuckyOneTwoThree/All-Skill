@@ -1,6 +1,6 @@
----
+﻿---
 name: user-research-interview-assist
-description: 访谈辅助Pipeline。当需要设计用户访谈脚本、执行访谈后提取洞察、跨访谈聚类分析时使用。关键词：用户访谈、访谈脚本、访谈洞察、半结构化访谈、定性研究辅助。
+description: 当需要设计用户访谈脚本、执行访谈后提取洞察、跨访谈聚类分析时使用。访谈辅助Pipeline。关键词：用户访谈、访谈脚本、访谈洞察、半结构化访谈、定性研究辅助。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"

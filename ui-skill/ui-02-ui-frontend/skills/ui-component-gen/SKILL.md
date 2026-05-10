@@ -1,6 +1,6 @@
 ---
 name: ui-component-gen
-description: UI组件自动生成。基于设计系统和意图描述，自动生成带样式和交互的前端组件代码，支持React/Vue/Svelte多框架输出。关键词：UI组件生成、组件代码、前端组件、React组件、Vue组件、设计系统组件。
+description: 当需要生成前端UI组件代码时使用。UI组件自动生成，基于设计系统和意图描述，自动生成带样式和交互的前端组件代码，支持React/Vue/Svelte多框架输出。关键词：UI组件生成、组件代码、前端组件、React组件、Vue组件、设计系统组件。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"

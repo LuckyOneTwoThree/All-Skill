@@ -1,6 +1,6 @@
 ---
 name: decision-dace
-description: DACE循环自动化。Define/Analyze由AI自动执行，Conclude由AI辅助人类决策，Execute由AI追踪执行效果。实现数据驱动决策的持续迭代闭环。关键词：DACE循环、数据决策、决策闭环、数据驱动、决策框架。
+description: 当需要执行数据驱动决策闭环时使用。DACE循环自动化，Define/Analyze由AI自动执行，Conclude由AI辅助人类决策，Execute由AI追踪执行效果。实现数据驱动决策的持续迭代闭环。关键词：DACE循环、数据决策、决策闭环、数据驱动、决策框架、决策循环、数据分析闭环。
 metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"

@@ -1,6 +1,6 @@
 ---
 name: api-security
-description: API安全自动设计。为API接口设计安全策略，包含限流规则、数据加密、输入校验、CORS策略和安全头配置，确保API安全合规。关键词：API安全、限流、加密、CORS、输入校验、安全头。
+description: 当需要设计API安全策略时使用。API安全自动设计，为API接口设计安全策略，包含限流规则、数据加密、输入校验、CORS策略和安全头配置，确保API安全合规。关键词：API安全、限流、加密、CORS、输入校验、安全头。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"

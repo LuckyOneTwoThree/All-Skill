@@ -1,6 +1,6 @@
 ---
 name: iteration-backlog
-description: 产品 Backlog 自动优化。根据问题优先级、技术债务影响和关联关系，自动重组 Backlog 优先级。关键词：Backlog优化、需求池管理、需求关联、Backlog梳理、需求重组。
+description: 当需要优化产品Backlog优先级时使用。产品 Backlog 自动优化，根据问题优先级、技术债务影响和关联关系，自动重组 Backlog 优先级。关键词：Backlog优化、需求池管理、需求关联、Backlog梳理、需求重组。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"

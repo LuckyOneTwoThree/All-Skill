@@ -1,6 +1,6 @@
 ---
 name: revenue-nrr
-description: NRR自动追踪与预警Pipeline。自动计算净收入留存率，分析NRR趋势，识别流失预警，识别扩张收入机会。关键词：NRR、净收入留存、收入留存、流失预警、扩张收入。
+description: 当需要追踪净收入留存率时使用。NRR自动追踪与预警Pipeline，自动计算净收入留存率，分析NRR趋势，识别流失预警，识别扩张收入机会。关键词：NRR、净收入留存、收入留存、流失预警、扩张收入。
 metadata:
   module: "产品增长与运营"
   sub-module: "变现"

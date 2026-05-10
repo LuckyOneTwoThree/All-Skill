@@ -1,11 +1,11 @@
----
+﻿---
 name: user-research-orchestrator
-description: 用户研究指挥官。当需要执行完整的用户研究流程时使用，按顺序调度子Skill执行。关键词：用户研究流程、用户研究编排、用户洞察全流程。
+description: 当需要执行完整的用户研究流程时使用。用户研究指挥官，按顺序调度子Skill执行，最终产出可交付的用户研究报告。关键词：用户研究流程、用户研究编排、用户洞察全流程、用户研究报告。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 用户研究指挥官
@@ -38,6 +38,12 @@ metadata:
 
 - → 加载 `user-research-interview-assist` 执行
 
+### 阶段4（报告生成）
+
+- → 加载 `user-research-report` 执行
+- ⏸ 等待 user-research-report.md 生成
+- ✅ 完整用户研究报告已产出
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -51,9 +57,17 @@ metadata:
 
 - 用户声音分析完成覆盖≥500条
 - 至少1个Persona置信度≥0.7
+- 用户研究报告已生成，执行摘要完整
 
 ## 人类决策点
 
 - Persona最终确认
 - Emotional/Social Job推断验证
 - 访谈结果校准
+- 用户研究报告结论与行动建议审批
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 结构优化
+- v3.0: 新增 user-research-report（用户研究报告）

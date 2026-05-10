@@ -1,6 +1,6 @@
----
+﻿---
 name: quality-orchestrator
-description: 质量保障指挥官。当需要进行自动化测试或验收检查时使用，包括测试用例自动生成与执行、自动化验收标准校验。关键词：质量保障、自动化测试、验收检查、测试覆盖率、质量门禁。
+description: 当需要进行自动化测试、验收检查或生成验收报告时使用。质量保障指挥官，包括测试用例自动生成与执行、自动化验收标准校验、验收报告生成。关键词：质量保障、自动化测试、验收检查、测试覆盖率、质量门禁、验收报告。
 metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
@@ -26,7 +26,7 @@ metadata:
 ## 任务调度
 
 ```
-quality-auto-test → quality-auto-acceptance
+quality-auto-test → quality-auto-acceptance → quality-acceptance-report
 ```
 
 ### 调度逻辑
@@ -46,6 +46,8 @@ quality-auto-test
        ↓ test_cases / coverage_report / case_code_mapping
 quality-auto-acceptance
        ↓ acceptance_report / failed_cases_analysis / quality_gate_result
+quality-acceptance-report
+       ↓ acceptance_report_v{version}.md / sign_off_status
 ```
 
 ## 调度规则
@@ -61,6 +63,7 @@ quality-auto-acceptance
 |------|----------|------------|
 | 测试覆盖率≥80% | 自动化测试覆盖率达到阈值 | 升级人工审查 |
 | 自动化验收P0/P1全部通过 | P0/P1用例全部通过 | 立即阻断，阻止上线 |
+| 验收报告已生成 | 报告结论明确，签收表完整 | 补充验收标准或测试数据 |
 
 ## 人类决策点
 
@@ -77,3 +80,8 @@ quality-auto-acceptance
 | 测试执行超时 | 标记为失败，生成超时报告 |
 | 覆盖率不达标 | 升级人工审查 |
 | P0/P1用例失败 | 立即阻断，发送告警 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: 新增 quality-acceptance-report（验收报告）

@@ -1,6 +1,6 @@
 ---
 name: metrics-orchestrator
-description: 产品度量设计子模块指挥官。当需要构建产品度量体系时使用，包括指标体系自动构建、埋点方案自动生成、Dashboard自动配置。关键词：度量设计、指标体系、埋点方案、Dashboard配置。
+description: 当需要构建产品度量体系时使用。产品度量设计子模块指挥官，包括指标体系自动构建、埋点方案自动生成、Dashboard自动配置。关键词：度量设计、指标体系、埋点方案、Dashboard配置。
 metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
@@ -55,3 +55,8 @@ metrics-system → tracking-plan → metrics-dashboard
 | 北极星指标选择 | AI推荐3个候选北极星指标，人类选择最终指标 |
 | 埋点方案审核 | AI生成埋点方案，人类审核业务逻辑和隐私合规 |
 | Dashboard布局确认 | AI配置Dashboard，人类确认布局和告警阈值 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

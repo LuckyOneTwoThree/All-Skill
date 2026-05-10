@@ -1,6 +1,6 @@
 ---
 name: monitoring-escalation
-description: 告警升级与 On-Call 自动化。自动进行告警分级、触发升级链、发送通知并生成值班报告。关键词：告警升级、升级流程、On-Call、告警通知、应急响应。
+description: 当需要配置告警升级和On-Call流程时使用。告警升级与 On-Call 自动化，自动进行告警分级、触发升级链、发送通知并生成值班报告。关键词：告警升级、升级流程、On-Call、告警通知、应急响应、值班。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"

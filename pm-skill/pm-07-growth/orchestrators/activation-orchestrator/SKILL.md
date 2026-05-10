@@ -1,6 +1,6 @@
 ---
 name: activation-orchestrator
-description: 用户激活指挥官。当需要识别Aha Moment或设计Onboarding流程时使用，包括Aha Moment候选行为识别与验证、差异化Onboarding路径设计。关键词：用户激活、Aha Moment、Onboarding、新用户引导、激活策略。
+description: 当需要识别Aha Moment或设计Onboarding流程时使用。用户激活指挥官，包括Aha Moment候选行为识别与验证、差异化Onboarding路径设计。关键词：用户激活、Aha Moment、Onboarding、新用户引导、激活策略。
 metadata:
   module: "产品增长与运营"
   sub-module: "激活"
@@ -67,3 +67,8 @@ activation-onboarding
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
 | Aha Moment确认 | Aha Moment候选识别完成 | 确认主Aha Moment的选择和Onboarding路径设计 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化

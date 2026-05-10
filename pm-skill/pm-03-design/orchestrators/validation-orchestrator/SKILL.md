@@ -1,6 +1,6 @@
 ---
 name: validation-orchestrator
-description: 方案验证子模块指挥官。当需要验证产品方案时使用，包括假设地图生成、MVP范围界定、验证实验设计、可用性测试辅助。关键词：方案验证、假设验证、MVP、可用性测试、实验设计。
+description: 当需要验证产品方案时使用。方案验证子模块指挥官，包括假设地图生成、MVP范围界定、验证实验设计、可用性测试辅助。关键词：方案验证、假设验证、MVP、可用性测试、实验设计。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
@@ -57,3 +57,8 @@ validation-assumption-map → validation-mvp → validation-experiment → valid
 | MVP范围确认 | AI建议MVP范围，人类审批并决定最终范围 |
 | 实验方案审核 | AI设计实验方案，人类审核并批准 |
 | 验证结论决策 | AI整理验证数据，人类做最终产品方案决策 |
+
+## 变更记录
+
+- v1.0: 初始版本
+- v2.0: description触发词优化
