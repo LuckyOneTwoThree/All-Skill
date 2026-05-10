@@ -1,4 +1,4 @@
-﻿---
+---
 name: insight-requirement-layers
 description: 当需要将原始需求拆解为表层需求、行为需求、本质需求三层时使用。需求三层模型自动拆解。关键词：需求拆解、三层模型、表层需求、行为需求、本质需求、需求深挖。
 metadata:

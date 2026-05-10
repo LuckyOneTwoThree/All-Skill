@@ -1,4 +1,4 @@
-﻿---
+---
 name: positioning-statement
 description: 当需要生成产品定位陈述候选时使用。定位陈述自动生成，输入探索阶段输出+BMC+竞品分析，输出3-5个差异化定位陈述。关键词：定位陈述、差异化、目标用户、价值主张。
 metadata:

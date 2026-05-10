@@ -1,4 +1,4 @@
-﻿---
+---
 name: privacy-compliance-assessment
 description: 当需要评估产品的隐私合规状态或生成合规评估报告时使用。隐私合规评估文档自动生成，覆盖个人信息收集、存储、使用、共享全生命周期，对标GDPR/PIPL等法规，输出结构化Markdown评估文档。关键词：隐私合规、GDPR、PIPL、个人信息保护、数据合规、隐私评估、合规评估。
 metadata:

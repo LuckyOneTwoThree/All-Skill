@@ -1,4 +1,4 @@
-﻿---
+---
 name: architecture-decision-record
 description: 当需要记录重要的架构或技术决策时使用。架构决策记录(ADR)自动生成，包含决策背景、备选方案评估、决策结果、影响分析和决策回顾机制。关键词：架构决策、ADR、技术决策、决策记录、Architecture Decision Record、方案评估。
 metadata:

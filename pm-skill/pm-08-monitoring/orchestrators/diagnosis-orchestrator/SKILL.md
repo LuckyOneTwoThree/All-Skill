@@ -1,4 +1,4 @@
-﻿---
+---
 name: diagnosis-orchestrator
 description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，包括产品健康度多维度评分与校准、竞品功能变更追踪与应对策略。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR。
 metadata:

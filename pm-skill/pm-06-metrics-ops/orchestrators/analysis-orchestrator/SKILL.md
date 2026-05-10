@@ -1,4 +1,4 @@
-﻿---
+---
 name: analysis-orchestrator
 description: 当需要进行产品数据异常检测、漏斗分析或留存分析时使用。数据分析指挥官，最终产出可交付的数据洞察报告。关键词：数据分析、异常检测、漏斗分析、留存分析、Aha Moment、数据洞察报告。
 metadata:

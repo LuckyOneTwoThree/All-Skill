@@ -1,4 +1,4 @@
-﻿---
+---
 name: release-orchestrator
 description: 当需要制定灰度发布策略、生成发布检查清单或版本发布说明时使用。发布策略指挥官。关键词：灰度发布、发布策略、发布检查清单、Feature Flag、持续部署、版本发布说明、Release Notes。
 metadata:

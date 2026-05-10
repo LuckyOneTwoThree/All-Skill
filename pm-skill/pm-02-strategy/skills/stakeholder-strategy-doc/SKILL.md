@@ -1,4 +1,4 @@
-﻿---
+---
 name: stakeholder-strategy-doc
 description: 当需要组装完整的产品战略文档时使用。产品战略文档自动生成，根据BMC、定位陈述、SWOT、OKR、路线图等输入，自动组装完整的产品战略文档。关键词：战略文档、产品战略、商业模式、SWOT分析。
 metadata:

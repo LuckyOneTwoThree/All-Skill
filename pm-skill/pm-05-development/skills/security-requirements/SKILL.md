@@ -1,4 +1,4 @@
-﻿---
+---
 name: security-requirements
 description: 当需要从PRD和SRS中提取安全需求或制定产品安全标准时使用。产品安全需求清单自动生成，包含威胁建模、安全功能需求、数据保护需求、合规映射和安全验收标准。关键词：安全需求、威胁建模、数据保护、安全验收、安全合规、STRIDE。
 metadata:

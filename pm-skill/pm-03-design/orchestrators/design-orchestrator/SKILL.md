@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-orchestrator
 description: 当需要生成PRD、需求规格说明书、信息架构设计、用户流程设计、原型设计、交互设计规范或设计交接时使用。产品设计与原型子模块指挥官。关键词：产品设计、PRD、SRS、需求规格、信息架构、用户流程、原型设计、交互规范、设计交接、Handoff。
 metadata:

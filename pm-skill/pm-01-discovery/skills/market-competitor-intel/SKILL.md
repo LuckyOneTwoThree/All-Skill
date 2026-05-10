@@ -1,4 +1,4 @@
-﻿---
+---
 name: market-competitor-intel
 description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断。
 metadata:

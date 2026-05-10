@@ -1,4 +1,4 @@
-﻿---
+---
 name: agile-orchestrator
 description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，包括Sprint规划与容量分配、每日同步与障碍追踪、Sprint评审与交付检查。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理。
 metadata:

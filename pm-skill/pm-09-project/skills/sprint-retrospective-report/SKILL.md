@@ -1,4 +1,4 @@
-﻿---
+---
 name: sprint-retrospective-report
 description: 当需要将Sprint执行数据汇总为完整可交付的复盘报告时使用。Sprint复盘报告自动生成，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议。关键词：Sprint复盘、迭代复盘、Sprint报告、团队回顾、改进行动项。
 metadata:

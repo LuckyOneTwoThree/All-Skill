@@ -1,4 +1,4 @@
-﻿---
+---
 name: user-research-orchestrator
 description: 当需要执行完整的用户研究流程时使用。用户研究指挥官，按顺序调度子Skill执行，最终产出可交付的用户研究报告。关键词：用户研究流程、用户研究编排、用户洞察全流程、用户研究报告。
 metadata:

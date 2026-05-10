@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-orchestrator
 description: 当需要进行产品立项、战略规划、SWOT分析、OKR制定、路线图规划时使用。战略规划与路线图子模块指挥官。关键词：产品立项、战略规划、SWOT、OKR、路线图、战略分析、产品提案。
 metadata:

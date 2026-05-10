@@ -1,4 +1,4 @@
-﻿---
+---
 name: experiment-orchestrator
 description: 当需要设计或执行A/B测试实验时使用。实验验证指挥官，包括实验方案自动设计、实验执行与统计显著性分析。关键词：A/B测试、实验设计、统计显著性、实验执行、数据实验。
 metadata:

@@ -1,4 +1,4 @@
-﻿---
+---
 name: user-research-voice-analysis
 description: 当需要从用户评论、客服工单、社媒提及、社区帖子中提取情感、主题和痛点时使用。大规模用户声音分析Pipeline。关键词：用户声音分析、VOC、情感分析、痛点提取、用户反馈分析。
 metadata:

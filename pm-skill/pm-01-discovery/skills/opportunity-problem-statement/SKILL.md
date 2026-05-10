@@ -1,4 +1,4 @@
-﻿---
+---
 name: opportunity-problem-statement
 description: 当需要基于用户研究数据和需求洞察生成结构化问题陈述时使用。Problem Statement自动生成，包含目标用户、场景、痛点、现有方案不足和预期收益。关键词：Problem Statement、问题陈述、痛点定义、用户问题、机会定义。
 metadata:
