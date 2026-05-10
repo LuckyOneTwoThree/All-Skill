@@ -1,0 +1,287 @@
+---
+name: risk-monitoring
+description: 风险监控与预警自动化。持续追踪风险指标、更新风险状态、识别新风险、触发风险预警、追踪应对效果，输出完整的风险监控报告。关键词：风险监控、风险预警、风险追踪、风险状态、风险指标。
+metadata:
+  module: "项目管理与执行"
+  sub-module: "风险管理"
+  type: "pipeline"
+  version: "1.0"
+---
+
+# Pipeline 8: 风险监控与预警自动化
+
+## 核心原则
+
+1. **透明度即协作**：风险监控状态和预警信息实时同步给相关方
+2. **风险前置**：持续监控风险指标，在风险升级前触发预警
+3. **自动化追踪**：风险状态变化、应对效果自动追踪和报告
+
+## 交互模式
+
+**🤖 AI自动执行（持续运行）**
+
+- 监控和预警由AI自动执行
+- 每小时执行指标检查
+- 预警实时触发和通知
+- 人类接收预警通知并决策
+- 应对调整需人类批准
+
+---
+
+## 输入
+
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| risk_register | object | 是 | risk-identification → risk_register.json | 风险登记册 |
+| project_data | object | 是 | 项目管理系统 → 项目数据 | 项目实时数据 |
+| trigger_conditions | object | 是 | 用户提供 | 配置的触发条件 |
+| mitigation_actions | object[] | ○ | risk-monitoring → 应对追踪 | 已执行的应对措施 |
+
+---
+
+## 执行步骤
+
+### Step 1: 风险指标自动追踪
+
+**动作**：
+- 为每个活跃风险定义追踪指标
+- 收集指标当前值
+- 与基线对比
+- 计算指标趋势
+
+**输出**：
+```json
+{
+  "risk_indicators": [{
+    "risk_id": "RISK-001",
+    "indicators": [{
+      "indicator_name": "string",
+      "current_value": number,
+      "baseline_value": number,
+      "threshold_warning": number,
+      "threshold_critical": number,
+      "trend": "improving | stable | worsening",
+      "trend_percentage": number,
+      "last_measured": "ISO datetime"
+    }]
+  }]
+}
+```
+
+### Step 2: 风险状态自动更新
+
+**动作**：
+- 基于指标变化评估风险状态
+- 识别风险升级或降级
+- 更新风险登记册
+- 记录状态变更历史
+
+**输出**：
+```json
+{
+  "risk_status_updates": [{
+    "risk_id": "RISK-001",
+    "previous_status": "string",
+    "new_status": "string",
+    "status_change_reason": "string",
+    "probability_change": 0.0-1.0,
+    "impact_change": 0.0-1.0,
+    "priority_reassessment": boolean,
+    "updated_at": "ISO datetime"
+  }],
+  "status_summary": {
+    "status_distribution": {
+      "active": number,
+      "escalated": number,
+      "improving": number,
+      "resolved": number
+    },
+    "significant_changes": number
+  }
+}
+```
+
+### Step 3: 新风险自动识别
+
+**动作**：
+- 扫描风险指标异常
+- 检测未在登记册中的风险信号
+- 交叉验证新风险
+- 评估是否需要添加到登记册
+
+**输出**：
+```json
+{
+  "new_risks_identified": [{
+    "risk_id": "RISK-NEW-001",
+    "description": "string",
+    "detection_signal": "string",
+    "signal_source": "string",
+    "confidence": 0.0-1.0,
+    "related_existing_risks": ["RISK-ID"],
+    "auto_add_to_register": boolean
+  }],
+  "risk_signals_pending_review": number
+}
+```
+
+### Step 4: 风险预警自动触发
+
+**动作**：
+- 检测预警触发条件
+- 评估预警严重度
+- 生成预警通知
+- 路由预警至相应接收人
+
+**输出**：
+```json
+{
+  "alerts_triggered": [{
+    "alert_id": "ALERT-001",
+    "risk_id": "RISK-001",
+    "alert_type": "threshold_breach | trend_worsening | new_risk | mitigation_failed",
+    "severity": "critical | high | medium | low",
+    "message": "string",
+    "triggered_conditions": {
+      "indicator_name": "string",
+      "current_value": number,
+      "threshold_value": number
+    },
+    "notification_routed": ["string"],
+    "created_at": "ISO datetime"
+  }],
+  "alert_summary": {
+    "critical_alerts": number,
+    "high_alerts": number,
+    "medium_alerts": number,
+    "low_alerts": number,
+    "total_alerts_24h": number,
+    "alert_trend": "increasing | stable | decreasing"
+  }
+}
+```
+
+### Step 5: 应对效果自动追踪
+
+**动作**：
+- 检查已实施应对措施的状态
+- 评估应对效果（指标是否改善）
+- 识别应对失效情况
+- 建议应对调整
+
+**输出**：
+```json
+{
+  "mitigation_effectiveness": [{
+    "risk_id": "RISK-001",
+    "mitigation_action": "string",
+    "implementation_date": "ISO date",
+    "expected_impact": "string",
+    "actual_impact": "string",
+    "effectiveness_score": 0.0-1.0,
+    "status": "effective | partially_effective | ineffective | needs_adjustment",
+    "next_review_date": "ISO date",
+    "adjustment_suggestions": ["string"]
+  }],
+  "effectiveness_summary": {
+    "total_mitigations_tracked": number,
+    "effective_count": number,
+    "partially_effective_count": number,
+    "ineffective_count": number,
+    "overall_effectiveness_rate": 0.0-1.0
+  }
+}
+```
+
+---
+
+## 输出
+
+**存储路径**：`output/pm-project/risk-monitoring/`
+
+```json
+{
+  "risk_monitoring": {
+    "tracked_risks": [{
+      "id": "RISK-001",
+      "status": "active | escalated | improving | resolved",
+      "triggered_conditions": ["string"],
+      "latest_update": "ISO datetime",
+      "indicators": {}
+    }],
+    "new_risks_identified": number,
+    "alerts_triggered": [{
+      "id": "string",
+      "severity": "string",
+      "message": "string"
+    }],
+    "mitigation_effectiveness": {}
+  },
+  "metadata": {
+    "monitoring_cycle": "ISO datetime",
+    "monitoring_duration": "string",
+    "risks_monitored": number,
+    "alerts_generated": number,
+    "confidence": 0.0-1.0
+  }
+}
+```
+
+---
+
+## 预警触发规则
+
+| 预警类型 | 触发条件 |
+|----------|----------|
+| 阈值突破 | 指标超过warning或critical阈值 |
+| 趋势恶化 | 连续3天指标恶化 |
+| 新风险 | 检测到未登记的风险信号 |
+| 应对失效 | 应对措施实施后指标未改善 |
+
+---
+
+## 预警通知配置
+
+| 严重度 | 通知方式 | 通知对象 |
+|--------|----------|----------|
+| Critical | 即时 + 短信 | 项目经理 + 发起人 |
+| High | 即时通知 | 项目经理 |
+| Medium | 每日汇总 | 团队 |
+| Low | 周报记录 | 记录 |
+
+---
+
+## 决策规则
+
+| 条件 | 动作 |
+|------|------|
+| Critical预警 > 2个/天 | 升级至管理层 |
+| 应对措施连续失效 | 触发应对重新设计 |
+| 新风险识别频率激增 | 触发系统性风险审查 |
+| 预警被忽略 > 48小时 | 自动升级 |
+
+## 质量检查
+
+- [ ] 风险状态更新及时
+- [ ] 预警触发条件明确
+- [ ] 风险趋势分析覆盖至少3个周期
+- [ ] 高风险项有跟进记录
+
+## 降级策略
+
+### 上游文件缺失降级方案
+
+| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
+|---------------|---------|---------|---------|
+| 风险登记册 | 无法追踪已知风险状态 | 用户提供风险列表（风险描述+优先级），AI生成监控方案 | 基于用户输入的监控方案 |
+| 项目数据 | 无法获取实时指标 | 跳过指标自动采集，用户手动提供关键指标数值 | 基于手动数据的监控报告 |
+| 触发条件 | 无法自动触发预警 | 使用默认预警阈值，标注需人工确认 | 基于默认阈值的预警配置 |
+| 应对措施 | 无法追踪应对效果 | 跳过应对效果追踪，仅监控风险状态变化 | 无应对效果追踪的监控 |
+
+### 数据获取说明
+
+当上游文件缺失时，通过以下方式获取必要数据：
+
+1. **风险登记册缺失**：请用户提供风险列表，包含风险描述和优先级，AI将据此生成监控指标定义和预警方案
+2. **项目数据缺失**：跳过指标自动采集，请用户定期手动提供关键指标数值，AI将基于手动数据进行趋势分析和预警判断
+3. **触发条件缺失**：采用默认预警阈值模板（概率变化>20%触发Warning，>40%触发Critical），输出中标注默认阈值需人工审核

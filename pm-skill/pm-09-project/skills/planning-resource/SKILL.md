@@ -1,0 +1,279 @@
+---
+name: planning-resource
+description: 资源需求自动规划。基于项目范围、技术方案和团队能力数据，自动完成工作量估算、资源类型识别、团队能力匹配、资源冲突检测，输出完整的资源配置方案。关键词：资源规划、资源分配、人力规划、资源需求、容量规划。
+metadata:
+  module: "项目管理与执行"
+  sub-module: "项目规划"
+  type: "pipeline"
+  version: "1.0"
+---
+
+# Pipeline 2: 资源需求自动规划
+
+## 核心原则
+
+1. **透明度即协作**：资源需求和配置方案全员可见，确保团队了解资源约束
+2. **风险前置**：资源冲突和依赖风险在规划阶段即识别和预警
+3. **自动化追踪**：资源状态、冲突检测、利用率自动追踪
+
+## 交互模式
+
+**🤖 AI自动执行**
+
+- 所有步骤由AI自动完成
+- 输出自动生成，无需人类实时参与
+- 如有无法自动解决的关键冲突，输出升级请求
+- 人类可在任何时候审查和调整配置方案
+
+---
+
+## 输入
+
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| project_scope | object | 是 | planning-project-charter → project_charter | 项目范围（含in_scope/out_of_scope） |
+| technical_solution | object | 是 | 用户提供 | 技术方案描述 |
+| team_capability_data | object | ○ | 用户提供 | 团队能力数据（技能矩阵、历史绩效） |
+
+---
+
+## 执行步骤
+
+### Step 1: 工作量估算
+
+**动作**：
+- 分析项目范围，识别工作项
+- 基于历史数据（相似项目）估算基准工时
+- 使用AI学习模型调整估算（考虑技术复杂度、团队熟悉度）
+- 汇总总工作量和人天需求
+
+**输出**：
+```json
+{
+  "workload_estimates": [{
+    "work_item_id": "WI-001",
+    "description": "string",
+    "estimated_hours": number,
+    "confidence": 0.0-1.0,
+    "estimation_method": "historical | ai-adjusted | expert",
+    "similar_historical_project": "string | null"
+  }],
+  "total_estimated_hours": number,
+  "estimation_confidence": 0.0-1.0
+}
+```
+
+### Step 2: 资源类型需求识别
+
+**动作**：
+- 分析工作项所需的技能类型
+- 识别需要的人力资源类型（角色）
+- 识别需要的非人力资源（工具、环境、预算）
+- 按技能类型汇总需求
+
+**输出**：
+```json
+{
+  "resource_needs": {
+    "human_resources": [{
+      "role": "string",
+      "skill_types": ["string"],
+      "quantity_needed": number,
+      "duration_days": number,
+      "total_hours": number
+    }],
+    "non_human_resources": [{
+      "type": "tool | environment | budget | external",
+      "description": "string",
+      "quantity": number,
+      "cost_estimate": number,
+      "procurement_timeline": "string"
+    }]
+  }
+}
+```
+
+### Step 3: 团队能力匹配
+
+**动作**：
+- 加载团队能力数据（技能矩阵、可用时间、历史绩效）
+- 将工作项与团队成员能力进行匹配
+- 识别能力缺口
+- 建议培训或外部资源补充
+
+**输出**：
+```json
+{
+  "team_matching": [{
+    "work_item_id": "WI-001",
+    "recommended_assignee": "string",
+    "match_score": 0.0-1.0,
+    "skill_coverage": {
+      "required": ["string"],
+      "covered": ["string"],
+      "gaps": ["string"]
+    },
+    "historical_performance": "good | average | below_avg | unknown"
+  }],
+  "skill_gaps": [{
+    "skill": "string",
+    "current_capacity": number,
+    "required_capacity": number,
+    "gap": number,
+    "recommendation": "train | hire | outsource"
+  }]
+}
+```
+
+### Step 4: 资源冲突检测
+
+**动作**：
+- 检查资源需求与可用资源的匹配情况
+- 识别时间冲突（同一资源被多个任务需要）
+- 识别技能冲突（所需技能无可用资源）
+- 识别数量冲突（需求超过可用数量）
+
+**输出**：
+```json
+{
+  "conflict_detection": {
+    "time_conflicts": [{
+      "resource_id": "string",
+      "conflicting_tasks": ["string"],
+      "conflict_period": "date range",
+      "overload_hours": number
+    }],
+    "skill_conflicts": [{
+      "skill": "string",
+      "demand": number,
+      "available": number,
+      "gap": number,
+      "affected_tasks": ["string"]
+    }],
+    "capacity_conflicts": [{
+      "role": "string",
+      "demand": number,
+      "available": number,
+      "overcapacity_percentage": number
+    }]
+  },
+  "conflict_summary": {
+    "total_conflicts": number,
+    "critical_conflicts": number,
+    "auto_resolvable": boolean
+  }
+}
+```
+
+### Step 5: 资源配置方案生成
+
+**动作**：
+- 基于以上分析生成资源配置方案
+- 解决可自动解决的冲突
+- 对无法自动解决的冲突提出多个方案供选择
+- 生成最终的资源分配时间表
+
+**输出**：
+```json
+{
+  "resource_allocation": {
+    "assignments": [{
+      "work_item_id": "WI-001",
+      "assignee": "string",
+      "start_date": "ISO date",
+      "end_date": "ISO date",
+      "allocation_percentage": 0-100,
+      "status": "confirmed | tentative"
+    }],
+    "schedule": {
+      "phases": [{
+        "phase_id": "PHASE-001",
+        "name": "string",
+        "start_date": "ISO date",
+        "end_date": "ISO date",
+        "resources": ["string"],
+        "key_deliverables": ["string"]
+      }]
+    }
+  },
+  "unresolved_conflicts": [{
+    "conflict_type": "string",
+    "description": "string",
+    "options": ["string"],
+    "recommendation": "string",
+    "escalation_required": boolean
+  }],
+  "resource_plan_confidence": 0.0-1.0
+}
+```
+
+---
+
+## 输出
+
+**存储路径**：`output/pm-project/planning-resource/`
+
+```json
+{
+  "resource_plan": {
+    "workload_estimates": {},
+    "resource_needs": {
+      "type": "string",
+      "count": number,
+      "duration": "string"
+    },
+    "team_matching": {},
+    "conflict_detection": {},
+    "resource_allocation": {}
+  },
+  "metadata": {
+    "generated_at": "ISO datetime",
+    "confidence": 0.0-1.0,
+    "auto_generated": true,
+    "requires_human_review": boolean
+  }
+}
+```
+
+---
+
+## 数据依赖
+
+本Pipeline依赖以下上游数据：
+- `project_charter.scope`：来自Pipeline 1的项目范围
+
+---
+
+## 决策规则
+
+| 条件 | 动作 |
+|------|------|
+| 关键资源缺口 > 30% | 升级至人类决策资源配置 |
+| 时间冲突无法自动排解 | 输出多个方案，升级至人类选择 |
+| 团队能力数据严重缺失 | 降级输出，标注置信度低，升级至人类补充 |
+| 估算置信度 < 0.5 | 标注不确定性，升级至人类确认 |
+
+## 质量检查
+
+- [ ] 资源估算基于WBS分解
+- [ ] 关键资源缺口已识别并标注
+- [ ] 时间表无资源冲突
+- [ ] 估算置信度已标注
+
+## 降级策略
+
+### 上游文件缺失降级方案
+
+| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
+|---------------|---------|---------|---------|
+| 项目范围 | 无法识别工作项和估算工作量 | 用户提供需求列表和优先级，AI基于需求列表估算资源 | 基于需求列表的资源估算 |
+| 技术方案 | 无法评估技术复杂度 | 跳过技术复杂度调整，使用基准工时估算，标注置信度低 | 低置信度的工时估算 |
+| 团队能力数据 | 无法进行人员匹配和能力评估 | 用户提供团队人数和角色信息，AI按角色平均能力估算 | 基于平均能力的资源方案 |
+
+### 数据获取说明
+
+当上游文件缺失时，通过以下方式获取必要数据：
+
+1. **项目范围缺失**：请用户提供需求列表（功能名称+简述+优先级），AI将基于需求列表识别工作项并估算工作量
+2. **技术方案缺失**：跳过技术复杂度调整因子，使用行业基准工时估算，输出中标注估算置信度低，建议技术团队确认
+3. **团队能力数据缺失**：请用户提供团队人数和角色构成（如"3名后端、2名前端、1名QA"），AI将按角色平均能力水平进行资源匹配，标注需人工确认能力假设
