@@ -116,13 +116,13 @@
 │                              │  │                                      │
 │  设计系统 → UI前端生成 → 集成  │  │  API设计 → 数据架构 → 后端架构        │
 │                              │  │                                      │
-│  design-token                │  │  api-contract ←── PRD/数据模型(可选) │
+│  design-token                │  │  api-contract                        │
 │  component-library           │  │  api-security                        │
-│  page-assembly ←── IA/原型/令牌│  │  auth-design                         │
-│  interaction-design          │  │  data-model ←── API契约              │
-│  api-contract-consume ←──────┼──┼── openapi.yaml + 令牌(可选)           │
-│  frontend-build-deploy       │  │  service-design                      │
-│  frontend-performance        │  │  backend-review                      │
+│  page-assembly               │  │  auth-design                         │
+│  interaction-design          │  │  data-model                          │
+│  api-contract-consume        │  │  service-design                      │
+│  frontend-build-deploy       │  │  backend-review                      │
+│  frontend-performance        │  │                                      │
 │                              │  │                                      │
 └──────────────────────────────┘  └──────────────────────────────────────┘
 ```
@@ -390,7 +390,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 119 个 Pipeline Skill 中，24 个产出人类可读的 Markdown 可交付文档，其余 95 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 179 个 Skill（含 39 个编排器 + 119 个 PM Pipeline + 11 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航）。
+PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付文档，79 个产出 JSON 数据片段供下游 Skill 消费，1 个产出配置文件。UI/Backend 以代码和配置为交付物。全局共 179 个 Skill（含 39 个编排器 + 119 个 PM Pipeline + 11 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航）。
 
 ### PM 核心产出文档一览
 
@@ -495,10 +495,16 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 | 你的场景 | 推荐入口 |
 |----------|----------|
-| 从0到1做新产品 | PM模块1→2→3 → UI模块1→2→3 + Backend模块1→2→3 |
+| 从0到1做新产品 | product-launch-orchestrator（跨领域全流程） |
+| 已有产品功能迭代 | product-iteration-orchestrator（跨领域增量更新） |
 | 已有产品需要优化 | PM模块6（数据分析）或 PM模块8（监控迭代） |
 | 需要增长 | PM模块7（增长与运营） |
+| 竞品分析 | PM模块1 market-orchestrator |
+| 用户研究 | PM模块1 user-research-orchestrator |
+| 商业模式设计 | PM模块2 business-orchestrator |
+| 产品定位 | PM模块2 positioning-orchestrator |
 | 需要写PRD | PM模块3 design-prd |
+| 需要A/B测试 | PM模块6 experiment-orchestrator |
 | 需要建立设计系统 | UI模块1 design-system-orchestrator |
 | 需要生成前端代码 | UI模块2 ui-frontend-orchestrator |
 | 需要与后端联调 | UI模块3 api-contract-consume ← Backend api-contract |
