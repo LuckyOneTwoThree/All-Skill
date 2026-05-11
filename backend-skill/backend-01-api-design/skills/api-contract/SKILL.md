@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 产品需求文档 |
-| 数据模型 | JSON | ○ | data-model → er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
-| 业务流程 | JSON | ○ | design-userflow → userflow.json | 用户流程定义 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
+| 数据模型 | JSON | ○ | output/backend-data-architecture/data-model/er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
+| 业务流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户流程定义 |
 
 ## 执行步骤
 
@@ -133,6 +133,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-api-design/api-contract/`
+
+**输出文件**：openapi.yaml
 
 **输出校验规则**：
 

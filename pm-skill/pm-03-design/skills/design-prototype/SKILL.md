@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-prototype
 description: 当需要基于IA和用户流程生成原型时使用。原型自动生成，基于IA方案和User Flow自动生成低保真和中保真原型，包含设计规范检查和可用性启发式评估。适用于快速原型验证和设计稿生成。关键词：原型设计、低保真原型、中保真原型、设计规范、原型生成。
 metadata:
@@ -28,10 +28,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| IA方案 | JSON | 是 | design-ia → ia_proposals.json | Pipeline 9输出的信息架构方案 |
-| User Flow | JSON | 是 | design-userflow → userflow.json | Pipeline 10输出的用户流程 |
+| IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
+| User Flow | JSON | 是 | output/pm-design/design-userflow/userflow.json | Pipeline 10输出的用户流程 |
 | 设计系统规范 | JSON/object | ○ | 用户提供 | 设计系统组件和规范定义 |
-| 设计令牌 | JSON | ○ | design-token → tokens.json | 设计变量定义，用于设计规范一致性检查 |
+| 设计令牌 | JSON | ○ | output/pm-design/design-token/tokens.json | 设计变量定义，用于设计规范一致性检查 |
 
 ## 执行步骤
 

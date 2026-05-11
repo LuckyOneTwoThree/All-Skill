@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-strategy-report
 description: 当需要产出完整的商业战略规划文档时使用。商业战略规划报告自动生成，整合商业画布、SWOT、OKR、路线图、定位和利益相关者数据，补充战略推演和执行路径，输出结构化Markdown报告。关键词：商业战略报告、战略规划、商业规划、战略文档、商业分析报告。
 metadata:
@@ -26,16 +26,16 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 商业画布 | JSON | ○ | business-model-canvas → bmc.json | 9宫格商业模型 |
-| SWOT分析 | JSON | ○ | planning-swot → swot.json | 优势/劣势/机会/威胁 |
-| OKR | JSON | ○ | planning-okr → okr.json | 目标与关键结果 |
-| 路线图 | JSON | ○ | planning-roadmap → roadmap.json | 产品路线图 |
-| 定位陈述 | JSON | ○ | positioning-statement → positioning-statements.json | 产品定位 |
-| 价值曲线 | JSON | ○ | positioning-value-curve → value-curve.json | 竞争价值曲线 |
-| 差异化评估 | JSON | ○ | positioning-differentiation → differentiation-assessment.json | 差异化程度 |
-| 利益相关者 | JSON | ○ | stakeholder-map → stakeholder-map.json | 利益相关者地图 |
-| 定价策略 | JSON | ○ | business-pricing → pricing_strategy.json | 定价方案 |
-| 北极星指标 | JSON | ○ | planning-north-star → north_star.json | 核心指标定义 |
+| 商业画布 | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 9宫格商业模型 |
+| SWOT分析 | JSON | ○ | output/pm-strategy/planning-swot/swot.json | 优势/劣势/机会/威胁 |
+| OKR | JSON | ○ | output/pm-strategy/planning-okr/okr.json | 目标与关键结果 |
+| 路线图 | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | 产品路线图 |
+| 定位陈述 | JSON | ○ | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位 |
+| 价值曲线 | JSON | ○ | output/pm-strategy/positioning-value-curve/value-curve.json | 竞争价值曲线 |
+| 差异化评估 | JSON | ○ | output/pm-strategy/positioning-differentiation/differentiation-assessment.json | 差异化程度 |
+| 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-map/stakeholder-map.json | 利益相关者地图 |
+| 定价策略 | JSON | ○ | output/pm-strategy/business-pricing/pricing_strategy.json | 定价方案 |
+| 北极星指标 | JSON | ○ | output/pm-strategy/planning-north-star/north_star.json | 核心指标定义 |
 | 产品/业务信息 | string | 是 | 用户提供 | 产品名称、业务模式、当前阶段 |
 
 ## 执行步骤
@@ -272,3 +272,4 @@ metadata:
 | okr缺失 | 基于战略方向推导OKR | OKR需人工校准 |
 | roadmap缺失 | 基于OKR推导里程碑 | 时间线需人工调整 |
 | positioning缺失 | 战略方向缺少定位验证 | 差异化策略需补充验证 |
+| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | — |

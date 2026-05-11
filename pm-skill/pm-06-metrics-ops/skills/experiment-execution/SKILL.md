@@ -47,9 +47,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 实验设计文档 | object | 是 | experiment-design → experiment_design.json | experiment-design 输出的实验方案 |
+| 实验设计文档 | object | 是 | output/pm-metrics-ops/experiment-design/experiment_design.json | experiment-design 输出的实验方案 |
 | 实验数据 | object | 是 | 用户提供 | 分组数据、指标数据、护栏指标数据 |
-| 终止条件 | object | 是 | experiment-design → experiment_design.json | 样本量目标、运行时长、最小可检测效应 |
+| 终止条件 | object | 是 | output/pm-metrics-ops/experiment-design/experiment_design.json | 样本量目标、运行时长、最小可检测效应 |
 
 ## 执行步骤
 
@@ -284,6 +284,8 @@ decision_recommendation:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/experiment-execution/`
+
+**输出文件**：experiment_result.json
 
 **输出Schema**：
 

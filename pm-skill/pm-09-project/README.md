@@ -36,6 +36,7 @@
 | agile-sprint-planning | 制定Sprint计划，定义Sprint Goal、分配Story、确认容量 | 产品Backlog、团队容量、迭代目标 | Sprint Goal、Story分配方案、容量确认、Sprint Backlog |
 | agile-daily-sync | 每日进度同步，识别障碍并标记，重大障碍触发升级 | Sprint Backlog、团队成员状态更新 | 每日同步记录、障碍清单、升级标记 |
 | agile-review | Sprint评审与回顾，评估目标达成情况并沉淀改进 | Sprint执行数据、交付成果、障碍记录 | Sprint评审报告、目标达成率、改进建议 |
+| sprint-retrospective-report | 将Sprint执行数据汇总为完整可交付的复盘报告，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议 | Sprint计划、每日同步记录、Sprint评审结果、历史Sprint数据 | Sprint复盘报告（含目标达成分析、交付质量、速率趋势、改进行动项） |
 
 ### 风险管理
 
@@ -75,6 +76,9 @@
 │  │                                 ▼               │           │
 │  │                          agile-review ──────────┘           │
 │  │                                 │                           │
+│  │                                 ▼                           │
+│  │                 sprint-retrospective-report                 │
+│  │                    (Sprint复盘报告)                          │
 │  └─────────────────────────────────┘                           │
 │                                    │                            │
 │                                    ▼                            │
@@ -101,6 +105,7 @@ output/pm-project/
 ├── agile-sprint-planning/       # Sprint计划与Backlog
 ├── agile-daily-sync/            # 每日同步记录与障碍清单
 ├── agile-review/                # Sprint评审报告与改进建议
+├── sprint-retrospective-report/ # Sprint复盘报告（目标达成、交付质量、速率趋势、改进行动项）
 ├── risk-identification/         # 风险登记册
 ├── risk-monitoring/             # 风险状态监控报告
 └── risk-escalation/             # 风险升级通知与应对方案

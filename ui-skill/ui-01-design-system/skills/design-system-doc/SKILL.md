@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 设计变量定义 |
-| 组件库 | JSON | 是 | component-library → library.json | 组件规格定义 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 设计变量定义 |
+| 组件库 | JSON | 是 | output/ui-design-system/component-library/library.json | 组件规格定义 |
 | 品牌规范 | JSON/markdown | ○ | 用户提供 | 品牌故事、设计理念 |
 
 ## 执行步骤
@@ -103,6 +103,8 @@ design-system/
 ## 输出
 
 **存储路径**：`output/ui-design-system/design-system-doc/`
+
+**输出文件**：doc-index.json
 
 **输出Schema**：
 

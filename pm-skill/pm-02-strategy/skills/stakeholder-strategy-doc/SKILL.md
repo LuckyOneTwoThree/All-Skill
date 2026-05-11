@@ -1,4 +1,4 @@
-﻿---
+---
 name: stakeholder-strategy-doc
 description: 当需要组装完整的产品战略文档时使用。产品战略文档自动生成，根据BMC、定位陈述、SWOT、OKR、路线图等输入，自动组装完整的产品战略文档。关键词：战略文档、产品战略、商业模式、SWOT分析。
 metadata:
@@ -26,12 +26,12 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| BMC | JSON | 是 | business-model-canvas → bmc.json | 商业模式画布 |
-| 定位陈述 | JSON | 是 | positioning-statement → positioning-statements.json | 产品定位和价值主张 |
-| SWOT | JSON | 是 | planning-swot → swot.json | 优势/劣势/机会/威胁分析 |
-| OKR | JSON | 是 | planning-okr → okr.json | 目标和关键结果 |
-| 路线图 | JSON | ○ | planning-roadmap → roadmap.json | 产品路线图规划 |
-| Stakeholder地图 | JSON | ○ | stakeholder-map → stakeholder-map.json | Pipeline 12输出 |
+| BMC | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 商业模式画布 |
+| 定位陈述 | JSON | 是 | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位和价值主张 |
+| SWOT | JSON | 是 | output/pm-strategy/planning-swot/swot.json | 优势/劣势/机会/威胁分析 |
+| OKR | JSON | 是 | output/pm-strategy/planning-okr/okr.json | 目标和关键结果 |
+| 路线图 | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | 产品路线图规划 |
+| Stakeholder地图 | JSON | ○ | output/pm-strategy/stakeholder-map/stakeholder-map.json | Pipeline 12输出 |
 
 ## 执行步骤
 
@@ -92,6 +92,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/stakeholder-strategy-doc/strategy-doc.md`
+
+**输出文件**：strategy-doc.md
 
 **文件**: `strategy-doc.md`
 

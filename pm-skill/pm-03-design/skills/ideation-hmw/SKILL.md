@@ -1,4 +1,4 @@
-﻿---
+---
 name: ideation-hmw
 description: 当需要基于问题陈述生成HMW创意时使用。HMW（How Might We）批量生成工具，根据问题陈述和用户研究数据，从6个维度系统化生成HMW陈述，并进行质量检查与评分。关键词：HMW、创意问题陈述、需求挖掘、产品洞察。
 metadata:
@@ -36,8 +36,8 @@ HMW（How Might We）是一种经典的创意启发工具，它将问题陈述�
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| Problem Statement | string | 是 | requirements-understanding / 用户提供 | 清晰、具体地描述需要解决的问题，避免过于抽象或宽泛 |
-| User Research Data | JSON/object | 是 | requirements-collection / 用户提供 | 包含至少一种类型的用户研究数据（访谈、问卷或行为数据），确保HMW生成有据可依 |
+| Problem Statement | string | 是 | output/pm-design/requirements-understanding / 用户提供 | 清晰、具体地描述需要解决的问题，避免过于抽象或宽泛 |
+| User Research Data | JSON/object | 是 | output/pm-design/requirements-collection / 用户提供 | 包含至少一种类型的用户研究数据（访谈、问卷或行为数据），确保HMW生成有据可依 |
 
 ### 输入格式
 
@@ -191,6 +191,7 @@ AI需要从以下6个维度为每个核心问题生成HMW陈述：
 ## 输出
 
 **存储路径**：`output/pm-design/ideation-hmw/`
+**输出文件**：hmw_questions.json
 
 ### 数据结构
 

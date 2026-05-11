@@ -1,4 +1,4 @@
-﻿---
+---
 name: stakeholder-brief
 description: 当需要向高管或利益方汇报产品战略时使用。一页纸战略简报自动生成，基于产品战略文档，生成适合邮件或消息发送的精炼战略简报。关键词：战略简报、执行摘要、一页纸、高管沟通。
 metadata:
@@ -26,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 产品战略文档 | markdown | 是 | stakeholder-strategy-doc → strategy-doc.md | Pipeline 13 输出的完整战略文档 |
+| 产品战略文档 | markdown | 是 | output/pm-strategy/stakeholder-strategy-doc/strategy-doc.md | Pipeline 13 输出的完整战略文档 |
 
 ## 执行步骤
 
@@ -42,6 +42,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/stakeholder-brief/`
+
+**输出文件**：stakeholder-brief.md
 
 ### 一句话战略方向
 

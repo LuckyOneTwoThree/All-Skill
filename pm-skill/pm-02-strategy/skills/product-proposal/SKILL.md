@@ -1,4 +1,4 @@
-﻿---
+---
 name: product-proposal
 description: 当需要发起产品立项审批时使用。产品提案书自动生成，整合市场机会、用户需求、竞品格局和资源评估，产出结构化的产品提案文档供决策层审批。关键词：产品提案、产品立项、立项报告、产品提案书、项目提案、立项审批。
 metadata:
@@ -26,11 +26,11 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 竞品分析报告 | Markdown | ○ | market-competitor-report → competitor-report.md | 竞品格局与差异化机会 |
-| 市场规模数据 | JSON | ○ | market-tam-som → tam-som.json | TAM/SAM/SOM |
-| 用户研究报告 | Markdown | ○ | user-research-report → user-research-report.md | 用户洞察与痛点 |
-| 机会简报 | JSON | ○ | opportunity-brief → opportunity_brief.json | 机会评估 |
-| 定位陈述 | JSON | ○ | positioning-statement → positioning-statements.json | 产品定位 |
+| 竞品分析报告 | Markdown | ○ | output/pm-discovery/market-competitor-report/competitor-report.md | 竞品格局与差异化机会 |
+| 市场规模数据 | JSON | ○ | output/pm-discovery/market-tam-som/tam-som.json | TAM/SAM/SOM |
+| 用户研究报告 | Markdown | ○ | output/pm-discovery/user-research-report/user-research-report.md | 用户洞察与痛点 |
+| 机会简报 | JSON | ○ | output/pm-discovery/opportunity-brief/opportunity_brief.json | 机会评估 |
+| 定位陈述 | JSON | ○ | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位 |
 | 产品名称与品类 | string | 是 | 用户提供 | 产品名称和所属品类 |
 | 商业目标 | string | 是 | 用户提供 | 为什么要做这个产品（业务目标） |
 | 资源约束 | string | ○ | 用户提供 | 团队规模、预算、时间限制 |
@@ -304,3 +304,6 @@ metadata:
 | 用户研究报告缺失 | 痛点基于假设和AI知识 | 缺乏实证支撑 |
 | 机会简报缺失 | 机会评估基于其他数据推导 | 机会评分可能不够精确 |
 | 定位陈述缺失 | 差异化定位基于竞品分析推导 | 定位可能不够清晰 |
+| 产品名称与品类（用户提供） | 若用户未提供产品名称与品类，提示用户提供或跳过该输入相关步骤 | — |
+| 商业目标（用户提供） | 若用户未提供商业目标，提示用户提供或跳过该输入相关步骤 | — |
+| 资源约束（用户提供） | 若用户未提供资源约束，提示用户提供或跳过该输入相关步骤 | — |

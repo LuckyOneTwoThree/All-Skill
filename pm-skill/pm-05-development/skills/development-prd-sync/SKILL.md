@@ -31,8 +31,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD文档 | object | 是 | design-prd → prd.json | 产品需求文档，作为同步的单一数据源 |
-| 技术方案 | object | 是 | development-task-breakdown → task_breakdown.json | 代码实现、设计稿、测试用例 |
+| PRD文档 | object | 是 | output/pm-design/design-prd/prd.json | 产品需求文档，作为同步的单一数据源 |
+| 技术方案 | object | 是 | output/pm-development/development-task-breakdown/task_breakdown.json | 代码实现、设计稿、测试用例 |
 | 开发进度 | object | ○ | 用户提供 | 代码变更、合入记录、构建状态 |
 
 ## 执行步骤
@@ -437,6 +437,8 @@ metadata:
 
 **存储路径**：`output/pm-development/development-prd-sync/`
 
+**输出文件**：`prd_sync_report.json`
+
 **输出Schema**：
 
 ```json
@@ -540,6 +542,7 @@ metadata:
 | 代码缺失 | 跳过PRD→代码同步和逆向同步步骤 | 代码一致性检查缺失 |
 | 测试用例缺失 | 跳过PRD→测试用例同步步骤 | 测试覆盖检查缺失 |
 | PRD + 设计稿 + 代码 + 测试用例均缺失 | 用户提供PRD和代码文件路径 → 执行单向同步检查 | 仅输出单向同步结果，标注"待补充" |
+| 开发进度缺失 | 若用户未提供开发进度，提示用户提供或跳过该输入相关步骤 | 无法进行代码→PRD逆向同步的增量分析 |
 
 ### 数据获取说明
 

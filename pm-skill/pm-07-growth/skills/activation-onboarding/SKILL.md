@@ -27,7 +27,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | Onboarding数据 | object | 是 | 用户提供 | 完成率、流失率、用户反馈 |
-| Aha Moment数据 | object | 是 | activation-aha → aha_moment.yaml | Aha Moment数据 |
+| Aha Moment数据 | object | 是 | output/pm-growth/activation-aha/aha_moment.yaml | Aha Moment数据 |
 | 用户分群数据 | object | ○ | 用户提供 | 用户特征、行为特征 |
 
 ## Onboarding阶段定义
@@ -141,6 +141,8 @@ metadata:
 
 **存储路径**：`output/pm-growth/activation-onboarding/`
 
+**输出文件**：onboarding_plan.json
+
 **输出Schema**：
 
 ```json
@@ -253,6 +255,7 @@ success_criteria:
 | Onboarding数据缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 优化建议基于定性描述而非数据驱动 |
 | Aha Moment缺失 | 跳过Aha Moment引导优化，基于通用最佳实践 | Onboarding优化缺乏Aha Moment锚点 |
 | Onboarding数据 + Aha Moment均缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 输出基于最佳实践的优化建议，标注"待数据验证" |
+- 若用户未提供用户分群数据，提示用户提供或跳过该输入相关步骤
 
 ### 数据获取说明
 

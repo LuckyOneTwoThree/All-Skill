@@ -27,11 +27,11 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 组件意图描述 | string | 是 | 用户提供 | 自然语言描述需要生成的组件 |
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 设计变量定义 |
-| 组件库 | JSON | 是 | component-library → library.json | 可复用的组件清单和规格 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 设计变量定义 |
+| 组件库 | JSON | 是 | output/ui-design-system/component-library/library.json | 可复用的组件清单和规格 |
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
-| 原型规格 | JSON | ○ | design-prototype → prototype_spec.json | 原型定义的组件视觉和交互规格 |
-| PRD | markdown | ○ | design-prd → prd.md | 产品需求上下文 |
+| 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 原型定义的组件视觉和交互规格 |
+| PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求上下文 |
 
 ## 执行步骤
 
@@ -94,6 +94,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/ui-component-gen/`
+
+**输出文件**：components.json
 
 **输出Schema**：
 
@@ -173,6 +175,8 @@ metadata:
 | 设计令牌缺失 | 使用内联样式+TODO注释标注需替换为Token | 样式值硬编码，需后续替换 |
 | 组件库缺失 | 全部新建组件，不检查复用 | 可能存在重复组件 |
 | 目标框架未指定 | 默认React + TypeScript | 需手动转换为其他框架 |
+| 组件意图描述缺失 | 若用户未提供组件意图描述，提示用户提供或跳过该输入相关步骤 | 无法生成组件 |
+| 目标框架缺失 | 若用户未提供目标框架，提示用户提供或跳过该输入相关步骤 | 默认React + TypeScript |
 | 原型规格缺失 | 基于意图描述推导组件规格 | 组件视觉细节可能不够精准 |
 
 数据获取说明：

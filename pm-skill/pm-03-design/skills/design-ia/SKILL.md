@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-ia
 description: 当需要设计产品信息架构时使用。信息架构自动设计，从PRD自动提取内容、进行语义聚类、推荐导航模式、模拟卡片分类、生成IA候选方案。适用于产品信息架构重构或新功能导航设计。关键词：信息架构、IA设计、导航设计、卡片分类、内容组织。
 metadata:
@@ -28,9 +28,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 产品需求文档 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
 | 现有产品IA | JSON | ○ | 用户提供 | 现有信息架构（如有） |
-| 用户研究数据 | JSON | ○ | user-research-voice-analysis / user-research-behavior-analysis | 用户行为模式、内容偏好 |
+| 用户研究数据 | JSON | ○ | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | 用户行为模式、内容偏好 |
 
 ## 执行步骤
 

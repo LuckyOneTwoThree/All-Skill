@@ -1,4 +1,4 @@
-﻿---
+---
 name: positioning-statement
 description: 当需要生成产品定位陈述候选时使用。定位陈述自动生成，输入探索阶段输出+BMC+竞品分析，输出3-5个差异化定位陈述。关键词：定位陈述、差异化、目标用户、价值主张。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 探索阶段输出 | JSON | 是 | user-research-user-modeling / opportunity-brief | 用户痛点、需求洞察 |
-| BMC | JSON | 是 | business-model-canvas → bmc.json | 商业模式画布，包含价值主张 |
-| 竞品分析数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品定位、功能对比 |
+| BMC | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 商业模式画布，包含价值主张 |
+| 竞品分析数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品定位、功能对比 |
 
 ## 执行步骤
 
@@ -57,6 +57,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/positioning-statement/positioning-statements.json`
+
+**输出文件**：positioning-statements.json
 
 ```json
 {

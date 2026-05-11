@@ -1,11 +1,11 @@
 ---
 name: project-planning-orchestrator
-description: 当需要启动新项目或进行项目规划时使用。项目规划指挥官，包括项目宪章生成、资源需求与分配计划、Kickoff会议准备与行动项提取。关键词：项目规划、项目宪章、资源规划、Kickoff、项目启动。
+description: 当需要启动新项目或进行项目规划时使用。项目规划指挥官，调度 planning-project-charter、planning-resource、planning-kickoff 子Skill执行。关键词：项目规划、项目宪章、资源规划、Kickoff、项目启动、项目章程、资源分配。
 metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 项目规划指挥官
@@ -22,44 +22,68 @@ metadata:
 2. **风险前置**：在规划阶段识别和评估风险，而非在执行阶段被动应对。风险登记册在项目启动时即建立
 3. **自动化追踪**：规划进度、资源状态、里程碑达成自动追踪，减少人工汇报的延迟和偏差
 
-## 任务调度
+## 子Skill执行协议
 
-```
-planning-project-charter → planning-resource → planning-kickoff
-```
+你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
 
-### 调度逻辑
+1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
+2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
+3. **输出到指定路径**：将结果写入子Skill规定的输出路径
+4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
+5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
 
-| 触发事件 | 调度动作 |
-|----------|----------|
-| 项目启动信号 | → planning-project-charter（项目宪章生成） |
-| 宪章生成完成 | → planning-resource（资源需求规划） |
-| 资源规划完成 | → planning-kickoff（Kickoff会议自动化） |
+**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
 
-### 数据流转
+## 阶段执行计划
 
-```
-[产品背景 + 战略目标 + 资源约束]
-       ↓
-planning-project-charter
-       ↓ project_charter (scope / objectives / success_criteria / risks)
-planning-resource
-       ↓ resource_plan (team / budget / timeline / dependencies)
-planning-kickoff
-       ↓ kickoff (meeting_prep / agenda / action_items / communication_plan)
-```
+### 阶段1：项目宪章生成
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | planning-project-charter |
+| 读取定义路径 | `.trae/skills/planning-project-charter/SKILL.md` |
+| 输入 | 产品背景（用户提供）、战略目标（用户提供）、资源约束（用户提供，可选） |
+| 输出 | `output/pm-project/planning-project-charter/`（project_charter、metadata） |
+| 验证 | 项目目标符合SMART原则；利益相关方覆盖所有关键角色；成功标准可量化且可验证；初步风险清单包含影响和概率评估 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 宪章已批准（项目宪章经人类审批，目标和范围已确认），否则修改宪章后重新审批 |
+
+### 阶段2：资源需求规划
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | planning-resource |
+| 读取定义路径 | `.trae/skills/planning-resource/SKILL.md` |
+| 输入 | 项目范围（planning-project-charter → project_charter）、技术方案（用户提供）、团队能力数据（用户提供，可选） |
+| 输出 | `output/pm-project/planning-resource/`（resource_plan、metadata） |
+| 验证 | 资源估算基于WBS分解；关键资源缺口已识别并标注；时间表无资源冲突；估算置信度已标注 |
+| 执行模式 | 🤖 |
+| ⏸ 阶段卡口 | 资源已锁定（资源需求与可用资源匹配，关键资源已预留），否则升级人类决策，调整范围或资源 |
+
+### 阶段3：Kickoff会议自动化
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | planning-kickoff |
+| 读取定义路径 | `.trae/skills/planning-kickoff/SKILL.md` |
+| 输入 | 项目宪章（planning-project-charter → project_charter）、资源计划（planning-resource → resource_plan）、会议参与者（用户提供）、首选会议时间（用户提供，可选） |
+| 输出 | `output/pm-project/planning-kickoff/`（kickoff、metadata） |
+| 验证 | 议程覆盖项目目标、范围、角色、时间线；关键利益相关方确认参会；行动项有明确负责人和截止日期 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | Kickoff已完成（Kickoff会议已召开，行动项已提取），否则重新调度会议时间 |
 
 ## 调度规则
 
-- 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-project/{skill-name}/` 文件，释放上下文空间
+- 执行子Skill前必须先读取其SKILL.md定义文件
+- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
+- 每个阶段完成后，将中间结果写入 `output/pm-project/{当前阶段子Skill名称}/` 文件，释放上下文空间
 - 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
 - 单个子Skill的输出应控制在2000字以内，超出部分写入文件
 
 ## 阶段卡口
 
-| 卡口 | 通过条件 | 未通过处理 |
-|------|----------|------------|
+| 卡口 | 条件 | 未通过处理 |
+|------|------|------------|
 | 宪章已批准 | 项目宪章经人类审批，目标和范围已确认 | 修改宪章后重新审批 |
 | 资源已锁定 | 资源需求与可用资源匹配，关键资源已预留 | 升级人类决策，调整范围或资源 |
 | Kickoff已完成 | Kickoff会议已召开，行动项已提取 | 重新调度会议时间 |
@@ -75,3 +99,4 @@ planning-kickoff
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
+- v3.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则

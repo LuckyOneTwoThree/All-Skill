@@ -1,4 +1,4 @@
-﻿---
+---
 name: architecture-pattern
 description: 当需要选择和设计后端架构模式时使用。架构模式自动选择与设计，基于业务规模、团队能力和技术约束，自动评估并推荐后端架构模式（单体/微服务/Serverless），输出架构决策记录和系统拓扑图。关键词：架构模式、微服务、单体架构、Serverless、架构决策、系统拓扑。
 metadata:
@@ -28,7 +28,7 @@ metadata:
 |--------|------|------|------|------|
 | 业务规模 | JSON | 是 | 用户提供 | 用户量、QPS、数据量、团队规模 |
 | 技术约束 | JSON | ○ | 用户提供 | 技术栈、运维能力、预算 |
-| PRD | markdown | ○ | design-prd → prd.md | 业务需求上下文 |
+| PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 业务需求上下文 |
 
 ## 执行步骤
 
@@ -121,6 +121,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-architecture/architecture-pattern/`
+
+**输出文件**：architecture-decision.json, topology.mmd
 
 ```json
 {

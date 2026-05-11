@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 组件代码 | code | 是 | ui-component-gen | 待测试的组件代码 |
-| 页面代码 | code | 是 | page-assembly | 待测试的页面代码 |
-| 交互规格 | JSON | ○ | interaction-design | 交互行为定义（用于E2E场景） |
-| UI审查结果 | JSON | ○ | ui-review | 已知问题清单（优先覆盖） |
+| 组件代码 | code | 是 | output/ui-frontend/ui-component-gen | 待测试的组件代码 |
+| 页面代码 | code | 是 | output/ui-frontend/page-assembly | 待测试的页面代码 |
+| 交互规格 | JSON | ○ | output/ui-frontend/interaction-design | 交互行为定义（用于E2E场景） |
+| UI审查结果 | JSON | ○ | output/ui-frontend/ui-review | 已知问题清单（优先覆盖） |
 
 ## 执行步骤
 
@@ -101,6 +101,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/frontend-test/`
+
+**输出文件**：test-report.json
 
 **输出Schema**：
 

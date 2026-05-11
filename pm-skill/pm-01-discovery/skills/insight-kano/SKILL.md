@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户反馈数据 | JSON | 是 | user-research-voice-analysis → voice-analysis.json | 用户声音与情感分析数据 |
-| 功能需求列表 | JSON | 是 | insight-requirement-layers → requirement-layers.json | 需求三层模型拆解结果 |
+| 用户反馈数据 | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户声音与情感分析数据 |
+| 功能需求列表 | JSON | 是 | output/pm-discovery/insight-requirement-layers/requirement-layers.json | 需求三层模型拆解结果 |
 
 ### Input JSON 示例结构
 

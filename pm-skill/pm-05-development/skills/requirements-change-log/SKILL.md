@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD文档（当前版本） | Markdown | ○ | design-prd → PRD-{产品名}.md | 变更前的PRD |
+| PRD文档（当前版本） | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 变更前的PRD |
 | PRD文档（新版本） | Markdown | ○ | 用户提供 | 变更后的PRD |
-| SRS文档 | Markdown | ○ | requirements-srs → SRS-{产品名}.md | 受影响的需求规格 |
+| SRS文档 | Markdown | ○ | output/pm-design/requirements-srs/SRS-{产品名}.md | 受影响的需求规格 |
 | 变更描述 | string | 是 | 用户提供 | 变更的内容描述 |
 | 变更原因 | string | 是 | 用户提供 | 为什么要变更 |
 | 变更发起人 | string | 是 | 用户提供 | 谁提出的变更 |

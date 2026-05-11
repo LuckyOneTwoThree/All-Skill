@@ -26,11 +26,11 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 漏斗分析 | JSON | ○ | analysis-funnel → funnel-analysis.json | 漏斗健康度、转化率、流失点 |
-| 留存分析 | JSON | ○ | analysis-retention → retention-analysis.json | 留存曲线、流失预警、 cohorts |
-| 异常检测 | JSON | ○ | analysis-anomaly → anomaly-analysis.json | 异常指标、归因、影响范围 |
-| 决策洞察 | JSON | ○ | decision-insight → insight.json | 数据驱动的决策建议 |
-| 度量体系 | JSON | ○ | metrics-system → metrics_system.json | 指标定义和基线 |
+| 漏斗分析 | JSON | ○ | output/pm-metrics-ops/analysis-funnel/funnel-analysis.json | 漏斗健康度、转化率、流失点 |
+| 留存分析 | JSON | ○ | output/pm-metrics-ops/analysis-retention/retention-analysis.json | 留存曲线、流失预警、 cohorts |
+| 异常检测 | JSON | ○ | output/pm-metrics-ops/analysis-anomaly/anomaly-analysis.json | 异常指标、归因、影响范围 |
+| 决策洞察 | JSON | ○ | output/pm-metrics-ops/decision-insight/insight.json | 数据驱动的决策建议 |
+| 度量体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metrics_system.json | 指标定义和基线 |
 | 分析时间范围 | string | 是 | 用户提供 | 如"2025年Q1""最近30天" |
 | 产品/业务信息 | string | ○ | 用户提供 | 产品名称、核心业务指标 |
 
@@ -292,3 +292,5 @@ metadata:
 | anomaly-analysis缺失 | 跳过异常分析章节 | 缺少异常归因 |
 | decision-insight缺失 | 行动建议基于数据分析推导 | 建议可能不够深入 |
 | metrics-system缺失 | 核心指标基于用户提供信息 | 指标定义可能不完整 |
+- 若用户未提供分析时间范围，提示用户提供或跳过该输入相关步骤
+- 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤

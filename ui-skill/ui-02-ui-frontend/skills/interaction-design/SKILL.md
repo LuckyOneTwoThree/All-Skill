@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 组件规格 | JSON | 是 | ui-component-gen / component-library | 组件Props和变体定义 |
-| 页面需求 | markdown | 是 | page-assembly / design-prd | 页面交互场景描述 |
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 动画时长、缓动曲线令牌 |
+| 组件规格 | JSON | 是 | output/ui-frontend/ui-component-gen / output/ui-design-system/component-library | 组件Props和变体定义 |
+| 页面需求 | markdown | 是 | output/ui-frontend/page-assembly / output/pm-design/design-prd | 页面交互场景描述 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 动画时长、缓动曲线令牌 |
 
 ## 执行步骤
 
@@ -111,6 +111,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/interaction-design/`
+
+**输出文件**：interaction-spec.json
 
 **输出Schema**：
 

@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 告警数据 | JSON | 是 | monitoring-system → 告警数据 | 告警内容、级别、来源 |
+| 告警数据 | JSON | 是 | output/pm-monitoring/monitoring-system/告警数据 | 告警内容、级别、来源 |
 | On-Call 排班 | JSON | 是 | 值班管理系统 → 排班表 | 值班表和联系方式 |
-| 告警规则 | JSON | 是 | monitoring-system → 告警规则 | 升级规则和阈值配置 |
-| 知识库 | JSON | ○ | monitoring-escalation → 知识库 | 问题处理指南和历史案例 |
+| 告警规则 | JSON | 是 | output/pm-monitoring/monitoring-system/告警规则 | 升级规则和阈值配置 |
+| 知识库 | JSON | ○ | output/pm-monitoring/monitoring-escalation/知识库 | 问题处理指南和历史案例 |
 
 ## 执行步骤
 

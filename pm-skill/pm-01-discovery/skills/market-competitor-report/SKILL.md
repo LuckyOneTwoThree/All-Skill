@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 竞品情报数据 | JSON | ○ | market-competitor-intel → competitor-intel.json | Feature Matrix、口碑、定价、战略信号 |
-| 竞品四象限数据 | JSON | ○ | market-competitor-quadrant → competitor-quadrant.json | 四象限分类与置信度 |
-| 市场规模数据 | JSON | ○ | market-tam-som → tam-som.json | TAM/SAM/SOM与增长率 |
-| 宏观环境数据 | JSON | ○ | market-pest → pest.json | PEST四维度趋势 |
+| 竞品情报数据 | JSON | ○ | output/pm-discovery/market-competitor-intel/competitor-intel.json | Feature Matrix、口碑、定价、战略信号 |
+| 竞品四象限数据 | JSON | ○ | output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json | 四象限分类与置信度 |
+| 市场规模数据 | JSON | ○ | output/pm-discovery/market-tam-som/tam-som.json | TAM/SAM/SOM与增长率 |
+| 宏观环境数据 | JSON | ○ | output/pm-discovery/market-pest/pest.json | PEST四维度趋势 |
 | 品类关键词 | string | 是 | 用户提供 | 分析的品类范围，如"在线教育""SaaS CRM" |
 | 自身产品信息 | string/markdown | ○ | 用户提供 | 自身产品定位、核心功能、目标用户、当前状态 |
 
@@ -375,6 +375,7 @@ quadrantChart
 | PEST数据缺失 | 跳过宏观环境章节 | 市场概览缺少宏观视角 |
 | 自身产品信息缺失 | 差异化策略标注为"通用建议" | 策略需结合自身情况调整 |
 | 所有上游数据均缺失 | 基于品类关键词和AI知识库生成报告，整体置信度降低 | 报告深度有限，需人类大量补充验证 |
+| 若用户未提供品类关键词 | 提示用户提供品类关键词，否则无法确定竞品分析范围 | - |
 
 数据获取说明：
 - 本Skill需要竞品情报和品类信息，请通过以下方式之一提供：

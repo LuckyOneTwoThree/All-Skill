@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户研究数据 | JSON | 是 | user-research-voice-analysis → voice-analysis.json / user-research-behavior-analysis → behavior-analysis.json | 痛点提及率、行为数据印证 |
-| 市场分析数据 | JSON | 是 | market-tam-som → tam-som.json | SOM 估算值 |
-| 竞品分析数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品能力与壁垒分析 |
+| 用户研究数据 | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json / output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 痛点提及率、行为数据印证 |
+| 市场分析数据 | JSON | 是 | output/pm-discovery/market-tam-som/tam-som.json | SOM 估算值 |
+| 竞品分析数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品能力与壁垒分析 |
 | 技术团队评估 | object | ○ | 用户提供 | 现有技术栈可实现性评估 |
 
 ## 执行步骤
@@ -194,6 +194,7 @@ metadata:
 | 市场分析数据（tam-som） | 用户描述机会 → 市场规模维度基于用户估算评分，标注"缺乏市场数据" |
 | 竞品分析数据（competitor-intel） | 用户描述机会 → 竞争壁垒维度基于用户描述评分，标注"缺乏竞品数据" |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的机会直接评分（标注置信度较低） |
+| 若用户未提供技术团队评估 | 跳过该输入相关步骤，可解决性维度使用默认值3（中等），标记confirmed=false |
 
 数据获取说明：
 - 本Skill需要用户研究、市场分析和竞品分析数据，请通过以下方式之一提供：

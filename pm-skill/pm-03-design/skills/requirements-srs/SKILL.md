@@ -1,4 +1,4 @@
-﻿---
+---
 name: requirements-srs
 description: 当需要将PRD转化为面向研发团队的技术需求规格时使用。需求规格说明书（SRS）自动生成，补充非功能需求、接口约束、数据约束和边界条件，输出结构化Markdown文档。关键词：需求规格说明书、SRS、技术需求、软件需求规格、非功能需求、需求规格。
 metadata:
@@ -26,11 +26,11 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD文档 | Markdown | 是 | design-prd → PRD-{产品名}.md | 产品需求文档 |
-| API契约 | JSON | ○ | backend api-contract → openapi.yaml | 接口定义 |
-| 数据模型 | JSON | ○ | backend data-model → er_model.json | 数据实体和关系 |
-| IA信息架构 | JSON | ○ | design-ia → ia.json | 页面路由和导航结构 |
-| 用户流程 | JSON | ○ | design-userflow → userflow.json | 用户操作流程 |
+| PRD文档 | Markdown | 是 | output/pm-design/design-prd/PRD-{产品名}.md | 产品需求文档 |
+| API契约 | JSON | ○ | output/pm-development/api-contract/openapi.yaml | 接口定义 |
+| 数据模型 | JSON | ○ | output/pm-development/data-model/er_model.json | 数据实体和关系 |
+| IA信息架构 | JSON | ○ | output/pm-design/design-ia/ia.json | 页面路由和导航结构 |
+| 用户流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户操作流程 |
 | 技术约束 | string | ○ | 用户提供 | 技术栈、部署环境、性能基线等 |
 
 ## 执行步骤

@@ -22,7 +22,7 @@
 
 ## Pipeline Skill 清单
 
-### 用户研究（4个）
+### 用户研究（5个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
@@ -30,6 +30,7 @@
 | user-research-behavior-analysis | 用户行为分析：从行为数据中发现模式 | 行为数据 | behavior-analysis.json |
 | user-research-user-modeling | 用户建模：生成 Persona 和 JTBD | 声音+行为分析结果 | persona.json |
 | user-research-interview-assist | 访谈辅助：生成访谈提纲、记录分析 | 访谈目标/记录 | interview-output.json |
+| user-research-report | 用户研究报告：整合声音分析、行为分析、用户建模和访谈数据，补充研究方法论和行动建议 | 用户研究各输出 | user-research-report.json |
 
 ### 需求洞察（5个）
 
@@ -41,7 +42,7 @@
 | insight-kano | Kano 需求分类（基本/期望/兴奋） | 需求列表 | kano.json |
 | insight-priority-scoring | 需求优先级评分 | 洞察结果 | priority-scoring.json |
 
-### 市场分析（4个）
+### 市场分析（5个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
@@ -49,6 +50,7 @@
 | market-pest | PEST 宏观环境分析 | 行业信息 | pest.json |
 | market-competitor-intel | 竞品情报收集 | 竞品信息 | competitor-intel.json |
 | market-competitor-quadrant | 竞品象限分析 | 竞品情报 | competitor-quadrant.json |
+| market-competitor-report | 竞品分析报告：整合竞品情报和四象限数据，补充SWOT分析、竞争定位图、护城河评估和差异化策略 | 竞品情报+四象限数据 | competitor-report.json |
 
 ### 机会识别（4个）
 
@@ -82,6 +84,7 @@ output/pm-discovery/
 ├── user-research-behavior-analysis/
 ├── user-research-user-modeling/
 ├── user-research-interview-assist/
+├── user-research-report/
 ├── insight-jtbd/
 ├── insight-5whys/
 ├── insight-requirement-layers/
@@ -91,6 +94,7 @@ output/pm-discovery/
 ├── market-pest/
 ├── market-competitor-intel/
 ├── market-competitor-quadrant/
+├── market-competitor-report/
 ├── opportunity-scoring/
 ├── opportunity-hmw/
 ├── opportunity-problem-statement/

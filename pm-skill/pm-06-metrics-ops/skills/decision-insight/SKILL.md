@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 分析结果 | object | 是 | analysis-anomaly → anomaly_report.json | anomaly/funnel/retention报告 |
-| 实验结果 | object | 是 | experiment-execution → ab_test_result.yaml | experiment-execution报告 |
+| 分析结果 | object | 是 | output/pm-metrics-ops/analysis-anomaly/anomaly_report.json | anomaly/funnel/retention报告 |
+| 实验结果 | object | 是 | output/pm-metrics-ops/experiment-execution/ab_test_result.yaml | experiment-execution报告 |
 | 业务上下文 | object | ○ | 用户提供 | 产品阶段、团队目标 |
-| 历史洞察库 | object[] | ○ | decision-insight → insight_library.json | 避免重复 |
+| 历史洞察库 | object[] | ○ | output/pm-metrics-ops/decision-insight/insight_library.json | 避免重复 |
 
 ## 执行步骤
 
@@ -172,6 +172,7 @@ decision_boundary:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/decision-insight/`
+**输出文件**：decision_insight.json
 
 **输出Schema**：
 
@@ -407,6 +408,7 @@ funnel_insight:
 | 分析结果缺失 | 用户提供数据发现 → 转化为洞察 | 洞察基于用户描述，可能缺乏深度归因 |
 | 实验结果缺失 | 跳过实验相关洞察转化 | 实验洞察维度缺失 |
 | 分析结果 + 实验结果均缺失 | 用户提供数据发现 → 转化为洞察 | 输出基于用户描述的洞察，归因和决策边界标注"待补充" |
+- 若用户未提供业务上下文，提示用户提供或跳过该输入相关步骤
 
 ### 数据获取说明
 

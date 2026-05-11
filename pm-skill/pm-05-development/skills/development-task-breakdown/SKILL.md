@@ -292,6 +292,8 @@ metadata:
 
 **存储路径**：`output/pm-development/development-task-breakdown/`
 
+**输出文件**：`task_breakdown.json`
+
 **输出Schema**：
 
 ```json

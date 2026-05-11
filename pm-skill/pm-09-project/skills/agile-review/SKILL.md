@@ -32,7 +32,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| sprint_backlog | object | 是 | agile-sprint-planning → sprint_plan.json | Sprint计划的Stories |
+| sprint_backlog | object | 是 | output/pm-project/agile-sprint-planning/sprint_plan.json | Sprint计划的Stories |
 | completed_stories | object[] | 是 | 用户提供 | 已完成的Stories |
 | team_data | object | ○ | 用户提供 | 团队绩效数据 |
 | stakeholder_feedback | object[] | ○ | 用户提供 | 利益相关方反馈（可选） |
@@ -243,6 +243,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/agile-review/`
+
+**输出文件**：sprint_review.json、sprint_retro.json、metadata.json
 
 **输出Schema**：
 

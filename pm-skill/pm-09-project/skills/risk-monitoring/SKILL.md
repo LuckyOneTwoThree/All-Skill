@@ -1,4 +1,4 @@
-﻿---
+---
 name: risk-monitoring
 description: 当需要持续监控项目风险时使用。风险监控与预警自动化，持续追踪风险指标、更新风险状态、识别新风险、触发风险预警、追踪应对效果，输出完整的风险监控报告。关键词：风险监控、风险预警、风险追踪、风险状态、风险指标。
 metadata:
@@ -33,10 +33,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| risk_register | object | 是 | risk-identification → risk_register.json | 风险登记册 |
+| risk_register | object | 是 | output/pm-project/risk-identification/risk_register.json | 风险登记册 |
 | project_data | object | 是 | 项目管理系统 → 项目数据 | 项目实时数据 |
 | trigger_conditions | object | 是 | 用户提供 | 配置的触发条件 |
-| mitigation_actions | object[] | ○ | risk-monitoring → 应对追踪 | 已执行的应对措施 |
+| mitigation_actions | object[] | ○ | output/pm-project/risk-monitoring/应对追踪 | 已执行的应对措施 |
 
 ---
 
@@ -199,6 +199,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/risk-monitoring/`
+
+**输出文件**：risk_monitoring.json、metadata.json
 
 ```json
 {

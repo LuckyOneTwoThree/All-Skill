@@ -32,7 +32,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| project_scope | object | 是 | planning-project-charter → project_charter | 项目范围（含in_scope/out_of_scope） |
+| project_scope | object | 是 | output/pm-project/planning-project-charter/project_charter | 项目范围（含in_scope/out_of_scope） |
 | technical_solution | object | 是 | 用户提供 | 技术方案描述 |
 | team_capability_data | object | ○ | 用户提供 | 团队能力数据（技能矩阵、历史绩效） |
 
@@ -213,6 +213,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/planning-resource/`
+
+**输出文件**：resource_plan.json、metadata.json
 
 **输出Schema**：
 

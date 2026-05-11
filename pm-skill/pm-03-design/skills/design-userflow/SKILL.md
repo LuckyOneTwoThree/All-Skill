@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-userflow
 description: 当需要设计用户流程和任务流程时使用。用户流程自动设计，从PRD和IA方案自动生成Task Flow和User Flow，包含条件分支、异常路径、质量检查和优化建议。适用于核心用户路径梳理和流程优化。关键词：用户流程、User Flow、Task Flow、流程设计、路径优化。
 metadata:
@@ -28,9 +28,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 产品需求文档 |
-| IA方案 | JSON | 是 | design-ia → ia_proposals.json | Pipeline 9输出的信息架构方案 |
-| 用户研究数据 | JSON | ○ | user-research-voice-analysis / user-research-behavior-analysis | 用户行为模式、任务偏好 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
+| IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
+| 用户研究数据 | JSON | ○ | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | 用户行为模式、任务偏好 |
 
 ## 执行步骤
 
@@ -76,6 +76,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/design-userflow/`
+**输出文件**：userflow.json
 
 ```json
 {

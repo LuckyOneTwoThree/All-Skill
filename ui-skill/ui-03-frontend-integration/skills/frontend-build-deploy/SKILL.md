@@ -1,4 +1,4 @@
-﻿---
+---
 name: frontend-build-deploy
 description: 当需要配置前端构建和部署流程时使用。前端构建部署自动配置，生成前端项目的构建配置、环境管理、CDN策略和CI/CD流水线，实现前端自动化构建和部署。关键词：前端构建、部署、CI/CD、CDN、环境管理、Webpack、Vite。
 metadata:
@@ -109,6 +109,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend-integration/frontend-build-deploy/`
+
+**输出文件**：build-config.json
 
 ```json
 {

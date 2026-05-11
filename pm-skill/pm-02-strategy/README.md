@@ -22,13 +22,14 @@
 
 ## Pipeline Skill 清单
 
-### 商业模式设计（3个）
+### 商业模式设计（4个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
 | business-model-canvas | 生成商业模式画布（BMC 9格），标注关键假设 | 机会简报、用户研究输出 | bmc.json |
 | business-value-fit | 验证价值主张与客户需求的匹配度 | BMC、用户洞察 | value-fit.json |
 | business-pricing | 生成多个定价方案（成本加成/价值定价/竞争定价） | BMC、竞品情报、价值匹配结果 | pricing.json |
+| business-strategy-report | 商业战略规划报告：整合商业画布、SWOT、OKR、路线图、定位和利益相关者数据，补充战略推演和执行路径 | 商业画布、SWOT、OKR、路线图、定位 | business-strategy-report.json |
 
 ### 产品定位与差异化（4个）
 
@@ -58,6 +59,12 @@
 | stakeholder-strategy-doc | 编写战略文档，质量检查 | SWOT、OKR、路线图、定位 | strategy-doc.json |
 | stakeholder-brief | 生成战略简报，可执行性检查 | 战略文档、Stakeholder地图 | stakeholder-brief.json |
 
+### 产品提案（1个）
+
+| Skill | 作用 | 输入 | 输出 |
+|-------|------|------|------|
+| product-proposal | 产品提案书：整合市场机会、用户需求、竞品格局和资源评估，产出结构化的产品提案文档供决策层审批 | 竞品报告、市场规模、用户研究、定位陈述 | product-proposal.json |
+
 ## 执行顺序
 
 ```
@@ -83,6 +90,7 @@ output/pm-strategy/
 ├── business-model-canvas/
 ├── business-value-fit/
 ├── business-pricing/
+├── business-strategy-report/
 ├── positioning-statement/
 ├── positioning-value-curve/
 ├── positioning-differentiation/
@@ -95,7 +103,8 @@ output/pm-strategy/
 ├── planning-ansoff/
 ├── stakeholder-map/
 ├── stakeholder-strategy-doc/
-└── stakeholder-brief/
+├── stakeholder-brief/
+└── product-proposal/
 ```
 
 ## 阶段卡口

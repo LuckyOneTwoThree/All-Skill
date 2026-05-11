@@ -26,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 原始需求列表 | JSON | 是 | 用户提供 / user-research-voice-analysis → voice-analysis.json | 用户声音、业务方需求、数据异常等原始需求 |
+| 原始需求列表 | JSON | 是 | 用户提供 / output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户声音、业务方需求、数据异常等原始需求 |
 
 ### Input JSON 示例结构
 

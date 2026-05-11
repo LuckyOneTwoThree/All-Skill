@@ -23,13 +23,14 @@
 
 ## Pipeline Skill 清单
 
-### 需求管理（3个）
+### 需求管理（4个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
 | requirements-collection | 1 | 收集需求并自动分类，标注置信度 | 上游战略输出、用户反馈 | requirements-collection.json |
 | requirements-understanding | 2 | 深度理解需求，填充理解模板5项（场景/动机/期望/约束/优先级） | 需求列表 | requirements-understanding.json |
 | requirements-prioritization | 3 | 基于RICE评分给出MoSCoW建议 | 需求理解结果、资源约束 | requirements-prioritization.json |
+| requirements-srs | 4 | 需求规格说明书（SRS）：补充非功能需求、接口约束、数据约束和边界条件 | PRD、API契约、数据模型 | requirements-srs.json |
 
 ### 创意发散与方案构思（4个）
 
@@ -40,7 +41,7 @@
 | ideation-inversion | 6 | 逆转分析，从反面推导设计约束 | HMW问题、竞品分析 | inversion.json |
 | ideation-convergence | 7 | 收敛Top5方案，深化细节和可行性 | SCAMPER方案、逆转约束 | convergence.json |
 
-### 产品设计与原型（4个）
+### 产品设计与原型（5个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
@@ -48,6 +49,7 @@
 | design-ia | 9 | 生成信息架构（IA）候选方案 | PRD文档、收敛方案 | ia.json |
 | design-userflow | 10 | 设计用户流程，消除死胡同 | PRD文档、IA方案 | userflow.json |
 | design-prototype | 11 | 生成交互原型，检查设计规范一致性 | 用户流程、设计规范 | prototype.json |
+| design-handoff-spec | 12 | 设计交接文档：整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单 | 原型规格、设计令牌、IA、用户流程 | design-handoff-spec.json |
 
 ### 方案验证（4个）
 
@@ -57,6 +59,12 @@
 | validation-mvp | 13 | 定义MVP范围，确保占比<60% | 假设地图、需求优先级 | mvp.json |
 | validation-experiment | 14 | 设计验证实验方案 | MVP范围、假设地图 | experiment.json |
 | validation-usability | 15 | 可用性测试，问题严重程度分级 | 原型、实验方案 | usability.json |
+
+### 交互（1个）
+
+| Skill | Pipeline | 作用 | 输入 | 输出 |
+|-------|----------|------|------|------|
+| interaction-spec | 16 | 交互设计规范：包含交互状态机、动画规范、手势操作、反馈机制、无障碍交互和异常状态处理 | 用户流程、原型规格、设计交接文档 | interaction-spec.json |
 
 ## 执行顺序
 
@@ -83,6 +91,7 @@ output/pm-design/
 ├── requirements-collection/
 ├── requirements-understanding/
 ├── requirements-prioritization/
+├── requirements-srs/
 ├── ideation-hmw/
 ├── ideation-scamper/
 ├── ideation-inversion/
@@ -91,10 +100,12 @@ output/pm-design/
 ├── design-ia/
 ├── design-userflow/
 ├── design-prototype/
+├── design-handoff-spec/
 ├── validation-assumption-map/
 ├── validation-mvp/
 ├── validation-experiment/
-└── validation-usability/
+├── validation-usability/
+└── interaction-spec/
 ```
 
 ## 阶段卡口

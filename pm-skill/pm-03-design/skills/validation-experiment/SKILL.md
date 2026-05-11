@@ -1,4 +1,4 @@
-﻿---
+---
 name: validation-experiment
 description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法。
 metadata:
@@ -35,8 +35,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 假设地图 | JSON | 是 | validation-assumption-map → assumption-map.json | Pipeline 12输出的假设地图 |
-| MVP范围 | JSON | 是 | validation-mvp → mvp-scope.json | Pipeline 13输出的MVP范围 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption-map.json | Pipeline 12输出的假设地图 |
+| MVP范围 | JSON | 是 | output/pm-design/validation-mvp/mvp-scope.json | Pipeline 13输出的MVP范围 |
 | 可用流量/用户数据 | JSON | ○ | 用户提供 | 当前用户量、日活、新增等数据 |
 
 ### 输入格式
@@ -177,6 +177,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/validation-experiment/`
+**输出文件**：experiment_plan.json
 
 ```json
 {

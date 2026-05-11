@@ -31,6 +31,8 @@
 | development-task-breakdown | 将PRD任务分解结构进行技术深化、Sprint分配和依赖检测 | PRD任务分解结构、PRD门禁校验结果、技术栈配置、团队容量、Sprint日历 | Epic→Story→Task完整结构、Sprint分配结果、依赖关系图、技术细节澄清 |
 | development-auto-review | 接收变更请求，自动进行变更分类（L1-L4）、影响传播分析、重评审必要性判断和版本联动分析 | 变更请求、当前PRD、当前技术方案、开发进度 | 变更影响报告（含分类、四维度影响分析、评审决策、版本联动建议） |
 | development-prd-sync | 实现PRD与设计稿、代码、测试用例的双向同步，自动检测不一致并生成更新提案 | PRD文档、设计稿、代码库、测试用例 | 同步状态报告、冲突清单、更新提案 |
+| architecture-decision-record | 架构决策记录(ADR)：记录决策背景、备选方案评估、决策结果、影响分析和决策回顾机制 | 决策背景、备选方案、约束条件 | ADR文档、adr-index.json |
+| data-dictionary | 数据字典：包含数据实体定义、字段规格、数据关系、枚举值和业务规则 | PRD、SRS、数据模型 | data-dictionary.md、data-dictionary.json |
 
 ### 4.2 质量保障（quality-orchestrator）
 
@@ -38,6 +40,7 @@
 |-------|------|------|------|
 | quality-auto-test | 从PRD验收标准自动生成测试用例（Happy Path/边界/异常），并与代码提交自动关联追踪 | PRD（含验收标准）、技术方案、设计稿、代码库 | 测试用例集、覆盖率报告、代码-用例映射关系 |
 | quality-auto-acceptance | 基于Given-When-Then验收标准自动执行验收，P0/P1失败阻断上线 | Story验收标准、测试用例、测试环境配置、构建产物 | 验收报告、失败用例分析（含根因和修复建议）、门禁判定结果 |
+| quality-acceptance-report | 验收测试报告：整合测试结果、验收标准、遗留问题和签收确认，产出可签收的验收报告文档 | 测试结果、验收标准、SRS文档 | acceptance-report.md、acceptance-report.json |
 
 ### 4.3 发布策略（release-orchestrator）
 
@@ -45,12 +48,32 @@
 |-------|------|------|------|
 | release-gradual | 执行渐进式灰度发布（1%→10%→50%→100%），各阶段自动监控指标，P0恶化自动回滚 | 发布内容、Feature Flag配置、监控指标定义、灰度策略配置 | 发布状态报告、阶段转换记录、回滚历史、监控数据汇总 |
 | release-auto-checklist | 自动生成T-7/T-1/T-0/T+24h/T+72h的发布Checklist，逐项自动检查和人工确认 | 发布内容、Checklist模板、发布计划、发布历史 | 各阶段Checklist、完成状态汇总、待处理告警、风险评估 |
+| release-notes | 版本发布说明：基于变更记录和PRD差异，生成面向用户/客户的版本更新说明，支持多语言和多平台格式 | 需求变更记录、PRD、版本号、发布类型 | release-notes.md、release-notes.json |
 
 ### 4.4 上线复盘（retrospective-orchestrator）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
 | retrospective-auto | 执行T+2周效果复盘、工程质量复盘、发布过程复盘，自动生成改进行动项 | 发布内容、监控数据、用户反馈、团队反馈、Bug统计、发布过程数据 | 复盘报告（含目标vs实际对比、Bug趋势分析、协作效率分析）、改进行动项 |
+
+### 4.5 变更管理
+
+| Skill | 作用 | 输入 | 输出 |
+|-------|------|------|------|
+| requirements-change-log | 需求变更记录：记录变更内容、影响评估、审批状态和追溯链，确保需求变更可追踪、可审计 | PRD新旧版本、SRS、变更描述、变更原因 | requirements-change-log.md、requirements-change-log.json |
+
+### 4.6 安全合规
+
+| Skill | 作用 | 输入 | 输出 |
+|-------|------|------|------|
+| privacy-compliance-assessment | 隐私合规评估：覆盖个人信息收集、存储、使用、共享全生命周期，对标GDPR/PIPL等法规 | PRD、API契约、数据模型、目标市场 | privacy-compliance-assessment.md、privacy-compliance-assessment.json |
+| security-requirements | 产品安全需求清单：包含威胁建模、安全功能需求、数据保护需求、合规映射和安全验收标准 | PRD、SRS、隐私合规评估 | security-requirements.md、security-requirements.json |
+
+### 4.7 技术债管理
+
+| Skill | 作用 | 输入 | 输出 |
+|-------|------|------|------|
+| tech-debt-register | 技术债务登记册：包含债务识别与分类、影响评估、偿还优先级排序、偿还计划和预防策略 | 代码审查结果、PRD同步记录、技术信息 | tech-debt-register.md、tech-debt-register.json |
 
 ## 5. 执行顺序
 
@@ -110,11 +133,19 @@ output/pm-development/
 ├── development-task-breakdown/  # Epic→Story→Task结构、Sprint分配、依赖图
 ├── development-auto-review/     # 变更影响报告（分类、影响分析、版本联动）
 ├── development-prd-sync/        # PRD同步报告（冲突清单、更新提案）
+├── architecture-decision-record/ # 架构决策记录（ADR文档、索引）
+├── data-dictionary/             # 数据字典（实体定义、字段规格、枚举值）
 ├── quality-auto-test/           # 自动生成的测试用例集、覆盖率报告
 ├── quality-auto-acceptance/     # 验收报告、失败分析、门禁判定
+├── quality-acceptance-report/   # 验收测试报告（签收确认、遗留问题）
 ├── release-gradual/             # 灰度发布状态、阶段转换记录、回滚记录
 ├── release-auto-checklist/      # 各阶段Checklist、完成状态、告警
-└── retrospective-auto/          # 复盘报告、行动项清单
+├── release-notes/               # 版本发布说明（多格式）
+├── retrospective-auto/          # 复盘报告、行动项清单
+├── requirements-change-log/     # 需求变更记录、变更日志
+├── privacy-compliance-assessment/ # 隐私合规评估报告
+├── security-requirements/       # 安全需求清单、威胁建模
+└── tech-debt-register/          # 技术债务登记册、偿还计划
 ```
 
 ## 7. 阶段卡口

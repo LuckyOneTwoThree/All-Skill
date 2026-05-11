@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-roadmap
 description: 当需要制定产品路线图、季度规划、版本规划、资源分配时使用。路线图自动规划。基于OKR和战略方向，规划Epic级别的产品路线图，进行Now/Next/Later分层和RICE评分排序。关键词：产品路线图、版本规划、RICE评分、季度规划、Epic规划。
 metadata:
@@ -25,8 +25,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| OKR目标与关键结果 | JSON | 是 | planning-okr → okr.json | Objective与Key Results |
-| SWOT战略方向 | JSON | 是 | planning-swot → swot.json | SO/ST/WO/WT战略方向 |
+| OKR目标与关键结果 | JSON | 是 | output/pm-strategy/planning-okr/okr.json | Objective与Key Results |
+| SWOT战略方向 | JSON | 是 | output/pm-strategy/planning-swot/swot.json | SO/ST/WO/WT战略方向 |
 | 需求优先级评分 | JSON | ○ | requirements-prioritization | RICE评分结果 |
 | 资源约束条件 | JSON | ○ | 用户提供 | 团队容量、预算、时间约束 |
 
@@ -113,6 +113,8 @@ RICE Score = (Reach × Impact × Confidence) ÷ Effort
 
 **存储路径**：`output/pm-strategy/planning-roadmap/`
 
+**输出文件**：roadmap.json
+
 ```yaml
 roadmap:
   strategic_themes:
@@ -193,6 +195,7 @@ roadmap:
 | 需求优先级数据（priority-scoring / kano） | 用户提供目标列表 → 直接规划路线图，标注"缺乏需求优先级数据" |
 | okr.json + swot.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 |
+| 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要OKR、SWOT和需求优先级数据，请通过以下方式之一提供：

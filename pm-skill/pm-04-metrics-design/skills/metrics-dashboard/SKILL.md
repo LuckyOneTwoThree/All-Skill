@@ -1,4 +1,4 @@
-﻿---
+---
 name: metrics-dashboard
 description: 当需要配置产品度量Dashboard时使用。Dashboard自动配置，基于指标层级设计Dashboard结构，自动分配指标到各Dashboard，配置告警规则和阈值。关键词：Dashboard配置、数据看板、指标可视化、告警配置、监控面板。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| metric_system | JSON | 是 | metrics-system → metric_system.json | 指标体系（含北极星、L1/L2/行动指标） |
-| tracking_plan | JSON数组 | 是 | tracking-plan → tracking_plan | 埋点方案 |
+| metric_system | JSON | 是 | output/pm-metrics-design/metrics-system/metric_system.json | 指标体系（含北极星、L1/L2/行动指标） |
+| tracking_plan | JSON数组 | 是 | output/pm-metrics-design/tracking-plan/tracking_plan | 埋点方案 |
 | user_roles | string[] | ○ | 用户提供 | Dashboard使用角色 |
 | dashboard_platform | string | ○ | 用户提供 | 可视化平台（amplitude/grafana/datadog） |
 
@@ -117,6 +117,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-metrics-design/metrics-dashboard/`
+
+**输出文件**：`dashboard_config.json`
 
 **输出Schema**：
 
@@ -215,6 +217,8 @@ metadata:
 | 指标体系缺失 | 提示用户提供核心指标列表，基于指标列表生成基础Dashboard配置 | Dashboard层级结构简化，无战略/战术/运营分层 |
 | 埋点方案缺失 | 跳过数据源标记步骤，Widget数据源标注"待配置" | 无法确认数据采集可行性 |
 | 指标体系 + 埋点方案均缺失 | 用户提供核心指标列表 → 生成基础Dashboard配置 | 输出基础Dashboard配置，数据源和刷新频率标注"待确认" |
+| user_roles缺失 | 若用户未提供user_roles，提示用户提供或跳过该输入相关步骤 | Dashboard角色分层缺失，使用默认角色配置 |
+| dashboard_platform缺失 | 若用户未提供dashboard_platform，提示用户提供或跳过该输入相关步骤 | 使用通用JSON配置格式，平台特定配置标注"待指定" |
 
 ### 数据获取说明
 

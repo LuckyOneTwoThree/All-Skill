@@ -33,10 +33,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| project_data | object | 是 | agile-sprint-planning → sprint_plan.json | 项目数据（进度、变更、依赖） |
+| project_data | object | 是 | output/pm-project/agile-sprint-planning/sprint_plan.json | 项目数据（进度、变更、依赖） |
 | external_data | object | ○ | 用户提供 | 外部数据（行业、技术、竞争） |
 | historical_risk_library | object[] | ○ | 用户提供 | 历史风险库 |
-| current_risk_register | object | ○ | risk-identification → risk_register.json | 当前风险登记册（增量更新用） |
+| current_risk_register | object | ○ | output/pm-project/risk-identification/risk_register.json | 当前风险登记册（增量更新用） |
 
 ---
 
@@ -200,6 +200,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/risk-identification/`
+
+**输出文件**：risk_register.json、metadata.json
 
 **输出Schema**：
 

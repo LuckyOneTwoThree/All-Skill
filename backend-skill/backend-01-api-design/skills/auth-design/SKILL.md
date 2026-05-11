@@ -1,4 +1,4 @@
-﻿---
+---
 name: auth-design
 description: 当需要设计认证鉴权方案时使用。认证鉴权自动设计，为系统设计完整的认证和授权方案，包含用户认证（JWT/OAuth2/SSO）、权限模型（RBAC/ABAC）、多租户隔离和会话管理。关键词：认证、鉴权、JWT、OAuth2、RBAC、ABAC、多租户、SSO。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 用户角色和权限需求 |
-| API契约 | YAML/JSON | 是 | api-contract → openapi.yaml | 需要鉴权的接口清单 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 用户角色和权限需求 |
+| API契约 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | 需要鉴权的接口清单 |
 | 多租户需求 | string | ○ | 用户提供 | 是否需要多租户隔离 |
 
 ## 执行步骤
@@ -124,6 +124,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-api-design/auth-design/`
+
+**输出文件**：auth-scheme.json, role-permissions.json
 
 ```json
 {

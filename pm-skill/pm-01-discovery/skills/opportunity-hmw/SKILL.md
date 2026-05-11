@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| problem-statement.json | JSON | 是 | opportunity-problem-statement → problem-statement.json | Problem Statement 文本及数据支撑 |
-| 用户研究数据 | JSON | 是 | user-research-voice-analysis → voice-analysis.json / user-research-behavior-analysis → behavior-analysis.json | 用户痛点、行为数据、期望数据 |
+| problem-statement.json | JSON | 是 | output/pm-discovery/opportunity-problem-statement/problem-statement.json | Problem Statement 文本及数据支撑 |
+| 用户研究数据 | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json / output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 用户痛点、行为数据、期望数据 |
 
 ## 执行步骤
 

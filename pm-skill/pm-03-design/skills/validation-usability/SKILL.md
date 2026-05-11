@@ -1,4 +1,4 @@
-﻿---
+---
 name: validation-usability
 description: 当需要辅助可用性测试时使用。可用性测试辅助工具，在测试前、中、后各阶段提供AI辅助支持：测试前生成任务脚本和招募问卷，测试后整理数据并生成洞察报告。注意：实际测试执行必须由人类研究员主持。关键词：可用性测试、任务脚本、招募筛选、问题聚类、洞察提炼。
 metadata:
@@ -35,9 +35,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 可用性测试计划 | object | 是 | validation-assumption-map → assumption-map.json | 测试目标、假设地图、MVP功能 |
+| 可用性测试计划 | object | 是 | output/pm-design/validation-assumption-map/assumption-map.json | 测试目标、假设地图、MVP功能 |
 | 测试参与者 | object | 是 | 用户提供 | 目标用户画像、招募筛选标准 |
-| 测试任务场景 | object | 是 | design-prototype → prototype.json | 待验证的可用性假设与任务脚本 |
+| 测试任务场景 | object | 是 | output/pm-design/design-prototype/prototype.json | 待验证的可用性假设与任务脚本 |
 
 ## 执行步骤
 
@@ -265,6 +265,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/validation-usability/`
+**输出文件**：usability_report.json
 
 ```json
 {

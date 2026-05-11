@@ -127,6 +127,8 @@ metadata:
 
 **存储路径**：`output/pm-growth/retention-churn/`
 
+**输出文件**：churn_analysis.json
+
 **输出Schema**：
 
 ```json

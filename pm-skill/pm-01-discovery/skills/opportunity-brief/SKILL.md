@@ -26,16 +26,16 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户之声分析 | JSON | 是 | user-research-voice-analysis → voice-analysis.json | 用户反馈与情感分析 |
-| 行为分析 | JSON | 是 | user-research-behavior-analysis → behavior-analysis.json | 用户行为模式与痛点 |
-| 用户画像 | JSON | 是 | user-research-user-modeling → persona.json | 目标用户群体画像 |
-| 待办任务 | JSON | 是 | insight-jtbd → jtbd.json | 用户待办任务分析 |
-| 需求分类 | JSON | 是 | insight-kano → kano.json | Kano 模型需求分类 |
-| 市场规模 | JSON | 是 | market-tam-som → tam-som.json | TAM/SAM/SOM 估算 |
-| 竞品情报 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品能力与壁垒分析 |
-| 机会评分 | JSON | 是 | opportunity-scoring → opportunity-scoring.json | 多维度加权评分结果 |
-| HMW 陈述 | JSON | 是 | opportunity-hmw → hmw.json | How Might We 陈述 |
-| Problem Statement | JSON | 是 | opportunity-problem-statement → problem-statement.json | 结构化问题陈述 |
+| 用户之声分析 | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户反馈与情感分析 |
+| 行为分析 | JSON | 是 | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 用户行为模式与痛点 |
+| 用户画像 | JSON | 是 | output/pm-discovery/user-research-user-modeling/persona.json | 目标用户群体画像 |
+| 待办任务 | JSON | 是 | output/pm-discovery/insight-jtbd/jtbd.json | 用户待办任务分析 |
+| 需求分类 | JSON | 是 | output/pm-discovery/insight-kano/kano.json | Kano 模型需求分类 |
+| 市场规模 | JSON | 是 | output/pm-discovery/market-tam-som/tam-som.json | TAM/SAM/SOM 估算 |
+| 竞品情报 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品能力与壁垒分析 |
+| 机会评分 | JSON | 是 | output/pm-discovery/opportunity-scoring/opportunity-scoring.json | 多维度加权评分结果 |
+| HMW 陈述 | JSON | 是 | output/pm-discovery/opportunity-hmw/hmw.json | How Might We 陈述 |
+| Problem Statement | JSON | 是 | output/pm-discovery/opportunity-problem-statement/problem-statement.json | 结构化问题陈述 |
 
 ## 执行步骤
 

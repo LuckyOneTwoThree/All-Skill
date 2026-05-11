@@ -26,12 +26,12 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 页面需求 | string/markdown | 是 | 用户提供 / design-prd → prd.md | 页面功能描述和布局需求 |
-| 组件库 | JSON | 是 | component-library → library.json | 可用组件清单 |
-| 已生成组件 | JSON | 是 | ui-component-gen → components.json | 已生成的自定义组件 |
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 设计变量 |
-| 路由结构 | JSON | ○ | design-ia → ia_proposals.json | 信息架构定义的路由层级 |
-| 原型规格 | JSON | ○ | design-prototype → prototype_spec.json | 原型定义的页面布局和交互规格 |
+| 页面需求 | string/markdown | 是 | 用户提供 / output/pm-design/design-prd/prd.md | 页面功能描述和布局需求 |
+| 组件库 | JSON | 是 | output/ui-design-system/component-library/library.json | 可用组件清单 |
+| 已生成组件 | JSON | 是 | output/ui-frontend/ui-component-gen/components.json | 已生成的自定义组件 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 设计变量 |
+| 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
+| 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 原型定义的页面布局和交互规格 |
 
 ## 执行步骤
 
@@ -98,6 +98,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/page-assembly/`
+
+**输出文件**：pages.json
 
 **输出Schema**：
 
@@ -178,6 +180,7 @@ metadata:
 | 原型规格缺失 | 基于页面需求推导页面布局 | 页面布局可能不够精准 |
 | 组件库缺失 | 使用通用HTML组件占位 | 页面可运行但视觉不统一 |
 | 设计令牌缺失 | 使用默认布局参数 | 间距/字号可能不符合设计规范 |
+| 页面需求缺失 | 若用户未提供页面需求，提示用户提供或跳过该输入相关步骤 | 无法组装页面 |
 
 数据获取说明：
 - 本Skill需要组件库和页面需求，请通过以下方式之一提供：

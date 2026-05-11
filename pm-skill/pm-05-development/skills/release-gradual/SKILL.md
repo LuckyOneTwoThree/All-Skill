@@ -527,6 +527,8 @@ metadata:
 
 **存储路径**：`output/pm-development/release-gradual/`
 
+**输出文件**：`release_status.json`
+
 **输出Schema**：
 
 ```json

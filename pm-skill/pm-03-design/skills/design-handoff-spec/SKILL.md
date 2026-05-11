@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-handoff-spec
 description: 当设计阶段完成需要交付给开发团队时使用。设计交接文档自动生成，整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单文档。关键词：设计交接、设计交付、Handoff、设计标注、切图清单、设计开发交接。
 metadata:
@@ -26,12 +26,12 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 原型规格 | JSON | ○ | design-prototype → prototype_spec.json | 页面原型和交互规格 |
-| 设计令牌 | JSON | ○ | ui design-token → tokens.json | 颜色/字体/间距/阴影 |
-| IA信息架构 | JSON | ○ | design-ia → ia.json | 页面路由和导航结构 |
-| 用户流程 | JSON | ○ | design-userflow → userflow.json | 用户操作流程和状态机 |
-| PRD文档 | Markdown | ○ | design-prd → PRD-{产品名}.md | 产品需求参考 |
-| 组件库 | JSON | ○ | ui component-library → component-library.json | 可复用组件清单 |
+| 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 页面原型和交互规格 |
+| 设计令牌 | JSON | ○ | output/pm-design/design-token/tokens.json | 颜色/字体/间距/阴影 |
+| IA信息架构 | JSON | ○ | output/pm-design/design-ia/ia.json | 页面路由和导航结构 |
+| 用户流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户操作流程和状态机 |
+| PRD文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 产品需求参考 |
+| 组件库 | JSON | ○ | output/pm-design/component-library/component-library.json | 可复用组件清单 |
 
 ## 执行步骤
 

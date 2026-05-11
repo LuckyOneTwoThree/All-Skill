@@ -1,4 +1,4 @@
-﻿---
+---
 name: service-design
 description: 当需要设计服务拆分方案时使用。服务设计自动生成，基于领域驱动设计，自动识别限界上下文、设计服务拆分方案、定义服务间通信和依赖治理策略。关键词：服务设计、领域驱动、DDD、限界上下文、服务拆分、依赖治理。
 metadata:
@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 业务领域和流程 |
-| 数据模型 | JSON | 是 | data-model → er_model.json | 数据实体和关系 |
-| 架构模式 | JSON | 是 | architecture-pattern | 选择的架构模式 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务领域和流程 |
+| 数据模型 | JSON | 是 | output/backend-data-architecture/data-model/er_model.json | 数据实体和关系 |
+| 架构模式 | JSON | 是 | output/backend-architecture/architecture-pattern | 选择的架构模式 |
 
 ## 执行步骤
 
@@ -117,6 +117,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-architecture/service-design/`
+
+**输出文件**：service-design.json
 
 ```json
 {

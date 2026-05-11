@@ -1,4 +1,4 @@
-﻿---
+---
 name: ideation-inversion
 description: 当需要通过逆向思维寻找创新方案时使用。思维逆转法（Inversion）创意工具，通过分析失败路径并逆向思考，将其转化为成功条件和设计约束。关键词：思维逆转、失败分析、风险预防、设计约束、逆向思维。
 metadata:
@@ -36,7 +36,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| Product Goals | JSON/array | 是 | ideation-hmw / 用户提供 | 清晰的产品或功能目标，包括成功指标和时间框架 |
+| Product Goals | JSON/array | 是 | output/pm-design/ideation-hmw / 用户提供 | 清晰的产品或功能目标，包括成功指标和时间框架 |
 | Product Context | JSON/object | ○ | 用户提供 | 产品背景信息，帮助AI更准确地识别相关失败模式 |
 
 ### 输入格式
@@ -312,6 +312,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/ideation-inversion/`
+**输出文件**：inversion_ideas.json
 
 ### 数据结构
 

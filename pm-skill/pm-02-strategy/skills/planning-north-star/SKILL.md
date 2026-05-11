@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-north-star
 description: 当需要确定产品核心指标、OKR北极星指标、指标体系设计时使用。北极星指标选择。AI辅助选择最能衡量产品成功和用户价值的指标。这是人类决策点，AI提供数据支撑，人类最终选择。关键词：北极星指标、核心指标、指标选择、产品成功指标、NSM。
 metadata:
@@ -26,7 +26,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 用户价值数据 | JSON | 是 | user-research-user-modeling / user-research-voice-analysis | 探索阶段用户价值数据 |
-| BMC商业模式画布 | JSON | 是 | business-model-canvas → bmc.json | 价值主张、收入来源 |
+| BMC商业模式画布 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、收入来源 |
 | 业务现状数据 | JSON | ○ | 用户提供 | 当前业务指标、用户规模 |
 
 ## 执行步骤
@@ -71,6 +71,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/planning-north-star/`
+
+**输出文件**：north_star.json
 
 ```yaml
 north_star_metric:
@@ -167,6 +169,7 @@ AI应该提供以下分析支撑：
 | bmc.json | 用户提供产品描述 → 推荐北极星候选，标注"缺乏BMC数据" |
 | 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要用户价值数据和BMC数据，请通过以下方式之一提供：

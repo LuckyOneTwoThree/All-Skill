@@ -1,4 +1,4 @@
-﻿---
+---
 name: backend-review
 description: 当需要对后端架构进行审查时使用。后端架构审查自动执行，对后端架构和代码进行性能、安全、可维护性和可扩展性的自动化审查，输出问题清单和修复建议。关键词：后端审查、架构审查、性能审查、安全审查、可维护性、可扩展性。
 metadata:
@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 服务设计 | JSON | 是 | service-design | 服务架构和通信方案 |
-| API契约 | YAML/JSON | 是 | api-contract → openapi.yaml | 接口定义 |
-| 数据模型 | JSON | 是 | data-model → er_model.json | 数据库设计 |
-| 缓存策略 | JSON | ○ | cache-strategy | 缓存方案 |
+| 服务设计 | JSON | 是 | output/backend-architecture/service-design | 服务架构和通信方案 |
+| API契约 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | 接口定义 |
+| 数据模型 | JSON | 是 | output/backend-data-architecture/data-model/er_model.json | 数据库设计 |
+| 缓存策略 | JSON | ○ | output/backend-data-architecture/cache-strategy | 缓存方案 |
 
 ## 执行步骤
 
@@ -103,6 +103,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-architecture/backend-review/`
+
+**输出文件**：review-report.json
 
 ```json
 {

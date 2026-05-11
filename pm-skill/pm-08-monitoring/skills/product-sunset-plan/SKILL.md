@@ -24,8 +24,8 @@ metadata:
 
 | 输入项 | 来源 | 必需 | 说明 |
 |--------|------|------|------|
-| 健康度诊断 | diagnosis-health | ⬜ | 产品健康度评分、趋势 |
-| 留存数据 | retention-churn | ⬜ | 用户留存、流失趋势 |
+| 健康度诊断 | output/pm-monitoring/diagnosis-health | ⬜ | 产品健康度评分、趋势 |
+| 留存数据 | output/pm-growth/retention-churn | ⬜ | 用户留存、流失趋势 |
 | 下线对象 | 用户提供 | ✅ | 需要下线的产品/功能名称和范围 |
 | 下线原因 | 用户提供 | ✅ | 业务决策原因 |
 

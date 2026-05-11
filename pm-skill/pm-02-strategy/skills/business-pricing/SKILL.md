@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-pricing
 description: 当需要制定或优化产品定价策略时使用。定价策略自动分析，AI建议人类审批，分析竞品定价、推断用户支付意愿、生成3个差异化定价方案。关键词：定价策略、竞品分析、支付意愿、套餐设计、单位经济。
 metadata:
@@ -30,8 +30,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| BMC数据 | JSON | 是 | business-model-canvas → bmc.json | 价值主张、收入模式、客户细分、成本结构 |
-| 竞品定价数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品定价层级、市场定位、市场份额 |
+| BMC数据 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、收入模式、客户细分、成本结构 |
+| 竞品定价数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品定价层级、市场定位、市场份额 |
 | 支付意愿推断数据 | JSON | ○ | 用户提供 | 用户支付意愿区间、推断方法、置信度 |
 
 ### 必需输入
@@ -366,6 +366,10 @@ metadata:
 
 ## 输出
 
+**存储路径**：`output/pm-strategy/business-pricing/`
+
+**输出文件**：pricing_analysis.json
+
 ### 完整定价分析报告
 
 ```json
@@ -450,6 +454,7 @@ metadata:
 | 竞品定价数据（competitor-intel.json） | 用户提供产品描述 → 基于行业基准推荐定价，标注"缺乏竞品定价数据" |
 | bmc.json + 竞品定价数据 | 用户提供产品描述和目标市场 → 基于行业基准推荐定价，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和行业基准推荐定价 |
+| 支付意愿推断数据（用户提供） | 若用户未提供支付意愿推断数据，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要BMC和竞品定价数据，请通过以下方式之一提供：

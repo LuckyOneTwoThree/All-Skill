@@ -1,4 +1,4 @@
-﻿---
+---
 name: data-model
 description: 当需要设计数据模型和表结构时使用。数据模型自动设计，基于PRD和API契约，自动设计ER模型、表结构、索引策略和分库分表方案，输出数据库DDL和数据字典。关键词：数据模型、ER图、表结构、索引、分库分表、DDL。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD | markdown | 是 | design-prd → prd.md | 业务实体和关系需求 |
-| API契约 | YAML/JSON | 是 | api-contract → openapi.yaml | 接口数据结构定义 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务实体和关系需求 |
+| API契约 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | 接口数据结构定义 |
 | 数据量预估 | JSON | ○ | 用户提供 | 核心表数据量级和增长速度 |
 
 ## 执行步骤
@@ -149,6 +149,8 @@ erDiagram
 ## 输出
 
 **存储路径**：`output/backend-data-architecture/data-model/`
+
+**输出文件**：er_model.json, schema.sql
 
 ```json
 {

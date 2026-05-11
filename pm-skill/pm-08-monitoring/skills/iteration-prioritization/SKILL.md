@@ -35,9 +35,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 当前迭代计划 | JSON | 是 | agile-sprint-planning → sprint_plan | Sprint Backlog、承诺内容 |
+| 当前迭代计划 | JSON | 是 | output/pm-project/agile-sprint-planning/sprint_plan | Sprint Backlog、承诺内容 |
 | 触发事件 | JSON | 是 | 监控系统/反馈系统 → 触发事件 | 异常详情、反馈内容、战略变化 |
-| 资源约束 | JSON | 是 | planning-resource → resource_plan | 团队容量、可用时间、依赖 |
+| 资源约束 | JSON | 是 | output/pm-project/planning-resource/resource_plan | 团队容量、可用时间、依赖 |
 | 变更需求 | JSON | 是 | 用户提供 | 新增/修改/删除的项 |
 
 ## 执行步骤

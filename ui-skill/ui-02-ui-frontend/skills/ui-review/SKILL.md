@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 组件代码 | code | 是 | ui-component-gen | 待审查的组件代码 |
-| 页面代码 | code | 是 | page-assembly | 待审查的页面代码 |
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 设计规范基准 |
-| 交互规格 | JSON | ○ | interaction-design | 交互行为定义 |
+| 组件代码 | code | 是 | output/ui-frontend/ui-component-gen | 待审查的组件代码 |
+| 页面代码 | code | 是 | output/ui-frontend/page-assembly | 待审查的页面代码 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 设计规范基准 |
+| 交互规格 | JSON | ○ | output/ui-frontend/interaction-design | 交互行为定义 |
 
 ## 执行步骤
 
@@ -99,6 +99,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/ui-review/`
+
+**输出文件**：review-report.json
 
 **输出Schema**：
 

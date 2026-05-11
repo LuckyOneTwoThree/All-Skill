@@ -1,4 +1,4 @@
-﻿---
+---
 name: frontend-performance
 description: 当需要分析和优化前端性能时使用。前端性能优化自动执行，对前端应用进行性能分析，识别包体积、加载速度和渲染性能瓶颈，生成优化方案和代码级修复建议。关键词：前端性能、Web Vitals、包体积、加载速度、渲染性能、Lighthouse。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 前端代码 | code | 是 | page-assembly / ui-component-gen | 待优化的前端代码 |
-| 构建产物 | JSON | 是 | frontend-build-deploy | 构建配置和产物分析 |
+| 前端代码 | code | 是 | output/ui-frontend/page-assembly / output/ui-frontend/ui-component-gen | 待优化的前端代码 |
+| 构建产物 | JSON | 是 | output/ui-frontend-integration/frontend-build-deploy | 构建配置和产物分析 |
 | 性能数据 | JSON | ○ | 用户提供 | Lighthouse报告 / Web Vitals数据 |
 
 ## 执行步骤
@@ -100,6 +100,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend-integration/frontend-performance/`
+
+**输出文件**：performance-report.json
 
 ```json
 {

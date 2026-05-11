@@ -1,11 +1,11 @@
 ---
 name: revenue-orchestrator
-description: 当需要优化付费转化或提升收入时使用。商业化指挥官，包括付费漏斗分析与瓶颈定位、NRR追踪与流失预警、升级与增购策略设计。关键词：商业化、付费漏斗、NRR、增购策略、收入优化。
+description: 当需要优化付费转化或提升收入时使用。商业化指挥官，调度 revenue-funnel（付费漏斗分析）、revenue-nrr（NRR追踪预警）、revenue-upsell（升级转化），实现从付费漏斗分析到增购策略的闭环。关键词：商业化、付费漏斗、NRR、增购策略、收入优化、revenue-funnel、revenue-nrr、revenue-upsell。
 metadata:
   module: "产品增长与运营"
   sub-module: "变现"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 商业化指挥官
@@ -23,46 +23,71 @@ metadata:
 3. **实时优化**：基于实时付费漏斗和NRR数据动态调整商业化策略
 4. **数据驱动归因**：从使用行为到付费转化全链路归因，量化每个触点的商业化贡献
 
-## 任务调度
+## 子Skill执行协议
 
-```
-revenue-funnel → revenue-nrr → revenue-upsell
-```
+你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
 
-### 调度逻辑
+1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
+2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
+3. **输出到指定路径**：将结果写入子Skill规定的输出路径
+4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
+5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
 
-| 触发事件 | 调度动作 |
-|----------|----------|
-| 每日执行 / 付费漏斗数据更新 | → revenue-funnel（付费漏斗分析） |
-| 收入数据更新 | → revenue-nrr（NRR追踪预警） |
-| 用户使用数据更新 | → revenue-upsell（升级转化） |
+**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
 
-### 数据流转
+## 阶段执行计划
 
-```
-[付费漏斗数据]
-       ↓
-revenue-funnel
-       ↓ revenue_funnel (funnel / bottlenecks / optimization_suggestions)
-revenue-nrr
-       ↓ nrr_tracking (current_nrr / trend / churn_warnings / expansion_opportunities)
-revenue-upsell
-       ↓ upsell_automation (upgrade_signals / personalized_offers / ab_tests)
-```
+### 阶段1：付费漏斗分析
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | revenue-funnel |
+| 读取定义路径 | `.trae/skills/revenue-funnel/SKILL.md` |
+| 输入 | 注册到付费全链路数据（用户提供）、付费转化数据（revenue-nrr → nrr_report.yaml，可选）、用户特征数据（用户提供，可选） |
+| 输出 | `output/pm-growth/revenue-funnel/` |
+| 验证 | 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 注册到付费全链路转化分析完成，瓶颈已识别；若未通过则补充漏斗步骤定义或数据 |
+
+### 阶段2：NRR追踪预警
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | revenue-nrr |
+| 读取定义路径 | `.trae/skills/revenue-nrr/SKILL.md` |
+| 输入 | 收入数据（用户提供）、用户账户数据（用户提供）、用户行为数据（用户提供，可选） |
+| 输出 | `output/pm-growth/revenue-nrr/` |
+| 验证 | NRR计算包含扩张、收缩、流失三部分；流失预警覆盖活跃度、功能、财务、组织4类信号；扩张机会识别有评分和推荐策略；分维度NRR计算覆盖用户分群和产品线 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别；若未通过则完善收入数据采集 |
+
+### 阶段3：升级转化
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | revenue-upsell |
+| 读取定义路径 | `.trae/skills/revenue-upsell/SKILL.md` |
+| 输入 | 用户行为数据（用户提供）、付费历史数据（revenue-nrr → `output/pm-growth/revenue-nrr/nrr_report.yaml`）、产品使用数据（用户提供，可选） |
+| 输出 | `output/pm-growth/revenue-upsell/` |
+| 验证 | 升级信号识别覆盖4类信号（用量/功能/行为/意向）；个性化内容包含用户名、用量、收益3个要素；A/B测试设计包含护栏指标；升级ROI计算包含触达成本 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 升级转化策略和个性化方案已生成；若未通过则优化升级信号识别或补充用户行为数据 |
 
 ## 调度规则
 
-- 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-growth/{skill-name}/` 文件，释放上下文空间
+- 执行子Skill前必须先读取其SKILL.md定义文件
+- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
+- 每个阶段完成后，将中间结果写入 `output/pm-growth/{当前阶段子Skill名称}/` 文件，释放上下文空间
 - 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
 - 单个子Skill的输出应控制在2000字以内，超出部分写入文件
 
 ## 阶段卡口
 
-| 卡口 | 通过条件 | 未通过处理 |
-|------|----------|------------|
+| 卡口 | 条件 | 未通过处理 |
+|------|------|------------|
 | 付费漏斗分析完成 | 注册到付费全链路转化分析完成，瓶颈已识别 | 补充漏斗步骤定义或数据 |
 | NRR追踪已建立 | NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别 | 完善收入数据采集 |
+| 升级转化策略已生成 | 升级转化策略和个性化方案已生成 | 优化升级信号识别或补充用户行为数据 |
 
 ## 人类决策点
 
@@ -74,3 +99,4 @@ revenue-upsell
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
+- v3.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格

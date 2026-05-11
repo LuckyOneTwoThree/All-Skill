@@ -447,6 +447,8 @@ metadata:
 
 **存储路径**：`output/pm-development/quality-auto-acceptance/`
 
+**输出文件**：`acceptance_report.json`
+
 **输出Schema**：
 
 ```json

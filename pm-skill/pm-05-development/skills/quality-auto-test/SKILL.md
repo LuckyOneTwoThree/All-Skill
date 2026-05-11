@@ -357,6 +357,8 @@ metadata:
 
 **存储路径**：`output/pm-development/quality-auto-test/`
 
+**输出文件**：`test_cases.json`
+
 **输出Schema**：
 
 ```json

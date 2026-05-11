@@ -521,6 +521,8 @@ metadata:
 
 **存储路径**：`output/pm-development/retrospective-auto/`
 
+**输出文件**：`retrospective_report.json`
+
 **输出Schema**：
 
 ```json

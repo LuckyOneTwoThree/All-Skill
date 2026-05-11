@@ -1,4 +1,4 @@
-﻿---
+---
 name: positioning-differentiation
 description: 当需要评估差异化可持续性时使用。差异化来源自动评估，输入价值曲线+竞品分析+能力评估，从功能/体验/场景/商业/生态5个维度输出差异化强度评分和推荐。关键词：差异化评估、可持续性、竞争壁垒、护城河。
 metadata:
@@ -25,8 +25,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 价值曲线 | JSON | 是 | positioning-value-curve → value-curve.json | 竞争要素评分、蓝海动作建议 |
-| 竞品分析 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品能力、追赶难度评估 |
+| 价值曲线 | JSON | 是 | output/pm-strategy/positioning-value-curve/value-curve.json | 竞争要素评分、蓝海动作建议 |
+| 竞品分析 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品能力、追赶难度评估 |
 | 自身能力评估 | JSON | ○ | 用户提供 | 技术壁垒、资源优势 |
 
 ## 执行步骤
@@ -117,6 +117,8 @@ metadata:
 
 **存储路径**：`output/pm-strategy/positioning-differentiation/differentiation-assessment.json`
 
+**输出文件**：differentiation-assessment.json
+
 ```json
 {
   "differentiation_scores": {
@@ -182,6 +184,7 @@ metadata:
 | competitor-intel.json | 用户提供自身和竞品特点 → 评估差异化，标注"缺乏竞品情报数据" |
 | positioning-value-curve.json + competitor-intel.json | 用户提供自身和竞品特点描述 → 直接评估差异化，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的自身和竞品特点评估差异化 |
+| 自身能力评估（用户提供） | 若用户未提供自身能力评估，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要价值曲线和竞品分析数据，请通过以下方式之一提供：

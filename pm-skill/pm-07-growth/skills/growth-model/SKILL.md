@@ -27,7 +27,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 产品特征 | object | 是 | 用户提供 | 产品类型、核心功能、价值主张 |
-| 用户数据 | object | 是 | analysis-retention → retention_analysis.yaml | 用户行为、转化漏斗、留存曲线 |
+| 用户数据 | object | 是 | output/pm-metrics-ops/analysis-retention/retention_analysis.yaml | 用户行为、转化漏斗、留存曲线 |
 | 商业模式 | object | 是 | 用户提供 | 定价策略、目标客户、市场定位 |
 
 ## 执行步骤
@@ -87,6 +87,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/growth-model/`
+
+**输出文件**：growth_model.json
 
 **输出Schema**：
 

@@ -1,4 +1,4 @@
-﻿---
+---
 name: validation-assumption-map
 description: 当需要提取和评估产品假设时使用。假设地图自动生成工具，根据方案设计和PRD，自动提取价值假设、可行性假设、可用性假设、增长假设，并进行风险评估和验证方法推荐。关键词：假设提取、风险评估、假设地图、验证方法。
 metadata:
@@ -35,8 +35,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 方案设计输出 | JSON | 是 | design-prototype / design-userflow | 功能列表、用户旅程、交互设计说明 |
-| PRD | markdown | 是 | design-prd → prd.md | 问题陈述、目标用户、核心价值主张 |
+| 方案设计输出 | JSON | 是 | output/pm-design/design-prototype / output/pm-design/design-userflow | 功能列表、用户旅程、交互设计说明 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 问题陈述、目标用户、核心价值主张 |
 
 ### 输入格式
 ```json
@@ -100,6 +100,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/validation-assumption-map/`
+**输出文件**：assumption_map.json
 
 ```json
 {

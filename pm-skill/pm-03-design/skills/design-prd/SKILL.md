@@ -694,9 +694,9 @@ L2处理：
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | metadata | JSON/object | 是 | 系统生成 | 请求元信息（request_id、trigger、requester、timestamp） |
-| exploration_outputs | JSON/object | ○ | requirements-understanding → requirement_analysis.json | 探索阶段输出：用户洞察、问题陈述 |
+| exploration_outputs | JSON/object | ○ | output/pm-design/requirements-understanding/requirement_analysis.json | 探索阶段输出：用户洞察、问题陈述 |
 | strategy_outputs | JSON/object | ○ | 用户提供 | 战略阶段输出：OKR、路线图 |
-| ideation_outputs | JSON/object | ○ | ideation-convergence → converged_solutions.json | 构思阶段输出：解决方案、功能列表 |
+| ideation_outputs | JSON/object | ○ | output/pm-design/ideation-convergence/converged_solutions.json | 构思阶段输出：解决方案、功能列表 |
 | design_outputs | JSON/object | ○ | 用户提供 | 设计阶段输出：原型、用户流程、信息架构 |
 | metrics_outputs | JSON/object | ○ | 用户提供 | 度量阶段输出：指标体系、埋点方案 |
 | requirement | JSON/object | 是 | 用户提供 | 需求上下文（product_name必填）及手动覆盖配置 |
@@ -859,6 +859,7 @@ L2处理：
 **格式**：Markdown
 **文件命名**：`PRD-{产品名}-{需求ID}-{版本}.md`
 **存储路径**：`output/pm-design/design-prd/`
+**输出文件**：prd.md
 
 **输出模板**：
 ```markdown

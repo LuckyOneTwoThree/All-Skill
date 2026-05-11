@@ -28,8 +28,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| voice-analysis.json | JSON | 是 | user-research-voice-analysis → voice-analysis.json | 用户声音洞察、痛点、主题、分群 |
-| behavior-analysis.json | JSON | 是 | user-research-behavior-analysis → behavior-analysis.json | 行为洞察、漏斗、路径、Aha Moment |
+| voice-analysis.json | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户声音洞察、痛点、主题、分群 |
+| behavior-analysis.json | JSON | 是 | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 行为洞察、漏斗、路径、Aha Moment |
 | survey_data | JSON | ○ | 用户提供 | 问卷数据，补充人口统计学信息和态度数据 |
 | modeling_config | object | ○ | 用户提供 | 建模配置（最大Persona数、置信度阈值、旅程阶段等） |
 
@@ -347,6 +347,8 @@ metadata:
 | behavior-analysis.json | 基于用户口头描述的用户行为推断Persona，标注"缺乏行为数据支撑" |
 | voice-analysis.json + behavior-analysis.json | 用户提供目标用户描述 → 基于描述推断Persona，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版Persona推断 |
+| 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" |
+| 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） |
 
 数据获取说明：
 - 本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：

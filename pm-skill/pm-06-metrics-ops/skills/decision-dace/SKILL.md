@@ -1,4 +1,4 @@
-﻿---
+---
 name: decision-dace
 description: 当需要执行数据驱动决策闭环时使用。DACE循环自动化，Define/Analyze由AI自动执行，Conclude由AI辅助人类决策，Execute由AI追踪执行效果。实现数据驱动决策的持续迭代闭环。关键词：DACE循环、数据决策、决策闭环、数据驱动、决策框架、决策循环、数据分析闭环。
 metadata:
@@ -27,8 +27,8 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | OKR数据 | object | 是 | 用户提供 | 目标与关键结果、基线值与目标值 |
-| KR进度 | object | 是 | analysis-anomaly → anomaly_report.json | 各KR当前进度与偏差分析 |
-| 实验结果 | object | 是 | experiment-execution → ab_test_result.yaml | A/B测试结果、异常检测数据 |
+| KR进度 | object | 是 | output/pm-metrics-ops/analysis-anomaly/anomaly_report.json | 各KR当前进度与偏差分析 |
+| 实验结果 | object | 是 | output/pm-metrics-ops/experiment-execution/ab_test_result.yaml | A/B测试结果、异常检测数据 |
 
 ## 执行步骤
 
@@ -407,6 +407,8 @@ output/pm-metrics-ops/decision-dace/
 ├── action_log.json
 └── dace_cycle_report.md
 ```
+
+输出文件：dace_status.json、okr_tracking.json、action_log.json、dace_cycle_report.md
 
 ## 执行频率
 

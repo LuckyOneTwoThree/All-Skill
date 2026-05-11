@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 需求变更记录 | Markdown/JSON | ○ | requirements-change-log → requirements-change-log.md | 本版本的需求变更 |
-| PRD文档 | Markdown | ○ | design-prd → PRD-{产品名}.md | 产品需求参考 |
-| SRS文档 | Markdown | ○ | requirements-srs → SRS-{产品名}.md | 需求规格参考 |
+| 需求变更记录 | Markdown/JSON | ○ | output/pm-development/requirements-change-log/requirements-change-log.md | 本版本的需求变更 |
+| PRD文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 产品需求参考 |
+| SRS文档 | Markdown | ○ | output/pm-design/requirements-srs/SRS-{产品名}.md | 需求规格参考 |
 | 版本号 | string | 是 | 用户提供 | 如 v2.3.0 |
 | 发布日期 | string | 是 | 用户提供 | 如 2025-03-15 |
 | 发布类型 | string | 是 | 用户提供 | major / minor / patch / hotfix |

@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户研究数据 | JSON | 是 | user-research-voice-analysis → voice-analysis.json / user-research-behavior-analysis → behavior-analysis.json | 用户痛点、行为数据、期望数据 |
-| 需求洞察数据 | JSON | 是 | user-research-user-modeling → persona.json / insight-jtbd → jtbd.json / insight-kano → kano.json | 用户画像、待办任务、需求分类 |
-| 机会评分数据 | JSON | ○ | opportunity-scoring → opportunity-scoring.json | 已评分的机会信息 |
+| 用户研究数据 | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json / output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 用户痛点、行为数据、期望数据 |
+| 需求洞察数据 | JSON | 是 | output/pm-discovery/user-research-user-modeling/persona.json / output/pm-discovery/insight-jtbd/jtbd.json / output/pm-discovery/insight-kano/kano.json | 用户画像、待办任务、需求分类 |
+| 机会评分数据 | JSON | ○ | output/pm-discovery/opportunity-scoring/opportunity-scoring.json | 已评分的机会信息 |
 
 ## 执行步骤
 

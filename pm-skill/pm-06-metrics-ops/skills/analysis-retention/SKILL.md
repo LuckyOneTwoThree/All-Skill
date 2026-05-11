@@ -87,6 +87,9 @@ Cohort划分
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/analysis-retention/`
+**输出文件**：retention_analysis.json
+
+输出文件：retention_curve_{date}.png、cohort_heatmap_{date}.png、aha_moment_{date}.yaml、churn_risk_users_{date}.csv
 
 **输出Schema**：
 

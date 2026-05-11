@@ -31,10 +31,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| sprint_backlog | object | 是 | agile-sprint-planning → sprint_plan | 当前Sprint的Stories |
-| team_assignments | object | 是 | agile-sprint-planning → sprint_plan | 团队成员任务分配 |
-| previous_daily_sync | object | 是 | agile-daily-sync → daily_sync | 上一次Daily Sync状态 |
-| blocker_log | object[] | ○ | agile-daily-sync → blocker_log | 已记录的障碍列表 |
+| sprint_backlog | object | 是 | output/pm-project/agile-sprint-planning/sprint_plan | 当前Sprint的Stories |
+| team_assignments | object | 是 | output/pm-project/agile-sprint-planning/sprint_plan | 团队成员任务分配 |
+| previous_daily_sync | object | 是 | output/pm-project/agile-daily-sync/daily_sync | 上一次Daily Sync状态 |
+| blocker_log | object[] | ○ | output/pm-project/agile-daily-sync/blocker_log | 已记录的障碍列表 |
 | current_date | ISO date | 是 | 系统生成 | 当前日期 |
 
 ---
@@ -225,6 +225,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/agile-daily-sync/`
+
+**输出文件**：daily_sync.json、metadata.json
 
 **输出Schema**：
 

@@ -206,6 +206,8 @@ metadata:
 
 **存储路径**：`output/pm-project/planning-project-charter/`
 
+**输出文件**：project_charter.json、metadata.json
+
 **输出Schema**：
 
 ```json

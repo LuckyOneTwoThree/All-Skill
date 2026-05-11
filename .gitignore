@@ -1,0 +1,32 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Trae runtime output
+output/
+
+# Node (if any tooling added later)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary / audit scripts
+*.ps1
+audit_*.ps1
+fix_*.ps1
+check_*.ps1
+verify_*.ps1
+deep_*.ps1
+final_*.ps1

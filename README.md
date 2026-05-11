@@ -1,10 +1,22 @@
 # All-Skill：产品×设计×工程 AI Agent Skills 全集
 
+> ## ⚠ 声明：AI 是杠杆，不是替代
+>
+> 这套 Skill 体系将产品方法论结构化为可执行的 Pipeline，让 AI 成为方法论的**忠实执行者**——但它永远无法替代人的**判断力**。
+>
+> **AI 擅长的**：规模化数据处理、结构化分析、模式识别、方案穷举、一致性检查。这些是杠杆的力臂，放大人的效率。
+>
+> **人必须掌控的**：战略取舍的平衡点、用户痛点的优先级判定、商业假设的真伪裁决、体验细节的审美判断、风险边界的最终拍板。这些是杠杆的支点，决定力的方向。
+>
+> 每个编排器的阶段卡口和人类决策点，不是流程的冗余，而是**人机协作的分界线**。跳过它们，AI 会高效地走向错误的方向。持续 Review 不是对 AI 的不信任，而是对产品本质的尊重——**产品是为人创造的，最终也必须由人来负责**。
+>
+> 记住：方法论不会因为被 AI 执行就自动产生正确的结果。**好的产品，始终是人的判断力 × AI 的执行力。**
+
 ## 这是什么
 
-将软件产品从0到1的全生命周期方法论，提取为 **177 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发**三大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
+将软件产品从0到1的全生命周期方法论，提取为 **179 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
 
-每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。三大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
+每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。四大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
 
 ## 快速开始
 
@@ -21,7 +33,7 @@
 ├── insight-jtbd/SKILL.md
 ├── api-contract/SKILL.md
 ├── design-token/SKILL.md
-├── ...（177个Skill扁平平铺）
+├── ...（179个Skill扁平平铺）
 └── frontend-performance/SKILL.md
 ```
 
@@ -33,17 +45,18 @@
 
 > ⚠️ 部署时只需复制最内层的 `{skill-name}/` 文件夹（含 SKILL.md），不需要保留外层的目录结构。
 
-## 三大领域总览
+## 四大领域总览
 
 | 领域 | 模块数 | 编排器 | Pipeline Skill | 导航 | 核心定位 |
 |------|--------|--------|---------------|------|----------|
 | **pm-skill** 产品方法论 | 10 | 31 | 119 | 1 | 做正确的事：从探索发现到增长运营 |
 | **ui-skill** UI设计与前端 | 3 | 3 | 11 | — | 正确地呈现：设计即实现，令牌驱动 |
 | **backend-skill** 后端架构 | 3 | 3 | 9 | — | 正确地构建：契约驱动，安全内建 |
+| **cross-domain** 跨领域协调 | — | 2 | — | — | 全局编排：产品迭代与产品启动 |
 
 ## 全局流程与数据流
 
-三大领域不是孤立的工具集，而是通过**数据契约**紧密衔接的完整产品构建闭环：
+四大领域不是孤立的工具集，而是通过**数据契约**紧密衔接的完整产品构建闭环：
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -138,16 +151,19 @@ All-Skill/
 │       ├── orchestrators/                     frontend-integration-orchestrator
 │       └── skills/                            api-contract-consume / frontend-build-deploy / frontend-performance
 │
-└── backend-skill/                     后端架构与开发
-    ├── backend-01-api-design/             模块1：API设计
-    │   ├── orchestrators/                     api-design-orchestrator
-    │   └── skills/                            api-contract / api-security / auth-design
-    ├── backend-02-data-architecture/       模块2：数据架构
-    │   ├── orchestrators/                     data-architecture-orchestrator
-    │   └── skills/                            data-model / cache-strategy / data-migration
-    └── backend-03-backend-architecture/    模块3：后端架构
-        ├── orchestrators/                     backend-architecture-orchestrator
-        └── skills/                            architecture-pattern / service-design / backend-review
+├── backend-skill/                     后端架构与开发
+│   ├── backend-01-api-design/             模块1：API设计
+│   │   ├── orchestrators/                     api-design-orchestrator
+│   │   └── skills/                            api-contract / api-security / auth-design
+│   ├── backend-02-data-architecture/       模块2：数据架构
+│   │   ├── orchestrators/                     data-architecture-orchestrator
+│   │   └── skills/                            data-model / cache-strategy / data-migration
+│   └── backend-03-backend-architecture/    模块3：后端架构
+│       ├── orchestrators/                     backend-architecture-orchestrator
+│       └── skills/                            architecture-pattern / service-design / backend-review
+│
+└── cross-domain/                      跨领域协调
+    └── orchestrators/                     product-iteration-orchestrator / product-launch-orchestrator
 ```
 
 ## 各领域模块详解
@@ -252,6 +268,17 @@ All-Skill/
 
 ---
 
+### 跨领域协调（2个Skill）
+
+跨领域编排器负责协调PM、UI、Backend三大领域的完整产品流程，实现从需求到上线的全局调度。
+
+| 编排器 | 作用 | 调度的子编排器 |
+|--------|------|--------------|
+| product-iteration-orchestrator | 产品迭代总指挥，根据需求变更影响范围调度各领域编排器 | requirements / design / api-design / data-architecture / backend-architecture / design-system / ui-frontend / frontend-integration / quality / release |
+| product-launch-orchestrator | 产品启动总指挥，协调从0到1的全流程并行构建 | insight / market / business / positioning / design / metrics / api-design / data-architecture / backend-architecture / design-system / ui-frontend / frontend-integration / quality / release / retrospective |
+
+---
+
 ### UI 设计与前端开发（14个Skill）
 
 #### 模块1：UI设计系统
@@ -322,7 +349,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 119 个 Pipeline Skill 中，24 个产出人类可读的 Markdown 可交付文档，其余 95 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。
+PM 领域的 119 个 Pipeline Skill 中，24 个产出人类可读的 Markdown 可交付文档，其余 95 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 179 个 Skill（含 39 个编排器 + 119 个 PM Pipeline + 11 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航）。
 
 ### PM 核心产出文档一览
 

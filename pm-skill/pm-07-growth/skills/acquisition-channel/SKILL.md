@@ -120,6 +120,8 @@ metadata:
 
 **存储路径**：`output/pm-growth/acquisition-channel/`
 
+**输出文件**：channel_analysis.json
+
 **输出Schema**：
 
 ```json

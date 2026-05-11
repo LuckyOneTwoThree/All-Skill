@@ -1,4 +1,4 @@
-﻿---
+---
 name: tracking-plan
 description: 当需要生成埋点方案时使用。埋点方案自动生成，包含从指标体系反推埋点需求、PRD功能埋点提取、埋点质量检查、PRD一致性校验。关键词：埋点方案、事件设计、属性设计、埋点规范、Tracking Plan、数据采集。
 metadata:
@@ -32,7 +32,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | string/文件 | 是 | 用户提供 | PRD文档内容（含功能描述、用户流程、核心路径、业务规则） |
-| 指标体系 | JSON | 是 | metrics-system → metric_system.json | 北极星指标、L1/L2/行动指标 |
+| 指标体系 | JSON | 是 | output/pm-metrics-design/metrics-system/metric_system.json | 北极星指标、L1/L2/行动指标 |
 | 现有埋点清单 | JSON数组 | ○ | 用户提供 | 已有埋点事件清单 |
 
 ### PRD（必填）
@@ -630,6 +630,8 @@ def calculate_prd_consistency_score():
 ## 输出
 
 **存储路径**：`output/pm-metrics-design/tracking-plan/`
+
+**输出文件**：`tracking_plan.json`
 
 **输出Schema**：
 

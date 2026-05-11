@@ -1,4 +1,4 @@
-﻿---
+---
 name: sprint-retrospective-report
 description: 当需要将Sprint执行数据汇总为完整可交付的复盘报告时使用。Sprint复盘报告自动生成，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议。关键词：Sprint复盘、迭代复盘、Sprint报告、团队回顾、改进行动项。
 metadata:
@@ -25,9 +25,9 @@ Sprint复盘报告的核心价值在于从每个迭代中提取可复用的学�
 
 | 输入项 | 来源 | 必需 | 说明 |
 |--------|------|------|------|
-| Sprint计划 | agile-sprint-planning | ✅ | Sprint Goal、Story列表、容量分配 |
-| 每日同步记录 | agile-daily-sync | ⬜ | 障碍追踪、风险记录、进展更新 |
-| Sprint评审结果 | agile-review | ✅ | 交付物、反馈、改进建议 |
+| Sprint计划 | output/pm-project/agile-sprint-planning | ✅ | Sprint Goal、Story列表、容量分配 |
+| 每日同步记录 | output/pm-project/agile-daily-sync | ⬜ | 障碍追踪、风险记录、进展更新 |
+| Sprint评审结果 | output/pm-project/agile-review | ✅ | 交付物、反馈、改进建议 |
 | 历史Sprint数据 | 用户提供 | ⬜ | 过往3-5个Sprint的速率和交付数据 |
 
 ### 降级策略

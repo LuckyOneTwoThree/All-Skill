@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| OKR数据 | object | 是 | decision-dace → dace_status.yaml | 目标与关键结果、进度追踪数据 |
-| 决策记录 | object | 是 | decision-insight → data_insight.yaml | 团队历史决策及数据支撑情况 |
+| OKR数据 | object | 是 | output/pm-metrics-ops/decision-dace/dace_status.yaml | 目标与关键结果、进度追踪数据 |
+| 决策记录 | object | 是 | output/pm-metrics-ops/decision-insight/data_insight.yaml | 团队历史决策及数据支撑情况 |
 | 团队反馈 | object | ○ | 用户提供 | 报告使用率、数据素养评估 |
 
 ## 执行步骤
@@ -537,6 +537,8 @@ output/pm-metrics-ops/decision-culture/
 └── engagement/
     └── report_analytics.yaml
 ```
+
+输出文件：{date}_daily_summary.md、{week}_weekly_report.md、{month}_monthly_report.md、{quarter}_quarterly_report.md、daily_dashboard.yaml、metrics_overview.yaml、report_analytics.yaml
 
 ## 文化推广原则
 

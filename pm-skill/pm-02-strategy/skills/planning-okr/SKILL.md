@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-okr
 description: 当需要制定季度/年度OKR、目标分解、绩效考核标准时使用。OKR自动生成。从战略方向生成目标与关键结果，包括Objective生成、Key Results设计、可行性评估和OKR对齐检查。关键词：OKR、目标管理、关键结果、目标分解、OKR对齐。
 metadata:
@@ -25,9 +25,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| SWOT战略方向 | JSON | 是 | planning-swot → swot.json | SO/ST/WO/WT战略方向 |
-| 北极星指标 | JSON | 是 | planning-north-star → north-star.json | 北极星指标及下钻指标 |
-| BMC商业模式画布 | JSON | ○ | business-model-canvas → bmc.json | 价值主张、收入来源 |
+| SWOT战略方向 | JSON | 是 | output/pm-strategy/planning-swot/swot.json | SO/ST/WO/WT战略方向 |
+| 北极星指标 | JSON | 是 | output/pm-strategy/planning-north-star/north-star.json | 北极星指标及下钻指标 |
+| BMC商业模式画布 | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、收入来源 |
 | 业务现状数据 | JSON | ○ | 用户提供 | 当前业务指标基线 |
 
 ## 执行步骤
@@ -87,6 +87,8 @@ kr_assessment:
 ## 输出
 
 **存储路径**：`output/pm-strategy/planning-okr/`
+
+**输出文件**：okr.json
 
 ```yaml
 okr_candidates:
@@ -164,6 +166,7 @@ okr_candidates:
 | bmc.json | 用户提供业务目标 → 直接生成OKR候选，标注"缺乏BMC数据" |
 | swot.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选，整体置信度降低 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要SWOT、北极星指标和BMC数据，请通过以下方式之一提供：

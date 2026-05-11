@@ -1,4 +1,4 @@
-﻿---
+---
 name: ideation-convergence
 description: 当需要从多个创意方案中筛选和深化时使用。方案收敛与深化Pipeline，从SCAMPER方案列表中筛选高质量候选，通过深化和对比矩阵为人类决策提供支持。关键词：方案收敛、方案深化、对比矩阵、人类决策、产品决策。
 metadata:
@@ -37,8 +37,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| Solutions | JSON/array | 是 | ideation-scamper → solutions.json | 来自Pipeline 5的SCAMPER方案列表 |
-| Inversion Analysis | JSON/array | 是 | ideation-inversion → inversion_analysis.json | 来自Pipeline 6的思维逆转分析结果，包括设计约束 |
+| Solutions | JSON/array | 是 | output/pm-design/ideation-scamper/solutions.json | 来自Pipeline 5的SCAMPER方案列表 |
+| Inversion Analysis | JSON/array | 是 | output/pm-design/ideation-inversion/inversion_analysis.json | 来自Pipeline 6的思维逆转分析结果，包括设计约束 |
 | Product Context | JSON/object | ○ | 用户提供 | 产品战略和资源约束信息 |
 
 ### 输入格式
@@ -367,6 +367,7 @@ AI推荐需要明确标注置信度，并在输出中说明推荐理由。
 ## 输出
 
 **存储路径**：`output/pm-design/ideation-convergence/`
+**输出文件**：converged_solutions.json
 
 ### 数据结构
 

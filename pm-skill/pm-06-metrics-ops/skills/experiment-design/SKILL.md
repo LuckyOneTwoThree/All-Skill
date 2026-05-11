@@ -28,7 +28,7 @@ metadata:
 |--------|------|------|------|------|
 | 假设陈述 | string | 是 | 用户提供 | 业务问题或改进想法 |
 | 可用流量 | number | 是 | 用户提供 | 可参与实验的用户量 |
-| 指标体系 | JSON | ○ | metrics-system → metrics.json | 产品关键指标定义 |
+| 指标体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metrics.json | 产品关键指标定义 |
 | 历史数据 | JSON | ○ | analysis-funnel / analysis-retention | 用于样本量计算的基线数据 |
 
 ## 执行步骤
@@ -303,6 +303,8 @@ ab_test_design:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/experiment-design/`
+
+**输出文件**：experiment_design.json
 
 **输出Schema**：
 

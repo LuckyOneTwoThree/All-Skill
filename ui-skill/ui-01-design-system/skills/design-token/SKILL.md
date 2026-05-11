@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 品牌规范 | JSON/markdown | 是 | 用户提供 | 品牌色彩、字体、风格指南 |
-| 产品定位 | JSON | 是 | positioning-statement → positioning-statements.json | 产品定位陈述，影响视觉风格 |
+| 品牌规范 | JSON/markdown | 是 | 用户提供 / output/pm-strategy/positioning-statement/positioning-statements.json（可选） | 品牌色彩、字体、风格指南 |
+| 产品定位 | JSON | 是 | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位陈述，影响视觉风格 |
 | 目标平台 | string | 是 | 用户提供 | Web / Mobile / 跨平台 |
 
 ## 执行步骤
@@ -89,6 +89,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-design-system/design-token/`
+
+**输出文件**：tokens.json
 
 **输出Schema**：
 
@@ -210,9 +212,10 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| 品牌规范缺失 | 用户提供产品名称和行业 → 基于行业基准生成默认品牌色 | 品牌色基于行业推断，标注"待品牌确认" |
+| 品牌规范缺失 | 用户提供产品名称和行业 → 基于行业基准生成默认品牌色；若用户未提供品牌规范，可从 positioning-statement 的输出中提取品牌定位信息作为替代 | 品牌色基于行业推断，标注"待品牌确认" |
 | 产品定位缺失 | 基于品牌规范推断色彩情绪 | 色彩情绪可能不够精准 |
 | 品牌规范+产品定位均缺失 | 用户提供产品名称和目标用户 → 生成通用设计令牌 | 输出为通用令牌，关键决策标注"待确认" |
+| 目标平台缺失 | 若用户未提供目标平台，提示用户提供或跳过该输入相关步骤 | 默认输出Web格式，标注"待平台确认" |
 
 数据获取说明：
 - 本Skill需要品牌规范和产品定位，请通过以下方式之一提供：

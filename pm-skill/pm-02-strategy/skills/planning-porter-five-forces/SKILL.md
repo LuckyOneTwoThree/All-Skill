@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-porter-five-forces
 description: 当需要进行行业分析、竞争战略制定、市场吸引力评估时使用。波特五力自动评估。分析行业竞争结构的五种力量，评估行业吸引力。关键词：波特五力、行业分析、竞争战略、行业吸引力、竞争结构。
 metadata:
@@ -25,9 +25,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 竞品分析数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品能力、市场份额、战略动向 |
-| 市场数据 | JSON | 是 | market-tam-som → tam-som.json | 市场规模、增长率 |
-| 行业信息 | JSON | ○ | market-pest → pest.json | 政策法规、技术动态 |
+| 竞品分析数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品能力、市场份额、战略动向 |
+| 市场数据 | JSON | 是 | output/pm-discovery/market-tam-som/tam-som.json | 市场规模、增长率 |
+| 行业信息 | JSON | ○ | output/pm-discovery/market-pest/pest.json | 政策法规、技术动态 |
 
 ## 执行步骤
 
@@ -126,6 +126,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/planning-porter-five-forces/`
+
+**输出文件**：porter_five_forces.json
 
 ```yaml
 porter_five_forces:

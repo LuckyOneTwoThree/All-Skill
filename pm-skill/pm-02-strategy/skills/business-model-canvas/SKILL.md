@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-model-canvas
 description: 当需要设计或评估产品商业模式时触发。商业模式画布自动生成，将产品探索阶段洞察转化为9格商业画布。关键词：商业模式画布、BMC、价值主张、收入模式、成本结构。
 metadata:
@@ -365,6 +365,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/business-model-canvas/`
+
+**输出文件**：bmc.json, assumptions.json
 
 ### 完整商业画布JSON
 

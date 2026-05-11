@@ -32,9 +32,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| product_backlog | object[] | 是 | iteration-backlog → prioritized_items | 产品待办列表 |
+| product_backlog | object[] | 是 | output/pm-monitoring/iteration-backlog/prioritized_items | 产品待办列表 |
 | sprint_goal | string | ○ | 用户提供 | Sprint目标描述 |
-| team_capacity | object | 是 | planning-resource → resource_plan | 团队容量数据 |
+| team_capacity | object | 是 | output/pm-project/planning-resource/resource_plan | 团队容量数据 |
 | sprint_duration_days | number | 是 | 用户提供 | Sprint天数 |
 
 ---
@@ -185,6 +185,8 @@ metadata:
 
 **存储路径**：`output/pm-project/agile-sprint-planning/`
 
+**输出文件**：sprint_plan.json、metadata.json
+
 **输出Schema**：
 
 ```json
@@ -269,6 +271,7 @@ metadata:
 | Product Backlog | 无法选取和排序Stories | 用户提供需求列表（标题+优先级+估算），AI据此生成Sprint计划 | 基于用户输入的Sprint计划 |
 | Sprint目标 | 无法确定Sprint聚焦方向 | AI基于高优先级Stories自动推断Sprint Goal，标注需PO确认 | AI推断的Sprint Goal |
 | 团队容量 | 无法验证计划可行性 | 跳过容量验证，计划中标注"需人工确认容量匹配" | 无容量验证的Sprint计划 |
+| Sprint天数 | 无法确定Sprint时间范围 | 若用户未提供Sprint天数，提示用户提供或跳过该输入相关步骤 | — |
 
 ### 数据获取说明
 

@@ -1,4 +1,4 @@
-﻿---
+---
 name: cache-strategy
 description: 当需要设计缓存策略时使用。缓存策略自动设计，为系统设计多级缓存架构、缓存一致性策略和穿透防护方案，确保高并发场景下的数据访问性能和一致性。关键词：缓存策略、Redis、多级缓存、缓存一致性、缓存穿透、缓存雪崩。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 数据模型 | JSON | 是 | data-model → er_model.json | 数据实体和访问模式 |
-| API契约 | YAML/JSON | 是 | api-contract → openapi.yaml | 接口读写模式 |
+| 数据模型 | JSON | 是 | output/backend-data-architecture/data-model/er_model.json | 数据实体和访问模式 |
+| API契约 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | 接口读写模式 |
 | 并发量预估 | JSON | ○ | 用户提供 | QPS/TPS峰值和均值 |
 
 ## 执行步骤
@@ -116,6 +116,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-data-architecture/cache-strategy/`
+
+**输出文件**：cache-strategy.json
 
 ```json
 {

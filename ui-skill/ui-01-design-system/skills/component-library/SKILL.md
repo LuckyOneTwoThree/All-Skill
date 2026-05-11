@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 设计令牌 | JSON | 是 | design-token → tokens.json | 色彩、字体、间距等设计变量 |
-| PRD | markdown | 是 | design-prd → prd.md | 产品需求文档，提取组件需求 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 色彩、字体、间距等设计变量 |
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档，提取组件需求 |
 | 现有组件库 | JSON | ○ | 用户提供 | 已有组件清单（如有，避免重复） |
 
 ## 执行步骤
@@ -102,6 +102,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-design-system/component-library/`
+
+**输出文件**：library.json
 
 **输出Schema**：
 

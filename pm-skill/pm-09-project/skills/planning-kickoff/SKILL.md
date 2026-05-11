@@ -31,8 +31,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| project_charter | object | 是 | planning-project-charter → project_charter | 项目宪章 |
-| resource_plan | object | 是 | planning-resource → resource_plan | 资源计划 |
+| project_charter | object | 是 | output/pm-project/planning-project-charter/project_charter | 项目宪章 |
+| resource_plan | object | 是 | output/pm-project/planning-resource/resource_plan | 资源计划 |
 | meeting_attendees | string[] | 是 | 用户提供 | 会议参与者名单 |
 | preferred_meeting_time | string | ○ | 用户提供 | 首选会议时间 |
 
@@ -217,6 +217,8 @@ metadata:
 
 **存储路径**：`output/pm-project/planning-kickoff/`
 
+**输出文件**：kickoff.json、metadata.json
+
 **输出Schema**：
 
 ```json
@@ -363,6 +365,7 @@ metadata:
 | 项目宪章 | 无法提取会议议程和背景材料 | 用户描述项目目标和范围，AI基于描述生成Kickoff议程 | 基于用户描述的Kickoff议程 |
 | 资源规划 | 无法整理资源要点 | 跳过资源配置讨论环节，议程中标注"资源规划待确认" | 含待确认项的Kickoff材料 |
 | 会议参与者 | 无法确定参会人员和角色 | 用户提供参会人员名单，AI据此调整议程和问题准备 | 基于用户输入的参会配置 |
+| 首选会议时间 | 无法确定会议安排 | 若用户未提供首选会议时间，提示用户提供或跳过该输入相关步骤 | — |
 
 ### 数据获取说明
 

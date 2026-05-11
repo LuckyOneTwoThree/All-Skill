@@ -1,4 +1,4 @@
-﻿---
+---
 name: positioning-value-curve
 description: 当需要绘制竞争要素价值曲线或识别蓝海机会时使用。价值曲线自动绘制，输入竞品分析+产品能力+用户研究，输出竞争要素评分和蓝海动作建议。关键词：价值曲线、蓝海策略、竞争要素、差异化。
 metadata:
@@ -25,9 +25,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 竞品分析数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品功能对比、市场定位 |
+| 竞品分析数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品功能对比、市场定位 |
 | 自身产品能力评估 | JSON | 是 | 用户提供 | 产品功能矩阵、成熟度评估 |
-| 用户研究数据 | JSON | 是 | user-research-user-modeling → persona.json | 用户关注要素、痛点优先级 |
+| 用户研究数据 | JSON | 是 | output/pm-discovery/user-research-user-modeling/persona.json | 用户关注要素、痛点优先级 |
 
 ## 执行步骤
 
@@ -72,6 +72,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/positioning-value-curve/value-curve.json`
+
+**输出文件**：value-curve.json
 
 ```json
 {

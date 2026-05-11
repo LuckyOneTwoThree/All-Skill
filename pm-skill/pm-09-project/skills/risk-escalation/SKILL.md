@@ -33,11 +33,11 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| risk_data | object | 是 | risk-monitoring → risk_monitoring | 风险数据 |
+| risk_data | object | 是 | output/pm-project/risk-monitoring/risk_monitoring | 风险数据 |
 | issue_data | object | 是 | 用户提供 | 问题数据 |
 | escalation_rules | object | 是 | 用户提供 | 升级规则配置 |
 | organizational_structure | object | 是 | 用户提供 | 组织结构（用于确定升级路径） |
-| pending_escalations | object[] | ○ | risk-escalation → 升级记录 | 待处理的升级请求 |
+| pending_escalations | object[] | ○ | output/pm-project/risk-escalation/升级记录 | 待处理的升级请求 |
 
 ---
 
@@ -184,6 +184,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/risk-escalation/`
+
+**输出文件**：escalation.json、metadata.json
 
 **输出Schema**：
 

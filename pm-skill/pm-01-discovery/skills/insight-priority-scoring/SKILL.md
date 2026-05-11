@@ -1,4 +1,4 @@
-﻿---
+---
 name: insight-priority-scoring
 description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分。
 metadata:
@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 需求列表 | JSON | 是 | insight-requirement-layers → requirement-layers.json | 需求三层模型拆解结果 |
-| KANO分类结果 | JSON | 是 | insight-kano → kano.json | KANO模型分类结果 |
-| 痛点数据 | JSON | 是 | insight-jtbd → jtbd.json / insight-5whys → 5whys.json | 痛点强度与频率数据 |
+| 需求列表 | JSON | 是 | output/pm-discovery/insight-requirement-layers/requirement-layers.json | 需求三层模型拆解结果 |
+| KANO分类结果 | JSON | 是 | output/pm-discovery/insight-kano/kano.json | KANO模型分类结果 |
+| 痛点数据 | JSON | 是 | output/pm-discovery/insight-jtbd/jtbd.json / output/pm-discovery/insight-5whys/5whys.json | 痛点强度与频率数据 |
 
 ### Input JSON 示例结构
 

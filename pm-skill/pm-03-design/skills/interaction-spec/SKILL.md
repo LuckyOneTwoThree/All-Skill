@@ -1,4 +1,4 @@
-﻿---
+---
 name: interaction-spec
 description: 当需要将用户流程和原型设计转化为完整的交互设计规范时使用。交互设计规范文档自动生成，包含交互状态机、动画规范、手势操作、反馈机制、无障碍交互和异常状态处理。关键词：交互设计规范、交互规范、状态机、动画规范、手势操作、交互反馈、无障碍交互。
 metadata:
@@ -25,9 +25,9 @@ metadata:
 
 | 输入项 | 来源 | 必需 | 说明 |
 |--------|------|------|------|
-| 用户流程 | design-userflow | ✅ | 用户流程图、状态转换、决策节点 |
-| 原型规格 | design-prototype | ✅ | 原型设计、交互标注、组件规格 |
-| 设计交接文档 | design-handoff-spec | ⬜ | 设计令牌、组件规格、响应式断点 |
+| 用户流程 | output/pm-design/design-userflow | ✅ | 用户流程图、状态转换、决策节点 |
+| 原型规格 | output/pm-design/design-prototype | ✅ | 原型设计、交互标注、组件规格 |
+| 设计交接文档 | output/pm-design/design-handoff-spec | ⬜ | 设计令牌、组件规格、响应式断点 |
 | 品牌规范 | 用户提供 | ⬜ | 品牌调性、动画风格偏好 |
 
 ### 降级策略

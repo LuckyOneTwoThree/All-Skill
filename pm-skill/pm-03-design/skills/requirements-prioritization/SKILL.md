@@ -1,4 +1,4 @@
-﻿---
+---
 name: requirements-prioritization
 description: 当需要对需求进行优先级排序时使用。需求自动评估与排序，基于RICE评分和MoSCoW框架对需求进行优先级排序。执行角色：🤖→👤 AI建议，人类审批。关键词：需求排序、RICE评分、MoSCoW、优先级评估、需求优先级。
 metadata:
@@ -39,7 +39,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| requirement_analysis[] | JSON/array | 是 | requirements-understanding → requirement_analysis.json | Pipeline 2输出的需求分析列表，含id、understanding、relationships、understanding_confidence等字段 |
+| requirement_analysis[] | JSON/array | 是 | output/pm-design/requirements-understanding/requirement_analysis.json | Pipeline 2输出的需求分析列表，含id、understanding、relationships、understanding_confidence等字段 |
 | 资源约束 | YAML/JSON | ○ | 用户提供 | 资源约束配置，含可用人力、最大并行功能数、战略目标、截止日期 |
 
 ### 输入格式
@@ -177,6 +177,7 @@ ELSE
 ## 输出
 
 **存储路径**：`output/pm-design/requirements-prioritization/`
+**输出文件**：prioritized_requirements.json
 
 ### requirement_prioritization[] 数据结构
 

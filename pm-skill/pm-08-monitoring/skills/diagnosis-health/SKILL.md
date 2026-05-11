@@ -30,7 +30,7 @@ metadata:
 | 可用性数据 | JSON | 是 | 监控系统 → 可用性数据 | SLA 达成率、MTTR、MTBF |
 | 用户满意度 | JSON | 是 | 反馈系统 → 满意度数据 | NPS、CSAT、反馈、投诉 |
 | 业务指标 | JSON | 是 | 数据分析平台 → 业务指标 | 转化率、GMV、DAU/MAU、留存 |
-| 竞品动态 | JSON | ○ | diagnosis-competition → 竞品报告 | 竞品健康度对比数据 |
+| 竞品动态 | JSON | ○ | output/pm-monitoring/diagnosis-competition/竞品报告 | 竞品健康度对比数据 |
 
 ## 执行步骤
 

@@ -1,4 +1,4 @@
-﻿---
+---
 name: insight-5whys
 description: 当需要对关键痛点或问题现象进行根因深挖时使用。5Whys结构化根因分析，通过逐层追问定位可行动的根因和改进点。关键词：5Whys、根因分析、因果链、痛点深挖、原因追溯。
 metadata:
@@ -26,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 待分析的问题现象 | JSON | 是 | insight-jtbd → jtbd.json / 用户提供 | 待分析的问题现象描述，含痛点指标与趋势 |
+| 待分析的问题现象 | JSON | 是 | output/pm-discovery/insight-jtbd/jtbd.json / 用户提供 | 待分析的问题现象描述，含痛点指标与趋势 |
 
 ### Input JSON 示例结构
 

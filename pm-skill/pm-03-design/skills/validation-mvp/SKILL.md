@@ -1,4 +1,4 @@
-﻿---
+---
 name: validation-mvp
 description: 当需要界定MVP功能范围时使用。MVP范围自动界定工具，基于假设地图和资源约束，智能识别Must Have、MUST NOT和Nice to Have功能，并评估MVP规模占比。关键词：MVP范围、最小可行产品、功能优先级、资源约束。
 metadata:
@@ -35,8 +35,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 方案设计 | JSON | 是 | design-prototype / design-userflow | 完整功能列表及描述 |
-| 假设地图 | JSON | 是 | validation-assumption-map → assumption-map.json | Pipeline 12输出的假设地图 |
+| 方案设计 | JSON | 是 | output/pm-design/design-prototype / output/pm-design/design-userflow | 完整功能列表及描述 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption-map.json | Pipeline 12输出的假设地图 |
 | 资源约束 | JSON | ○ | 用户提供 | 时间、人力、预算限制 |
 
 ### 输入格式
@@ -153,6 +153,7 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 ## 输出
 
 **存储路径**：`output/pm-design/validation-mvp/`
+**输出文件**：mvp_definition.json
 
 ```json
 {

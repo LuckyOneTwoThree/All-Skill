@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 告警数据 | object | 是 | monitoring-system → alert.json | 告警内容、时间、来源服务 |
-| 版本发布信息 | object | ○ | release-gradual → release_record.json | 近期发布记录 |
+| 告警数据 | object | 是 | output/pm-monitoring/monitoring-system/alert.json | 告警内容、时间、来源服务 |
+| 版本发布信息 | object | ○ | output/pm-development/release-gradual/release_record.json | 近期发布记录 |
 | 配置变更记录 | object | ○ | 用户提供 | 配置修改历史 |
 | 流量变化数据 | object | ○ | 用户提供 | 流量趋势和异常波动 |
 | 根因知识库 | object[] | ○ | 用户提供 | 历史问题-根因映射 |

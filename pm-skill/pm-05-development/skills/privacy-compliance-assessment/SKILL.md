@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| PRD文档 | Markdown | ○ | design-prd → PRD-{产品名}.md | 产品功能需求 |
-| API契约 | JSON | ○ | backend api-contract → openapi.yaml | 接口定义（含数据字段） |
-| 数据模型 | JSON | ○ | backend data-model → er_model.json | 数据实体和字段 |
+| PRD文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 产品功能需求 |
+| API契约 | JSON | ○ | output/backend-api-design/api-contract/openapi.yaml | 接口定义（含数据字段） |
+| 数据模型 | JSON | ○ | output/backend-data-architecture/data-model/er_model.json | 数据实体和字段 |
 | 目标市场 | string | 是 | 用户提供 | 产品服务的地区/国家 |
 | 已有隐私政策 | string/markdown | ○ | 用户提供 | 现有隐私政策文本 |
 | 第三方SDK/服务清单 | string | ○ | 用户提供 | 使用的第三方服务和SDK |
@@ -278,5 +278,6 @@ metadata:
 | PRD缺失 | 基于用户提供的产品描述推导功能涉及的数据 | 数据盘点可能不完整 |
 | API契约缺失 | 无法自动提取数据字段，需人工补充 | 数据映射可能不精确 |
 | 数据模型缺失 | 无法自动识别数据存储和关系 | 数据流分析可能不完整 |
-| 第三方清单缺失 | 跳过第三方评估章节 | 第三方合规风险未评估 |
+| 第三方清单缺失 | 跳过第三方评估章节 | 输出中标注"第三方评估待补充" |
+| 已有隐私政策缺失 | 若用户未提供已有隐私政策，提示用户提供或跳过该输入相关步骤 | 隐私政策差距分析章节标注"待用户提供隐私政策" |
 | 目标市场未指定 | 默认评估PIPL（中国），标注"建议确认目标市场" | 可能遗漏其他法规 |

@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户声音分析 | JSON | ○ | user-research-voice-analysis → voice-analysis.json | 情感分布、主题聚类、痛点提取 |
-| 行为分析 | JSON | ○ | user-research-behavior-analysis → behavior-analysis.json | 漏斗健康度、Aha Moment、功能使用深度 |
-| 用户建模 | JSON | ○ | user-research-user-modeling → persona.json | Persona、Empathy Map、Journey Map |
-| 访谈数据 | JSON | ○ | user-research-interview-assist → interview_script.json | 访谈脚本、访谈记录、洞察提取 |
+| 用户声音分析 | JSON | ○ | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 情感分布、主题聚类、痛点提取 |
+| 行为分析 | JSON | ○ | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 漏斗健康度、Aha Moment、功能使用深度 |
+| 用户建模 | JSON | ○ | output/pm-discovery/user-research-user-modeling/persona.json | Persona、Empathy Map、Journey Map |
+| 访谈数据 | JSON | ○ | output/pm-discovery/user-research-interview-assist/interview_script.json | 访谈脚本、访谈记录、洞察提取 |
 | 研究目标 | string | 是 | 用户提供 | 本次研究要回答的核心问题 |
 | 产品/品类信息 | string | ○ | 用户提供 | 产品名称、品类、目标市场 |
 
@@ -51,9 +51,9 @@ metadata:
 | 画像要素 | 数据来源 | 报告呈现 |
 |----------|---------|---------|
 | 基本属性 | persona → demographics | 人口统计学描述 |
-| 行为特征 | behavior-analysis → usage_patterns | 使用习惯描述 |
+| 行为特征 | output/pm-discovery/user-research-behavior-analysis/usage_patterns | 使用习惯描述 |
 | 目标与动机 | persona → goals | 引用原话+总结 |
-| 痛点与挫折 | voice-analysis → pain_points | 引用原话+频率标注 |
+| 痛点与挫折 | output/pm-discovery/user-research-voice-analysis/pain_points | 引用原话+频率标注 |
 | 情感地图 | persona → empathy_map | 思维导图描述 |
 
 **画像数量规则**：
@@ -290,3 +290,5 @@ metadata:
 | persona缺失 | 基于VOC和行为数据推导用户画像 | 画像可能不够精细 |
 | interview数据缺失 | 洞察基于VOC和行为数据 | 缺乏深度定性洞察 |
 | 所有上游数据均缺失 | 基于研究目标和AI知识库生成，整体置信度降低 | 报告需人类大量补充验证 |
+| 若用户未提供研究目标 | 提示用户提供研究目标，否则无法确定报告聚焦方向 | - |
+| 若用户未提供产品/品类信息 | 跳过该输入相关步骤，报告中产品相关描述基于推断 | 产品背景描述可能不够准确 |

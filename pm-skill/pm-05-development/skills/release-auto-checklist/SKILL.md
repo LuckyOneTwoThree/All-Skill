@@ -567,6 +567,8 @@ metadata:
 
 **存储路径**：`output/pm-development/release-auto-checklist/`
 
+**输出文件**：`release_checklist.json`
+
 **输出Schema**：
 
 ```json

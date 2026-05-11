@@ -29,7 +29,7 @@ metadata:
 | 竞品数据 | JSON | 是 | 竞品监控系统 → 竞品数据 | 功能列表、版本更新、用户评价 |
 | 自身数据 | JSON | 是 | 产品数据平台 → 自身数据 | 功能列表、用户评价、满意度 |
 | 市场数据 | JSON | ○ | 行业报告 → 市场数据 | 行业趋势、用户需求变化 |
-| 历史追踪 | JSON | ○ | diagnosis-competition → 历史报告 | 历史竞品分析报告 |
+| 历史追踪 | JSON | ○ | output/pm-monitoring/diagnosis-competition/历史报告 | 历史竞品分析报告 |
 
 ## 执行步骤
 

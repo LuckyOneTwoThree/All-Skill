@@ -1,4 +1,4 @@
-﻿---
+---
 name: monitoring-system
 description: 当需要构建产品监控预警体系时使用。产品监控预警体系自动构建，根据产品架构和业务需求，自动生成监控指标、告警规则和 On-Call 手册。关键词：监控系统、监控配置、健康检查、告警规则、监控体系、监控搭建、告警配置。
 metadata:
@@ -27,9 +27,9 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 产品架构 | JSON/文件 | 是 | 用户提供 | 系统架构图、组件关系、依赖链路 |
-| 指标体系 | JSON | 是 | metrics-system → metric_system.json | 需监控的业务指标和技术指标定义 |
+| 指标体系 | JSON | 是 | output/pm-metrics-design/metrics-system/metric_system.json | 需监控的业务指标和技术指标定义 |
 | SLA 要求 | JSON | 是 | 用户提供 | 可用性、响应时间、吞吐量要求 |
-| 现有监控 | JSON | ○ | monitoring-system → 现有配置 | 已有的监控配置和告警规则 |
+| 现有监控 | JSON | ○ | output/pm-monitoring/monitoring-system/现有配置 | 已有的监控配置和告警规则 |
 
 ## 执行步骤
 

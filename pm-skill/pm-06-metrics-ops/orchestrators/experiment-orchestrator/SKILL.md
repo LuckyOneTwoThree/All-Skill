@@ -1,11 +1,11 @@
 ---
 name: experiment-orchestrator
-description: 当需要设计或执行A/B测试实验时使用。实验验证指挥官，包括实验方案自动设计、实验执行与统计显著性分析。关键词：A/B测试、实验设计、统计显著性、实验执行、数据实验。
+description: 当需要设计或执行A/B测试实验时使用。实验验证指挥官，调度experiment-design/execution/report。关键词：A/B测试、实验设计、统计显著性、实验执行。
 metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "orchestrator"
-  version: "3.0"
+  version: "4.0"
 ---
 
 # 实验设计指挥官
@@ -23,45 +23,68 @@ metadata:
 3. **自动归因**：实验结果自动进行多维下钻分析，识别异质性效应和新奇效应
 4. **决策规则显式化**：统计显著且稳定可考虑提前终止、护栏指标下降触发告警、新奇效应显著则延长周期，规则前置而非事后判断
 
-## 任务调度
+## 子Skill执行协议
 
-```
-experiment-design → experiment-execution → experiment-report
-```
+你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
 
-### 调度逻辑
+1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
+2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
+3. **输出到指定路径**：将结果写入子Skill规定的输出路径
+4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
+5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
 
-| 触发事件 | 调度动作 |
-|----------|----------|
-| 新实验需求 | → experiment-design（假设结构化、指标选择、样本量计算） |
-| 实验上线运行 | → experiment-execution（持续监控模式） |
-| 实验结束 | → experiment-execution（结果分析模式） |
-| 实验结果分析完成 | → experiment-report（报告生成） |
+**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
 
-### 数据流转
+## 阶段执行计划
 
-```
-[假设陈述 + 可用流量 + 指标体系]
-       ↓
-experiment-design
-       ↓ ab_test_design (hypothesis / primary_metric / guardrail_metrics / sample_size / traffic_split / termination_conditions)
-experiment-execution
-       ↓ ab_test_result (conclusion / primary_metric / guardrail_metrics / heterogeneous_effects / novelty_check / decision_recommendation)
-experiment-report
-       ↓ experiment_report (statistical_conclusion / effect_analysis / action_recommendation)
-```
+### 阶段1：实验设计
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | experiment-design |
+| 读取定义路径 | `.trae/skills/experiment-design/SKILL.md` |
+| 输入 | 假设陈述（用户提供）、可用流量（用户提供）、指标体系（metrics-system → metrics.json，可选）、历史数据（analysis-funnel/analysis-retention，可选） |
+| 输出 | `output/pm-metrics-ops/experiment-design/` |
+| 验证 | 假设已结构化（If-Then-Because-For）；主指标与假设直接对应；护栏指标覆盖留存、收入、技术三个维度；样本量计算参数有据可依 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 实验设计经人类审核确认；若未通过则阻止实验上线，修改后重新审核 |
+
+### 阶段2：实验执行
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | experiment-execution |
+| 读取定义路径 | `.trae/skills/experiment-execution/SKILL.md` |
+| 输入 | 实验设计文档（experiment-design → `output/pm-metrics-ops/experiment-design/experiment_design.json`）、实验数据（用户提供）、终止条件（experiment-design → experiment_design.json） |
+| 输出 | `output/pm-metrics-ops/experiment-execution/` |
+| 验证 | 实验分组流量分配正确；护栏指标未触发告警；实验数据采集完整；统计显著性计算正确 |
+| 执行模式 | 🤖 |
+| ⏸ 阶段卡口 | 样本量充足且统计检验完成；若未通过则延长实验周期或扩大流量 |
+
+### 阶段3：实验报告
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | experiment-report |
+| 读取定义路径 | `.trae/skills/experiment-report/SKILL.md` |
+| 输入 | 实验设计方案（experiment-design → `output/pm-metrics-ops/experiment-design/`）、实验执行结果（experiment-execution → `output/pm-metrics-ops/experiment-execution/`）、产品背景（用户提供，可选） |
+| 输出 | `output/pm-metrics-ops/experiment-report/experiment-report.md`、`output/pm-metrics-ops/experiment-report/experiment-report.json` |
+| 验证 | 统计结论与数据一致；行动建议与结论一致；护栏指标全覆盖；异质性效应已分析（至少3个分群维度） |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 实验报告经人类审核确认；若未通过则补充分析或修改结论 |
 
 ## 调度规则
 
-- 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-metrics-ops/{skill-name}/` 文件，释放上下文空间
+- 执行子Skill前必须先读取其SKILL.md定义文件
+- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
+- 每个阶段完成后，将中间结果写入 `output/pm-metrics-ops/{当前阶段子Skill名称}/` 文件，释放上下文空间
 - 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
 - 单个子Skill的输出应控制在2000字以内，超出部分写入文件
 
 ## 阶段卡口
 
-| 卡口 | 通过条件 | 未通过处理 |
-|------|----------|------------|
+| 卡口 | 条件 | 未通过处理 |
+|------|------|------------|
 | 实验方案人类已审核 | 实验设计经人类审核确认 | 阻止实验上线，修改后重新审核 |
 | 统计显著性已判断 | 样本量充足且统计检验完成 | 延长实验周期或扩大流量 |
 | 实验报告已审核 | 实验报告经人类审核确认 | 补充分析或修改结论 |
@@ -89,3 +112,4 @@ experiment-report
 - v1.0: 初始版本
 - v2.0: 结构优化
 - v3.0: 新增 experiment-report（A/B测试报告）
+- v4.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格

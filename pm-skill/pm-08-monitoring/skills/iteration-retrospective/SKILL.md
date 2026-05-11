@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 迭代完成情况 | JSON | 是 | agile-daily-sync → daily_sync | 已完成/未完成项、故事点 |
+| 迭代完成情况 | JSON | 是 | output/pm-project/agile-daily-sync/daily_sync | 已完成/未完成项、故事点 |
 | 质量指标 | JSON | 是 | 测试平台/CI/CD → 质量数据 | 缺陷数、代码覆盖率、返工率 |
 | 团队反馈 | JSON | ○ | Retro工具 → 团队反馈 | Retro 会议记录、投票结果 |
-| 监控数据 | JSON | ○ | monitoring-system → 监控数据 | 稳定性、性能变化数据 |
+| 监控数据 | JSON | ○ | output/pm-monitoring/monitoring-system/监控数据 | 稳定性、性能变化数据 |
 
 ## 执行步骤
 

@@ -25,9 +25,9 @@ metadata:
 
 | 输入项 | 来源 | 必需 | 说明 |
 |--------|------|------|------|
-| 竞品追踪数据 | diagnosis-competition | ✅ | 功能变更、优劣势变化、应对策略 |
-| 竞品情报 | market-competitor-intel | ⬜ | 竞品动态、口碑、定价 |
-| 竞品分类 | market-competitor-quadrant | ⬜ | 四象限分类、竞品定位 |
+| 竞品追踪数据 | output/pm-monitoring/diagnosis-competition | ✅ | 功能变更、优劣势变化、应对策略 |
+| 竞品情报 | output/pm-discovery/market-competitor-intel | ⬜ | 竞品动态、口碑、定价 |
+| 竞品分类 | output/pm-discovery/market-competitor-quadrant | ⬜ | 四象限分类、竞品定位 |
 | 监控周期 | 用户提供 | ⬜ | 报告覆盖的时间范围 |
 
 ### 降级策略
@@ -37,6 +37,7 @@ metadata:
 | 无竞品追踪数据 | 基于竞品情报生成报告，标注"追踪数据缺失" |
 | 无竞品情报 | 基于用户提供信息生成框架，标注"待情报补充" |
 | 无竞品分类 | 默认监控直接竞品，标注"分类待补充" |
+| 无监控周期 | 若用户未提供监控周期，提示用户提供或跳过该输入相关步骤 |
 
 ## 执行步骤
 

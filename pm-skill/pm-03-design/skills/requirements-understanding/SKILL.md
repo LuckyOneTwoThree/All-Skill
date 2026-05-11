@@ -1,4 +1,4 @@
-﻿---
+---
 name: requirements-understanding
 description: 当需要深入理解需求背后的真实问题时使用。需求自动理解与拆解，将分类后的需求还原为真实问题，分析需求间的关联关系。执行角色：🤖→👤 AI建议，人类审批。关键词：需求理解、需求拆解、问题还原、需求关联、需求分析。
 metadata:
@@ -39,7 +39,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| requirements[] | JSON/array | 是 | requirements-collection → requirements.json | Pipeline 1输出的已分类需求列表，含id、category、original_text、source_credibility等字段 |
+| requirements[] | JSON/array | 是 | output/pm-design/requirements-collection/requirements.json | Pipeline 1输出的已分类需求列表，含id、category、original_text、source_credibility等字段 |
 
 ---
 
@@ -110,6 +110,7 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-design/requirements-understanding/`
+**输出文件**：requirement_analysis.json
 
 ### requirement_analysis[] 数据结构
 

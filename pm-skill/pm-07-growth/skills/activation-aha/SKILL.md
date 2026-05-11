@@ -26,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 留存数据 | object | 是 | analysis-retention → retention_analysis.yaml | D1/D7/D30留存率 |
+| 留存数据 | object | 是 | output/pm-metrics-ops/analysis-retention/retention_analysis.yaml | D1/D7/D30留存率 |
 | 用户行为数据 | object | 是 | 用户提供 | 事件日志、行为序列 |
 | 用户分群数据 | object | ○ | 用户提供 | 用户分群数据 |
 
@@ -104,6 +104,8 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 ## 输出
 
 **存储路径**：`output/pm-growth/activation-aha/`
+
+**输出文件**：aha_moment.json
 
 **输出Schema**：
 
@@ -205,6 +207,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 | 留存数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | Aha Moment基于推断而非数据验证 |
 | 行为数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 无法进行行为-留存相关性分析 |
 | 留存数据 + 行为数据均缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 输出Aha Moment候选列表，标注"待数据验证" |
+- 若用户未提供用户分群数据，提示用户提供或跳过该输入相关步骤
 
 ### 数据获取说明
 

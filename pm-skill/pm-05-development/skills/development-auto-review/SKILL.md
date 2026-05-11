@@ -346,6 +346,8 @@ metadata:
 
 **存储路径**：`output/pm-development/development-auto-review/`
 
+**输出文件**：`change_impact_report.json`
+
 **输出Schema**：
 
 ```json

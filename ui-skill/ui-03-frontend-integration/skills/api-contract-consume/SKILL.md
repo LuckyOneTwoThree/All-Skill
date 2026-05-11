@@ -1,4 +1,4 @@
-﻿---
+---
 name: api-contract-consume
 description: 当需要基于API契约生成前端请求层代码时使用。API契约消费自动生成，基于OpenAPI/Swagger文档，自动生成前端请求层代码、TypeScript类型定义、Mock数据和接口调用Hook，实现前后端契约驱动开发。关键词：API契约、OpenAPI、请求层、类型定义、Mock数据、前后端联调。
 metadata:
@@ -26,10 +26,10 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| API契约文档 | YAML/JSON | 是 | api-contract → openapi.yaml | OpenAPI 3.0规范文档 |
-| 页面数据需求 | JSON | 是 | page-assembly | 页面需要的API接口清单 |
+| API契约文档 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | OpenAPI 3.0规范文档 |
+| 页面数据需求 | JSON | 是 | output/ui-frontend/page-assembly | 页面需要的API接口清单 |
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
-| 设计令牌 | JSON | ○ | design-token → tokens.json | 设计变量，用于生成带令牌引用的错误/加载状态UI |
+| 设计令牌 | JSON | ○ | output/ui-design-system/design-token/tokens.json | 设计变量，用于生成带令牌引用的错误/加载状态UI |
 
 ## 执行步骤
 
@@ -101,6 +101,8 @@ metadata:
 
 **存储路径**：`output/ui-frontend-integration/api-contract-consume/`
 
+**输出文件**：api-client-config.json
+
 ```json
 {
   "api_metadata": {
@@ -157,6 +159,7 @@ metadata:
 | API契约部分缺失 | 已有接口生成完整代码，缺失接口生成占位 | 部分接口需手动补充 |
 | 页面数据需求缺失 | 为所有API接口生成代码 | 可能生成未使用的接口代码 |
 | 设计令牌缺失 | 错误/加载状态UI使用内联样式+TODO标注 | 错误提示样式硬编码，需后续替换为Token |
+| 目标框架缺失 | 若用户未提供目标框架，提示用户提供或跳过该输入相关步骤 | 默认React + TypeScript |
 
 数据获取说明：
 - 本Skill需要API契约文档，请通过以下方式之一提供：

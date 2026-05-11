@@ -26,8 +26,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| voice-analysis.json | JSON | 是 | user-research-voice-analysis → voice-analysis.json | 用户声音分析数据，含用户原话、情感、频率 |
-| behavior-analysis.json | JSON | 是 | user-research-behavior-analysis → behavior-analysis.json | 行为分析数据，含行为模式、流失率、上下文 |
+| voice-analysis.json | JSON | 是 | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户声音分析数据，含用户原话、情感、频率 |
+| behavior-analysis.json | JSON | 是 | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 行为分析数据，含行为模式、流失率、上下文 |
 
 ### Input JSON 示例结构
 

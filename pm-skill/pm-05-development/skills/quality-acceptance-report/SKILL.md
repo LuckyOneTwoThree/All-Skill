@@ -26,9 +26,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 测试结果 | JSON | ○ | quality-auto-test → test-results.json | 自动化测试结果 |
-| 验收标准 | JSON | ○ | quality-auto-acceptance → acceptance-criteria.json | 验收标准定义 |
-| SRS文档 | Markdown | ○ | requirements-srs → SRS-{产品名}.md | 需求规格（含验收标准） |
+| 测试结果 | JSON | ○ | output/pm-development/quality-auto-test/test-results.json | 自动化测试执行结果 |
+| 验收标准 | JSON | ○ | output/pm-development/quality-auto-acceptance/acceptance-criteria.json | 验收标准定义 |
+| SRS文档 | Markdown | ○ | output/pm-design/requirements-srs/SRS-{产品名}.md | 需求规格（含验收标准） |
 | 版本号 | string | 是 | 用户提供 | 验收的版本号 |
 | 验收范围 | string | 是 | 用户提供 | 本次验收的功能范围 |
 | 验收方 | string | ○ | 用户提供 | 验收负责人/团队 |
@@ -291,3 +291,4 @@ Must需求通过率：{X}%
 | 测试结果缺失 | 基于验收标准生成待填报告模板 | 无法自动判断通过/不通过 |
 | 验收标准缺失 | 基于SRS推导验收标准 | 验收标准可能不完整 |
 | SRS缺失 | 验收标准由用户提供 | 需人工定义验收标准 |
+| 验收方缺失 | 若用户未提供验收方，提示用户提供或跳过该输入相关步骤 | 签收确认表标注"待指定验收方" |

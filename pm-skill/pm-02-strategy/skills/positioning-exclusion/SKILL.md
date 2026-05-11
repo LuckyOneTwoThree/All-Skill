@@ -1,4 +1,4 @@
-﻿---
+---
 name: positioning-exclusion
 description: 当需要明确产品不为哪些用户服务时使用。目标用户排他决策，输入定位陈述+竞品分析，输出排他陈述和战略意图说明。关键词：目标用户、排他、市场定位、边界。
 metadata:
@@ -27,8 +27,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| positioning-statement输出 | JSON | 是 | positioning-statement → positioning-statements.json | 已通过质量检查的定位陈述候选 |
-| 竞品分析 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品覆盖的用户群体 |
+| positioning-statement输出 | JSON | 是 | output/pm-strategy/positioning-statement/positioning-statements.json | 已通过质量检查的定位陈述候选 |
+| 竞品分析 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品覆盖的用户群体 |
 
 ## 执行步骤
 
@@ -63,6 +63,8 @@ AI扫描竞品分析数据，识别：
 ## 输出
 
 **存储路径**：`output/pm-strategy/positioning-exclusion/exclusion-decision.json`
+
+**输出文件**：exclusion-decision.json
 
 ```json
 {

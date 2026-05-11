@@ -1,11 +1,11 @@
 ---
 name: risk-orchestrator
-description: 当需要识别项目风险或处理风险升级时使用。风险管理指挥官，包括风险识别与登记册维护、风险指标持续监控与预警、风险升级流程自动触发。关键词：风险管理、风险识别、风险监控、风险升级、风险登记册。
+description: 当需要识别项目风险或处理风险升级时使用。风险管理指挥官，调度 risk-identification、risk-monitoring、risk-escalation 子Skill执行。关键词：风险管理、风险识别、风险监控、风险升级、风险登记册、风险预警、应急升级。
 metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 风险管理指挥官
@@ -22,49 +22,70 @@ metadata:
 2. **风险前置**：在项目启动时即建立风险登记册，持续扫描而非等问题出现才识别
 3. **自动化追踪**：风险指标自动监控，触发条件自动检测，升级流程自动执行
 
-## 任务调度
+## 子Skill执行协议
 
-```
-risk-identification → risk-monitoring → risk-escalation
-```
+你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
 
-### 调度逻辑
+1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
+2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
+3. **输出到指定路径**：将结果写入子Skill规定的输出路径
+4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
+5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
 
-| 触发事件 | 调度动作 |
-|----------|----------|
-| 每日定时 / 事件触发 | → risk-identification（风险识别与评估） |
-| 持续运行 / 阈值触发 | → risk-monitoring（风险监控与预警） |
-| 高优先级风险需升级 / 自动升级规则触发 | → risk-escalation（风险升级与问题升级） |
+**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
 
-### 数据流转
+## 阶段执行计划
 
-```
-[项目数据 + 外部数据 + 历史风险库]
-       ↓
-risk-identification
-       ↓ risk_register (risks / probability / impact / mitigation / owner)
-[风险登记册 + 项目实时数据]
-       ↓
-risk-monitoring
-       ↓ risk_monitoring (tracked_risks / alerts / status_changes)
-[升级条件满足]
-       ↓
-risk-escalation
-       ↓ escalation (escalation_path / notifications / tracking)
-```
+### 阶段1：风险识别与评估
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | risk-identification |
+| 读取定义路径 | `.trae/skills/risk-identification/SKILL.md` |
+| 输入 | 项目数据（agile-sprint-planning → sprint_plan.json）、外部数据（用户提供，可选）、历史风险库（用户提供，可选）、当前风险登记册（risk-identification → risk_register.json，可选） |
+| 输出 | `output/pm-project/risk-identification/`（risk_register、metadata） |
+| 验证 | 风险覆盖技术、资源、进度、外部4个维度；每个风险有影响和概率评估；风险优先级排序合理；高优先级风险有应对策略 |
+| 执行模式 | 🤖 |
+| ⏸ 阶段卡口 | 风险登记册已建立（风险识别完成，风险登记册已生成且持续更新），否则补充风险扫描或延长识别周期 |
+
+### 阶段2：风险监控与预警
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | risk-monitoring |
+| 读取定义路径 | `.trae/skills/risk-monitoring/SKILL.md` |
+| 输入 | 风险登记册（risk-identification → risk_register.json）、项目数据（项目管理系统）、触发条件（用户提供）、应对措施（risk-monitoring → 应对追踪，可选） |
+| 输出 | `output/pm-project/risk-monitoring/`（risk_monitoring、metadata） |
+| 验证 | 风险状态更新及时；预警触发条件明确；风险趋势分析覆盖至少3个周期；高风险项有跟进记录 |
+| 执行模式 | 🤖 |
+| ⏸ 阶段卡口 | 高优先级风险已监控（风险指标持续追踪，预警条件已配置），否则补充监控指标或调整预警阈值 |
+
+### 阶段3：风险升级与问题升级
+
+| 项目 | 内容 |
+|------|------|
+| 子Skill名称 | risk-escalation |
+| 读取定义路径 | `.trae/skills/risk-escalation/SKILL.md` |
+| 输入 | 风险数据（risk-monitoring → risk_monitoring）、问题数据（用户提供）、升级规则（用户提供）、组织结构（用户提供）、待处理升级（risk-escalation → 升级记录，可选） |
+| 输出 | `output/pm-project/risk-escalation/`（escalation、metadata） |
+| 验证 | 升级路径与风险等级匹配；升级通知在SLA内发送；升级原因包含≥3个要素；升级超时有自动跟进机制 |
+| 执行模式 | 🤖→👤 |
+| ⏸ 阶段卡口 | 高优先级风险已升级（Critical/High风险已触发升级流程），否则立即执行升级，通知相关方 |
 
 ## 调度规则
 
-- 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-project/{skill-name}/` 文件，释放上下文空间
+- 执行子Skill前必须先读取其SKILL.md定义文件
+- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
+- 每个阶段完成后，将中间结果写入 `output/pm-project/{当前阶段子Skill名称}/` 文件，释放上下文空间
 - 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
 - 单个子Skill的输出应控制在2000字以内，超出部分写入文件
 
 ## 阶段卡口
 
-| 卡口 | 通过条件 | 未通过处理 |
-|------|----------|------------|
+| 卡口 | 条件 | 未通过处理 |
+|------|------|------------|
 | 风险登记册已建立 | 风险识别完成，风险登记册已生成且持续更新 | 补充风险扫描或延长识别周期 |
+| 高优先级风险已监控 | 风险指标持续追踪，预警条件已配置 | 补充监控指标或调整预警阈值 |
 | 高优先级风险已升级 | Critical/High风险已触发升级流程 | 立即执行升级，通知相关方 |
 
 ## 人类决策点
@@ -78,3 +99,4 @@ risk-escalation
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
+- v3.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则

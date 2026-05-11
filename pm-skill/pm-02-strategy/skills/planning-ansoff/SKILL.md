@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-ansoff
 description: 当需要进行市场扩张、产品扩张、多元化战略决策时使用。Ansoff矩阵自动定位。分析当前产品/市场定位，推荐增长路径。关键词：Ansoff矩阵、增长路径、市场扩张、多元化战略、产品扩张。
 metadata:
@@ -27,8 +27,8 @@ metadata:
 |--------|------|------|------|------|
 | 当前产品定义 | string | 是 | 用户提供 | 产品核心功能和价值主张描述 |
 | 当前市场定义 | string | 是 | 用户提供 | 目标市场、用户群体描述 |
-| 增长目标 | string | ○ | planning-okr → okr.json | 期望的增长方向和目标 |
-| SWOT分析结果 | JSON | ○ | planning-swot → swot.json | 优势/劣势/机会/威胁 |
+| 增长目标 | string | ○ | output/pm-strategy/planning-okr/okr.json | 期望的增长方向和目标 |
+| SWOT分析结果 | JSON | ○ | output/pm-strategy/planning-swot/swot.json | 优势/劣势/机会/威胁 |
 
 ## Ansoff矩阵框架
 
@@ -91,6 +91,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/planning-ansoff/`
+
+**输出文件**：ansoff.json
 
 ```yaml
 ansoff:

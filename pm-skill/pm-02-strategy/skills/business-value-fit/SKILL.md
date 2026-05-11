@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-value-fit
 description: 当需要评估价值主张与用户需求的匹配度时使用。价值主张匹配度自动评估，AI自动执行，评估商业画布中的价值主张与用户痛点/收益的匹配程度。关键词：价值主张匹配、痛点覆盖、收益验证、匹配度评分。
 metadata:
@@ -30,7 +30,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| BMC价值主张 | JSON | 是 | business-model-canvas → bmc.json | 价值主张列表，含Pain Relievers和Gain Creators |
+| BMC价值主张 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 价值主张列表，含Pain Relievers和Gain Creators |
 | 用户研究数据 | JSON | 是 | user-research-user-modeling / user-research-voice-analysis | 用户画像、痛点、期望收益、机会简报 |
 
 ### 必需输入
@@ -238,6 +238,8 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 ## 输出
 
 **存储路径**：`output/pm-strategy/business-value-fit/`
+
+**输出文件**：evaluation_report.json
 
 ### 完整评估报告
 

@@ -1,4 +1,4 @@
-﻿---
+---
 name: ideation-scamper
 description: 当需要系统化生成产品改进方案时使用。SCAMPER结构化方案生成工具，基于HMW陈述，从替代、合并、改编、修改、转换用途、消除、逆向7个维度系统化生成产品方案。关键词：SCAMPER、方案生成、产品创新、结构化思考。
 metadata:
@@ -36,7 +36,7 @@ SCAMPER是一种经典的结构化创意工具，通过7个维度的启发式问
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| HMW Statements | JSON/array | 是 | ideation-hmw → hmw.json | 来自Pipeline 4的HMW陈述数组，建议选择发散潜力≥3的HMW |
+| HMW Statements | JSON/array | 是 | output/pm-design/ideation-hmw/hmw.json | 来自Pipeline 4的HMW陈述数组，建议选择发散潜力≥3的HMW |
 | Current Solution | JSON/object | 是 | 用户提供 | 当前产品的现有方案描述，包括功能点和局限性 |
 | Competitor Solutions | JSON/array | ○ | 用户提供 | 至少2-3个竞品的方案分析，包括功能、优劣势 |
 
@@ -273,6 +273,7 @@ SCAMPER是一种经典的结构化创意工具，通过7个维度的启发式问
 ## 输出
 
 **存储路径**：`output/pm-design/ideation-scamper/`
+**输出文件**：scamper_ideas.json
 
 ### 数据结构
 

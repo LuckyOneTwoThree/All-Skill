@@ -1,4 +1,4 @@
-﻿---
+---
 name: data-migration
 description: 当需要设计数据迁移方案时使用。数据迁移方案自动设计，设计数据库版本管理、Schema迁移、数据迁移和回滚方案，确保数据库变更安全可控。关键词：数据迁移、Schema迁移、版本管理、回滚、Flyway、Liquibase。
 metadata:
@@ -27,7 +27,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 当前Schema | SQL/JSON | 是 | 用户提供 | 现有数据库表结构 |
-| 目标Schema | SQL/JSON | 是 | data-model | 新的数据库表结构 |
+| 目标Schema | SQL/JSON | 是 | output/backend-data-architecture/data-model | 新的数据库表结构 |
 | 数据量 | JSON | ○ | 用户提供 | 各表数据量级 |
 
 ## 执行步骤
@@ -105,6 +105,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-data-architecture/data-migration/`
+
+**输出文件**：migration-plan.json
 
 ```json
 {

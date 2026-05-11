@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-swot
 description: 当需要进行战略定位、竞争优势分析、战略方向选择时使用。SWOT自动分析。对内部优势/劣势、外部机会/威胁进行系统分析，并生成SO/ST/WO/WT战略方向。关键词：SWOT分析、战略定位、竞争优势、战略方向、机会威胁。
 metadata:
@@ -26,8 +26,8 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 探索阶段输出 | JSON | 是 | user-research-user-modeling / opportunity-brief | 用户痛点、需求洞察 |
-| 竞品分析数据 | JSON | 是 | market-competitor-intel → competitor-intel.json | 竞品定位、功能对比 |
-| BMC商业模式画布 | JSON | 是 | business-model-canvas → bmc.json | 价值主张、核心资源 |
+| 竞品分析数据 | JSON | 是 | output/pm-discovery/market-competitor-intel/competitor-intel.json | 竞品定位、功能对比 |
+| BMC商业模式画布 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、核心资源 |
 | 内部能力评估 | JSON | ○ | 用户提供 | 技术/品牌/资源/财务能力 |
 
 ## 执行步骤
@@ -85,6 +85,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-strategy/planning-swot/`
+
+**输出文件**：swot.json
 
 ```yaml
 swot:
@@ -157,6 +159,7 @@ swot:
 | competitor-intel.json | 用户提供产品现状描述 → 基于描述生成SWOT，标注"缺乏竞品分析数据" |
 | bmc.json | 用户提供产品现状描述 → 基于描述生成SWOT，标注"缺乏BMC数据" |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状描述直接生成SWOT |
+| 内部能力评估（用户提供） | 若用户未提供内部能力评估，提示用户提供或跳过该输入相关步骤 |
 
 数据获取说明：
 - 本Skill需要探索输出、竞品分析和BMC数据，请通过以下方式之一提供：

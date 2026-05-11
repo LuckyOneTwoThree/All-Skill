@@ -28,11 +28,11 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| persona.json | JSON | ○ | user-research-user-modeling → persona.json | 用户画像数据，用于定向访谈对象和脚本设计 |
+| persona.json | JSON | ○ | output/pm-discovery/user-research-user-modeling/persona.json | 用户画像数据，用于定向访谈对象和脚本设计 |
 | research_objectives | object | 是 | 用户提供 | 研究目标，定义本次访谈要验证的假设和探索的方向 |
 | interview_config | object | 是 | 用户提供 | 访谈配置（目标人数、时长、形式、录音可用性） |
-| voice-analysis.json | JSON | ○ | user-research-voice-analysis → voice-analysis.json | 用户声音分析数据 |
-| behavior-analysis.json | JSON | ○ | user-research-behavior-analysis → behavior-analysis.json | 行为分析数据 |
+| voice-analysis.json | JSON | ○ | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 用户声音分析数据 |
+| behavior-analysis.json | JSON | ○ | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 行为分析数据 |
 
 ### 输入格式
 
@@ -351,6 +351,8 @@ metadata:
 | persona.json | 用户提供研究目标和用户描述 → 基于描述生成访谈脚本，标注"缺乏Persona数据定向" |
 | voice-analysis.json / behavior-analysis.json | 基于用户提供的研究目标直接生成脚本，标注"缺乏数据验证假设" |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的研究目标生成轻量版访谈脚本 |
+| 若用户未提供research_objectives | 提示用户提供研究目标，否则无法设计定向访谈脚本 |
+| 若用户未提供interview_config | 提示用户提供访谈配置，否则使用默认配置（目标人数：5，时长：45分钟，形式：视频，录音可用） |
 
 数据获取说明：
 - 本Skill需要Persona和用户研究数据，请通过以下方式之一提供：

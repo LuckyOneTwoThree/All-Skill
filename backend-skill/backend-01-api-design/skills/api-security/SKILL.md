@@ -1,4 +1,4 @@
-﻿---
+---
 name: api-security
 description: 当需要设计API安全策略时使用。API安全自动设计，为API接口设计安全策略，包含限流规则、数据加密、输入校验、CORS策略和安全头配置，确保API安全合规。关键词：API安全、限流、加密、CORS、输入校验、安全头。
 metadata:
@@ -26,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| API契约 | YAML/JSON | 是 | api-contract → openapi.yaml | 接口定义 |
+| API契约 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | 接口定义 |
 | 安全等级 | string | 是 | 用户提供 | 标准 / 高安全（金融/医疗） |
 | 合规要求 | string | ○ | 用户提供 | GDPR / 等保 / PCI-DSS |
 
@@ -106,6 +106,8 @@ metadata:
 ## 输出
 
 **存储路径**：`output/backend-api-design/api-security/`
+
+**输出文件**：security-policy.json
 
 ```json
 {
