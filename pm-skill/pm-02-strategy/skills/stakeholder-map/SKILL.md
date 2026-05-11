@@ -1,102 +1,110 @@
 ---
 name: stakeholder-map
-description: 当需要识别和分析项目利益相关方时使用。Stakeholder地图自动生成，识别并分析项目相关利益方，评估其影响力和关注度，分类并制定沟通策略。关键词：Stakeholder识别、影响力评估、利益相关方管理、沟通策略。
+description: 当需要识别和管理产品利益相关者时使用。利益相关者地图自动生成，识别产品决策者、资源控制者、受影响方和外部相关方，评估影响力和关注度，生成四象限地图。关键词：利益相关者、Stakeholder地图、影响力、关注度、四象限。
 metadata:
   module: "产品商业与战略"
-  sub-module: "Stakeholder对齐"
+  sub-module: "利益相关者管理"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 12: Stakeholder地图自动生成
+# 利益相关者地图自动生成
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **四类全覆盖**——产品决策者/资源控制者/受影响方/外部相关方四类缺一不可
+2. **双维度量化**——影响力和关注度1-5分评估，四象限分类有据可依
+3. **关键决策者不遗漏**——关键决策者未在地图中则阻塞后续流程
+4. **沟通策略具体化**——每个Stakeholder的沟通策略必须包含关切点和建议话题
 
 ## 交互模式
-
 🤖→👤 AI建议人类审批
 
 ## 输入
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 组织架构信息 | JSON | 是 | planning-okr / planning-roadmap | 公司/团队的组织结构、汇报关系 |
-| 项目涉及范围 | JSON | 是 | planning-okr / planning-roadmap | 项目目标、影响领域、涉及部门 |
+| 商业模式画布 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 关键伙伴、客户关系 |
+| 产品/业务信息 | string | 是 | 用户提供 | 产品名称、组织架构、业务模式 |
 
 ## 执行步骤
 
-### Step 1: Stakeholder识别
+### Step 1: 利益相关者识别
 
-识别四类相关方：
+从4个维度识别利益相关者：
 
-1. **产品决策者**: 有权决定产品方向和优先级的人
-   - 高管/CxO
-   - 产品VP/总监
-   - 产品负责人
+**1. 产品决策者**
+- 产品负责人
+- 业务负责人
+- 技术负责人
+- 高管层
 
-2. **资源控制者**: 掌握项目所需资源的人
-   - 研发负责人
-   - 设计负责人
-   - 财务/预算审批者
-   - HR（招聘资源）
+**2. 资源控制者**
+- 预算审批人
+- 人力资源
+- 技术资源
+- 数据资源
 
-3. **受影响方**: 项目实施会影响的团队或个人
-   - 运营团队
-   - 客服团队
-   - 销售团队
-   - 终端用户
+**3. 受影响方**
+- 内部团队
+- 现有用户
+- 合作伙伴
+- 运营团队
 
-4. **外部相关方**: 外部利益相关方
-   - 合作伙伴
-   - 客户
-   - 监管机构
-   - 供应商
+**4. 外部相关方**
+- 监管机构
+- 行业协会
+- 媒体
+- 投资人
 
 ### Step 2: 影响力-关注度评估
 
-对每个Stakeholder进行1-5分评估：
+对每个利益相关者进行双维度评估：
 
-| 维度 | 1分 | 2分 | 3分 | 4分 | 5分 |
-|------|-----|-----|-----|-----|-----|
-| **影响力** | 无决定权 | 有限影响 | 中等影响 | 重要影响 | 最终决定权 |
-| **关注度** | 不知情 | 被动知晓 | 偶尔关注 | 主动关注 | 深度参与 |
-
-### Step 3: 分类和沟通策略
-
-根据四象限分类制定策略：
-
+**影响力评分 (1-5)**：
 ```
-                    高关注度
-                       ↑
-                       │
-     重点管理          │          密切合作
-   (高影响力+          │         (高影响力+
-     高关注度)         │          低关注度)
-                       │
-    ───────────────────┼──────────────────→
-                       │
-     保持告知          │          监控跟踪
-   (低影响力+          │         (低影响力+
-     高关注度)         │          低关注度)
-                       │
-                       ↓
-                    低关注度
+5分：有最终决策权
+4分：有重大影响权
+3分：有中等影响
+2分：有较小影响
+1分：几乎无影响
 ```
 
-**分类说明及策略**:
+**关注度评分 (1-5)**：
+```
+5分：极度关注，主动参与
+4分：高度关注，定期跟进
+3分：中等关注，偶尔过问
+2分：低度关注，被动了解
+1分：几乎不关注
+```
 
-| 分类 | 影响力 | 关注度 | 沟通策略 |
-|------|--------|--------|----------|
-| **重点管理** | 高 | 高 | 深度合作、充分授权、定期汇报、寻求指导 |
-| **密切合作** | 高 | 低 | 主动触达、创造参与机会、简化沟通、强调价值 |
-| **保持告知** | 低 | 高 | 定期通报、积极倾听、回应关切、争取支持 |
-| **监控跟踪** | 低 | 低 | 按需沟通、简化流程、监控态度变化 |
+### Step 3: 四象限分类
+
+基于影响力-关注度矩阵进行分类：
+
+```
+          │ 高关注度        │ 低关注度
+──────────┼─────────────────┼──────────────
+高影响力  │ 重点管理        │ 保持满意
+          │ (Key Player)    │ (Keep Satisfied)
+──────────┼─────────────────┼──────────────
+低影响力  │ 保持告知        │ 最小关注
+          │ (Keep Informed) │ (Minimal Effort)
+```
+
+### Step 4: 沟通策略制定
+
+为每个利益相关者制定沟通策略：
+
+| 要素 | 内容 |
+|------|------|
+| 沟通频率 | 日常/周度/月度/按需 |
+| 沟通方式 | 会议/邮件/简报/一对一 |
+| 关切点 | 该Stakeholder最关心什么 |
+| 建议话题 | 沟通时应该讨论什么 |
+| 风险 | 不沟通可能导致的后果 |
 
 ## 输出
 
@@ -104,40 +112,82 @@ metadata:
 
 **输出文件**：stakeholder-map.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| stakeholder_map.stakeholders | array | 是 | 利益相关者列表 |
+| stakeholder_map.stakeholders[].name | string | 是 | 姓名/角色 |
+| stakeholder_map.stakeholders[].category | string | 是 | decision_maker/resource_controller/affected/external |
+| stakeholder_map.stakeholders[].influence | number | 是 | 影响力1-5 |
+| stakeholder_map.stakeholders[].interest | number | 是 | 关注度1-5 |
+| stakeholder_map.stakeholders[].quadrant | string | 是 | key_player/keep_satisfied/keep_informed/minimal_effort |
+| stakeholder_map.stakeholders[].communication_strategy | object | 是 | 沟通策略 |
+| stakeholder_map.stakeholders[].communication_strategy.frequency | string | 是 | 沟通频率 |
+| stakeholder_map.stakeholders[].communication_strategy.method | string | 是 | 沟通方式 |
+| stakeholder_map.stakeholders[].communication_strategy.concerns | array | 是 | 关切点列表 |
+| stakeholder_map.stakeholders[].communication_strategy.suggested_topics | array | 是 | 建议话题列表 |
+| stakeholder_map.stakeholders[].communication_strategy.risk | string | 是 | 不沟通的风险 |
+| stakeholder_map.quadrant_summary | object | 是 | 四象限汇总 |
+| stakeholder_map.key_decision_makers_identified | boolean | 是 | 关键决策者是否已识别 |
+
 ```json
-stakeholder_map: [
-  {
-    "name": "姓名",
-    "role": "职位/角色",
-    "category": "产品决策者|资源控制者|受影响方|外部相关方",
-    "influence": 1-5,
-    "interest": 1-5,
-    "quadrant": "重点管理|密切合作|保持告知|监控跟踪",
-    "communication_strategy": "沟通策略描述",
-    "key_concerns": ["关切点1", "关切点2"],
-    "suggested_talking_points": ["建议话题1", "建议话题2"]
+{
+  "stakeholder_map": {
+    "stakeholders": [
+      {
+        "name": "产品VP",
+        "category": "decision_maker",
+        "influence": 5,
+        "interest": 4,
+        "quadrant": "key_player",
+        "communication_strategy": {
+          "frequency": "周度",
+          "method": "一对一+战略简报",
+          "concerns": ["产品方向", "市场竞争力", "ROI"],
+          "suggested_topics": ["战略方向进展", "关键指标变化", "竞品动态"],
+          "risk": "方向偏移，资源错配"
+        }
+      },
+      {
+        "name": "技术总监",
+        "category": "resource_controller",
+        "influence": 4,
+        "interest": 3,
+        "quadrant": "keep_satisfied",
+        "communication_strategy": {
+          "frequency": "月度",
+          "method": "技术评审+邮件简报",
+          "concerns": ["技术可行性", "团队负载", "技术债务"],
+          "suggested_topics": ["技术方案评审", "资源需求", "技术风险"],
+          "risk": "技术方案不支持，开发延期"
+        }
+      }
+    ],
+    "quadrant_summary": {
+      "key_player": ["产品VP", "CEO"],
+      "keep_satisfied": ["技术总监", "财务总监"],
+      "keep_informed": ["运营团队", "客服团队"],
+      "minimal_effort": ["行业协会"]
+    },
+    "key_decision_makers_identified": true
   }
-]
+}
 ```
 
 ## 决策规则
 
-| 条件 | 决策 |
-|------|------|
-| 影响力评分≥4且关注度≥4 | 影响力评估需人类校准，AI结果标记"待确认" |
-| 影响力评分<4且关注度<4 | AI自动分类，标记"低优先级监控" |
-| 新增Stakeholder与现有≥2个Stakeholder存在利益冲突 | 标记"需人工评估关系"，不可自动归类 |
-| 沟通策略涉及≥3个Stakeholder协调 | 需人类根据历史关系调整，AI仅提供建议 |
-| 遗漏Stakeholder识别（与组织架构对比覆盖率<90%） | 标记"可能遗漏"，提示人工补充 |
-| 关键决策者未在Stakeholder Map中 | 强制标记为缺失，阻塞后续流程 |
+1. **关键决策者检查**：至少1个决策者已识别
+2. **评分校准**：影响力评分需人类校准
+3. **沟通策略**：需人类审批确认
 
 ## 质量检查
 
-- [ ] 所有相关方已识别（四类全覆盖）
-- [ ] 分类有明确依据（影响力+关注度评分）
-- [ ] 沟通策略具体可行（非泛泛而谈）
-- [ ] 关键关切点已识别
-- [ ] 建议话题与关切点匹配
+- [ ] 4类利益相关者都已识别
+- [ ] 每个利益相关者有双维度评分
+- [ ] 四象限分类已完成
+- [ ] 沟通策略具体可执行
+- [ ] 关键决策者已识别
 
 ---
 
@@ -145,19 +195,29 @@ stakeholder_map: [
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 组织架构信息 | 用户描述团队和项目范围 → 推断Stakeholder，标注"缺乏组织架构数据" |
-| bmc.json / positioning-statement.json | 用户描述团队和项目范围 → 推断Stakeholder，标注"缺乏业务和定位数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的团队和项目范围推断Stakeholder |
-
-数据获取说明：
-- 本Skill需要组织架构信息和业务数据，请通过以下方式之一提供：
-  1. 直接描述团队结构、项目范围和关键决策者
-  2. 上传组织架构文件 / bmc.json等文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| bmc.json | 用户提供组织架构和业务信息 → 识别利益相关者 | 缺乏BMC数据，关键伙伴和客户关系可能遗漏 |
+| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | 利益相关者识别缺乏业务上下文 |
+| bmc.json + 产品/业务信息 | 用户提供组织架构和业务信息 → 识别利益相关者 | 整体置信度降低，利益相关者列表可能不完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的组织架构信息识别利益相关者 | 整体置信度显著降低，地图仅为通用参考 |
 
 ---
 
+## 上游变更响应
 
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json关键伙伴变更 | 外部相关方识别 | 重新执行Step 1，更新外部相关方 |
+| bmc.json客户关系变更 | 受影响方识别 | 重新执行Step 1，更新受影响方 |
+| 组织架构变更 | 决策者和资源控制者 | 重新执行Step 1-2，更新决策者和资源控制者 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 利益相关者列表变更 | stakeholder-brief、stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
+| 四象限分类变更 | stakeholder-brief | 输出文件版本号+变更摘要 |
+| 沟通策略调整 | stakeholder-strategy-doc | 输出文件版本号+变更摘要 |

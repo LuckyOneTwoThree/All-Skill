@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **五力全覆盖**——新进入者、替代品、供应商、买家、同业竞争五种力量缺一不可
+2. **1-5分标尺统一**——每力使用1-5分评分，评分标准前置定义，不可主观随意
+3. **数据依据标注**——每个评分因子必须标注数据来源和影响程度
+4. **吸引力总评人类定**——行业吸引力综合判断必须人类决策，AI只提供评分支撑
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -129,6 +129,24 @@ metadata:
 
 **输出文件**：porter_five_forces.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| porter_five_forces.new_entrant_threat.score | number | 是 | 1-5分 |
+| porter_five_forces.new_entrant_threat.key_factors | array | 是 | 关键影响因素列表 |
+| porter_five_forces.substitutes_threat.score | number | 是 | 1-5分 |
+| porter_five_forces.substitutes_threat.key_factors | array | 是 | 关键影响因素列表 |
+| porter_five_forces.supplier_power.score | number | 是 | 1-5分 |
+| porter_five_forces.supplier_power.key_factors | array | 是 | 关键影响因素列表 |
+| porter_five_forces.buyer_power.score | number | 是 | 1-5分 |
+| porter_five_forces.buyer_power.key_factors | array | 是 | 关键影响因素列表 |
+| porter_five_forces.competitive_rivalry.score | number | 是 | 1-5分 |
+| porter_five_forces.competitive_rivalry.key_factors | array | 是 | 关键影响因素列表 |
+| porter_five_forces.industry_attractiveness.overall_score | number | 是 | 综合评分 |
+| porter_five_forces.industry_attractiveness.rating | string | 是 | 吸引力等级 |
+| porter_five_forces.key_recommendations | array | 是 | 战略建议列表 |
+
 ```yaml
 porter_five_forces:
   new_entrant_threat:
@@ -197,11 +215,11 @@ porter_five_forces:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| competitor-intel.json | 用户提供行业信息 → 基于AI知识评估五力，标注"缺乏竞品分析数据" |
-| 市场数据（tam-som / pest） | 用户提供行业信息 → 基于AI知识评估五力，标注"缺乏市场数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的行业信息基于AI知识评估五力 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| competitor-intel.json | 用户提供行业信息 → 基于AI知识评估五力 | 缺乏竞品分析数据，同业竞争和替代品评分可能不够精准 |
+| 市场数据（tam-som / pest） | 用户提供行业信息 → 基于AI知识评估五力 | 缺乏市场数据，行业吸引力评估缺乏量化依据 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的行业信息基于AI知识评估五力 | 整体置信度显著降低，评分主要为AI推断 |
 
 数据获取说明：
 - 本Skill需要竞品分析和市场数据，请通过以下方式之一提供：
@@ -209,3 +227,23 @@ porter_five_forces:
   2. 上传competitor-intel.json / tam-som.json / pest.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| competitor-intel竞品数据更新 | 同业竞争强度和新进入者威胁 | 重新评估Force 1和Force 5，更新评分 |
+| tam-som市场规模变更 | 行业吸引力评估 | 重新计算吸引力综合评分 |
+| pest政策/技术环境变更 | 五力评估的多项因素 | 重新评估受影响的力，更新关键因素 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 五力评分变更 | planning-swot、business-strategy-report | 输出文件版本号+变更摘要 |
+| 行业吸引力评级变更 | planning-ansoff、business-strategy-report | 输出文件版本号+变更摘要 |
+| 战略建议调整 | planning-swot | 输出文件版本号+变更摘要 |

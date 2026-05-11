@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **问题是定义出来的不是找到的**——Problem Statement是结构化提炼的产物，不是原始数据的简单复述
+2. **质量检查即自校正循环**——5项检查不通过则自动修复重试，最多3次，仍不通过升级人类
+3. **数据支撑每个要素**——模板中每个要素必须关联可追溯的数据证据，不可凭空编造
+4. **避免解决方案预设**——问题描述必须保持问题空间开放，禁止嵌入任何具体方案
 
 ## 交互模式
 
@@ -70,6 +70,28 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| `problem_statement` | string | 是 | 完整的Problem Statement文本，不可为空且不可包含具体解决方案 |
+| `data_support.pain_point_frequency` | string | 是 | 痛点提及率，不可为空，需为可量化数值或区间 |
+| `data_support.behavioral_evidence` | string | 是 | 行为数据印证，不可为空，需描述具体行为模式 |
+| `data_support.confidence` | number | 是 | 置信度0-1，低于0.5时需升级人类审核 |
+| `template_elements.target_user` | string | 是 | 目标用户群体，不可使用泛称如"用户""客户" |
+| `template_elements.scenario` | string | 是 | 具体场景，不可为模糊描述如"日常使用" |
+| `template_elements.task` | string | 是 | 用户需完成的任务，不可为空 |
+| `template_elements.core_pain` | string | 是 | 核心痛点，不可为空 |
+| `template_elements.current_gap` | string | 是 | 现有方案不足，需指出1个或多个具体不足 |
+| `template_elements.expected_benefit` | string | 是 | 预期收益，需可量化或可验证 |
+| `quality_check.specific_user_group.passed` | boolean | 是 | 用户群体具体性检查结果 |
+| `quality_check.specific_scenario.passed` | boolean | 是 | 场景具体性检查结果 |
+| `quality_check.current_solution_gap.passed` | boolean | 是 | 现有方案不足检查结果 |
+| `quality_check.verifiable.passed` | boolean | 是 | 可验证性检查结果 |
+| `quality_check.no_solution_preset.passed` | boolean | 是 | 避免解决方案预设检查结果 |
+| `quality_check.all_passed` | boolean | 是 | 是否全部通过，任一检查不通过时为false |
+| `quality_check.retry_count` | number | 是 | 重试次数，最大值为3 |
 
 ```json
 {
@@ -188,11 +210,11 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 用户研究数据（voice-analysis / behavior-analysis） | 用户口述问题和用户群体 → 直接生成Problem Statement，标注"缺乏用户研究数据支撑" |
-| 需求洞察数据（persona / jtbd / kano） | 基于用户描述直接生成，标注"缺乏需求洞察数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的问题和用户群体直接生成 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|----------|
+| 用户研究数据（voice-analysis / behavior-analysis） | 用户口述问题和用户群体 → 直接生成Problem Statement，标注"缺乏用户研究数据支撑" | `data_support.pain_point_frequency` 为用户估算值，`data_support.confidence`<0.5，`behavioral_evidence` 标注"缺乏行为数据" |
+| 需求洞察数据（persona / jtbd / kano） | 基于用户描述直接生成，标注"缺乏需求洞察数据" | `template_elements.target_user` 可能使用泛称，`template_elements.task` 缺乏JTBD关联，`quality_check.specific_user_group` 可能不通过 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的问题和用户群体直接生成 | `data_support` 多字段为用户估算，`confidence` 极低，`quality_check` 多项可能不通过，`retry_count` 可能达到上限 |
 
 数据获取说明：
 - 本Skill需要用户研究和需求洞察数据，请通过以下方式之一提供：
@@ -200,3 +222,23 @@ metadata:
   2. 上传persona.json / jtbd.json / voice-analysis.json等文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游数据源 | 变更类型 | 影响维度 | 影响描述 | 响应策略 |
+|-----------|----------|----------|----------|----------|
+| voice-analysis.json | 痛点提及率更新 | data_support / core_pain | 痛点频率变化影响核心痛点描述和数据支撑 | 更新pain_point_frequency和core_pain，重新执行质量检查 |
+| behavior-analysis.json | 行为模式数据更新 | data_support / scenario / current_gap | 行为数据变化影响场景描述和现有方案不足 | 更新behavioral_evidence和scenario，重新执行质量检查 |
+| persona.json | 用户画像调整 | template_elements.target_user | 用户群体定义变化影响目标用户描述 | 更新target_user，重新执行specific_user_group检查 |
+| jtbd.json | 待办任务变更 | template_elements.task | 用户任务定义变化影响任务描述 | 更新task要素，重新执行质量检查 |
+| kano.json | 需求分类调整 | data_support / expected_benefit | 需求类型变化影响预期收益的优先级描述 | 更新expected_benefit，重新执行verifiable检查 |
+| opportunity-scoring.json | 评分结果更新 | 整体优先级 | 评分变化可能影响Problem Statement的聚焦方向 | 评估是否需要调整Problem Statement的重点要素 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知字段 | 通知时机 | 通知内容 |
+|-----------|----------|----------|----------|
+| opportunity-hmw | `problem_statement` | Problem Statement文本变更后 | 通知核心问题定义变更，HMW需重新评估关联性 |
+| opportunity-brief | `problem_statement` / `template_elements` | Problem Statement要素变更后 | 通知问题陈述及各要素变更详情 |

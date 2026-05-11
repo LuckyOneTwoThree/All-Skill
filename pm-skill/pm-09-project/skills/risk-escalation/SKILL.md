@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -200,6 +200,27 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| escalation.issues | array | 是 | 升级问题列表，每项须含id、description、escalation_needed |
+| escalation.issues[].id | string | 是 | 问题唯一标识，格式RISK-NNN或ISSUE-NNN |
+| escalation.issues[].escalation_needed | boolean | 是 | 是否需要升级 |
+| escalation.issues[].escalation_level | number | 是 | 升级级别，1-4 |
+| escalation.issues[].escalation_path | array | 是 | 升级路径，至少含1个接收人 |
+| escalation.issues[].notifications_sent | array | 否 | 已发送通知列表 |
+| escalation.issues[].notifications_sent[].channel | string | 是 | 通知渠道，枚举值email/sms/slack/phone |
+| escalation.issues[].notifications_sent[].status | string | 是 | 通知状态，枚举值sent/delivered/read/failed |
+| escalation.issues[].status | string | 是 | 升级状态，枚举值pending/in_progress/resolved/closed |
+| escalation.escalation_path_templates | array | 否 | 升级路径模板列表 |
+| escalation.escalation_path_templates[].level | number | 是 | 升级级别 |
+| escalation.escalation_path_templates[].expected_response_time | string | 是 | 预期响应时间 |
+| metadata.escalations_processed | number | 是 | 已处理升级数 |
+| metadata.pending_escalations | number | 是 | 待处理升级数 |
+| metadata.avg_escalation_time_hours | number | 是 | 平均升级耗时（小时） |
+| metadata.resolution_rate | number | 是 | 解决率，范围0.0-1.0 |
+
 ```json
 {
   "escalation": {
@@ -308,12 +329,12 @@ escalation_rules:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 问题数据 | 无法获取风险/问题详情 | 用户描述问题现象和影响，AI基于描述生成升级建议 | 基于用户描述的升级建议 |
-| 升级规则 | 无法自动判断升级必要性 | 使用默认升级规则模板，标注需人工确认 | 基于默认规则的升级判断 |
-| 组织结构 | 无法确定升级路径 | 用户提供关键决策人信息，AI据此构建升级链 | 基于用户输入的升级路径 |
-| 待处理升级 | 无法追踪升级状态 | 从零开始记录升级状态，无法关联历史升级 | 全新升级追踪记录 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 问题数据 | 用户描述问题现象和影响，AI基于描述生成升级建议 | 基于用户描述的升级建议，缺少结构化风险/问题数据支撑 |
+| 升级规则 | 使用默认升级规则模板，标注需人工确认 | 基于默认规则的升级判断，需人工确认规则适用性 |
+| 组织结构 | 用户提供关键决策人信息，AI据此构建升级链 | 基于用户输入的升级路径，可能不完整 |
+| 待处理升级 | 从零开始记录升级状态，无法关联历史升级 | 全新升级追踪记录，无法关联历史升级上下文 |
 
 ### 数据获取说明
 
@@ -322,3 +343,22 @@ escalation_rules:
 1. **问题数据缺失**：请用户描述问题，包括：问题现象、影响范围、当前处理状态、紧急程度，AI将基于描述生成升级建议和通知内容
 2. **升级规则缺失**：采用默认升级规则模板（Critical→立即升级L2，High→24h内升级L1，Medium→48h内评估），输出中标注默认规则需人工审核
 3. **组织结构缺失**：请用户提供关键决策人姓名和联系方式，AI将据此构建升级路径和通知链
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 风险数据变更（优先级调整/状态变化） | 升级必要性判断、升级路径确定 | 重新评估升级必要性，更新升级路径和通知 |
+| 问题数据更新（新增问题/严重度变化） | 升级判断、通知内容 | 重新评估问题升级需求，更新通知内容 |
+| 升级规则变更（阈值调整/新增规则） | 升级判断逻辑、自动触发条件 | 重新应用升级规则，更新升级评估结果 |
+| 组织结构变更（人员变动/角色调整） | 升级路径、通知接收人 | 重新构建升级路径，更新通知接收人 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 升级状态变更（新升级/已响应/已解决） | 风险监控、项目经理、相关方 | 更新escalation.json，通知risk-monitoring和相关决策人 |
+| 升级路径变更 | 当前活跃升级、后续升级流程 | 更新escalation.json，通知当前升级链中所有接收人 |
+| 升级规则变更 | 后续所有升级判断 | 更新escalation.json，通知规则维护者 |

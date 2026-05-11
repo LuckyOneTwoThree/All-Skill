@@ -6,7 +6,7 @@ metadata:
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "2"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -14,10 +14,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **需求背后是问题，问题背后是假设**——每个需求必须还原为用户假设，而非直接进入功能设计
+2. **低可信度需求必须逆向还原**——"老板说""竞品有"类需求必须还原真实诉求
+3. **关联关系是需求的经络**——独立需求是例外，关联需求是常态
+4. **理解置信度是通行证**——置信度<0.6的需求不能进入下一阶段
 
 ### 基本信息
 
@@ -216,12 +216,45 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 分类后需求列表缺失 | 用户口述需求，直接理解拆解 | 缺乏结构化需求输入，理解模板可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行需求收集阶段，或基于用户口述需求直接理解拆解 | 输出仅为基本理解框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| requirements.json（分类后的需求列表） | 用户口述需求 → 直接理解拆解，标注"缺乏结构化需求输入" |
-| 所有上游文件均缺失 | 提示用户先执行需求收集阶段，或基于用户口述的需求直接理解拆解 |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| requirement_analysis | array | 是 | 需求分析列表 |
+| requirement_analysis[].id | string | 是 | 关联原始需求ID |
+| requirement_analysis[].understanding | object | 是 | 5项理解模板结果 |
+| requirement_analysis[].understanding.who | string | 是 | 用户是谁 |
+| requirement_analysis[].understanding.where_when | string | 是 | 使用场景 |
+| requirement_analysis[].understanding.what_problem | string | 是 | 核心问题 |
+| requirement_analysis[].understanding.current_solution | string | 是 | 当前解决方案 |
+| requirement_analysis[].understanding.ideal_state | string | 是 | 理想状态 |
+| requirement_analysis[].restoration_needed | boolean | 是 | 是否需要问题还原 |
+| requirement_analysis[].relationships | array | 是 | 关联关系列表 |
+| requirement_analysis[].understanding_confidence | number | 是 | 理解置信度（0-1） |
+| requirement_analysis[].pending_human_review | boolean | 是 | 是否需要人工审批 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 需求列表增删 | 理解模板、关联关系 | 标注新增/删除的需求，建议人类确认是否重新理解 |
+| 需求分类变更 | 问题还原判断 | 标注分类变更，建议人类确认是否需要重新还原 |
+| 需求可信度变更 | 问题还原触发条件 | 标注可信度变更，建议人类确认是否需要补充还原 |
+
+### 下游通知机制
+
+| 需求理解变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 理解模板变更 | requirements-prioritization | 标记理解变更，触发RICE评分更新 |
+| 问题还原结果变更 | requirements-prioritization | 标记还原变更，触发优先级评估更新 |
+| 关联关系变更 | requirements-prioritization | 标记关联变更，触发需求分组更新 |
 
 数据获取说明：
 - 本Skill需要分类后的需求列表，请通过以下方式之一提供：

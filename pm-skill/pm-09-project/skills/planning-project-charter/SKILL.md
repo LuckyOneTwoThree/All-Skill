@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -221,6 +221,31 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| project_charter.background.summary | string | 是 | 项目背景摘要，须<200字 |
+| project_charter.background.product_info.name | string | 是 | 产品名称 |
+| project_charter.background.product_info.core_value | string | 是 | 核心价值描述 |
+| project_charter.objectives | array | 是 | 项目目标列表，至少1项 |
+| project_charter.objectives[].id | string | 是 | 目标唯一标识，格式OBJ-NNN |
+| project_charter.objectives[].measurable | string | 是 | 可衡量指标描述 |
+| project_charter.objectives[].target_date | string | 是 | 目标达成日期，ISO 8601格式 |
+| project_charter.scope.in_scope | array | 是 | 项目范围内项，至少1项 |
+| project_charter.scope.out_of_scope | array | 是 | 项目范围外项，至少1项 |
+| project_charter.success_criteria | array | 是 | 成功标准列表，至少1项 |
+| project_charter.success_criteria[].must_achieve | boolean | 是 | 是否必须达成 |
+| project_charter.stakeholders | array | 是 | 利益相关方列表，至少1项 |
+| project_charter.stakeholders[].influence | string | 是 | 影响力，枚举值high/medium/low |
+| project_charter.initial_risk_assessment | array | 否 | 初步风险评估列表 |
+| project_charter.initial_risk_assessment[].category | string | 是 | 风险类别，枚举值technical/team/external/business |
+| project_charter.initial_risk_assessment[].priority | string | 是 | 风险优先级，枚举值high/medium/low |
+| metadata.confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+| metadata.generated_at | string | 是 | 生成时间，ISO 8601格式 |
+| metadata.human_approval_required | boolean | 是 | 是否需要人类审批，宪章须为true |
+| metadata.approval_status | string | 是 | 审批状态，枚举值pending/approved/rejected |
+
 ```json
 {
   "project_charter": {
@@ -283,11 +308,11 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 产品背景 | 无法提取项目背景和驱动因素 | 用户描述项目目标和核心价值，AI基于描述生成背景摘要 | 基于用户描述的宪章草案 |
-| 战略目标 | 无法分解为可衡量的项目目标 | 用户口述项目期望达成的目标，AI转化为SMART目标 | 基于用户输入的目标定义 |
-| 资源约束 | 无法评估资源可行性 | 跳过资源需求估算，宪章中标注"资源需求待评估" | 含资源待评估项的宪章草案 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 产品背景 | 用户描述项目目标和核心价值，AI基于描述生成背景摘要 | 基于用户描述生成宪章草案，缺少市场背景和竞争环境分析 |
+| 战略目标 | 用户口述项目期望达成的目标，AI转化为SMART目标 | 目标定义基于用户口述转化，需人工确认SMART合规性 |
+| 资源约束 | 跳过资源需求估算，宪章中标注"资源需求待评估" | 宪章草案含资源待评估项，需在资源规划阶段补充 |
 
 ### 数据获取说明
 
@@ -296,3 +321,21 @@ metadata:
 1. **产品背景缺失**：请用户描述项目目标、产品定位和核心价值，AI将基于描述整理为结构化的项目背景摘要
 2. **战略目标缺失**：请用户口述项目期望达成的业务目标（如"提升转化率20%"），AI将转化为SMART格式的可衡量目标
 3. **资源约束缺失**：宪章中资源需求部分标注为"待评估"，建议在资源规划阶段（Pipeline 2）补充完善
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 产品背景变更（定位调整/市场变化） | 项目背景摘要、驱动因素、风险评估 | 重新整理项目背景，更新驱动因素和初步风险 |
+| 战略目标变更（目标增减/优先级调整） | 项目目标、成功标准、范围定义 | 重新分解目标，更新成功标准和范围边界 |
+| 资源约束变更（预算/人力调整） | 资源需求估算、时间线 | 更新资源需求和时间线估算 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 宪章目标/范围变更 | 资源规划、Kickoff会议、风险识别 | 更新project_charter.json，通知planning-resource、planning-kickoff、risk-identification |
+| 利益相关方变更 | Kickoff会议参会人、沟通计划 | 更新project_charter.json，通知planning-kickoff |
+| 审批状态变更 | 所有依赖宪章的下游Pipeline | 更新metadata.json，通知所有下游消费者 |

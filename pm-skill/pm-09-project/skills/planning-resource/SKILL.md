@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -229,6 +229,29 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| resource_plan.workload_estimates | array | 是 | 工作量估算列表，每项须含work_item_id、estimated_hours、confidence |
+| resource_plan.workload_estimates[].confidence | number | 是 | 估算置信度，范围0.0-1.0 |
+| resource_plan.workload_estimates[].estimation_method | string | 是 | 估算方法，枚举值historical/ai-adjusted/expert |
+| resource_plan.resource_needs.human_resources | array | 是 | 人力资源需求列表，每项须含role、quantity_needed、duration_days |
+| resource_plan.resource_needs.non_human_resources | array | 否 | 非人力资源需求列表 |
+| resource_plan.resource_needs.non_human_resources[].type | string | 是 | 资源类型，枚举值tool/environment/budget/external |
+| resource_plan.team_matching | array | 是 | 团队匹配结果列表 |
+| resource_plan.team_matching[].match_score | number | 是 | 匹配分数，范围0.0-1.0 |
+| resource_plan.conflict_detection.conflict_summary.total_conflicts | number | 是 | 冲突总数 |
+| resource_plan.conflict_detection.conflict_summary.critical_conflicts | number | 是 | 关键冲突数 |
+| resource_plan.resource_allocation.assignments | array | 是 | 资源分配列表，每项须含work_item_id、assignee、start_date、end_date |
+| resource_plan.resource_allocation.assignments[].status | string | 是 | 分配状态，枚举值confirmed/tentative |
+| resource_plan.unresolved_conflicts[].escalation_required | boolean | 是 | 是否需要升级 |
+| resource_plan.resource_plan_confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+| metadata.generated_at | string | 是 | 生成时间，ISO 8601格式 |
+| metadata.confidence | number | 是 | 元数据置信度，范围0.0-1.0 |
+| metadata.auto_generated | boolean | 是 | 是否自动生成 |
+| metadata.requires_human_review | boolean | 是 | 是否需要人工审核 |
+
 ```json
 {
   "resource_plan": {
@@ -280,11 +303,11 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 项目范围 | 无法识别工作项和估算工作量 | 用户提供需求列表和优先级，AI基于需求列表估算资源 | 基于需求列表的资源估算 |
-| 技术方案 | 无法评估技术复杂度 | 跳过技术复杂度调整，使用基准工时估算，标注置信度低 | 低置信度的工时估算 |
-| 团队能力数据 | 无法进行人员匹配和能力评估 | 用户提供团队人数和角色信息，AI按角色平均能力估算 | 基于平均能力的资源方案 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 项目范围 | 用户提供需求列表和优先级，AI基于需求列表估算资源 | 基于需求列表的资源估算，缺少结构化范围定义支撑 |
+| 技术方案 | 跳过技术复杂度调整，使用基准工时估算，标注置信度低 | 低置信度的工时估算，缺少技术复杂度因子调整 |
+| 团队能力数据 | 用户提供团队人数和角色信息，AI按角色平均能力估算 | 基于平均能力的资源方案，需人工确认能力假设 |
 
 ### 数据获取说明
 
@@ -293,3 +316,21 @@ metadata:
 1. **项目范围缺失**：请用户提供需求列表（功能名称+简述+优先级），AI将基于需求列表识别工作项并估算工作量
 2. **技术方案缺失**：跳过技术复杂度调整因子，使用行业基准工时估算，输出中标注估算置信度低，建议技术团队确认
 3. **团队能力数据缺失**：请用户提供团队人数和角色构成（如"3名后端、2名前端、1名QA"），AI将按角色平均能力水平进行资源匹配，标注需人工确认能力假设
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 项目范围变更（需求增减/优先级调整） | 工作量估算、资源需求识别、冲突检测 | 重新估算工作量，更新资源需求和冲突检测 |
+| 技术方案变更（架构调整/技术栈变化） | 技术复杂度调整、技能需求、工作量估算 | 重新评估技术复杂度，更新技能需求和工时估算 |
+| 团队能力数据变更（人员变动/技能更新） | 团队匹配、能力缺口、冲突检测 | 重新执行团队匹配，更新能力缺口和冲突检测结果 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 资源配置方案变更 | Sprint规划、Kickoff会议、风险识别 | 更新resource_plan.json，通知agile-sprint-planning、planning-kickoff、risk-identification |
+| 冲突检测结果变更 | 项目经理决策、资源协调 | 更新resource_plan.json，通知项目经理 |
+| 技能缺口变更 | 招聘计划、培训计划 | 更新resource_plan.json，通知人力资源相关部门 |

@@ -5,7 +5,7 @@ metadata:
   module: "开发与上线"
   sub-module: "发布上线"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -261,6 +261,48 @@ metadata:
   "upgrade_guide": {}
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| release_notes | object | 是 | 发布说明根对象 |
+| release_notes.version | string | 是 | 版本号 |
+| release_notes.release_date | string | 是 | 发布日期 |
+| release_notes.highlights | array | 是 | 核心亮点列表，至少1项 |
+| release_notes.highlights[].title | string | 是 | 亮点标题 |
+| release_notes.highlights[].description | string | 是 | 亮点描述 |
+| release_notes.highlights[].target_audience | string | 是 | 目标受众 |
+| release_notes.changes | object | 是 | 变更分类 |
+| release_notes.changes.new_features | array | 是 | 新功能列表 |
+| release_notes.changes.improvements | array | 是 | 改进列表 |
+| release_notes.changes.bug_fixes | array | 是 | 修复列表 |
+| release_notes.changes.breaking_changes | array | 否 | 破坏性变更列表 |
+| release_notes.changes.deprecations | array | 否 | 废弃功能列表 |
+| release_notes.upgrade_guide | object | 条件必填 | 升级指南，有breaking_changes时必填 |
+| release_notes.known_issues | array | 否 | 已知问题列表 |
+| release_notes.acknowledgments | array | 否 | 致谢列表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | 新功能和改进描述 | 更新变更分类和描述，标记需人类确认 |
+| 灰度发布结果 | 已知问题和升级指南 | 更新已知问题列表，补充升级注意事项 |
+| 验收报告变更 | 变更分类和完整性 | 重新评估变更分类，确保所有变更已覆盖 |
+| 检查清单变更 | 发布说明完整性 | 更新发布说明，确保与检查清单一致 |
+
+当发布说明自身变更时，对下游的通知机制：
+
+| 说明变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 破坏性变更新增 | 全部下游 | 标记破坏性变更，触发影响评估 |
+| 已知问题新增 | retrospective-auto | 标记已知问题，触发复盘输入 |
+| 版本号变更 | release-gradual | 标记版本变更，触发灰度配置更新 |
+
+---
 
 ## 决策规则
 

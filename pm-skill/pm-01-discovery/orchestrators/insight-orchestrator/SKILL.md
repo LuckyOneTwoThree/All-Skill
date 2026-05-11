@@ -5,21 +5,17 @@ metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 需求洞察指挥官
 
 ## 核心原则
 
-需求≠问题，用户描述的是解决方案不是问题本身。
-
-## 执行步骤
-
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **需求≠问题**——用户描述的是解决方案不是问题本身，编排器确保先拆解（requirement-layers）再分析（jtbd/5whys），避免停留在表面需求
+2. **多维度交叉验证**——JTBD+需求三层+5Whys+KANO四维交叉，单一维度结论不可信，编排器确保各维度数据汇合后才输出最终优先级
+3. **串行依赖并行独立**——有数据依赖的步骤串行（5whys依赖jtbd），无依赖的步骤并行（jtbd与requirement-layers可并行），缩短整体周期
+4. **人类决策不可替代**——情感诉求验证、KANO边界判定、优先级权重确认必须人类参与，编排器在每个阶段卡口设置人类决策点
 
 ## 子Skill执行协议
 
@@ -69,9 +65,9 @@ metadata:
 | 读取定义路径 | `.trae/skills/insight-5whys/SKILL.md` |
 | 输入 | `output/pm-discovery/insight-jtbd/jtbd.json`（待分析的问题现象） |
 | 输出 | `output/pm-discovery/insight-5whys/5whys.json` |
-| 验证 | chain和root_cause字段非空 |
+| 验证 | chains和root_cause字段非空，actionable_fix含effort/impact |
 | 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | chain和root_cause字段非空 → 未通过：检查输入数据是否充分 |
+| ⏸ 阶段卡口 | chains和root_cause字段非空 → 未通过：检查输入数据是否充分 |
 
 ### 阶段3：insight-kano
 
@@ -93,7 +89,7 @@ metadata:
 | 读取定义路径 | `.trae/skills/insight-priority-scoring/SKILL.md` |
 | 输入 | `output/pm-discovery/insight-requirement-layers/requirement-layers.json`（需求列表）+ `output/pm-discovery/insight-kano/kano.json`（KANO分类结果）+ `output/pm-discovery/insight-jtbd/jtbd.json` 和 `output/pm-discovery/insight-5whys/5whys.json`（痛点数据） |
 | 输出 | `output/pm-discovery/insight-priority-scoring/priority-scoring.json` |
-| 验证 | priority_list和total_score字段非空，score_confidence已标注 |
+| 验证 | priority_list和total_score字段非空，score_confidence已标注，base_score和kano_bonus分别计算 |
 | 执行模式 | 🤖→👤 AI建议人类审批（优先级权重需人类确认） |
 | ⏸ 阶段卡口 | priority_list和total_score字段非空，score_confidence已标注 → 未通过：优先级权重需人类确认 |
 
@@ -123,9 +119,21 @@ metadata:
 | KANO边界判定 | insight-kano完成 | 确认边界情况的分类归属 |
 | 优先级权重确认 | insight-priority-scoring完成 | 确认评分权重和最终优先级排序 |
 
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| 阶段1某子Skill失败 | 不阻塞另一子Skill，失败子Skill使用降级方案继续，标注"降级执行" |
+| jtbd.json无Functional Job | 终止阶段2（5whys依赖Functional Job），直接进入阶段3（kano不依赖jtbd） |
+| 5whys.json根因为空 | 标注"根因未定位"，阶段4中痛点强度维度使用默认值，score_confidence降级 |
+| kano.json全部为边界情况 | 全部升级人类判定，阶段4暂缓执行直到KANO分类确认 |
+| priority-scoring权重未确认 | 输出评分结果但标注"权重待确认"，建议人类确认后再进入下游编排器 |
+| 上游数据全部缺失 | 降级为轻量版流程：用户口述需求 → requirement-layers拆解 → 基于描述评分 |
+
 ## 变更记录
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
 - v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格
 - v4.0: 统一阶段执行计划为表格格式，移除数据流转图
+- v5.0: 核心原则重写为编排理念；新增异常处理表；阶段2验证条件更新为chains（支持多路径）；阶段4验证条件新增base_score/kano_bonus

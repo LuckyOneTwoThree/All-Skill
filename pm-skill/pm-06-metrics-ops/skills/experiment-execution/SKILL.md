@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：实验结果基于全量数据分析，统计检验使用完整样本
-2. **实时感知**：实验运行期间持续监控，样本量、护栏指标、新奇效应实时追踪
-3. **自动归因**：实验结果自动进行多维下钻分析，识别异质性效应和新奇效应
-4. **决策规则显式化**：统计显著且稳定可考虑提前终止、护栏指标下降触发告警，规则前置
+1. **统计显著≠业务有效**：p值只告诉你"差异存在"，效应量才告诉你"差异有多大、值不值得做"
+2. **异质性是隐藏的真相**：整体正向可能掩盖某群体负向，不下钻就不知道真实效果
+3. **新奇效应是实验的陷阱**：初期效应可能随时间衰减，稳定才是可信
 
 ## 交互模式
 
@@ -390,6 +389,49 @@ ab_test_result:
       - "护栏指标安全"
       - "无新奇效应"
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| ab_test_result | object | 是 | 实验结果根对象 |
+| ab_test_result.experiment_id | string | 是 | 实验ID |
+| ab_test_result.analyzed_at | string | 是 | 分析时间 |
+| ab_test_result.conclusion | string | 是 | 实验结论，枚举值：positive/negative/neutral/inconclusive |
+| ab_test_result.primary_metric | object | 是 | 主指标结果 |
+| ab_test_result.primary_metric.name | string | 是 | 主指标名称 |
+| ab_test_result.primary_metric.control.value | number | 是 | 对照组值 |
+| ab_test_result.primary_metric.treatment.value | number | 是 | 实验组值 |
+| ab_test_result.primary_metric.lift.relative | number | 是 | 相对提升 |
+| ab_test_result.primary_metric.statistics.p_value | number | 是 | p值 |
+| ab_test_result.primary_metric.statistics.statistically_significant | boolean | 是 | 是否统计显著 |
+| ab_test_result.guardrail_metrics | object | 是 | 护栏指标结果 |
+| ab_test_result.heterogeneous_effects | object | 否 | 异质性效应 |
+| ab_test_result.novelty_check | object | 是 | 新奇效应检测 |
+| ab_test_result.novelty_check.detected | boolean | 是 | 是否检测到新奇效应 |
+| ab_test_result.decision_recommendation | object | 是 | 决策建议 |
+| ab_test_result.decision_recommendation.action | string | 是 | 建议行动，枚举值：full_release/partial_release/no_release/continue_experiment |
+| ab_test_result.decision_recommendation.confidence | string | 是 | 置信度 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 实验设计变更 | 统计检验参数和终止条件 | 更新统计检验配置，重新评估终止条件 |
+| 实验数据更新 | 统计检验和下钻分析 | 重新执行统计检验，更新异质性效应 |
+| 终止条件变更 | 实验运行监控 | 更新终止条件，重新评估是否达到终止标准 |
+
+当实验结果自身变更时，对下游的通知机制：
+
+| 结果变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 结论变更 | experiment-report | 标记结论变更，触发报告更新 |
+| 护栏指标触发告警 | decision-insight | 标记护栏告警，触发洞察转化 |
+| 决策建议变更 | decision-dace | 标记建议变更，触发DACE Conclude |
+
+---
 
 ## 决策规则
 

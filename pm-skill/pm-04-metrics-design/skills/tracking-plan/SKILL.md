@@ -5,7 +5,7 @@ metadata:
   module: "产品度量设计"
   sub-module: "埋点方案"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -689,6 +689,53 @@ def calculate_prd_consistency_score():
   }
 }
 ```
+
+---
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| tracking_plan | array | 是 | 埋点事件列表 |
+| tracking_plan[].event_name | string | 是 | 事件名称，小写下划线格式 |
+| tracking_plan[].display_name | string | 是 | 事件显示名称 |
+| tracking_plan[].trigger | object | 是 | 触发条件定义 |
+| tracking_plan[].trigger.description | string | 是 | 触发描述 |
+| tracking_plan[].trigger.timing | string | 是 | 触发时机，枚举值：on_action/immediate/on_exit |
+| tracking_plan[].properties | array | 是 | 属性列表 |
+| tracking_plan[].properties[].name | string | 是 | 属性名称 |
+| tracking_plan[].properties[].type | string | 是 | 属性类型 |
+| tracking_plan[].properties[].required | boolean | 是 | 是否必填 |
+| tracking_plan[].analysis_purpose | string | 是 | 分析目的 |
+| tracking_plan[].linked_metric | string | 是 | 关联指标 |
+| tracking_plan[].priority | string | 是 | 优先级，枚举值：high/medium/low |
+| tracking_plan[].status | string | 是 | 状态，枚举值：pending/approved/implemented |
+| quality_check | object | 是 | 质量检查结果 |
+| quality_check.naming_compliance | boolean | 是 | 命名规范是否通过 |
+| quality_check.property_completeness | number | 是 | 属性完整率，≥0.8 |
+| quality_check.core_path_coverage | number | 是 | 核心路径覆盖率，≥0.9 |
+| quality_check.prd_consistency | object | 是 | PRD一致性校验结果 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 北极星指标变更 | 关联北极星的埋点事件 | 更新linked_metric指向，重新评估埋点优先级，标记需人类确认 |
+| L1/L2指标增删 | 对应指标反推的埋点事件 | 新增指标触发新增埋点推荐，删除指标标记关联埋点为"待评估" |
+| 行动指标变更 | 行动指标关联的埋点 | 更新行动指标关联埋点的优先级和分析目的 |
+| PRD功能变更 | 功能模块埋点和核心路径埋点 | 重新提取PRD功能埋点，执行去重和一致性校验，标记变更部分 |
+| 指标定义修改 | 关联埋点的属性设计 | 更新埋点属性以匹配新的计算逻辑，标记需人类确认 |
+
+当埋点方案自身变更时，对下游的通知机制：
+
+| 埋点变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 埋点事件增删 | metrics-dashboard | 标记事件增删，触发Dashboard数据源更新 |
+| 埋点属性变更 | metrics-dashboard | 标记属性变更，触发Widget配置更新 |
+| 埋点优先级变更 | 开发团队 | 标记优先级变更，触发开发排期评估 |
+| 命名规范变更 | 全部下游 | 标记命名变更，触发全量命名校验 |
 
 ---
 

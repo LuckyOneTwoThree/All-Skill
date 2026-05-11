@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **收敛不是淘汰而是深化**——筛选出的方案必须经过完整深化，而非简单排序
+2. **对比矩阵是决策的脚手架**——多维度量化对比为人类决策提供结构化支撑，而非替代决策
+3. **人类决策权不可让渡**——AI提供分析和推荐，方案最终选择必须由人类决策
+4. **假设是方案的灵魂**——每个深化方案必须暴露关键假设，假设的可靠性决定方案的可靠性
 
 方案收敛是整个创意构思工作流的关键收尾阶段。本Pipeline从SCAMPER生成的众多候选方案中，通过科学的筛选机制、深度的方案完善和全面的对比分析，为人类决策者提供清晰的决策依据。**方案最终选择必须由人类决策**，AI的角色是提供高质量的分析和建议。
 
@@ -571,21 +571,52 @@ AI推荐需要明确标注置信度，并在输出中说明推荐理由。
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| SCAMPER方案缺失 | 用户提供候选方案列表，直接收敛深化 | 缺乏SCAMPER方案数据，方案维度覆盖可能不全 |
+| 思维逆转约束缺失 | 用户提供候选方案列表，跳过约束冲突检测 | 缺乏设计约束数据，可能保留与约束冲突的方案 |
+| SCAMPER方案+思维逆转约束均缺失 | 用户提供候选方案列表，收敛深化 | 整体置信度降低，筛选和对比维度可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户候选方案列表收敛深化 | 输出仅为基本对比框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| scamper方案（solutions.json） | 用户提供候选方案列表 → 收敛深化，标注"缺乏SCAMPER方案数据" |
-| 思维逆转约束（inversion_analysis.json） | 用户提供候选方案列表 → 收敛深化，标注"缺乏设计约束数据" |
-| scamper方案 + 思维逆转约束 | 用户提供候选方案列表 → 收敛深化，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的候选方案列表收敛深化 |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要SCAMPER方案和思维逆转约束数据，请通过以下方式之一提供：
-  1. 直接描述候选方案和设计约束
-  2. 上传solutions.json / inversion_analysis.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| converged_solutions | array | 是 | 收敛后的方案列表，至少3个 |
+| converged_solutions[].id | string | 是 | 方案唯一标识 |
+| converged_solutions[].title | string | 是 | 方案标题 |
+| converged_solutions[].detailed_description | object | 是 | 详细方案描述 |
+| converged_solutions[].interaction_flow | object | 是 | 交互流程设计 |
+| converged_solutions[].assumption | object | 是 | 关键假设 |
+| converged_solutions[].risk | object | 是 | 风险识别 |
+| converged_solutions[].mvp_scope | object | 是 | MVP范围定义 |
+| converged_solutions[].success_metrics | object | 是 | 成功指标 |
+| comparison_matrix | object | 是 | 对比矩阵 |
+| comparison_matrix.dimensions | array | 是 | 对比维度定义，6个维度 |
+| comparison_matrix.solutions | array | 是 | 各方案对比数据 |
+| comparison_matrix.recommendations | object | 是 | AI推荐结果 |
+| human_decision_package | object | 是 | 人类决策包 |
+| human_decision_package.approval_required | boolean | 是 | 是否需要人类审批 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| SCAMPER方案增删 | 筛选结果、深化方案、对比矩阵 | 标注受影响的方案，建议人类确认是否重新筛选 |
+| SCAMPER方案评分变更 | 筛选结果、排序 | 标注评分变更的方案，建议人类确认是否重新排序 |
+| 思维逆转约束增删 | 约束冲突检测、方案筛选 | 标注受影响的约束，建议人类确认是否重新筛选 |
+| 产品上下文变更（战略/资源） | 战略对齐评分、MVP范围 | 标注受影响的评分维度，建议人类确认是否重新评分 |
+
+### 下游通知机制
+
+| 收敛结果变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 方案选择变更 | design-prd、validation-assumption-map | 标记方案变更，触发PRD和假设地图更新 |
+| 方案深化内容变更 | design-prd | 标记深化内容变更，触发PRD功能规格更新 |
+| 对比矩阵评分变更 | design-prd | 标记评分变更，触发PRD优先级调整 |
+| MVP范围变更 | validation-mvp | 标记MVP范围变更，触发MVP界定更新 |
 
 ---
 

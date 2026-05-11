@@ -5,13 +5,8 @@ metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - growth-model
-    - activation-onboarding
-    - retention-engagement
-    - revenue-funnel
 ---
 
 # 产品运营手册生成
@@ -22,6 +17,10 @@ metadata:
 
 产品运营手册的核心价值在于让团队在无指导的情况下也能正确执行日常运营。手册不是写完就结束的文档，而是持续更新的活文档，是团队协作的最低共识。
 
+## 交互模式
+
+🤖→👤 AI建议人类审批
+
 ## 输入
 
 | 输入项 | 来源 | 必需 | 说明 |
@@ -31,14 +30,6 @@ metadata:
 | 留存策略 | retention-engagement | ⬜ | 分层运营、促活策略 |
 | 变现策略 | revenue-funnel | ⬜ | 付费漏斗、定价策略 |
 | 产品信息 | 用户提供 | ✅ | 产品功能、运营目标、团队结构 |
-
-### 降级策略
-
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无增长模式 | 手册聚焦通用运营SOP，增长策略部分标注"待增长模式诊断" |
-| 无各环节策略 | 手册提供标准模板和最佳实践，标注"待策略定制" |
-| 无产品信息 | 无法生成，要求用户提供基本信息 |
 
 ## 执行步骤
 
@@ -134,86 +125,19 @@ metadata:
 }
 ```
 
-### Markdown 报告结构
+## 输出校验规则
 
-```markdown
-# 产品运营手册：{产品名称}
-
-## 1. 日常运营 SOP
-- 日运营检查清单
-- 周运营节奏
-- 月运营节奏
-
-## 2. 内容运营规范
-- 内容类型矩阵
-- 内容生产流程
-- 内容质量标准
-- 分发渠道策略
-- 内容日历模板
-
-## 3. 用户运营策略
-- 用户分层模型
-- 分层运营策略
-- 触达策略与频率规范
-- 用户反馈处理SLA
-
-## 4. 活动运营模板
-- 活动类型与适用场景
-- 活动策划模板
-- 执行检查清单
-- 复盘模板
-- 预算模板
-
-## 5. 应急响应流程
-- 异常分级标准
-- 响应SLA
-- 升级路径
-- 应急沟通模板
-- 常见应急场景处理
-
-## 6. 附录
-- 运营工具清单
-- 关键联系人
-- 文档更新日志
-```
-
-### JSON 结构
-
-```json
-{
-  "product_name": "",
-  "report_date": "",
-  "daily_sop": {
-    "daily_checklist": [],
-    "weekly_rhythm": [],
-    "monthly_rhythm": []
-  },
-  "content_operations": {
-    "content_types": [],
-    "production_flow": [],
-    "quality_standards": [],
-    "distribution_channels": []
-  },
-  "user_operations": {
-    "segmentation_model": "",
-    "segment_strategies": [],
-    "reach_strategy": [],
-    "feedback_sla": {}
-  },
-  "activity_operations": {
-    "activity_types": [],
-    "planning_template": {},
-    "execution_checklist": [],
-    "review_template": {}
-  },
-  "emergency_response": {
-    "severity_levels": [],
-    "response_sla": {},
-    "escalation_path": [],
-    "common_scenarios": []
-  }
-}
-```
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| product_name | string | 是 | 产品名称，不可为空 |
+| daily_sop | object | 是 | 日常运营SOP，须含daily_checklist/weekly_rhythm/monthly_rhythm |
+| daily_sop.daily_checklist | array | 是 | 日检查清单，至少3项 |
+| user_operations | object | 是 | 用户运营策略，须含segmentation_model/segment_strategies |
+| user_operations.segment_strategies | array | 是 | 分层策略，至少覆盖新/活跃/沉默/流失4类 |
+| emergency_response | object | 是 | 应急响应，须含severity_levels/response_sla |
+| emergency_response.severity_levels | array | 是 | 异常分级，至少覆盖P0-P3 |
+| content_operations | object | 否 | 内容运营规范 |
+| activity_operations | object | 否 | 活动运营模板 |
 
 ## 质量检查
 
@@ -223,3 +147,31 @@ metadata:
 | 分层策略完整 | 至少覆盖新/活跃/沉默/流失4类用户 | 补充缺失分层 |
 | 应急流程可操作 | P0-P3均有响应SLA和升级路径 | 补充缺失级别 |
 | 模板可直接使用 | 活动模板有占位符和填写说明 | 补充模板细节 |
+
+## 降级策略
+
+### 上游文件缺失降级方案
+
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|----------|----------|----------|
+| 无增长模式 | 手册聚焦通用运营SOP，增长策略部分标注"待增长模式诊断" | 运营SOP缺乏增长模式导向 |
+| 无各环节策略 | 手册提供标准模板和最佳实践，标注"待策略定制" | 运营策略为通用模板，非定制化 |
+| 无产品信息 | 无法生成，要求用户提供基本信息 | 无输出 |
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| growth-model | 增长模式变更 | 运营SOP和用户运营策略 | 调整运营节奏和分层策略 |
+| activation-onboarding | Onboarding流程变更 | 新用户运营策略 | 更新新用户引导SOP |
+| retention-engagement | 分层策略变更 | 用户运营策略 | 更新分层模型和触达策略 |
+| revenue-funnel | 付费漏斗变更 | 变现运营策略 | 更新付费转化运营SOP |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| growth-orchestrator | 运营手册生成完成 | 输出文件更新 | 手册完成状态和关键结论 |
+| 用户提供 | 运营手册生成完成 | 输出文件 | 完整产品运营手册 |

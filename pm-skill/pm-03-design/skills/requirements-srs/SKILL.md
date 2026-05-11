@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -283,3 +283,48 @@ PRD通常缺少非功能需求，SRS必须补充：
 | 数据模型缺失 | 数据实体基于PRD推导 | 数据约束可能不够完整 |
 | IA/用户流程缺失 | 功能需求基于PRD文本推导 | 流程描述可能不够细致 |
 | 技术约束缺失 | 非功能需求使用通用标准 | 需确认是否符合实际环境 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| document_info | object | 是 | 文档信息 |
+| document_info.product | string | 是 | 产品名称 |
+| document_info.version | string | 是 | 文档版本号 |
+| document_info.prd_reference | string | 是 | 关联PRD引用 |
+| functional_requirements | array | 是 | 功能需求列表 |
+| functional_requirements[].id | string | 是 | 需求编号（FR-XXX-NNN） |
+| functional_requirements[].name | string | 是 | 需求名称 |
+| functional_requirements[].priority | string | 是 | 优先级（Must/Should/Could/Won't） |
+| functional_requirements[].description | string | 是 | 需求描述 |
+| functional_requirements[].acceptance_criteria | array | 是 | 验收标准 |
+| non_functional_requirements | object | 是 | 非功能需求 |
+| non_functional_requirements.performance | array | 是 | 性能需求 |
+| non_functional_requirements.availability | array | 是 | 可用性需求 |
+| non_functional_requirements.security | array | 是 | 安全需求 |
+| non_functional_requirements.compatibility | array | 是 | 兼容性需求 |
+| non_functional_requirements.maintainability | array | 是 | 可维护性需求 |
+| interface_requirements | array | 是 | 接口需求 |
+| data_requirements | array | 是 | 数据需求 |
+| constraints | array | 是 | 约束条件 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能需求增删 | 功能需求列表、接口需求 | 标注受影响的功能需求，建议人类确认是否更新SRS |
+| PRD优先级调整 | 功能需求优先级 | 标注优先级变更，建议人类确认是否调整MoSCoW标注 |
+| API契约变更 | 接口需求定义 | 标注受影响的接口，建议人类确认是否更新接口需求 |
+| 数据模型变更 | 数据需求定义 | 标注受影响的数据实体，建议人类确认是否更新数据需求 |
+| 技术约束变更 | 非功能需求 | 标注受影响的非功能需求，建议人类确认是否调整指标 |
+
+### 下游通知机制
+
+| SRS变更类型 | 通知范围 | 通知方式 |
+|------------|----------|----------|
+| 功能需求增删 | 开发团队、测试团队 | 标记需求变更，触发开发任务和测试用例更新 |
+| 非功能需求指标变更 | 开发团队、运维团队 | 标记指标变更，触发性能测试和监控配置更新 |
+| 接口需求变更 | 后端开发 | 标记接口变更，触发API契约更新 |
+| 约束条件变更 | 开发团队 | 标记约束变更，触发技术方案评估更新 |

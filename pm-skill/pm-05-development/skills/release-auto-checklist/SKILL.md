@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -628,6 +628,45 @@ metadata:
 | completion_status | JSON | 完成状态汇总 |
 | pending_alerts | JSON | 待处理告警 |
 | risk_assessment | JSON | 风险评估 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| release_checklist | object | 是 | 发布检查清单根对象 |
+| release_checklist.version | string | 是 | 发布版本号 |
+| release_checklist.items | array | 是 | 检查项列表 |
+| release_checklist.items[].id | string | 是 | 检查项编号 |
+| release_checklist.items[].category | string | 是 | 检查类别，枚举值：code_quality/testing/security/compliance/infrastructure/monitoring |
+| release_checklist.items[].description | string | 是 | 检查描述 |
+| release_checklist.items[].status | string | 是 | 状态，枚举值：pass/fail/pending/waived |
+| release_checklist.items[].severity | string | 是 | 严重级别，枚举值：blocker/warning/info |
+| release_checklist.items[].evidence | string | 否 | 证据链接 |
+| release_checklist.items[].assignee | string | 否 | 负责人 |
+| release_checklist.gate_result | string | 是 | 门禁结果，枚举值：go/no_go/conditional |
+| release_checklist.blockers | array | 是 | 阻断项列表 |
+| release_checklist.risk_summary | object | 是 | 风险摘要 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 验收报告变更 | 检查项状态 | 更新验收相关检查项状态，重新评估门禁结果 |
+| 测试报告变更 | 测试类检查项 | 更新测试相关检查项状态，标记需人类确认 |
+| 安全评估变更 | 安全类检查项 | 更新安全相关检查项状态，重新评估阻断项 |
+| 灰度策略变更 | 基础设施类检查项 | 更新基础设施检查项，标记需人类确认 |
+
+当检查清单自身变更时，对下游的通知机制：
+
+| 清单变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 门禁结果变更 | release-gradual | 标记门禁变更，触发灰度发布决策 |
+| 阻断项新增 | development-task-breakdown | 标记阻断项，触发修复任务创建 |
+| 检查项状态变更 | release-notes | 标记状态变更，触发发布说明更新 |
+
+---
 
 ## 决策规则
 

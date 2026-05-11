@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **失败比成功更有启发性**——先想清楚"为什么会死"，再想"怎么活"
+2. **风险量化是底线思维**——每条失败路径必须量化严重程度和发生概率，直觉判断不可靠
+3. **约束是创意的护栏**——设计约束不是限制创新，而是确保创新不踩坑
+4. **逆向转化必须可验证**——每个设计约束必须有明确的验证方法，不可验证的约束是空话
 
 思维逆转法（Inversion）是一种强大的逆向思考工具，它不是直接思考"如何成功"，而是先分析"为什么会失败"，然后将这些失败路径逆向转化为成功条件。这种方法能够帮助产品团队系统性地识别潜在风险，建立更完善的设计约束，从而提高产品的成功概率。
 
@@ -459,20 +459,48 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 产品/功能目标缺失 | 用户描述目标，直接思维逆转 | 缺乏结构化目标定义，失败路径可能不够聚焦 |
+| HMW/SCAMPER方案缺失 | 用户描述目标，直接思维逆转 | 缺乏HMW和方案数据，失败路径与创意方案可能脱节 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的目标直接思维逆转 | 输出仅为基本失败路径分析 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 产品/功能目标描述 | 用户描述目标 → 直接思维逆转，标注"缺乏结构化目标定义" |
-| hmw.json / scamper方案 | 用户描述目标 → 直接思维逆转，标注"缺乏HMW和方案数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的目标直接思维逆转 |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要产品/功能目标数据，请通过以下方式之一提供：
-  1. 直接描述产品/功能目标和成功标准
-  2. 上传hmw.json / scamper方案文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| inversion_analysis | array | 是 | 逆转分析列表，至少10条 |
+| inversion_analysis[].id | string | 是 | 唯一标识符 |
+| inversion_analysis[].failure_mode | string | 是 | 失败模式描述 |
+| inversion_analysis[].severity | integer | 是 | 严重程度（1-5） |
+| inversion_analysis[].likelihood | integer | 是 | 发生可能性（1-5） |
+| inversion_analysis[].risk_score | integer | 是 | 风险评分（severity × likelihood） |
+| inversion_analysis[].priority | string | 是 | 优先级（critical/high/medium/low） |
+| inversion_analysis[].success_condition | string | 是 | 成功条件 |
+| inversion_analysis[].design_constraints | array | 是 | 设计约束数组 |
+| inversion_analysis[].design_constraints[].constraint | string | 是 | 约束描述 |
+| inversion_analysis[].design_constraints[].category | string | 是 | 约束类别 |
+| inversion_analysis[].design_constraints[].verifiable | boolean | 是 | 是否可验证 |
+| inversion_analysis[].design_constraints[].verification_method | string | 是 | 验证方法 |
+| summary | object | 是 | 统计摘要 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 产品目标变更 | 失败路径、成功条件、设计约束 | 标注受影响的失败路径，建议人类确认是否重新分析 |
+| HMW陈述变更 | 失败路径的覆盖范围 | 标注受影响的维度，建议人类确认是否补充失败路径 |
+| 产品上下文变更 | 失败路径的优先级 | 标注受影响的优先级，建议人类确认是否重新排序 |
+
+### 下游通知机制
+
+| 逆转分析变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 失败路径增删 | ideation-convergence | 标记失败路径变更，触发方案收敛重新筛选 |
+| 设计约束增删 | ideation-convergence | 标记约束变更，触发约束冲突检测更新 |
+| 优先级变更 | ideation-convergence | 标记优先级变更，触发方案筛选条件更新 |
 
 ---
 

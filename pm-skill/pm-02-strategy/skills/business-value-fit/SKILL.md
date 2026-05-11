@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **痛点覆盖优先**——高频高严重度痛点必须被价值主张覆盖，遗漏即警告
+2. **531评分标尺**——匹配度评估使用5/3/1/0四级评分，标准统一不可模糊
+3. **加权计算透明**——痛点权重=频率×严重度，收益权重=重要性×满意度缺口
+4. **缺口即行动**——未覆盖的痛点和收益必须附带改进建议，不可只标注不行动
 
 **执行周期**：在Pipeline 1（商业模式画布）完成后自动触发
 
@@ -241,6 +241,25 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 
 **输出文件**：evaluation_report.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| evaluation_report.evaluation_metadata.evaluated_at | string | 是 | 评估时间戳 |
+| evaluation_report.evaluation_metadata.value_propositions_evaluated | number | 是 | 已评估价值主张数量 |
+| evaluation_report.evaluation_metadata.pains_analyzed | number | 是 | 已分析痛点数量 |
+| evaluation_report.evaluation_metadata.gains_analyzed | number | 是 | 已分析收益数量 |
+| evaluation_report.evaluation_metadata.confidence | string | 是 | high/medium/low |
+| evaluation_report.pain_alignment.covered_pains | array | 是 | 已覆盖痛点列表 |
+| evaluation_report.pain_alignment.uncovered_pains | array | 是 | 未覆盖痛点列表，每项含recommendation |
+| evaluation_report.pain_alignment.pain_coverage_summary | object | 是 | 覆盖率统计 |
+| evaluation_report.gain_validation.covered_gains | array | 是 | 已覆盖收益列表 |
+| evaluation_report.gain_validation.uncovered_gains | array | 是 | 未覆盖收益列表，每项含recommendation |
+| evaluation_report.overall_fit_score | number | 是 | 综合匹配度评分0-5 |
+| evaluation_report.coverage_rate | object | 是 | 覆盖率指标 |
+| evaluation_report.improvement_suggestions | array | 是 | 改进建议列表 |
+| evaluation_report.warnings | array | 是 | 警告列表 |
+
 ### 完整评估报告
 
 ```json
@@ -342,12 +361,12 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| bmc.json | 用户提供价值主张和用户痛点 → 直接评估匹配度，标注"缺乏BMC结构化数据" |
-| 用户研究数据（voice-analysis / persona） | 用户提供价值主张和用户痛点 → 直接评估匹配度，标注"缺乏用户研究数据" |
-| bmc.json + 用户研究数据 | 用户提供价值主张和用户痛点描述 → 直接评估匹配度，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供价值主张和用户痛点直接评估匹配度 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| bmc.json | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏BMC结构化数据，价值主张可能不完整 |
+| 用户研究数据（voice-analysis / persona） | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏用户研究数据，痛点频率和严重度缺乏实证 |
+| bmc.json + 用户研究数据 | 用户提供价值主张和用户痛点描述 → 直接评估匹配度 | 整体置信度降低，评分缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供价值主张和用户痛点直接评估匹配度 | 整体置信度显著降低，评估仅为假设推断 |
 
 数据获取说明：
 - 本Skill需要BMC和用户研究数据，请通过以下方式之一提供：
@@ -355,6 +374,28 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
   2. 上传bmc.json / persona.json / voice-analysis.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json价值主张变更 | 痛点对齐度和收益创造验证需重新评估 | 重新执行Step 1-3，更新匹配度评分 |
+| bmc.json客户细分调整 | 价值主张与细分群体对应关系 | 重新匹配价值主张与目标用户 |
+| persona/voice-analysis用户痛点更新 | 痛点覆盖率和遗漏分析 | 重新执行Step 1，更新未覆盖痛点清单 |
+| problem-statement问题陈述变更 | 痛点和收益的优先级权重 | 重新计算加权评分，更新匹配度总评 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 匹配度评分变更 | business-pricing、positioning-statement | 输出文件版本号+变更摘要 |
+| 痛点覆盖率变更 | business-model-canvas | 输出文件版本号+变更摘要 |
+| 改进建议新增 | business-model-canvas | 输出文件版本号+变更摘要 |
+| 警告触发/解除 | business-pricing | 输出文件版本号+变更摘要 |
 
 ---
 

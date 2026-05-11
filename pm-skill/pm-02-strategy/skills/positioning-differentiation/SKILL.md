@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **五维度全覆盖**——功能/体验/场景/商业/生态5个维度缺一不可
+2. **追赶难度量化**——评分标准锚定竞品追赶时间（3月/6月/12月+），拒绝模糊判断
+3. **加权综合评分**——各维度加权计算综合差异化强度，权重可调但必须显式
+4. **最可持续推荐**——不仅评估当前差异，更要推荐最可持续的差异化来源
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -119,6 +119,20 @@ metadata:
 
 **输出文件**：differentiation-assessment.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| differentiation_scores.feature | object | 是 | 功能差异评分，含score/description/sustainability |
+| differentiation_scores.experience | object | 是 | 体验差异评分 |
+| differentiation_scores.scenario | object | 是 | 场景差异评分 |
+| differentiation_scores.business | object | 是 | 商业差异评分 |
+| differentiation_scores.ecosystem | object | 是 | 生态差异评分 |
+| overall_differentiation_strength | number | 是 | 综合差异化强度0-1 |
+| recommended_differentiation_source.dimension | string | 是 | 推荐维度 |
+| recommended_differentiation_source.reason | string | 是 | 推荐理由 |
+| recommended_differentiation_source.action | string | 是 | 行动建议 |
+
 ```json
 {
   "differentiation_scores": {
@@ -178,13 +192,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| positioning-value-curve.json | 用户提供自身和竞品特点 → 评估差异化，标注"缺乏价值曲线数据" |
-| competitor-intel.json | 用户提供自身和竞品特点 → 评估差异化，标注"缺乏竞品情报数据" |
-| positioning-value-curve.json + competitor-intel.json | 用户提供自身和竞品特点描述 → 直接评估差异化，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的自身和竞品特点评估差异化 |
-| 自身能力评估（用户提供） | 若用户未提供自身能力评估，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| positioning-value-curve.json | 用户提供自身和竞品特点 → 评估差异化 | 缺乏价值曲线数据，竞争要素评分缺乏可视化对比 |
+| competitor-intel.json | 用户提供自身和竞品特点 → 评估差异化 | 缺乏竞品情报数据，追赶难度评估可能不够精准 |
+| positioning-value-curve.json + competitor-intel.json | 用户提供自身和竞品特点描述 → 直接评估差异化 | 整体置信度降低，评分缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的自身和竞品特点评估差异化 | 整体置信度显著降低，评估仅为假设推断 |
+| 自身能力评估（用户提供） | 若用户未提供自身能力评估，提示用户提供或跳过该输入相关步骤 | 功能和场景差异评估缺乏内部数据支撑 |
 
 数据获取说明：
 - 本Skill需要价值曲线和竞品分析数据，请通过以下方式之一提供：
@@ -192,3 +206,21 @@ metadata:
   2. 上传positioning-value-curve.json / competitor-intel.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| value-curve.json价值曲线更新 | 竞争要素评分和差异化计算 | 重新执行Step 1-6，更新差异化评分 |
+| competitor-intel竞品数据更新 | 追赶难度评估 | 重新评估各维度可持续性 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 差异化评分变更 | positioning-statement、business-strategy-report | 输出文件版本号+变更摘要 |
+| 推荐差异化来源变更 | positioning-statement、planning-roadmap | 输出文件版本号+变更摘要 |

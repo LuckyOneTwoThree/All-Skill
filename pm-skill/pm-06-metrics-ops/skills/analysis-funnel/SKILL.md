@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：对全量漏斗数据进行计算，不依赖抽样推断
-2. **实时感知**：漏斗数据更新后即时触发分析，而非等待周期性报告
-3. **自动归因**：自动识别最大流失节点并生成优化建议
-4. **决策规则显式化**：转化率下降阈值、流失告警规则前置定义
+1. **流失即机会**：每个流失节点都是优化的切入点，最大流失点 = 最大提升空间
+2. **下钻才能归因**：整体转化率只告诉你"有问题"，多维下钻才告诉你"问题在哪"
+3. **对比才有判断**：绝对值没有意义，环比同比对比才能判断趋势健康度
 
 ## 交互模式
 
@@ -261,6 +260,49 @@ funnel_definitions:
 - **每日分析**：每日8:00执行
 - **按需分析**：手动触发针对特定漏斗的分析
 - **实时监控**：核心转化节点的实时监控
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| funnel_analysis | object | 是 | 漏斗分析根对象 |
+| funnel_analysis.funnel_name | string | 是 | 漏斗名称 |
+| funnel_analysis.date_range | object | 是 | 分析时间范围 |
+| funnel_analysis.date_range.start | string | 是 | 开始日期 |
+| funnel_analysis.date_range.end | string | 是 | 结束日期 |
+| funnel_analysis.steps | array | 是 | 漏斗步骤数据，至少2步 |
+| funnel_analysis.steps[].step | number | 是 | 步骤序号 |
+| funnel_analysis.steps[].name | string | 是 | 步骤名称 |
+| funnel_analysis.steps[].event | string | 是 | 事件名称 |
+| funnel_analysis.steps[].count | number | 是 | 用户数 |
+| funnel_analysis.steps[].conversion_from_previous | number | 是 | 步骤间转化率 |
+| funnel_analysis.overall_conversion | number | 是 | 整体转化率 |
+| funnel_analysis.vs_last_period | object | 是 | 与上期对比 |
+| funnel_analysis.critical_drop | object | 是 | 关键流失分析 |
+| funnel_analysis.critical_drop.step | string | 是 | 流失步骤 |
+| funnel_analysis.critical_drop.dropoff_rate | number | 是 | 流失率 |
+| funnel_analysis.critical_drop.potential_causes | array | 是 | 潜在原因列表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 漏斗定义变更 | 步骤配置和转化计算 | 重新执行全量漏斗计算，标记变更步骤 |
+| 事件数据更新 | 转化率和流失分析 | 增量更新转化数据，重新评估流失节点 |
+| 分群配置变更 | 多维下钻维度 | 更新下钻维度，重新执行分群分析 |
+| 对比周期变更 | 环比同比对比 | 重新执行对比分析，更新趋势判断 |
+
+当漏斗分析自身变更时，对下游的通知机制：
+
+| 分析变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 关键步骤转化率下降>10% | decision-insight | 标记告警，触发洞察转化 |
+| 流失节点变更 | data-analysis-report | 标记流失变更，触发报告更新 |
+| 整体转化率趋势变化 | decision-dace | 标记趋势变化，触发DACE Analyze |
+
+---
 
 ## 决策规则
 

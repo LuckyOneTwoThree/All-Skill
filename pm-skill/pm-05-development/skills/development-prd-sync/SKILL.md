@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -503,6 +503,44 @@ metadata:
 | sync_status | JSON | 各方向同步状态 |
 | conflict_list | JSON | 检测到的冲突清单 |
 | update_proposals | JSON | 建议的更新提案 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| sync_result | object | 是 | 同步结果根对象 |
+| sync_result.changes | array | 是 | 变更列表 |
+| sync_result.changes[].type | string | 是 | 变更类型，枚举值：added/modified/removed |
+| sync_result.changes[].requirement_id | string | 是 | 需求ID |
+| sync_result.changes[].field | string | 是 | 变更字段 |
+| sync_result.changes[].old_value | string | 否 | 旧值（修改/删除时） |
+| sync_result.changes[].new_value | string | 否 | 新值（新增/修改时） |
+| sync_result.changes[].impact | string | 是 | 影响评估 |
+| sync_result.changes[].action_required | string | 是 | 需要的行动 |
+| sync_result.consistency_check | object | 是 | 一致性校验结果 |
+| sync_result.consistency_check.is_consistent | boolean | 是 | 是否一致 |
+| sync_result.consistency_check.inconsistencies | array | 否 | 不一致项列表 |
+| sync_result.approval_status | string | 是 | 审批状态，枚举值：pending/approved/rejected |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | 同步变更列表和影响评估 | 重新执行差异比对，标记新增变更，保留人类已确认的同步记录 |
+| SRS需求变更 | 一致性校验 | 重新执行一致性校验，标记不一致项 |
+| 需求变更日志更新 | 变更追溯 | 更新变更追溯链路，标记需人类确认 |
+
+当同步结果自身变更时，对下游的通知机制：
+
+| 同步变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 需求新增 | development-task-breakdown | 标记需求新增，触发任务拆解 |
+| 需求修改 | development-auto-review | 标记需求修改，触发审查规则更新 |
+| 一致性问题 | development-task-breakdown | 标记一致性问题，触发修复任务 |
+
+---
 
 ## 决策规则
 

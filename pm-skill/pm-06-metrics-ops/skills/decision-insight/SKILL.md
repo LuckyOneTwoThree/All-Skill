@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：洞察基于全量数据分析，不依赖片段信息
-2. **实时感知**：分析结果产出后即时触发洞察转化，缩短从数据到行动的时间
-3. **自动归因**：洞察自动附带决策边界和置信度评估
-4. **决策规则显式化**：每个洞察标注auto_execute_eligible，明确哪些可自动执行、哪些需人类确认
+1. **数据是起点，洞察是终点，行动是目的**：没有行动方向的洞察只是数据展示
+2. **故事化而非术语化**：将"p=0.001"翻译为"99.9%可信度"，让决策者听懂才能行动
+3. **边界标注比推荐更重要**：明确哪些可自动执行、哪些需人类确认，比简单推荐更有价值
 
 ## 交互模式
 
@@ -378,6 +377,50 @@ funnel_insight:
 □ 推荐行动明确
 □ 输出一致性检查
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| data_insight | object | 是 | 数据洞察根对象 |
+| data_insight.insight_id | string | 是 | 洞察唯一标识 |
+| data_insight.created_at | string | 是 | 创建时间 |
+| data_insight.source | object | 是 | 洞察来源 |
+| data_insight.source.type | string | 是 | 来源类型，枚举值：experiment_result/anomaly/funnel_analysis/retention_analysis |
+| data_insight.source.confidence | string | 是 | 来源置信度 |
+| data_insight.narrative | string | 是 | 故事化叙述 |
+| data_insight.action_options | array | 是 | 决策选项列表，至少2个 |
+| data_insight.action_options[].option_id | string | 是 | 选项ID |
+| data_insight.action_options[].expected_effect | object | 是 | 预期效果 |
+| data_insight.action_options[].risk | string | 是 | 风险等级 |
+| data_insight.action_options[].confidence | string | 是 | 置信度 |
+| data_insight.decision_boundary | object | 是 | 决策边界 |
+| data_insight.decision_boundary.type | string | 是 | 边界类型，枚举值：data_decision/data_reference/human_decision |
+| data_insight.decision_boundary.auto_execute_eligible | boolean | 是 | 是否可自动执行 |
+| data_insight.recommended_action | object | 是 | 推荐行动 |
+| data_insight.recommended_action.action | string | 是 | 行动描述 |
+| data_insight.recommended_action.priority | string | 是 | 优先级 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 分析结果更新 | 洞察叙述和决策选项 | 更新洞察叙述，重新评估决策选项 |
+| 实验结果更新 | 实验相关洞察 | 更新实验洞察，重新评估决策边界 |
+| 业务上下文变更 | 行动建议和优先级 | 重新评估行动建议，更新优先级 |
+| 历史洞察库更新 | 重复洞察检测 | 执行去重检查，合并相似洞察 |
+
+当洞察自身变更时，对下游的通知机制：
+
+| 洞察变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| data_decision类型洞察 | decision-dace | 标记可自动执行，触发Execute追踪 |
+| data_reference类型洞察 | decision-dace | 标记需人类确认，触发Conclude |
+| 洞察合并/置信度提升 | decision-culture | 标记洞察更新，触发报告更新 |
+
+---
 
 ## 决策规则
 

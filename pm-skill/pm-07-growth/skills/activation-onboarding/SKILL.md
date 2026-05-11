@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "激活"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **千人千面**：不同用户分群采用差异化Onboarding路径
-2. **自动实验持续优化**：Onboarding策略通过A/B测试持续验证
-3. **实时优化**：基于实时激活数据动态调整Onboarding内容
-4. **数据驱动归因**：量化每个Onboarding步骤对激活的贡献
+1. **Onboarding是价值递送不是功能导览**：每个引导步骤都必须让用户感受到价值，而非仅仅知道功能在哪
+2. **分群即分路**：不同用户分群需要不同的Onboarding路径，一条路径走不通所有人
+3. **Aha Moment是终点**：Onboarding的唯一目标是让用户到达Aha Moment，其他都是手段
 
 ## 交互模式
 
@@ -230,6 +229,19 @@ success_criteria:
   - statistical_significance: 0.95
 ```
 
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| current_effectiveness | object | 是 | 当前效果评估，须含overall_completion_rate/drop_off_points |
+| current_effectiveness.overall_completion_rate | number | 是 | 整体完成率，范围0-1 |
+| current_effectiveness.drop_off_points | array | 是 | 流失点列表，每项须含stage/drop_off_rate |
+| segment_strategies | array | 是 | 分群策略列表，至少1个分群策略 |
+| segment_strategies[].segment | string | 是 | 分群名称 |
+| segment_strategies[].strategy | string | 是 | 策略描述 |
+| personalized_content | array | 否 | 个性化内容列表，每项须含segment/content_type/content/trigger |
+| ab_tests | array | 否 | A/B测试列表，每项须含test_id/hypothesis |
+
 ## 决策规则
 
 | 情况 | 处理方式 |
@@ -250,7 +262,7 @@ success_criteria:
 
 ### 上游文件缺失降级方案
 
-| 缺失范围 | 降级方案 | 输出影响 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
 |----------|----------|----------|
 | Onboarding数据缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 优化建议基于定性描述而非数据驱动 |
 | Aha Moment缺失 | 跳过Aha Moment引导优化，基于通用最佳实践 | Onboarding优化缺乏Aha Moment锚点 |
@@ -263,6 +275,23 @@ success_criteria:
 - **当前Onboarding流程**：新用户引导的步骤和内容
 - **完成率数据**（可选）：各引导步骤的完成率
 - **用户反馈**（可选）：新用户对引导流程的反馈
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| activation-aha | 主Aha Moment变更 | Onboarding终点和引导路径 | 重新设计引导路径指向新Aha |
+| activation-aha | 到达率数据更新 | 分群策略的预期提升 | 调整预期提升和优先级 |
+| 用户提供-Onboarding数据 | 数据口径变更 | 效果评估和流失分析 | 按新口径重新评估效果 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| retention-engagement | 激活率变更 | 写入输出文件 | 新用户激活率和Onboarding完成率 |
+| activation-orchestrator | Onboarding策略输出完成 | 输出文件更新 | Onboarding优化完成状态和关键结论 |
 
 ## 关键成功指标
 

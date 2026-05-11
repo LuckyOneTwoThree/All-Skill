@@ -5,7 +5,7 @@ metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -171,6 +171,49 @@ metadata:
   }
 }
 ```
+
+---
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| dashboards | array | 是 | Dashboard配置列表，至少包含1个战略看板 |
+| dashboards[].name | string | 是 | Dashboard名称，不可为空 |
+| dashboards[].type | string | 是 | 看板类型，枚举值：strategic/tactical/operational |
+| dashboards[].owner | string | 是 | 看板负责人 |
+| dashboards[].widgets | array | 是 | Widget列表，至少包含1个Widget |
+| dashboards[].widgets[].type | string | 是 | Widget类型，枚举值：kpi/chart/table/funnel |
+| dashboards[].widgets[].metric | string | 是 | 关联指标名称 |
+| dashboards[].widgets[].visualization | string | 是 | 可视化类型 |
+| dashboards[].widgets[].refresh_interval | string | 是 | 刷新频率 |
+| dashboards[].alerts | array | 否 | 告警规则列表 |
+| dashboards[].alerts[].metric | string | 条件必填 | 告警关联指标，有alerts时必填 |
+| dashboards[].alerts[].threshold | number | 条件必填 | 告警阈值，有alerts时必填 |
+| dashboards[].alerts[].severity | string | 条件必填 | 告警级别，枚举值：P0/P1/P2/P3 |
+| configuration_files | object | 是 | 平台配置文件 |
+| configuration_files.platform | string | 是 | 平台类型 |
+| configuration_files.dashboard_json | object | 是 | Dashboard JSON配置 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 北极星指标变更 | 战略Dashboard的KPI Widget和告警规则 | 更新战略Dashboard的核心Widget，重新计算告警阈值，标记需人类确认 |
+| L1/L2指标增删 | 战术/运营Dashboard的Widget分配 | 重新执行指标自动分配，标记新增/移除的Widget，保留人类已确认的布局 |
+| 行动指标变更 | 运营Dashboard的Widget和告警 | 更新运营Dashboard，重新评估告警配置 |
+| 埋点事件增删 | Widget数据源标记 | 更新Widget的数据源状态，标记"待配置"或"已就绪" |
+| 指标定义修改 | 关联Widget的计算逻辑 | 更新Widget展示逻辑，标记需人类确认 |
+
+当Dashboard配置自身变更时，对下游的通知机制：
+
+| 配置变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| Dashboard结构变更 | 模块7（产品度量运营） | 标记看板结构变更，触发监控配置更新 |
+| 告警规则变更 | 运维团队、产品团队 | 标记告警变更，触发告警通知配置更新 |
+| Widget增删 | 模块7（产品度量运营） | 标记Widget变更，触发数据源验证 |
 
 ---
 

@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **Brief是决策文档不是数据堆砌**——每个字段必须服务于决策判断，无决策价值的数据不纳入
+2. **假设风险驱动下一步**——关键假设及其风险等级决定推荐行动，高风险假设优先验证
+3. **人类决策项不可省略**——所有需人类判断的事项必须显式列出，含决策上下文和紧急程度
+4. **证据链可追溯**——每条证据必须可追溯到上游数据源，确保决策依据可审计
 
 ## 交互模式
 
@@ -107,6 +107,37 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| `title` | string | 是 | 机会简报标题，格式为[目标用户群体]-[核心痛点摘要]，不可为空 |
+| `problem_statement` | string | 是 | 结构化问题陈述，不可为空，需可追溯到problem-statement.json |
+| `evidence_summary` | object | 是 | 证据摘要，3个子字段均必须有内容 |
+| `evidence_summary.user_research` | object | 是 | 用户研究证据，需包含痛点频率和行为印证 |
+| `evidence_summary.market_analysis` | object | 是 | 市场分析证据，需包含SOM估算 |
+| `evidence_summary.competitive_landscape` | object | 是 | 竞争格局证据，需包含市场空白分析 |
+| `opportunity_score` | object | 是 | 机会评分，weighted_total不可为null（需人类已完成战略契合度评分） |
+| `opportunity_score.weighted_total` | number | 是 | 加权总分，不可为null |
+| `opportunity_score.dimensions` | object | 是 | 各维度得分，5个维度均需有score值 |
+| `hmw_statements` | array | 是 | HMW陈述列表，不可为空数组 |
+| `hmw_statements[].id` | string | 是 | HMW唯一标识 |
+| `hmw_statements[].statement` | string | 是 | HMW陈述文本 |
+| `hmw_statements[].innovation_space` | number | 是 | 创新空间评分1-5 |
+| `key_assumptions` | array | 是 | 关键假设列表，不可为空数组 |
+| `key_assumptions[].assumption` | string | 是 | 假设描述，不可为空 |
+| `key_assumptions[].type` | string | 是 | 假设类型，必须为desirability/viability/feasibility/usability之一 |
+| `key_assumptions[].testability` | string | 是 | 可验证性描述，不可为空 |
+| `key_assumptions[].risk_if_wrong` | string | 是 | 风险等级，必须为高/中/低之一 |
+| `recommended_next_step` | string | 是 | 推荐下一步，必须基于评分和假设风险分析，不可凭空建议 |
+| `human_decisions_needed` | array | 是 | 人类决策事项列表，高风险假设必须有对应决策项 |
+| `human_decisions_needed[].item` | string | 是 | 决策事项，不可为空 |
+| `human_decisions_needed[].context` | string | 是 | 决策上下文，不可为空 |
+| `human_decisions_needed[].urgency` | string | 是 | 紧急程度，必须为高/中/低之一 |
+| `metadata.version` | string | 是 | 版本号 |
+| `metadata.generated_at` | string | 是 | 生成时间戳，ISO 8601格式 |
+| `metadata.source_files` | array | 是 | 来源文件列表，不可为空数组 |
 
 ```json
 {
@@ -235,13 +266,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| voice-analysis.json / behavior-analysis.json | 用户提供机会描述 → 生成简化版Brief，证据摘要部分基于用户描述填充 |
-| persona.json / jtbd.json / kano.json | 用户提供机会描述 → 生成简化版Brief，标注"缺乏用户画像和需求分类数据" |
-| tam-som.json / competitor-intel.json | 用户提供机会描述 → 生成简化版Brief，市场分析和竞品分析部分基于用户描述 |
-| opportunity-scoring.json / hmw.json / problem-statement.json | 用户提供机会描述 → 生成简化版Brief，核心内容基于用户描述填充 |
-| 多个前序文件缺失 | 用户提供机会描述 → 生成简化版Brief，标注各缺失数据源 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|----------|
+| voice-analysis.json / behavior-analysis.json | 用户提供机会描述 → 生成简化版Brief，证据摘要部分基于用户描述填充 | `evidence_summary.user_research` 基于用户描述，缺乏痛点频率和行为印证数据，决策可信度降低 |
+| persona.json / jtbd.json / kano.json | 用户提供机会描述 → 生成简化版Brief，标注"缺乏用户画像和需求分类数据" | `evidence_summary.user_research` 缺乏persona_summary/core_jobs/need_type，假设分析缺乏用户洞察支撑 |
+| tam-som.json / competitor-intel.json | 用户提供机会描述 → 生成简化版Brief，市场分析和竞品分析部分基于用户描述 | `evidence_summary.market_analysis` 和 `competitive_landscape` 基于用户估算，缺乏SOM和竞品能力数据 |
+| opportunity-scoring.json / hmw.json / problem-statement.json | 用户提供机会描述 → 生成简化版Brief，核心内容基于用户描述填充 | `opportunity_score` 缺乏结构化评分，`hmw_statements` 为空，`problem_statement` 为用户描述，`human_decisions_needed` 大幅增加 |
+| 多个前序文件缺失 | 用户提供机会描述 → 生成简化版Brief，标注各缺失数据源 | 多个字段基于用户描述，`evidence_summary` 大面积缺失，`key_assumptions` 可信度极低，Brief决策价值大幅降低 |
 
 数据获取说明：
 - 本Skill需要多个前序阶段的数据，请通过以下方式之一提供：
@@ -249,3 +280,27 @@ metadata:
   2. 上传前序阶段输出的JSON文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游数据源 | 变更类型 | 影响维度 | 影响描述 | 响应策略 |
+|-----------|----------|----------|----------|----------|
+| voice-analysis.json | 痛点频率或情感数据更新 | evidence_summary.user_research | 用户研究证据摘要需更新 | 更新user_research子字段，重新评估key_assumptions |
+| behavior-analysis.json | 行为模式数据更新 | evidence_summary.user_research | 行为印证数据需更新 | 更新behavioral_evidence，重新评估假设风险 |
+| persona.json | 用户画像调整 | evidence_summary.user_research / problem_statement | 用户群体描述可能变化 | 更新persona_summary，评估problem_statement是否需同步更新 |
+| jtbd.json | 待办任务变更 | evidence_summary.user_research | 核心任务描述需更新 | 更新core_jobs，重新评估desirability类假设 |
+| kano.json | 需求分类调整 | evidence_summary.user_research | 需求类型描述需更新 | 更新need_type，重新评估假设优先级 |
+| tam-som.json | 市场规模估算调整 | evidence_summary.market_analysis | TAM/SAM/SOM数据需更新 | 更新market_analysis，重新评估viability类假设 |
+| competitor-intel.json | 竞品能力变更 | evidence_summary.competitive_landscape | 竞争格局和壁垒分析需更新 | 更新competitive_landscape，重新评估竞争壁垒相关假设 |
+| opportunity-scoring.json | 评分结果更新 | opportunity_score / recommended_next_step | 加权总分和排名变化影响推荐行动 | 更新opportunity_score，重新生成recommended_next_step |
+| hmw.json | HMW陈述变更 | hmw_statements | HMW列表需同步更新 | 更新hmw_statements，评估创新空间分布变化 |
+| problem-statement.json | Problem Statement变更 | problem_statement | 问题陈述需同步更新 | 更新problem_statement，评估是否影响key_assumptions |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知字段 | 通知时机 | 通知内容 |
+|-----------|----------|----------|----------|
+| 决策层/利益相关方 | `title` / `opportunity_score.weighted_total` | Brief核心结论变更后 | 通知机会简报标题和评分变化，提示需重新审阅 |
+| 后续阶段（解决方案探索） | `recommended_next_step` / `key_assumptions` | 推荐行动或假设变更后 | 通知下一步行动调整及需验证的假设变化 |

@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：样本量基于全量用户计算，确保统计检验的可靠性
-2. **实时感知**：实验设计完成后即时输出配置，缩短从设计到上线的时间
-3. **自动归因**：自动识别指标间的关联关系，辅助指标选择
-4. **决策规则显式化**：终止条件、护栏指标阈值在设计阶段即明确定义
+1. **假设先于实验**：没有结构化假设的实验是盲目的探索，If-Then-Because-For缺一不可
+2. **护栏与主指标同等重要**：主指标衡量"是否有效"，护栏指标衡量"是否安全"，两者缺一不可
+3. **样本量决定可信度**：统计功效不足的实验不如不做，MDE和样本量必须在设计阶段确定
 
 ## 交互模式
 
@@ -349,6 +348,50 @@ ab_test_design:
 □ 风险评估完成
 □ 实验配置审核通过
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| ab_test_design | object | 是 | 实验设计根对象 |
+| ab_test_design.experiment | object | 是 | 实验基本信息 |
+| ab_test_design.experiment.id | string | 是 | 实验ID |
+| ab_test_design.experiment.name | string | 是 | 实验名称 |
+| ab_test_design.hypothesis | object | 是 | 结构化假设 |
+| ab_test_design.hypothesis.structured | string | 是 | If-Then-Because-For格式假设 |
+| ab_test_design.metrics | object | 是 | 指标体系 |
+| ab_test_design.metrics.primary_metric | object | 是 | 主指标 |
+| ab_test_design.metrics.primary_metric.name | string | 是 | 主指标名称 |
+| ab_test_design.metrics.primary_metric.baseline_value | number | 是 | 基线值 |
+| ab_test_design.metrics.guardrail_metrics | array | 是 | 护栏指标列表，至少2个 |
+| ab_test_design.sample_size | object | 是 | 样本量计算 |
+| ab_test_design.sample_size.per_group | number | 是 | 每组样本量 |
+| ab_test_design.sample_size.total | number | 是 | 总样本量 |
+| ab_test_design.sample_size.expected_duration_days | number | 是 | 预期天数 |
+| ab_test_design.traffic_split | object | 是 | 分流方案 |
+| ab_test_design.termination_conditions | object | 是 | 终止条件 |
+| ab_test_design.risk_assessment | object | 是 | 风险评估 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 假设陈述变更 | 结构化假设和指标选择 | 重新结构化假设，更新指标选择 |
+| 可用流量变更 | 样本量计算和实验周期 | 重新计算样本量，更新预期实验周期 |
+| 指标体系变更 | 主指标和护栏指标 | 更新指标选择，重新评估护栏指标覆盖度 |
+| 历史数据变更 | 基线值和MDE | 更新基线值，重新计算样本量 |
+
+当实验设计自身变更时，对下游的通知机制：
+
+| 设计变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 主指标变更 | experiment-execution | 标记主指标变更，触发执行配置更新 |
+| 护栏指标变更 | experiment-execution | 标记护栏变更，触发监控配置更新 |
+| 分流方案变更 | experiment-execution | 标记分流变更，触发分流配置更新 |
+
+---
 
 ## 决策规则
 

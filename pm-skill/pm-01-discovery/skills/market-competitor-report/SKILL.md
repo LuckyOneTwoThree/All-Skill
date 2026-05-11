@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -266,6 +266,70 @@ quadrantChart
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_metadata | object | 是 | 报告元数据，必须包含category、generated_at、competitors_analyzed、data_sources、overall_confidence |
+| report_metadata.category | string | 是 | 品类关键词，不可为空 |
+| report_metadata.generated_at | string | 是 | ISO 8601时间戳 |
+| report_metadata.competitors_analyzed | integer | 是 | 分析的竞品数量，≥3 |
+| report_metadata.data_sources | array | 是 | 数据来源清单，不可为空数组 |
+| report_metadata.overall_confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+| executive_summary | object | 是 | 执行摘要 |
+| executive_summary.competition_landscape | string | 是 | 竞争格局一段话总结，≥50字 |
+| executive_summary.key_findings | array | 是 | 核心发现列表，长度=3 |
+| executive_summary.top_strategy | string | 是 | Top1策略建议，不可为空 |
+| market_overview | object | 否 | 市场概览，缺失时标注"缺乏市场规模数据" |
+| market_overview.tam | number | 条件必填 | market_overview存在时必填，>0 |
+| market_overview.sam | number | 条件必填 | market_overview存在时必填，>0且≤tam |
+| market_overview.som | number | 条件必填 | market_overview存在时必填，>0且≤sam |
+| market_overview.growth_rate | string | 条件必填 | market_overview存在时必填，格式如"12.5%" |
+| market_overview.key_drivers | array | 条件必填 | market_overview存在时必填，≥1项 |
+| market_overview.pest_highlights | array | 否 | PEST关键因素，缺失时可为空数组 |
+| competitive_landscape | object | 否 | 竞争格局 |
+| competitive_landscape.quadrant_summary | object | 条件必填 | competitive_landscape存在时必填 |
+| competitive_landscape.market_share_estimate | array | 条件必填 | competitive_landscape存在时必填，≥1项 |
+| competitive_landscape.hhi_index | number | 条件必填 | competitive_landscape存在时必填，范围0-10000 |
+| competitive_landscape.concentration_level | string | 条件必填 | competitive_landscape存在时必填，枚举值：分散/适度集中/高度集中 |
+| competitor_profiles | array | 是 | 竞品深度画像列表，长度3-5 |
+| competitor_profiles[].name | string | 是 | 竞品名称，不可为空 |
+| competitor_profiles[].positioning | string | 是 | 一句话定位，不可为空 |
+| competitor_profiles[].swot | object | 是 | SWOT分析，必须包含strengths/weaknesses/opportunities/threats四个数组，每个数组≥1项 |
+| competitor_profiles[].swot.strengths | array | 是 | 优势列表，≥1项 |
+| competitor_profiles[].swot.weaknesses | array | 是 | 劣势列表，≥1项 |
+| competitor_profiles[].swot.opportunities | array | 是 | 机会列表，≥1项 |
+| competitor_profiles[].swot.threats | array | 是 | 威胁列表，≥1项 |
+| competitor_profiles[].moat_score | object | 是 | 护城河评估 |
+| competitor_profiles[].moat_score.network_effects | number | 是 | 网络效应评分，0-5 |
+| competitor_profiles[].moat_score.switching_cost | number | 是 | 转换成本评分，0-5 |
+| competitor_profiles[].moat_score.scale_economy | number | 是 | 规模经济评分，0-5 |
+| competitor_profiles[].moat_score.brand | number | 是 | 品牌壁垒评分，0-5 |
+| competitor_profiles[].moat_score.technology | number | 是 | 技术壁垒评分，0-5 |
+| competitor_profiles[].moat_score.data | number | 是 | 数据壁垒评分，0-5 |
+| competitor_profiles[].moat_score.ecosystem | number | 是 | 生态壁垒评分，0-5 |
+| competitor_profiles[].moat_score.total | number | 是 | 护城河总分，=7项评分之和，0-35 |
+| competitor_profiles[].moat_score.level | string | 是 | 护城河深度，枚举值：深/中/浅 |
+| feature_matrix_summary | object | 否 | 功能矩阵对比摘要 |
+| feature_matrix_summary.total_features_compared | integer | 条件必填 | feature_matrix_summary存在时必填，>0 |
+| feature_matrix_summary.differentiation_features | array | 条件必填 | feature_matrix_summary存在时必填，≥1项 |
+| feature_matrix_summary.coverage_scores | object | 条件必填 | feature_matrix_summary存在时必填，各竞品覆盖率评分 |
+| perceptual_map | object | 否 | 竞争定位图数据 |
+| perceptual_map.x_axis | string | 条件必填 | perceptual_map存在时必填，X轴维度名称 |
+| perceptual_map.y_axis | string | 条件必填 | perceptual_map存在时必填，Y轴维度名称 |
+| perceptual_map.positions | array | 条件必填 | perceptual_map存在时必填，≥2个竞品坐标点 |
+| perceptual_map.positions[].name | string | 是 | 竞品名称 |
+| perceptual_map.positions[].x | number | 是 | X轴坐标，0.0-1.0 |
+| perceptual_map.positions[].y | number | 是 | Y轴坐标，0.0-1.0 |
+| perceptual_map.white_space | string | 条件必填 | perceptual_map存在时必填，空白区域描述 |
+| differentiation_strategies | array | 是 | 差异化策略建议列表，≥3条 |
+| differentiation_strategies[].name | string | 是 | 策略名称，不可为空 |
+| differentiation_strategies[].description | string | 是 | 一句话描述，不可为空 |
+| differentiation_strategies[].evidence | string | 是 | 策略依据，必须引用具体分析数据 |
+| differentiation_strategies[].expected_impact | string | 是 | 预期效果，不可为空 |
+| differentiation_strategies[].risks | string | 是 | 风险与前提，不可为空 |
+| differentiation_strategies[].priority | string | 是 | 优先级，枚举值：P0/P1/P2 |
+
 ```json
 {
   "report_metadata": {
@@ -383,3 +447,31 @@ quadrantChart
   2. 上传competitor-intel.json和competitor-quadrant.json文件
   3. 提供上游Skill输出文件路径
 - AI不负责外部数据采集，仅负责分析和报告生成
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游数据源 | 变更类型 | 影响章节 | 响应动作 |
+|-----------|---------|---------|---------|
+| competitor-intel.json | Feature Matrix变更（新增/删除功能项） | Feature Matrix功能对比章节 | 重新生成feature_matrix_summary，更新差异化功能标注和覆盖率评分 |
+| competitor-intel.json | 口碑数据变更（情感分布/痛点变化） | 用户口碑对比章节、SWOT分析 | 更新reputation相关洞察，重新推导Weaknesses和Opportunities |
+| competitor-intel.json | 定价策略变更 | 定价策略对比章节 | 更新定价对比表和性价比评估，检查是否影响差异化策略 |
+| competitor-intel.json | 战略信号变更 | SWOT分析、差异化策略 | 更新Threats推断，重新评估策略优先级 |
+| competitor-quadrant.json | 象限分类变更（竞品类别调整） | 竞争格局章节 | 更新quadrant_summary，重新筛选核心竞品，可能触发竞品画像重建 |
+| competitor-quadrant.json | 新增/移除竞品 | 竞品深度分析章节 | 新增竞品需补充完整画像；移除竞品需更新对比表和定位图 |
+| competitor-quadrant.json | 置信度变更 | 报告整体置信度 | 更新overall_confidence，检查是否触发降级策略 |
+| tam-som.json | 市场规模变更（TAM/SAM/SOM数值调整） | 市场概览章节 | 更新market_overview数值，重新计算市场份额占比 |
+| tam-som.json | 增长率变更 | 市场概览章节 | 更新growth_rate，检查是否影响市场吸引力评估和策略优先级 |
+| pest.json | 宏观环境变更（政策/经济/社会/技术趋势变化） | 市场概览章节 | 更新pest_highlights，检查是否产生新的Opportunities或Threats |
+| pest.json | 新增重大政策或技术突破 | SWOT分析、差异化策略 | 评估对竞争格局的影响，可能需要新增策略建议 |
+
+### 下游通知机制表
+
+| 本Skill输出变更 | 变更条件 | 通知下游 | 通知内容 |
+|---------------|---------|---------|---------|
+| 差异化策略变更 | 策略新增/删除/优先级调整 | design-orchestrator | 变更的策略名称、调整方向、新优先级，提示设计阶段对齐 |
+| 竞争格局重大变化 | HHI指数跨阈值变化、核心竞品新增/退出 | product-launch-orchestrator | 格局变化描述、影响评估，提示上市策略调整 |
+| 市场规模显著变化 | TAM/SAM/SOM变化幅度>20% | opportunity-orchestrator | 新市场规模数据、变化原因，提示机会评分重新评估 |
+| 护城河评估变更 | 核心竞品护城河等级跨档变化 | insight-orchestrator | 竞品名称、旧等级→新等级，提示需求优先级可能需调整 |
+| 定位图空白区域变化 | 空白区域消失或新空白出现 | design-orchestrator | 空白区域变化描述，提示产品定位策略调整 |

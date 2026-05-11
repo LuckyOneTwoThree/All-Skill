@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **原声优先于总结**——用户原话比AI概括更有说服力，每个痛点必须有代表原声支撑
+2. **痛点分级而非平铺**——按影响面×痛苦度×频率评分分级，不输出无优先级的痛点清单
+3. **情感是信号不是噪音**——负面情绪指向真实痛点，混合情感指向未满足期望，都需深入分析
+4. **数据量决定可信度**——反馈量<500条时结论降级为"探索性"，置信度上限0.5
 
 ## 交互模式
 
@@ -144,6 +144,32 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| summary.total_feedback_analyzed | number | 是 | 分析的反馈总量，须>0 |
+| summary.data_sources_used | string[] | 是 | 实际使用的数据源列表，不可为空 |
+| summary.time_range | string | 是 | 数据时间范围 |
+| summary.sentiment_distribution.positive | number | 是 | 正面情感占比，0-1 |
+| summary.sentiment_distribution.negative | number | 是 | 负面情感占比，0-1 |
+| summary.sentiment_distribution.neutral | number | 是 | 中性情感占比，0-1 |
+| summary.sentiment_distribution.mixed | number | 是 | 混合情感占比，0-1 |
+| summary.top_themes | array | 是 | 主题列表，每项须含theme、feedback_count、representative_quotes、confidence |
+| summary.top_themes[].representative_quotes | string[] | 是 | 每个主题≥2条代表原声 |
+| summary.top_themes[].confidence | number | 是 | 主题置信度，0-1 |
+| summary.top_pain_points | array | 是 | 痛点列表，每项须含pain_point、severity、impact_score、representative_quotes、confidence |
+| summary.top_pain_points[].severity | string | 是 | 痛点等级，枚举：P0/P1/P2/P3 |
+| summary.top_pain_points[].representative_quotes | string[] | 是 | 每个痛点≥2条代表原声 |
+| summary.top_pain_points[].confidence | number | 是 | 痛点置信度，0-1 |
+| summary.emerging_themes | array | 否 | 新兴主题列表 |
+| summary.emerging_themes[].confidence | number | 是 | 新兴主题置信度，0-1 |
+| summary.user_segments | array | 是 | 用户分群列表，每项须含segment_name、size_ratio、confidence |
+| summary.user_segments[].confidence | number | 是 | 分群置信度，0-1 |
+| metadata.analysis_timestamp | string | 是 | 分析时间戳 |
+| metadata.data_quality_flags | string[] | 是 | 数据质量标记 |
+| metadata.confidence_overall | number | 是 | 整体置信度，0-1 |
+
 ```json
 {
   "summary": {
@@ -237,15 +263,14 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 无（本Skill为起始Skill） | 无上游依赖，但需要用户声音数据 |
-| 所有数据源均缺失 | 提示用户先提供反馈数据，或基于用户直接粘贴的反馈文本执行轻量版分析 |
-| 若用户未提供app_reviews | 提示用户提供应用商店评论数据，否则缺乏核心反馈来源 |
-| 若用户未提供support_tickets | 提示用户提供客服工单数据，否则缺乏核心反馈来源 |
-| 若用户未提供social_mentions | 跳过该输入相关步骤，社交媒体数据不参与分析 |
-| 若用户未提供community_posts | 跳过该输入相关步骤，社区帖子数据不参与分析 |
-| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 所有数据源均缺失 | 提示用户先提供反馈数据，或基于用户直接粘贴的反馈文本执行轻量版分析 | summary字段为空，置信度降为0 |
+| 若用户未提供app_reviews | 提示用户提供应用商店评论数据，否则缺乏核心反馈来源 | data_sources_used缺少app_reviews，情感分布和主题可能偏斜 |
+| 若用户未提供support_tickets | 提示用户提供客服工单数据，否则缺乏核心反馈来源 | data_sources_used缺少support_tickets，痛点可能遗漏工单类问题 |
+| 若用户未提供social_mentions | 跳过该输入相关步骤，社交媒体数据不参与分析 | data_sources_used缺少social_mentions，新兴主题检测能力降低 |
+| 若用户未提供community_posts | 跳过该输入相关步骤，社区帖子数据不参与分析 | data_sources_used缺少community_posts，深度用户洞察可能缺失 |
+| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 | 使用默认配置，分析参数可能非最优 |
 
 数据获取说明：
 - 本Skill需要用户声音数据（评论、工单、社媒提及等），请通过以下方式之一提供：
@@ -253,3 +278,18 @@ metadata:
   2. 上传CSV/Excel/JSON文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响
+
+本Skill为起始Skill，无上游文件依赖，不涉及上游变更影响。
+
+### 下游通知机制
+
+| 下游Skill | 通知触发条件 | 通知方式 | 通知内容 |
+|-----------|------------|---------|---------|
+| user-research-user-modeling | voice-analysis.json更新完成 | 写入output文件 | 通知用户分群、痛点、主题数据已就绪 |
+| user-research-report | voice-analysis.json更新完成 | 写入output文件 | 通知情感分布、痛点、主题数据已就绪 |

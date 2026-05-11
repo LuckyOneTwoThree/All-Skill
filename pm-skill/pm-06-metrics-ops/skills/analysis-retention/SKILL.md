@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：对全量用户进行留存分析，不依赖抽样推断
-2. **实时感知**：留存数据更新后即时触发分析，流失预警模型持续运行
-3. **自动归因**：自动识别Aha Moment候选和流失风险因素
-4. **决策规则显式化**：留存率下降阈值、流失预警规则前置定义
+1. **留存是产品健康的终极指标**：获客决定天花板，留存决定地板
+2. **Aha Moment是增长的杠杆**：找到"啊哈时刻"并提升到达率，比泛化优化更高效
+3. **预警优于召回**：在用户流失前干预，远比流失后召回成本低、效果好
 
 ## 交互模式
 
@@ -331,6 +330,48 @@ churn_prediction:
 - **Cohort周报**：每周一生成周度Cohort报告
 - **Aha Moment复盘**：每月重新分析
 - **流失预警**：实时计算
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| retention_analysis | object | 是 | 留存分析根对象 |
+| retention_analysis.overall | object | 是 | 整体留存数据 |
+| retention_analysis.overall.d1 | number | 是 | 次日留存率 |
+| retention_analysis.overall.d7 | number | 是 | 7日留存率 |
+| retention_analysis.overall.d30 | number | 是 | 30日留存率 |
+| retention_analysis.overall.curve_shape | object | 是 | 曲线形态分析 |
+| retention_analysis.overall.curve_shape.type | string | 是 | 形态类型，枚举值：smile/L/steep_decline/smooth |
+| retention_analysis.cohort_trend | object | 是 | Cohort趋势分析 |
+| retention_analysis.aha_moment_candidates | array | 是 | Aha Moment候选列表，至少1个 |
+| retention_analysis.aha_moment_candidates[].rank | number | 是 | 排名 |
+| retention_analysis.aha_moment_candidates[].behavior | string | 是 | 行为描述 |
+| retention_analysis.aha_moment_candidates[].retention_lift | object | 是 | 留存提升数据 |
+| retention_analysis.aha_moment_candidates[].correlation | number | 是 | 相关系数 |
+| retention_analysis.churn_risk | object | 是 | 流失风险分析 |
+| retention_analysis.churn_risk.high_risk_count | number | 是 | 高风险用户数 |
+| retention_analysis.churn_risk.high_risk_rate | number | 是 | 高风险用户占比 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 用户行为数据更新 | 留存曲线和Cohort | 重新计算留存曲线，更新Cohort分析 |
+| 分群定义变更 | Cohort维度 | 更新分群配置，重新执行Cohort分析 |
+| 流失定义变更 | 流失预警模型 | 重新构建流失预警模型，更新高风险用户列表 |
+| 基准日期变更 | 留存计算基准 | 重新计算留存数据，更新趋势判断 |
+
+当留存分析自身变更时，对下游的通知机制：
+
+| 分析变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| D7留存下降>5% | decision-insight | 标记告警，触发洞察转化 |
+| Aha Moment候选变更 | data-analysis-report | 标记候选变更，触发报告更新 |
+| 流失风险等级变更 | decision-dace | 标记风险变更，触发DACE Analyze |
+
+---
 
 ## 决策规则
 

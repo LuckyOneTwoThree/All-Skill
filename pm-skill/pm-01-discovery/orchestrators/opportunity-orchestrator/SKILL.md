@@ -5,21 +5,17 @@ metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 机会识别指挥官
 
 ## 核心原则
 
-好机会不是找到的，是定义出来的。
-
-## 执行步骤
-
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **好机会是定义出来的**——机会不是客观存在等待发现的，而是通过Problem Statement定义、HMW重构、评分验证逐步定义出来的，编排器确保定义过程完整
+2. **评分先于发散**——先评分确定机会优先级（scoring），再发散探索创新空间（hmw），顺序不可颠倒，否则HMW会发散到低价值方向
+3. **Problem Statement是锚点**——所有HMW和Brief都锚定在Problem Statement上，Problem Statement质量不通过则后续输出不可信
+4. **人类判定三个关键节点**——战略契合度评分人类判定、Problem Statement质量3次不通过人类仲裁、Brief最终决策人类审批
 
 ## 子Skill执行协议
 
@@ -111,9 +107,20 @@ metadata:
 | Problem Statement质量检查 | opportunity-problem-statement质量检查3次不通过 | 人工审核所有尝试版本并决定最终Problem Statement |
 | Opportunity Brief最终决策 | opportunity-brief完成 | 审批机会简报的结论、关键假设验证优先级和推荐下一步方案 |
 
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| opportunity-scoring战略契合度未判定 | 暂停进入阶段2，等待人类判定战略契合度评分，其余4个维度评分结果可先输出 |
+| opportunity-hmw某维度未覆盖 | 标注"维度覆盖不完整"，基于已有Problem Statement补充生成该维度HMW，标注"推断补充" |
+| opportunity-problem-statement质量检查3次不通过 | 升级人类仲裁，输出3次尝试版本及未通过项对比，由人类决定最终Problem Statement |
+| opportunity-brief上游数据大量缺失 | 基于已有数据生成Brief，缺失字段标注"数据缺失"，证据摘要和关键假设置信度降级，建议人类补充数据后重新生成 |
+| 所有上游数据全部缺失 | 降级为轻量版流程：用户口述问题 → 基于描述生成Problem Statement → 基于Problem Statement生成HMW → 输出轻量版Brief，全流程标注"数据缺失" |
+
 ## 变更记录
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
 - v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格和人类决策点表格
 - v4.0: 统一阶段执行计划为表格格式，移除数据流转图
+- v5.0: 核心原则重写为4条编排理念（好机会是定义出来的/评分先于发散/Problem Statement是锚点/人类判定三节点）；移除通用4条执行步骤原则；新增异常处理表（5种异常场景）

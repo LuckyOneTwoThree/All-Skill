@@ -5,22 +5,22 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "1.0"
-  interaction_mode: "human_execute_ai_assist"
+  version: "2.0"
+  interaction_mode: "human_ai_collaborate"
 ---
 
 # 访谈辅助
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **人类主导AI辅助**——访谈执行由人类主导，AI负责脚本设计、转录分析和洞察提取，不可替代人类判断
+2. **脚本服务于目标不是目标本身**——访谈脚本是验证假设的工具，人类可基于现场判断偏离脚本追问，灵活性优先于完整性
+3. **追问比主问题更有价值**——主问题打开话题，追问挖掘深度，脚本必须包含追问策略和探针提示
+4. **访谈是验证不是探索**——访谈目标来自已有数据发现的假设，每场访谈必须回答"验证了什么/推翻了什么"
 
 ## 交互模式
 
-👤→🤖 **人类执行AI辅助** — 人类主导访谈执行，AI负责脚本设计、转录分析和洞察提取
+👤→🤖 **人类AI协作** — 人类主导访谈执行，AI负责脚本设计、转录分析和洞察提取
 
 ---
 
@@ -175,6 +175,29 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| script_id | string | 是 | 脚本唯一标识 |
+| research_objectives | string[] | 是 | 研究目标列表，不可为空 |
+| target_personas | string[] | 否 | 目标Persona类型列表 |
+| opening.icebreaker_questions | string[] | 是 | 破冰问题列表 |
+| opening.context_setting | string | 是 | 背景设定描述 |
+| core_modules | array | 是 | 核心问题模块列表，不可为空 |
+| core_modules[].module_name | string | 是 | 模块名称 |
+| core_modules[].objective | string | 是 | 模块目标 |
+| core_modules[].hypothesis_to_validate | string | 是 | 待验证假设 |
+| core_modules[].priority | string | 是 | 优先级枚举：must_validate/should_validate/optional |
+| core_modules[].questions | array | 是 | 问题列表，每个核心问题≥2个追问方向 |
+| core_modules[].questions[].main_question | string | 是 | 主问题（开放式） |
+| core_modules[].questions[].follow_up_strategies | string[] | 是 | 追问策略，≥2个方向 |
+| core_modules[].questions[].probes | string[] | 是 | 探针提示 |
+| closing.open_ended_question | string | 是 | 收尾开放性问题 |
+| recommended_participants | array | 否 | 推荐访谈对象列表 |
+| recommended_participants[].persona_type | string | 是 | Persona类型 |
+| recommended_participants[].priority | string | 是 | 优先级枚举：high/medium/low |
+
 ```json
 {
   "script_id": "string",
@@ -238,6 +261,28 @@ metadata:
   }
 }
 ```
+
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| interviews_conducted | number | 是 | 已执行访谈数量，须≥1 |
+| validated_hypotheses | array | 是 | 已验证假设列表，每项须含hypothesis、supporting_evidence、supporting_quotes、interview_count、confidence |
+| validated_hypotheses[].confidence | number | 是 | 验证置信度，0-1 |
+| refuted_hypotheses | array | 是 | 被推翻假设列表，每项须含hypothesis、refuting_evidence、refuting_quotes、interview_count、confidence |
+| refuted_hypotheses[].confidence | number | 是 | 推翻置信度，0-1 |
+| new_discoveries | array | 是 | 新发现列表，每项须含discovery、evidence、quotes、interview_count、confidence、needs_further_validation |
+| new_discoveries[].needs_further_validation | boolean | 是 | 是否需要进一步验证 |
+| new_discoveries[].confidence | number | 是 | 发现置信度，0-1 |
+| cross_interview_patterns | array | 否 | 跨访谈模式列表，每项须含pattern、frequency、interview_ids、confidence、saturation_level |
+| cross_interview_patterns[].saturation_level | string | 是 | 饱和度枚举：saturated/near_saturated/needs_more |
+| persona_updates | array | 否 | Persona更新列表，每项须含persona_id、updates |
+| persona_updates[].updates[].update_type | string | 是 | 更新类型枚举：interview-validated/interview-revised/interview-discovered |
+| data_cross_validation | object | 否 | 交叉验证结果，须含consistent_with_voice_analysis、consistent_with_behavior_analysis、contradictions_found |
+| metadata.analysis_timestamp | string | 是 | 分析时间戳 |
+| metadata.total_interviews | number | 是 | 访谈总数 |
+| metadata.total_insights | number | 是 | 洞察总数 |
+| metadata.confidence_overall | number | 是 | 整体置信度，0-1 |
 
 ```json
 {
@@ -346,13 +391,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| persona.json | 用户提供研究目标和用户描述 → 基于描述生成访谈脚本，标注"缺乏Persona数据定向" |
-| voice-analysis.json / behavior-analysis.json | 基于用户提供的研究目标直接生成脚本，标注"缺乏数据验证假设" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的研究目标生成轻量版访谈脚本 |
-| 若用户未提供research_objectives | 提示用户提供研究目标，否则无法设计定向访谈脚本 |
-| 若用户未提供interview_config | 提示用户提供访谈配置，否则使用默认配置（目标人数：5，时长：45分钟，形式：视频，录音可用） |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| persona.json | 用户提供研究目标和用户描述 → 基于描述生成访谈脚本，标注"缺乏Persona数据定向" | target_personas为空，recommended_participants基于推断，访谈对象定向精度降低 |
+| voice-analysis.json / behavior-analysis.json | 基于用户提供的研究目标直接生成脚本，标注"缺乏数据验证假设" | hypothesis_to_validate基于用户描述而非数据发现，data_cross_validation缺失 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的研究目标生成轻量版访谈脚本 | 脚本为纯探索性设计，验证性假设缺失，整体置信度降低 |
+| 若用户未提供research_objectives | 提示用户提供研究目标，否则无法设计定向访谈脚本 | 无法生成interview-script.json，流程中断 |
+| 若用户未提供interview_config | 提示用户提供访谈配置，否则使用默认配置（目标人数：5，时长：45分钟，形式：视频，录音可用） | 使用默认配置，访谈安排可能不符合实际条件 |
 
 数据获取说明：
 - 本Skill需要Persona和用户研究数据，请通过以下方式之一提供：
@@ -360,3 +405,24 @@ metadata:
   2. 上传persona.json / voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游Skill | 变更类型 | 影响范围 | 响应动作 |
+|-----------|---------|---------|---------|
+| user-research-user-modeling | persona.json结构变更 | Persona字段映射变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-user-modeling | persona.json内容更新 | Persona特征、痛点、JTBD变化 | 重新生成访谈脚本和推荐对象，标注"基于更新Persona重建" |
+| user-research-voice-analysis | voice-analysis.json结构变更 | 痛点、主题数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-voice-analysis | voice-analysis.json内容更新 | 痛点等级、情感分布变化 | 更新待验证假设清单，标注"基于更新数据调整假设" |
+| user-research-behavior-analysis | behavior-analysis.json结构变更 | 行为分群、Aha Moment数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-behavior-analysis | behavior-analysis.json内容更新 | 漏斗、路径、异常检测结果变化 | 更新待验证假设清单，标注"基于更新数据调整假设" |
+
+### 下游通知机制
+
+| 下游Skill | 通知触发条件 | 通知方式 | 通知内容 |
+|-----------|------------|---------|---------|
+| user-research-report | interview-insights.json更新完成 | 写入output文件 | 通知访谈洞察和Persona更新数据已就绪，可用于报告生成 |

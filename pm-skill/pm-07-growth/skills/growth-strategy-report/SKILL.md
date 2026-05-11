@@ -5,19 +5,8 @@ metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - growth-model
-    - acquisition-channel
-    - acquisition-optimize
-    - activation-aha
-    - activation-onboarding
-    - retention-churn
-    - retention-engagement
-    - revenue-funnel
-    - revenue-nrr
-    - revenue-upsell
 ---
 
 # 增长策略报告生成
@@ -27,6 +16,10 @@ metadata:
 **增长策略报告是行动蓝图，不是数据看板**
 
 增长策略报告的核心价值在于将分散的增长诊断和各环节优化方案整合为一份可执行的增长蓝图。报告回答的不是"数据是什么"，而是"我们应该在哪里投入、投入多少、预期什么回报"。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -38,15 +31,6 @@ metadata:
 | 留存方案 | retention-churn / retention-engagement | ⬜ | 流失预警、分层运营 |
 | 变现方案 | revenue-funnel / revenue-nrr / revenue-upsell | ⬜ | 付费漏斗、NRR、增购 |
 | 业务目标 | 用户提供 | ⬜ | 北极星指标、增长目标、预算约束 |
-
-### 降级策略
-
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无增长模式诊断 | 基于各环节方案反推增长模式，标注"模式待确认" |
-| 仅有部分环节方案 | 仅覆盖已有数据的环节，缺失环节标注"待补充" |
-| 无任何上游输入 | 基于用户提供的产品信息生成增长策略框架，标注"需数据验证" |
-- 若用户未提供业务目标，提示用户提供或跳过该输入相关步骤
 
 ## 执行步骤
 
@@ -191,6 +175,20 @@ metadata:
 }
 ```
 
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| product_name | string | 是 | 产品名称，不可为空 |
+| growth_model | object | 是 | 增长模式评估，须含type/flywheel/bottleneck |
+| growth_model.type | string | 是 | 增长模式类型，仅允许PLG/SLG/MLG/hybrid |
+| growth_model.flywheel.nodes | array | 是 | 飞轮节点，至少3个 |
+| growth_model.bottleneck | string | 是 | 瓶颈描述，不可为空 |
+| leverage_strategies | object | 是 | 杠杆策略，须含high/medium/defensive |
+| leverage_strategies.high | array | 是 | 高杠杆策略，至少1条 |
+| roadmap | object | 是 | 执行路线图，须含quick_wins/core_optimization/long_term |
+| risks_and_assumptions | array | 否 | 风险与假设列表 |
+
 ## 质量检查
 
 | 检查项 | 标准 | 不通过处理 |
@@ -199,3 +197,31 @@ metadata:
 | 策略与瓶颈一致 | 高杠杆策略直接针对核心瓶颈 | 调整策略或补充瓶颈分析 |
 | 路线图可执行 | 每项行动有负责人、时间、验收指标 | 补充执行细节 |
 | 漏斗数据完整 | AARRR至少3个环节有数据 | 标注缺失环节为"待补充" |
+
+## 降级策略
+
+### 上游文件缺失降级方案
+
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|----------|----------|----------|
+| 无增长模式诊断 | 基于各环节方案反推增长模式，标注"模式待确认" | 增长模式为推断结论，需后续验证 |
+| 仅有部分环节方案 | 仅覆盖已有数据的环节，缺失环节标注"待补充" | 报告覆盖不完整，缺失环节无策略建议 |
+| 无任何上游输入 | 基于用户提供的产品信息生成增长策略框架，标注"需数据验证" | 报告为框架级，所有结论需数据验证 |
+- 若用户未提供业务目标，提示用户提供或跳过该输入相关步骤
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| growth-model | 增长模式或瓶颈变更 | 增长模式评估和杠杆策略 | 重新评估模式，调整策略优先级 |
+| acquisition-* / activation-* / retention-* / revenue-* | 优化方案更新 | AARRR漏斗诊断和策略整合 | 更新对应漏斗环节数据和策略 |
+| 用户提供-业务目标 | 目标或预算变更 | 杠杆策略和执行路线图 | 重新排序策略优先级，调整路线图 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| growth-orchestrator | 报告生成完成 | 输出文件更新 | 报告完成状态和关键结论 |
+| 用户提供 | 报告生成完成 | 输出文件 | 完整增长策略报告 |

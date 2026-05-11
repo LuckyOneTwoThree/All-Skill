@@ -5,18 +5,18 @@ metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "1.0"
-  interaction_mode: "human_execute"
+  version: "2.0"
+  interaction_mode: "human_ai_collaborate"
 ---
 
 # Pipeline 6b: 目标用户排他决策
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **排他是战略选择**——排他不是能力不足而是聚焦，每条排他必须有战略理由
+2. **重叠度硬检查**——排他用户与核心用户重叠≥30%时拒绝排他建议
+3. **市场缩减预警**——排他后潜在市场缩减≥50%时强制人类审批
+4. **替代方案必提供**——为排除的用户群体提供替代建议，不可只排除不指引
 
 ## 交互模式
 👤 人类执行
@@ -65,6 +65,22 @@ AI扫描竞品分析数据，识别：
 **存储路径**：`output/pm-strategy/positioning-exclusion/exclusion-decision.json`
 
 **输出文件**：exclusion-decision.json
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| exclusion_statement | string | 是 | 排他陈述 |
+| rationale | array | 是 | 排他理由列表 |
+| rationale[].excluded_audience | string | 是 | 被排除用户群体 |
+| rationale[].reason | string | 是 | 战略理由 |
+| rationale[].alternative | string | 是 | 替代建议 |
+| implications.revenue_impact | string | 是 | 营收影响 |
+| implications.resource_optimization | string | 是 | 资源优化说明 |
+| implications.brand_positioning | string | 是 | 品牌定位影响 |
+| implications.risks | array | 是 | 潜在风险列表 |
+| human_decision.decided_by | string | 是 | 决策人 |
+| human_decision.decided_at | string | 是 | 决策时间 |
 
 ```json
 {
@@ -116,12 +132,12 @@ AI扫描竞品分析数据，识别：
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| positioning-statement.json | 用户提供定位描述 → 生成排他建议，标注"缺乏结构化定位陈述" |
-| competitor-intel.json | 用户提供定位描述 → 生成排他建议，标注"缺乏竞品分析数据" |
-| positioning-statement.json + competitor-intel.json | 用户提供定位描述 → 生成排他建议，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的定位描述生成排他建议 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| positioning-statement.json | 用户提供定位描述 → 生成排他建议 | 缺乏结构化定位陈述，排他建议可能与定位不一致 |
+| competitor-intel.json | 用户提供定位描述 → 生成排他建议 | 缺乏竞品分析数据，竞品覆盖扫描无法执行 |
+| positioning-statement.json + competitor-intel.json | 用户提供定位描述 → 生成排他建议 | 整体置信度降低，排他建议缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的定位描述生成排他建议 | 整体置信度显著降低，排他建议仅为假设推断 |
 
 数据获取说明：
 - 本Skill需要定位陈述和竞品分析数据，请通过以下方式之一提供：
@@ -129,6 +145,24 @@ AI扫描竞品分析数据，识别：
   2. 上传positioning-statement.json / competitor-intel.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| positioning-statement定位陈述变更 | 排他候选需重新生成 | 重新执行Step 2，更新排他候选 |
+| competitor-intel竞品覆盖变更 | 竞品覆盖扫描结果 | 重新执行Step 1，更新竞品覆盖分析 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 排他决策变更 | positioning-statement、business-strategy-report | 输出文件版本号+变更摘要 |
+| 市场缩减评估变更 | business-pricing | 输出文件版本号+变更摘要 |
 
 ## 注意事项
 

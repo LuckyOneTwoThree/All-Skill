@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **用户行为比用户意见更真实**——观察用户做了什么，而非听用户说了什么
+2. **5个用户发现85%的问题**——可用性测试不需要大样本，5-8人即可发现主要问题
+3. **严重程度决定修复优先级**——致命问题必须修复，次要问题可以排期
+4. **测试报告必须可行动**——每个发现必须对应一个改进建议，不可行动的发现是噪音
 
 ### 基本信息
 
@@ -339,21 +339,51 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 原型数据缺失 | 用户提供设计描述，生成测试脚本 | 缺乏原型数据，测试任务可能不够精准 |
+| 假设地图缺失 | 用户提供设计描述，生成测试脚本 | 缺乏假设地图数据，测试目标可能不够聚焦 |
+| 原型+假设地图均缺失 | 用户提供设计描述，生成测试脚本 | 整体置信度降低，测试脚本可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述生成测试脚本 | 输出仅为基本测试框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 原型数据（prototype.json） | 用户提供设计描述 → 生成测试脚本，标注"缺乏原型数据" |
-| assumption-map.json（假设地图） | 用户提供设计描述 → 生成测试脚本，标注"缺乏假设地图数据" |
-| 原型 + 假设地图 | 用户提供设计描述 → 生成测试脚本，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的设计描述生成测试脚本 |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要原型和假设地图数据，请通过以下方式之一提供：
-  1. 直接描述设计功能和测试目标
-  2. 上传prototype.json / assumption-map.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| usability_report | object | 是 | 可用性测试报告 |
+| usability_report.test_summary | object | 是 | 测试摘要 |
+| usability_report.test_summary.participant_count | integer | 是 | 参与者数量 |
+| usability_report.test_summary.test_goals | array | 是 | 测试目标列表 |
+| usability_report.problems | array | 是 | 问题列表 |
+| usability_report.problems[].problem_id | string | 是 | 问题唯一标识 |
+| usability_report.problems[].severity | string | 是 | 严重程度（P0/P1/P2/P3） |
+| usability_report.problems[].frequency | string | 是 | 出现频率 |
+| usability_report.problems[].affected_element | string | 是 | 受影响元素 |
+| usability_report.problems[].description | string | 是 | 问题描述 |
+| usability_report.insights | array | 是 | 洞察列表 |
+| usability_report.insights[].type | string | 是 | 洞察类型 |
+| usability_report.improvement_suggestions | array | 是 | 改进建议列表 |
+| usability_report.improvement_suggestions[].suggestion | string | 是 | 建议内容 |
+| usability_report.improvement_suggestions[].priority | string | 是 | 优先级 |
+| usability_report.improvement_suggestions[].problem_ref | string | 是 | 关联问题ID |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 原型变更（页面/交互修改） | 测试任务、测试脚本 | 标注受影响的测试任务，建议人类确认是否更新测试脚本 |
+| 假设地图变更（假设增删/评分变更） | 测试目标、假设验证项 | 标注受影响的测试目标，建议人类确认是否调整测试重点 |
+| MVP范围变更 | 测试范围 | 标注受影响的测试范围，建议人类确认是否调整测试覆盖 |
+
+### 下游通知机制
+
+| 可用性测试报告变更类型 | 通知范围 | 通知方式 |
+|----------------------|----------|----------|
+| 问题发现增删 | design-prototype、interaction-spec | 标记问题变更，触发原型和交互规范更新 |
+| 假设验证结果变更 | validation-assumption-map、validation-mvp | 标记验证结果变更，触发假设地图和MVP范围更新 |
+| 改进建议变更 | design-prototype | 标记建议变更，触发原型更新 |
 
 ---
 

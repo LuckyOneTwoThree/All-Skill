@@ -5,7 +5,7 @@ metadata:
   module: "开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -283,6 +283,49 @@ CHG-{YYYYMMDD}-{序号}
   ]
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| change_log | object | 是 | 变更日志根对象 |
+| change_log.entries | array | 是 | 变更条目列表 |
+| change_log.entries[].id | string | 是 | 变更编号，格式CHG-NNN |
+| change_log.entries[].type | string | 是 | 变更类型，枚举值：added/modified/removed/deferred |
+| change_log.entries[].requirement_id | string | 是 | 关联需求ID |
+| change_log.entries[].description | string | 是 | 变更描述 |
+| change_log.entries[].reason | string | 是 | 变更原因 |
+| change_log.entries[].impact | object | 是 | 影响评估 |
+| change_log.entries[].impact.scope | array | 是 | 影响范围列表 |
+| change_log.entries[].impact.effort | string | 是 | 工作量评估 |
+| change_log.entries[].impact.risk | string | 是 | 风险等级，枚举值：high/medium/low |
+| change_log.entries[].approval | object | 是 | 审批信息 |
+| change_log.entries[].approval.status | string | 是 | 审批状态，枚举值：pending/approved/rejected |
+| change_log.entries[].approval.approver | string | 否 | 审批人 |
+| change_log.traceability | object | 是 | 追溯矩阵 |
+| change_log.traceability.forward | array | 是 | 前向追溯链 |
+| change_log.traceability.backward | array | 是 | 后向追溯链 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | 变更条目和影响评估 | 新增变更条目，执行影响评估，标记需人类审批 |
+| SRS需求变更 | 追溯矩阵 | 更新追溯矩阵，标记受影响的下游交付物 |
+| ADR决策变更 | 变更原因和影响 | 新增变更条目，更新影响评估 |
+| 验收标准变更 | 变更条目和审批 | 新增变更条目，标记需人类审批 |
+
+当变更日志自身变更时，对下游的通知机制：
+
+| 日志变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 变更条目新增 | development-prd-sync | 标记变更新增，触发PRD同步评估 |
+| 审批状态变更 | development-task-breakdown | 标记审批结果，触发任务调整 |
+| 影响范围变更 | 全部下游 | 标记影响变更，触发影响评估 |
+
+---
 
 ## 决策规则
 

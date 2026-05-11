@@ -1,11 +1,11 @@
 ---
 name: market-tam-som
-description: 当需要评估目标市场的TAM/SAM/SOM规模时使用。市场规模自动测算，支持自上而下与自下而上双路径测算，输出区间估计与置信度评估。关键词：市场规模、TAM、SAM、SOM、市场容量、区间估计。
+description: 当需要评估目标市场的TAM/SAM/SOM规模时使用。市场规模自动测算，支持自上而下与自下而上双路径交叉验证，差异>20%时标注并升级人类判断，输出区间估计与置信度评估。关键词：市场规模、TAM、SAM、SOM、市场容量、区间估计、双路径交叉验证。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **双路径交叉验证**——自上而下与自下而上两条路径独立测算，差异>20%时必须标注并升级人类判断，单一路径结论不可信
+2. **区间优于点估计**——所有规模数字输出区间估计（乐观/中性/保守），不输出单一确定值，因为市场规模的确定性是幻觉
+3. **假设显式化**——每个测算步骤的假设必须显式列出（assumption/basis/impact_direction），假设变化对结果影响>30%的标注为高敏感
+4. **置信度分层**——TAM置信度最高（行业数据支撑），SAM次之（叠加过滤系数），SOM最低（叠加竞争与资源约束），逐层递减是正常的
 
 ## 交互模式
 
@@ -122,6 +122,50 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|---------|------|------|------|
+| category_keywords | string | 是 | 品类关键词，不可为空 |
+| geographic_scope | string | 是 | 目标市场地理范围，不可为空 |
+| time_range | string | 是 | 测算时间范围，格式如"2025-2027" |
+| tam | object | 是 | TAM测算结果，必须包含top_down和bottom_up两个子对象 |
+| tam.top_down | object | 是 | 自上而下测算路径，必须包含industry_total、category_ratio、estimates、data_sources |
+| tam.top_down.industry_total | string | 是 | 行业总规模，需带单位 |
+| tam.top_down.category_ratio | string | 是 | 目标品类占比，百分比格式 |
+| tam.top_down.estimates | object | 是 | 必须包含optimistic、neutral、conservative三个区间值 |
+| tam.top_down.data_sources | array | 是 | 数据来源列表，可为空数组但不可缺失 |
+| tam.bottom_up | object | 是 | 自下而上测算路径，必须包含target_users、arpu、estimates、data_sources |
+| tam.bottom_up.target_users | string | 是 | 目标用户总数，需带单位 |
+| tam.bottom_up.arpu | string | 是 | 每用户年均收入，需带单位 |
+| tam.bottom_up.estimates | object | 是 | 必须包含optimistic、neutral、conservative三个区间值 |
+| tam.bottom_up.data_sources | array | 是 | 数据来源列表，可为空数组但不可缺失 |
+| sam | object | 是 | SAM测算结果 |
+| sam.geo_coefficient | string | 是 | 地理过滤系数，0-1之间 |
+| sam.audience_coefficient | string | 是 | 客群过滤系数，0-1之间 |
+| sam.service_coefficient | string | 是 | 服务能力系数，0-1之间 |
+| sam.estimates | object | 是 | 必须包含optimistic、neutral、conservative三个区间值 |
+| sam.data_sources | array | 是 | 数据来源列表 |
+| som | object | 是 | SOM测算结果 |
+| som.base | string | 是 | 计算基数，固定为"SAM" |
+| som.competition_constraint | string | 是 | 竞争约束百分比，0-1之间 |
+| som.resource_constraint | string | 是 | 资源约束百分比，0-1之间 |
+| som.acquisition_constraint | string | 是 | 获客约束百分比，0-1之间 |
+| som.calculation | string | 是 | 计算公式，展示完整乘法过程 |
+| som.estimates | object | 是 | 必须包含optimistic、neutral、conservative三个区间值 |
+| som.timeline | object | 是 | 可达时间线，必须包含6m、12m、24m三个里程碑 |
+| som.data_sources | array | 是 | 数据来源列表 |
+| confidence | object | 是 | 置信度评估 |
+| confidence.overall_score | number | 是 | 整体置信度评分，0-1之间 |
+| confidence.data_source_reliability | array | 是 | 各数据源可靠性评分列表 |
+| confidence.sensitivity_analysis | array | 是 | 敏感度分析结果列表 |
+| confidence.key_assumptions | array | 是 | 关键假设清单，每项必须包含assumption、basis、impact_direction |
+| confidence.key_assumptions[].assumption | string | 是 | 假设内容描述 |
+| confidence.key_assumptions[].basis | string | 是 | 假设依据 |
+| confidence.key_assumptions[].impact_direction | string | 是 | 对结果影响方向：正向/负向/双向 |
+| confidence.key_assumptions[].sensitivity | string | 否 | 敏感度标注，影响>30%时标注为"高" |
+| confidence.key_assumptions[].needs_human_validation | boolean | 否 | 是否需要人类验证，高敏感假设默认为true |
+
 ```json
 {
   "category_keywords": "在线教育",
@@ -219,13 +263,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 无强依赖 | 本Skill可独立运行，用户提供品类关键词和目标市场即可执行 |
-| 所有上游文件均缺失 | 用户提供品类关键词和目标市场 → 基于AI知识库中的公开数据估算TAM/SAM/SOM |
-| 若用户未提供category_keywords | 提示用户提供品类关键词，否则无法执行市场规模测算 |
-| 若用户未提供geographic_scope | 提示用户提供目标市场地理范围，否则默认使用"全球" |
-| 若用户未提供time_range | 提示用户提供测算时间范围，否则默认使用当前年份起3年 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无强依赖 | 本Skill可独立运行，用户提供品类关键词和目标市场即可执行 | 无影响，输出完整 |
+| 所有上游文件均缺失 | 用户提供品类关键词和目标市场 → 基于AI知识库中的公开数据估算TAM/SAM/SOM | 数据来源可靠性评分降低，confidence.overall_score可能<0.5，需标注"基于AI知识库推算" |
+| 若用户未提供category_keywords | 提示用户提供品类关键词，否则无法执行市场规模测算 | 无法生成输出，流程阻塞 |
+| 若用户未提供geographic_scope | 提示用户提供目标市场地理范围，否则默认使用"全球" | sam.geo_coefficient默认为1.0（无地理过滤），SAM=TAM，置信度降低 |
+| 若用户未提供time_range | 提示用户提供测算时间范围，否则默认使用当前年份起3年 | time_range字段为推断值，需标注"默认值"，趋势预测准确性降低 |
 
 数据获取说明：
 - 本Skill需要品类关键词和目标市场信息，请通过以下方式之一提供：
@@ -233,3 +277,25 @@ metadata:
   2. 上传市场调研数据文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游文件 | 变更类型 | 影响范围 | 影响说明 |
+|---------|---------|---------|---------|
+| pest.json | 政策法规变化 | SAM地理系数、SAM客群系数 | 新政策可能扩大或缩小可服务市场范围，需重新评估geo_coefficient和audience_coefficient |
+| pest.json | 经济指标变化 | TAM行业总规模 | GDP/消费支出等指标变化直接影响top_down路径的industry_total |
+| pest.json | 技术动态变化 | SAM服务能力系数 | 新技术突破可能提升service_coefficient，扩大可服务边界 |
+| competitor-intel.json | 竞争格局变化 | SOM竞争约束系数 | 新竞品进入或竞品份额变化直接影响competition_constraint |
+| competitor-intel.json | 竞品定价策略变化 | SOM获客约束系数 | 竞品价格战可能提高获客成本，影响acquisition_constraint |
+
+### 下游通知机制表
+
+| 触发事件 | 通知目标 | 通知内容 | 优先级 |
+|---------|---------|---------|--------|
+| TAM中性值变化>20% | competitor-report | TAM规模显著变化，建议重新评估市场吸引力与竞争策略 | 高 |
+| SAM过滤系数调整>0.1 | competitor-report | 可服务市场范围变化，建议更新竞品覆盖分析 | 中 |
+| SOM可获取份额变化>30% | opportunity-scoring | 可获取市场规模显著变化，建议重新评估机会评分 | 高 |
+| 关键假设新增或变更 | 所有下游Skill | 新增/变更关键假设，可能影响依赖本Skill输出的分析结论 | 中 |
+| confidence.overall_score降至<0.5 | 所有下游Skill | 整体置信度低于阈值，下游使用本输出时需附加不确定性说明 | 高 |

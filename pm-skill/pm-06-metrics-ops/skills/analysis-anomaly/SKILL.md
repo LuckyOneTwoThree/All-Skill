@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：对全量数据进行异常检测，不依赖抽样推断
-2. **实时感知**：7×24小时运行，每小时核心指标健康检查，确保异常即时发现
-3. **自动归因**：异常检测后自动执行归因流程——确认真实性、定位范围、关联外部事件、生成归因结论
-4. **决策规则显式化**：P0异常即时推送+电话告警、P1异常2小时内通知，规则前置而非事后判断
+1. **异常比常态更值得关注**：每个异常都是改进的信号，7×24小时不间断检测确保不遗漏
+2. **归因比检测更重要**：发现异常只是起点，四步归因法（真实性→范围→关联→结论）将异常转化为行动
+3. **告警分级而非一刀切**：P0即时推送+电话、P1两小时内、P2每日汇总、P3仅记录，规则前置减少噪音
 
 ## 交互模式
 
@@ -210,6 +209,47 @@ anomaly_detection:
       - type: "phone"
         for_severity: ["P0"]
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| anomaly_report | object | 是 | 异常报告根对象 |
+| anomaly_report.metric_name | string | 是 | 异常指标名称 |
+| anomaly_report.current_value | number | 是 | 当前值 |
+| anomaly_report.expected_range | array | 是 | 预期范围，[min, max] |
+| anomaly_report.deviation | string | 是 | 偏离程度 |
+| anomaly_report.severity | string | 是 | 严重程度，枚举值：P0/P1/P2/P3 |
+| anomaly_report.attribution | object | 是 | 归因信息 |
+| anomaly_report.attribution.is_real | boolean | 是 | 是否为真实异常 |
+| anomaly_report.attribution.scope | object | 是 | 影响范围 |
+| anomaly_report.attribution.most_likely_cause | string | 是 | 最可能原因 |
+| anomaly_report.attribution.confidence | number | 是 | 置信度，0-1 |
+| anomaly_report.attribution.recommended_action | string | 是 | 建议行动 |
+| anomaly_report.attribution.needs_human_confirmation | boolean | 是 | 是否需人类确认 |
+| anomaly_report.trend_chart_url | string | 否 | 趋势图URL |
+| anomaly_report.raw_data_url | string | 否 | 原始数据URL |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 指标体系变更 | 监控指标列表和阈值 | 更新监控指标列表，重新加载告警规则，标记需人类确认 |
+| 告警规则变更 | 异常检测阈值和推送策略 | 重新加载告警规则，更新检测参数 |
+| 事件日历变更 | 归因关联的外部事件 | 更新事件关联数据，重新评估未确认异常的归因 |
+| 数据源变更 | 数据获取和计算逻辑 | 更新数据源配置，验证数据完整性 |
+
+当异常报告自身变更时，对下游的通知机制：
+
+| 报告变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| P0/P1异常新增 | decision-insight, data-analysis-report | 标记异常新增，触发洞察转化 |
+| 归因结论变更 | decision-dace | 标记归因变更，触发DACE Conclude |
+| 严重级别升级 | 全部下游 | 标记级别升级，触发对应告警策略 |
+
+---
 
 ## 决策规则
 

@@ -1,11 +1,11 @@
 ---
 name: insight-priority-scoring
-description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分。
+description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数，采用加权求和避免极端值。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **多维度独立贡献**——痛点强度、频率、可解决性各自独立贡献分数，任一维度低分不会导致总分归零，采用加权求和而非乘法避免极端值
+2. **KANO是加成而非乘数**——KANO分类作为加成系数调整基础分，必备型加成50%，反向型建议不实施，但不会让其他维度的贡献完全消失
+3. **未确认维度显式标注**——可解决性默认值3（中等），未获技术确认的需求整体评分置信度强制为low，不隐藏不确定性
+4. **排序是建议不是决策**——评分排序是AI基于数据的建议，最终优先级由人类确认，权重可由人类调整覆盖
 
 ## 交互模式
 
@@ -62,17 +62,21 @@ metadata:
 
 ## 评分函数
 
-**优先级分数 = 痛点强度(1-5) × 频率权重(1-5) × 可解决性(1-5) × KANO系数**
+**基础分 = 0.35 × 痛点强度(1-5) + 0.30 × 频率权重(1-5) + 0.35 × 可解决性(1-5)**
+
+**KANO加成 = 基础分 × (KANO系数 - 1)**
+
+**优先级分数 = 基础分 + KANO加成**
 
 ### KANO系数映射
 
-| KANO分类 | 系数 | 说明 |
-|---|---|---|
-| 必备型（Must-be） | 1.5 | 缺失严重影响满意度，优先级最高 |
-| 期望型（One-dimensional） | 1.0 | 线性影响满意度，正常优先级 |
-| 兴奋型（Attractive） | 0.8 | 锦上添花，优先级略低 |
-| 无差异型（Indifferent） | 0.2 | 用户不在乎，优先级最低 |
-| 反向型（Reverse） | 0.0 | 有害功能，不建议实施 |
+| KANO分类 | 系数 | 加成效果 | 说明 |
+|---|---|---|---|
+| 必备型（Must-be） | 1.5 | 基础分+50% | 缺失严重影响满意度，优先级最高 |
+| 期望型（One-dimensional） | 1.0 | 无加成 | 线性影响满意度，正常优先级 |
+| 兴奋型（Attractive） | 0.8 | 基础分-20% | 锦上添花，优先级略低 |
+| 无差异型（Indifferent） | 0.2 | 基础分-80% | 用户不在乎，优先级最低 |
+| 反向型（Reverse） | 0.0 | 基础分归零 | 有害功能，不建议实施 |
 
 ### 各维度评分规则
 
@@ -106,6 +110,13 @@ metadata:
 | 2 | 技术方案有挑战，需跨团队协作 | 较低可解决性 |
 | 1 | 技术方案不确定或依赖外部条件 | 低可解决性 |
 
+### 评分示例
+
+| 需求 | 痛点强度 | 频率权重 | 可解决性 | KANO | 基础分 | KANO加成 | 总分 |
+|------|---------|---------|---------|------|--------|---------|------|
+| 批量导出 | 4 | 4 | 3 | must-be(1.5) | 3.65 | +1.825 | 5.475 |
+| AI推荐 | 2 | 2 | 2 | attractive(0.8) | 2.00 | -0.400 | 1.600 |
+
 ## 执行步骤
 
 ### Step 1: 数据关联
@@ -129,8 +140,10 @@ metadata:
 
 按评分函数计算每个需求的综合优先级分数。
 
-- 优先级分数 = 痛点强度 × 频率权重 × 可解决性 × KANO系数
-- 理论分数范围：0.0 - 150.0（5×5×5×1.5=187.5，实际最大值取决于KANO系数）
+- 基础分 = 0.35 × 痛点强度 + 0.30 × 频率权重 + 0.35 × 可解决性
+- KANO加成 = 基础分 × (KANO系数 - 1)
+- 优先级分数 = 基础分 + KANO加成
+- 分数范围：0.2（1×0.35+1×0.30+1×0.35=1.0，Indifferent×0.2=0.2）至 7.5（5×0.35+5×0.30+5×0.35=5.0，Must-be×1.5=7.5）
 - 按分数降序排列
 
 ### Step 4: 结果标注
@@ -160,13 +173,47 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| analysis_metadata | object | 是 | 分析元信息 |
+| analysis_metadata.source_files | array | 是 | 数据来源文件列表 |
+| analysis_metadata.scoring_formula | string | 是 | 评分公式描述 |
+| analysis_metadata.weights_confirmed_by_human | boolean | 是 | 权重是否已获人类确认 |
+| analysis_metadata.analysis_timestamp | string | 是 | 分析时间戳(ISO8601) |
+| priority_list | array | 是 | 需求优先级列表 |
+| priority_list[].rank | number | 是 | 排名 |
+| priority_list[].requirement_id | string | 是 | 需求标识 |
+| priority_list[].requirement_name | string | 是 | 需求名称 |
+| priority_list[].scores | object | 是 | 各维度评分详情 |
+| priority_list[].scores.pain_intensity.score | number | 是 | 痛点强度(1-5) |
+| priority_list[].scores.pain_intensity.basis | string | 是 | 评分依据 |
+| priority_list[].scores.frequency_weight.score | number | 是 | 频率权重(1-5) |
+| priority_list[].scores.frequency_weight.basis | string | 是 | 评分依据 |
+| priority_list[].scores.solvability.score | number | 是 | 可解决性(1-5) |
+| priority_list[].scores.solvability.confirmed | boolean | 是 | 是否已获技术确认 |
+| priority_list[].scores.kano_coefficient.coefficient | number | 是 | KANO系数 |
+| priority_list[].scores.kano_coefficient.category | string | 是 | KANO分类 |
+| priority_list[].scores.kano_coefficient.confidence | number | 是 | KANO分类置信度 |
+| priority_list[].base_score | number | 是 | 基础分 |
+| priority_list[].kano_bonus | number | 是 | KANO加成 |
+| priority_list[].total_score | number | 是 | 总分 |
+| priority_list[].score_confidence | enum(high,medium,low) | 是 | 评分可信度 |
+| scoring_summary | object | 是 | 评分统计摘要 |
+| scoring_summary.total_requirements | number | 是 | 需求总数 |
+| scoring_summary.high_priority | number | 是 | 高优先级数量 |
+| scoring_summary.medium_priority | number | 是 | 中优先级数量 |
+| scoring_summary.low_priority | number | 是 | 低优先级数量 |
+| priority_thresholds | object | 是 | 优先级分级阈值 |
+
 ### Output JSON 格式
 
 ```json
 {
   "analysis_metadata": {
     "source_files": ["requirement-layers.json", "kano.json", "jtbd.json", "5whys.json"],
-    "scoring_formula": "痛点强度(1-5) × 频率权重(1-5) × 可解决性(1-5) × KANO系数",
+    "scoring_formula": "基础分(0.35×痛点+0.30×频率+0.35×可解决性) + KANO加成(基础分×(系数-1))",
     "weights_confirmed_by_human": false,
     "analysis_timestamp": "ISO8601"
   },
@@ -195,7 +242,9 @@ metadata:
           "confidence": 0.85
         }
       },
-      "total_score": 72.0,
+      "base_score": 3.65,
+      "kano_bonus": 1.825,
+      "total_score": 5.475,
       "score_confidence": "medium",
       "notes": "可解决性维度待技术确认，确认后分数可能调整"
     },
@@ -223,7 +272,9 @@ metadata:
           "confidence": 0.65
         }
       },
-      "total_score": 6.4,
+      "base_score": 2.00,
+      "kano_bonus": -0.400,
+      "total_score": 1.600,
       "score_confidence": "low",
       "notes": "KANO分类置信度<0.7，建议人工确认分类后再评分"
     }
@@ -237,9 +288,9 @@ metadata:
     "needs_human_confirmation": 1
   },
   "priority_thresholds": {
-    "high": "总分 >= 60",
-    "medium": "总分 20-59",
-    "low": "总分 < 20"
+    "high": "总分 >= 4.5",
+    "medium": "总分 2.0-4.4",
+    "low": "总分 < 2.0"
   }
 }
 ```
@@ -252,6 +303,7 @@ metadata:
 | 可解决性需技术输入 | 可解决性维度未获技术团队确认 | 使用默认值3，标记confirmed=false，该需求score_confidence强制为low，提示需技术确认 |
 | KANO分类不确定 | KANO分类置信度 < 0.7 | 标记score_confidence=low，建议确认分类后重新评分 |
 | 数据不完整 | 需求无法关联痛点或KANO数据 | 相关维度使用默认值，标记数据不完整 |
+| 反向型功能 | KANO分类为Reverse | 总分归零，标注"不建议实施"，由人类最终决策 |
 
 ## 质量检查
 
@@ -262,19 +314,18 @@ metadata:
 - [ ] 评分结果按优先级降序排列
 - [ ] 评分可信度等级已标注
 - [ ] 数据不完整的需求已标记
-
----
+- [ ] base_score和kano_bonus分别计算（可审计）
 
 ## 降级策略
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| kano.json | 用户提供需求列表 → 基于用户描述评分，KANO系数使用默认值1.0，标注"缺乏KANO分类数据" |
-| 痛点数据（jtbd.json / 5whys.json） | 用户提供需求列表 → 基于用户描述评分，痛点强度使用用户主观评估，标注"缺乏痛点数据" |
-| kano.json + 痛点数据 | 用户提供需求列表 → 基于用户描述评分（标注置信度较低） |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的需求列表直接评分 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| kano.json | 用户提供需求列表 → 基于用户描述评分，KANO系数使用默认值1.0 | KANO加成为0，仅依赖基础分排序，必备型需求可能被低估 |
+| 痛点数据（jtbd.json / 5whys.json） | 用户提供需求列表 → 基于用户描述评分，痛点强度使用用户主观评估 | 痛点强度维度为主观评估，score_confidence降级 |
+| kano.json + 痛点数据 | 用户提供需求列表 → 基于用户描述评分 | 整体评分基于用户主观描述，score_confidence强制为low |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的需求列表直接评分 | 输出为轻量版评分，多个维度使用默认值 |
 
 数据获取说明：
 - 本Skill需要需求列表、KANO分类和痛点数据，请通过以下方式之一提供：
@@ -282,3 +333,22 @@ metadata:
   2. 上传kano.json / jtbd.json / 5whys.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| requirement-layers.json需求增删 | priority_list条目增删 | 标注新增/删除的需求，重新计算排名 |
+| kano.json分类变更 | KANO系数和加成变化 | 标注受影响的需求，重新计算kano_bonus和total_score |
+| jtbd.json情感强度更新 | 痛点强度维度变化 | 标注受影响的需求，重新评估pain_intensity评分 |
+| 5whys.json根因确认/推翻 | 痛点强度维度变化 | 标注受影响的需求，根因确认则痛点强度可能提升，根因推翻则可能降低 |
+
+当本Skill自身变更时，对下游的通知机制：
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 优先级排序变更 | design-orchestrator / development-task-breakdown | 标注排名变化的需求，建议重新评估开发排期 |
+| 评分公式调整 | 所有消费priority-scoring的下游Skill | 标注公式变更内容，建议下游重新评估基于评分的决策 |
+| 优先级阈值调整 | design-orchestrator | 标注阈值变化，可能影响需求的优先级分级 |

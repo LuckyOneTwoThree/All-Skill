@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -410,6 +410,48 @@ metadata:
 | review_needed | boolean | 是否需要重评审 |
 | review_decision | JSON | 评审范围和内容 |
 | version_updates | JSON | 版本联动更新建议 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| review_result | object | 是 | 审查结果根对象 |
+| review_result.summary | object | 是 | 审查摘要 |
+| review_result.summary.total_files | number | 是 | 审查文件总数 |
+| review_result.summary.issues_found | number | 是 | 发现问题总数 |
+| review_result.summary.critical_count | number | 是 | 严重问题数 |
+| review_result.files | array | 是 | 文件审查列表 |
+| review_result.files[].path | string | 是 | 文件路径 |
+| review_result.files[].issues | array | 是 | 问题列表 |
+| review_result.files[].issues[].severity | string | 是 | 严重级别，枚举值：critical/major/minor/info |
+| review_result.files[].issues[].rule | string | 是 | 违反规则ID |
+| review_result.files[].issues[].description | string | 是 | 问题描述 |
+| review_result.files[].issues[].suggestion | string | 是 | 修复建议 |
+| review_result.prd_coverage | object | 是 | PRD覆盖度校验 |
+| review_result.prd_coverage.covered_requirements | number | 是 | 已覆盖需求数 |
+| review_result.prd_coverage.total_requirements | number | 是 | 总需求数 |
+| review_result.prd_coverage.gap_items | array | 否 | 未覆盖需求列表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | PRD覆盖度校验规则 | 更新PRD覆盖度校验基准，重新评估未覆盖需求 |
+| 代码变更 | 审查范围和问题列表 | 增量审查变更文件，更新问题列表 |
+| ADR决策变更 | 审查规则 | 更新审查规则以匹配新决策，标记需人类确认 |
+| 安全需求变更 | 安全审查规则 | 更新安全审查规则，重新评估安全问题 |
+
+当审查结果自身变更时，对下游的通知机制：
+
+| 审查变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 严重问题新增 | development-task-breakdown | 标记严重问题，触发修复任务创建 |
+| PRD覆盖度变化 | development-prd-sync | 标记覆盖度变化，触发PRD同步评估 |
+| 审查规则变更 | quality-auto-test | 标记规则变更，触发测试用例更新 |
+
+---
 
 ## 决策规则
 

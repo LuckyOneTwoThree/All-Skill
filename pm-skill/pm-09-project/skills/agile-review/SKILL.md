@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -258,6 +258,29 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| sprint_review.deliverables.sprint_summary.sprint_id | string | 是 | Sprint唯一标识，格式SPR-YYYY-SNN |
+| sprint_review.deliverables.sprint_summary.completion_rate | number | 是 | Story完成率，范围0.0-1.0 |
+| sprint_review.deliverables.sprint_summary.points_completion_rate | number | 是 | 故事点完成率，范围0.0-1.0 |
+| sprint_review.deliverables.completed_items | array | 是 | 已完成Story列表，每项须含story_id、title、story_points |
+| sprint_review.deliverables.incomplete_items | array | 是 | 未完成Story列表，carryover_decision须为枚举值 |
+| sprint_review.demo_checklist.items | array | 是 | Demo清单，每项须含order、demo_topic、duration_minutes |
+| sprint_review.demo_checklist.items[].environment_check | object | 否 | 环境检查项，含staging_ready、test_data_ready、access_verified |
+| sprint_review.feedback_collected.total_feedback_count | number | 是 | 反馈总数，须≥feedback_items数组长度 |
+| sprint_review.feedback_collected.feedback_items[].priority | string | 是 | 优先级，枚举值high/medium/low |
+| sprint_retro.metrics.completion_metrics.story_completion_rate | number | 是 | Story完成率，须与sprint_summary中一致 |
+| sprint_retro.problems_identified[].category | string | 是 | 问题分类，枚举值process/technical/collaboration/resource |
+| sprint_retro.problems_identified[].frequency | string | 是 | 出现频率，枚举值first_time/recurring/persistent |
+| sprint_retro.improvement_suggestions[].problem_addressed | string | 是 | 关联问题ID，须与problems_identified中的problem_id对应 |
+| sprint_retro.improvement_suggestions[].implementation_effort | string | 是 | 实施成本，枚举值low/medium/high |
+| metadata.sprint_id | string | 是 | Sprint标识，须与sprint_summary中一致 |
+| metadata.generated_at | string | 是 | 生成时间，ISO 8601格式 |
+| metadata.review_completed | boolean | 是 | Review是否完成 |
+| metadata.retro_completed | boolean | 是 | Retro是否完成 |
+
 ```json
 {
   "sprint_review": {
@@ -435,11 +458,11 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| Sprint产出数据 | 无法自动整理交付清单 | 用户提供完成情况（完成/未完成Stories），AI生成Review/Retro | 基于用户输入的Review/Retro |
-| 团队绩效数据 | 无法进行多维度分析 | 跳过协作和效率维度分析，仅基于交付数据复盘 | 缺少团队维度的复盘 |
-| 利益相关方反馈 | 无法收集外部反馈 | 跳过反馈收集环节，Review中标注"无利益相关方反馈" | 无外部反馈的Review报告 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| Sprint产出数据 | 用户提供完成情况（完成/未完成Stories），AI生成Review/Retro | 基于用户输入生成Review/Retro，缺少自动化数据支撑 |
+| 团队绩效数据 | 跳过协作和效率维度分析，仅基于交付数据复盘 | Retro缺少团队协作和效率维度分析 |
+| 利益相关方反馈 | 跳过反馈收集环节，Review中标注"无利益相关方反馈" | Review报告无外部反馈内容 |
 
 ### 数据获取说明
 
@@ -448,3 +471,21 @@ metadata:
 1. **Sprint产出数据缺失**：请用户提供完成情况，包括：已完成的Stories列表、未完成Stories及原因、故事点完成情况，AI将据此生成Review和Retro报告
 2. **团队绩效数据缺失**：跳过协作和效率维度分析，Retro仅基于交付和质量数据，标注"缺少团队协作数据"
 3. **利益相关方反馈缺失**：Review中跳过反馈收集环节，标注"无利益相关方反馈"，建议通过其他渠道补充收集
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| Sprint计划变更（Story增减/优先级调整） | 产出清单、完成率计算、Demo议程 | 重新整理产出清单，更新完成率和Demo准备清单 |
+| 团队数据更新（人员变动/绩效变化） | Retro协作指标、团队健康评估 | 重新计算协作指标，更新问题识别和改进建议 |
+| 反馈数据补充（新增利益相关方反馈） | 反馈收集分类、优先级排序 | 重新分类反馈，更新反馈统计和优先级排序 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| Sprint评审结果变更 | Sprint复盘报告、下一Sprint规划 | 更新sprint_review.json，通知sprint-retrospective-report和agile-sprint-planning |
+| Retro改进建议变更 | 下一Sprint行动项、团队改进计划 | 更新sprint_retro.json，通知agile-sprint-planning |
+| 行动项状态变更 | 团队执行跟踪、后续Sprint验证 | 更新metadata.json，通知相关行动项负责人 |

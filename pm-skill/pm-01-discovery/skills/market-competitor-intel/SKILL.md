@@ -1,11 +1,11 @@
 ---
 name: market-competitor-intel
-description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断。
+description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构，关键发现多源交叉验证。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断、多源交叉验证。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **多源交叉验证**——单一数据源的竞品情报不可信，每个关键发现必须至少2个独立来源交叉验证，招聘+融资+功能更新三源信号汇聚时战略推断置信度最高
+2. **变更即信号**——竞品的每个功能变更、定价调整、招聘变化都是战略信号，不是孤立事件，必须关联解读而非简单罗列
+3. **告警分级响应**——P0级（影响≥5）紧急通知+标记需紧急响应，P1级（影响=4）即时通知+纳入周报，P2级（影响<4）仅纳入周报，资源分配与影响程度匹配
+4. **战略推断标注置信度**——招聘推断战略方向置信度0.5-0.7，融资+招聘双重信号0.7-0.9，官方公告0.9+，低置信度推断必须升级人类验证
 
 ## 交互模式
 
@@ -129,6 +129,34 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|---------|------|------|------|
+| scan_timestamp | string | 是 | ISO 8601格式时间戳，不得为空或未来时间 |
+| competitors | array | 是 | 至少包含1个竞品条目，每条须含name和category |
+| competitors[].feature_matrix | object | 是 | 须包含features数组和last_updated时间戳 |
+| competitors[].feature_matrix.features | array | 是 | 每项须含feature_name、status、impact_degree、source |
+| competitors[].feature_matrix.features[].impact_degree | integer | 是 | 取值1-5，须为整数 |
+| competitors[].feature_matrix.features[].source | string | 是 | 数据来源不得为空，关键发现须标注≥2个独立来源 |
+| competitors[].reputation | object | 是 | 须包含sentiment_distribution、top_pain_points、data_sources |
+| competitors[].reputation.sentiment_distribution | object | 是 | positive+neutral+negative之和须为1.0（误差±0.01） |
+| competitors[].reputation.data_sources | array | 是 | 至少标注1个口碑数据来源 |
+| competitors[].pricing | object | 是 | 须包含price_range、plan_structure、value_score |
+| competitors[].pricing.value_score | number | 是 | 取值0.0-1.0，保留两位小数 |
+| competitors[].strategic_signals | object | 是 | 须包含direction、confidence、evidence、needs_human_validation |
+| competitors[].strategic_signals.confidence | number | 是 | 取值0.0-1.0，<0.5时needs_human_validation必须为true |
+| competitors[].strategic_signals.evidence | array | 是 | 至少包含1条证据，每条须标注来源类型和置信度 |
+| competitors[].strategic_signals.needs_human_validation | boolean | 是 | 置信度<0.5或仅单一来源推断时必须为true |
+| reputation_comparison | object | 否 | 若competitors数量≥2则必填，须含common_pain_points、differentiation_opportunities |
+| reputation_comparison.common_pain_points | array | 否 | 每项须含痛点描述和涉及的竞品列表 |
+| reputation_comparison.differentiation_opportunities | array | 否 | 每项须含机会描述和关联的竞品共性痛点 |
+| reputation_comparison.competitive_disadvantages | array | 否 | 每项须含劣势描述和对比竞品名称 |
+| alerts | array | 否 | 影响程度≥4的变更必须生成告警条目 |
+| alerts[].impact_degree | integer | 是 | 取值1-5，≥4时须触发通知机制 |
+| alerts[].recommendation | string | 是 | 应对建议不得为空，须为可执行的具体建议 |
+| alerts[].timestamp | string | 是 | ISO 8601格式时间戳，不得为空 |
+
 ```json
 {
   "scan_timestamp": "扫描时间戳",
@@ -210,6 +238,7 @@ metadata:
 - [ ] 战略方向推断已完成，低置信度已标注
 - [ ] 告警已触发（影响程度≥4的变更）
 - [ ] 数据来源已标注
+- [ ] 关键发现已多源交叉验证（至少2个独立来源）
 
 ---
 
@@ -217,11 +246,11 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 竞品列表 | 用户提供品类关键词 → AI搜索识别竞品，标注"竞品列表为AI推断" |
-| 所有上游文件均缺失 | 用户提供品类关键词 → 基于AI知识库搜索识别竞品并执行分析 |
-| 若用户未提供monitor_config | 跳过该输入相关步骤，使用默认监控配置（扫描频率：每日，关注维度：全部，告警阈值：影响程度≥4） |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 竞品列表 | 用户提供品类关键词 → AI搜索识别竞品，标注"竞品列表为AI推断" | competitors[].name标注"AI推断"，strategic_signals.confidence上限降为0.5 |
+| 所有上游文件均缺失 | 用户提供品类关键词 → 基于AI知识库搜索识别竞品并执行分析 | 全部推断标注"AI知识库推断"，needs_human_validation默认为true，告警仅纳入周报不触发即时通知 |
+| monitor_config | 跳过该输入相关步骤，使用默认监控配置（扫描频率：每日，关注维度：全部，告警阈值：影响程度≥4） | 输出中不包含monitor_config相关定制化字段，告警阈值固定为≥4 |
 
 数据获取说明：
 - 本Skill需要竞品列表或品类关键词，请通过以下方式之一提供：
@@ -229,3 +258,24 @@ metadata:
   2. 上传竞品数据文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游文件 | 变更类型 | 对本Skill的影响 | 响应动作 |
+|---------|---------|---------------|---------|
+| pest.json | 政策法规变化 | 影响竞品合规成本评估，可能改变定价策略对比中的合规成本维度 | 重新评估受影响竞品的pricing.value_score，更新strategic_signals中合规相关推断 |
+| pest.json | 技术动态变化 | 影响竞品技术方向判断，可能改变Feature Matrix中技术功能的影响评估 | 重新评估相关功能变更的impact_degree，更新strategic_signals中技术方向推断 |
+| tam-som.json | 市场规模数据变化 | 影响竞争格局评估，可能改变竞品战略推断中的市场扩张/收缩判断 | 重新评估竞品strategic_signals.direction，调整confidence值 |
+| tam-som.json | 细分市场数据变化 | 影响竞品目标客群迁移方向推断 | 更新strategic_signals中客群迁移相关推断，重新评估差异化机会 |
+
+### 下游通知机制表
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| Feature Matrix变更 | competitor-quadrant | 变更的竞品名称、功能变更类型、影响程度 | impact_degree ≥ 3的功能变更 |
+| Feature Matrix变更 | competitor-report | 完整Feature Matrix变更摘要 | 任何功能变更 |
+| 战略推断变更 | competitor-report | 更新后的战略方向、置信度、证据链 | strategic_signals.direction或confidence发生变更 |
+| 口碑对比变更 | competitor-report | 口碑变化摘要、新增差异化机会 | reputation_comparison内容发生变更 |
+| 新增告警 | competitor-report | 告警详情及应对建议 | alerts新增P0或P1级告警 |

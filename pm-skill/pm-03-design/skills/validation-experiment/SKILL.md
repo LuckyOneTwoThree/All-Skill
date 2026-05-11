@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **实验是假设的审判庭**——每个实验必须对应一个假设，没有假设的实验是浪费
+2. **最小成本获取最大置信度**——实验设计追求成本最小化，而非完美数据
+3. **统计显著性是底线**——样本量和置信水平必须预先设定，事后调整是作弊
+4. **失败实验和成功实验同样有价值**——证伪假设与证实假设等效，关键是学到什么
 
 ### 基本信息
 
@@ -227,21 +227,53 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|----------|
+| 假设地图缺失 | 用户描述关键假设，设计实验 | 缺乏结构化假设数据，实验与假设可能不对齐 |
+| 方案设计数据缺失 | 用户描述方案，设计实验 | 缺乏方案数据，实验设计可能不够精准 |
+| 假设地图+方案设计均缺失 | 用户描述假设和方案，设计实验 | 整体置信度降低，实验设计可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述设计实验 | 输出仅为基本实验框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| assumption-map.json（假设地图） | 用户提供假设 → 设计验证实验，标注"缺乏假设地图数据" |
-| mvp-scope.json（MVP范围） | 用户提供假设 → 设计验证实验，标注"缺乏MVP范围数据" |
-| 假设地图 + MVP范围 | 用户提供假设 → 设计验证实验，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的假设设计验证实验 |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要假设地图和MVP范围数据，请通过以下方式之一提供：
-  1. 直接描述核心假设和验证目标
-  2. 上传assumption-map.json / mvp-scope.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| experiments | array | 是 | 实验列表 |
+| experiments[].id | string | 是 | 实验唯一标识 |
+| experiments[].assumption_id | string | 是 | 关联假设ID |
+| experiments[].type | string | 是 | 实验类型 |
+| experiments[].hypothesis | string | 是 | 实验假设 |
+| experiments[].method | string | 是 | 实验方法 |
+| experiments[].metrics | array | 是 | 指标列表 |
+| experiments[].metrics[].name | string | 是 | 指标名称 |
+| experiments[].metrics[].type | string | 是 | 指标类型（primary/secondary） |
+| experiments[].metrics[].target | string | 是 | 目标值 |
+| experiments[].sample_size | object | 是 | 样本量 |
+| experiments[].sample_size.minimum | integer | 是 | 最小样本量 |
+| experiments[].duration | string | 是 | 实验周期 |
+| experiments[].confidence_level | number | 是 | 置信水平 |
+| experiments[].cost_estimate | object | 是 | 成本估算 |
+| experiments[].result | object | 否 | 实验结果（实验完成后填充） |
+| experiments[].result.conclusion | string | 否 | 实验结论 |
+| experiments[].result.learnings | array | 否 | 学习要点 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 假设地图变更（假设增删/评分变更） | 实验假设、实验优先级 | 标注受影响的实验，建议人类确认是否重新设计 |
+| 方案设计变更 | 实验设计细节 | 标注受影响的实验设计，建议人类确认是否调整 |
+| 资源约束变更 | 实验成本估算、样本量 | 标注受影响的成本和样本量，建议人类确认是否调整 |
+
+### 下游通知机制
+
+| 实验设计变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 实验增删 | validation-mvp | 标记实验变更，触发MVP范围调整 |
+| 实验优先级变更 | validation-mvp | 标记优先级变更，触发MVP验证计划更新 |
+| 实验结果更新 | validation-mvp | 标记结果更新，触发MVP假设验证状态更新 |
 
 ---
 

@@ -5,18 +5,18 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
-  interaction_mode: "human_execute_ai_assist"
+  version: "2.0"
+  interaction_mode: "human_ai_collaborate"
 ---
 
 # Pipeline 9b: 北极星指标选择
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **多候选比较**——生成3-5个候选指标，四维度评分后推荐，人类最终选择
+2. **价值-商业双锚**——北极星必须同时关联用户价值和商业成功，缺一不可
+3. **输入变量可驱动**——推荐指标必须拆解为3个可量化、可追踪、可影响的输入变量
+4. **防操纵设计**——评估指标被操纵、失效、误导的风险并给出预警
 
 ## 交互模式
 👤→🤖 人类执行AI辅助
@@ -73,6 +73,21 @@ metadata:
 **存储路径**：`output/pm-strategy/planning-north-star/`
 
 **输出文件**：north_star.json
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| north_star_metric.recommended.metric_name | string | 是 | 推荐北极星指标名称 |
+| north_star_metric.recommended.definition | string | 是 | 指标定义和计算公式 |
+| north_star_metric.recommended.relationship_to_value | string | 是 | 与用户价值的关系说明 |
+| north_star_metric.recommended.relationship_to_business | string | 是 | 与商业成功的关系说明 |
+| north_star_metric.recommended.measurement.data_source | string | 是 | 数据来源 |
+| north_star_metric.recommended.measurement.calculation | string | 是 | 计算公式 |
+| north_star_metric.recommended.measurement.frequency | string | 是 | 更新频率 |
+| north_star_metric.alternatives | array | 是 | 至少2个备选指标 |
+| north_star_metric.alternatives[].fit_score | number | 是 | 备选指标适配评分0-1 |
+| north_star_metric.analysis_summary.recommendation_rationale | string | 是 | 推荐理由 |
 
 ```yaml
 north_star_metric:
@@ -163,13 +178,13 @@ AI应该提供以下分析支撑：
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 用户价值数据（voice-analysis / persona） | 用户提供产品描述 → 推荐北极星候选，标注"缺乏用户价值数据" |
-| bmc.json | 用户提供产品描述 → 推荐北极星候选，标注"缺乏BMC数据" |
-| 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 |
-| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 用户价值数据（voice-analysis / persona） | 用户提供产品描述 → 推荐北极星候选 | 缺乏用户价值数据，指标与用户价值关联度可能偏弱 |
+| bmc.json | 用户提供产品描述 → 推荐北极星候选 | 缺乏BMC数据，指标与商业模型关联度可能偏弱 |
+| 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选 | 整体置信度降低，指标缺乏价值-商业双锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 | 整体置信度显著降低，推荐仅为行业通用参考 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，无法评估指标现状 |
 
 数据获取说明：
 - 本Skill需要用户价值数据和BMC数据，请通过以下方式之一提供：
@@ -177,3 +192,23 @@ AI应该提供以下分析支撑：
   2. 上传persona.json / voice-analysis.json / bmc.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json价值主张变更 | 候选指标与价值主张的关联需重新评估 | 重新执行Step 1-2，更新候选指标和评分 |
+| bmc.json收入模式变更 | 指标与商业成功相关性 | 重新评分商业相关维度 |
+| persona/voice-analysis用户价值更新 | 候选指标池和用户价值关联 | 重新执行Step 1，更新候选指标 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 北极星指标变更 | planning-okr、planning-roadmap | 输出文件版本号+变更摘要 |
+| 输入变量定义变更 | planning-okr | 输出文件版本号+变更摘要 |
+| 候选指标评分变更 | planning-okr | 输出文件版本号+变更摘要 |

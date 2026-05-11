@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **问题比答案更重要**——HMW的质量决定后续方案的质量，宽泛和预设方案的HMW是创意的毒药
+2. **六维度全覆盖**——消除/降低/加速/增强/扩展/重定义六个维度必须全部覆盖，避免思维盲区
+3. **数据是HMW的锚点**——每条HMW必须有用户研究数据支撑，无数据的HMW是空中楼阁
+4. **发散潜力可量化**——HMW的发散潜力必须评分，高发散潜力的HMW优先进入SCAMPER
 
 HMW（How Might We）是一种经典的创意启发工具，它将问题陈述转化为开放性的问题，激发多元化的解决方案。本Pipeline通过系统化的方法，从多个维度批量生成高质量的HMW陈述，为后续的方案构思奠定基础。
 
@@ -313,21 +313,49 @@ AI需要从以下6个维度为每个核心问题生成HMW陈述：
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| Problem Statement缺失 | 用户描述问题，直接生成HMW | 缺乏结构化Problem Statement，HMW可能不够聚焦 |
+| 用户研究数据缺失 | 用户描述问题，直接生成HMW | 缺乏用户研究数据支撑，HMW与用户需求可能偏差 |
+| Problem Statement+用户研究数据均缺失 | 用户描述问题，直接生成HMW | 整体置信度降低，HMW可能过于宽泛 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述直接生成HMW | 输出仅为基本HMW列表 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| problem-statement.json | 用户描述问题 → 直接生成HMW，标注"缺乏结构化Problem Statement" |
-| 用户研究数据（voice-analysis / persona） | 用户描述问题 → 直接生成HMW，标注"缺乏用户研究数据支撑" |
-| problem-statement.json + 用户研究数据 | 用户描述问题 → 直接生成HMW，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的问题直接生成HMW |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要Problem Statement和用户研究数据，请通过以下方式之一提供：
-  1. 直接描述问题和用户痛点
-  2. 上传problem-statement.json / persona.json / voice-analysis.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| hmw_statements | array | 是 | HMW陈述列表 |
+| hmw_statements[].id | string | 是 | HMW唯一标识 |
+| hmw_statements[].statement | string | 是 | HMW陈述文本 |
+| hmw_statements[].dimension | string | 是 | 所属维度（remove/reduce/accelerate/amplify/expand/rethink） |
+| hmw_statements[].source_problem | string | 是 | 关联的核心问题 |
+| hmw_statements[].source_data | object | 是 | 来源的用户研究数据 |
+| hmw_statements[].divergence_potential | integer | 是 | 发散潜力评分（1-5） |
+| hmw_statements[].quality_check | string | 是 | 质量检查结果（passed/failed） |
+| hmw_statements[].quality_issues | array | 是 | 质量问题列表 |
+| hmw_statements[].related_dimensions | array | 是 | 关联的其他维度 |
+| summary | object | 是 | 统计摘要 |
+| summary.total_hmw | integer | 是 | HMW总数 |
+| summary.passed | integer | 是 | 通过质量检查数 |
+| summary.failed | integer | 是 | 未通过质量检查数 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| Problem Statement变更 | HMW陈述的聚焦方向 | 标注受影响的HMW，建议人类确认是否重新生成 |
+| 用户研究数据更新 | HMW的数据支撑、source_data关联 | 标注受影响的HMW，建议人类确认是否补充数据关联 |
+| 需求理解结果变更 | HMW关联的核心问题 | 标注受影响的source_problem，建议人类确认是否重新关联 |
+
+### 下游通知机制
+
+| HMW变更类型 | 通知范围 | 通知方式 |
+|------------|----------|----------|
+| HMW陈述增删 | ideation-scamper | 标记HMW变更，触发SCAMPER方案重新生成 |
+| HMW维度覆盖变更 | ideation-scamper | 标记维度变更，触发SCAMPER维度覆盖检查 |
+| 发散潜力评分变更 | ideation-scamper | 标记评分变更，触发HMW筛选排序更新 |
 
 ---
 

@@ -5,8 +5,8 @@ metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "pipeline"
-  version: "1.0"
-  interaction_mode: "human_execute_ai_assist"
+  version: "3.0"
+  interaction_mode: "human_ai_collaborate"
 ---
 
 # Pipeline 3: Kickoff会议自动化
@@ -232,6 +232,28 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| kickoff.agenda.meeting_title | string | 是 | 会议标题，须包含项目名称 |
+| kickoff.agenda.duration_minutes | number | 是 | 会议时长（分钟），须>0 |
+| kickoff.agenda.items | array | 是 | 议程项列表，每项须含order、topic、duration_minutes |
+| kickoff.agenda.items[].decision_needed | boolean | 是 | 是否需要决策 |
+| kickoff.background_materials.executive_summary | string | 是 | 项目摘要，须<500字 |
+| kickoff.background_materials.project_overview.objectives | array | 是 | 项目目标列表，至少1项 |
+| kickoff.background_materials.key_risks | array | 否 | 关键风险列表 |
+| kickoff.background_materials.success_criteria | array | 是 | 成功标准列表，至少1项 |
+| kickoff.prepared_questions[].priority | string | 是 | 问题优先级，枚举值high/medium/low |
+| kickoff.minutes.meeting_info.date | string | 是 | 会议日期，ISO 8601格式 |
+| kickoff.minutes.key_decisions | array | 是 | 关键决策列表，每项须含decision、decision_maker、date |
+| kickoff.action_items[].owner | string | 是 | 行动项负责人 |
+| kickoff.action_items[].due_date | string | 是 | 行动项截止日期，ISO 8601格式 |
+| kickoff.action_items[].status | string | 是 | 行动项状态，枚举值open/in_progress/completed |
+| kickoff.follow_up_reminders[].type | string | 是 | 提醒类型，枚举值action_item/milestone/check_in |
+| metadata.meeting_scheduled | boolean | 是 | 会议是否已安排 |
+| metadata.preparation_completed_at | string | 是 | 准备完成时间，ISO 8601格式 |
+
 ```json
 {
   "kickoff": {
@@ -360,12 +382,12 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 项目宪章 | 无法提取会议议程和背景材料 | 用户描述项目目标和范围，AI基于描述生成Kickoff议程 | 基于用户描述的Kickoff议程 |
-| 资源规划 | 无法整理资源要点 | 跳过资源配置讨论环节，议程中标注"资源规划待确认" | 含待确认项的Kickoff材料 |
-| 会议参与者 | 无法确定参会人员和角色 | 用户提供参会人员名单，AI据此调整议程和问题准备 | 基于用户输入的参会配置 |
-| 首选会议时间 | 无法确定会议安排 | 若用户未提供首选会议时间，提示用户提供或跳过该输入相关步骤 | — |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 项目宪章 | 用户描述项目目标和范围，AI基于描述生成Kickoff议程 | 基于用户描述生成Kickoff议程，缺少结构化宪章数据支撑 |
+| 资源规划 | 跳过资源配置讨论环节，议程中标注"资源规划待确认" | Kickoff材料含待确认资源项，需会后补充 |
+| 会议参与者 | 用户提供参会人员名单，AI据此调整议程和问题准备 | 基于用户输入的参会配置，议程和问题预准备可能不完整 |
+| 首选会议时间 | 若用户未提供首选会议时间，提示用户提供或跳过该输入相关步骤 | 会议安排缺少时间信息，需人工补充 |
 
 ### 数据获取说明
 
@@ -374,3 +396,21 @@ metadata:
 1. **项目宪章缺失**：请用户描述项目目标、范围和关键里程碑，AI将基于描述生成Kickoff议程和背景材料摘要
 2. **资源规划缺失**：Kickoff议程中跳过资源配置讨论环节，标注"资源规划待确认"，建议在会议中增加资源讨论议题
 3. **会议参与者缺失**：请用户提供参会人员名单和角色，AI将据此调整议程时间分配和问题预准备
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 项目宪章变更（目标/范围/成功标准调整） | 议程内容、背景材料、问题预准备 | 重新生成议程和背景材料，更新问题清单 |
+| 资源规划变更（人员/预算调整） | 资源配置讨论环节、团队信息 | 更新背景材料中的资源要点，调整议程相关环节 |
+| 参会人员变更（增减/角色变化） | 议程时间分配、问题预准备、提醒配置 | 重新调整议程和问题准备，更新提醒接收人 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 会议议程变更 | 所有参会者、会议安排 | 更新kickoff.json，发送议程变更通知 |
+| 行动项变更（新增/修改/完成） | 行动项负责人、项目经理 | 更新kickoff.json，通知相关责任人和项目经理 |
+| 关键决策变更 | 项目宪章、后续规划Pipeline | 更新kickoff.json，通知planning-project-charter |

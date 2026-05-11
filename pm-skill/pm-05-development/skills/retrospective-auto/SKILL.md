@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "复盘改进"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -599,6 +599,49 @@ metadata:
 | process | JSON | 过程复盘结果 |
 | action_items | JSON数组 | 改进行动项 |
 | overall_assessment | JSON | 整体评估 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| retrospective | object | 是 | 复盘报告根对象 |
+| retrospective.summary | object | 是 | 复盘摘要 |
+| retrospective.summary.release_version | string | 是 | 发布版本 |
+| retrospective.summary.period | string | 是 | 复盘周期 |
+| retrospective.what_went_well | array | 是 | 做得好的列表，至少1项 |
+| retrospective.what_went_wrong | array | 是 | 做得不好的列表，至少1项 |
+| retrospective.what_to_improve | array | 是 | 改进建议列表，至少1项 |
+| retrospective.metrics_review | object | 是 | 指标回顾 |
+| retrospective.metrics_review.target_vs_actual | array | 是 | 目标vs实际对比 |
+| retrospective.metrics_review.anomalies | array | 否 | 异常指标列表 |
+| retrospective.action_items | array | 是 | 行动项列表 |
+| retrospective.action_items[].id | string | 是 | 行动项编号 |
+| retrospective.action_items[].description | string | 是 | 行动项描述 |
+| retrospective.action_items[].owner | string | 是 | 负责人 |
+| retrospective.action_items[].deadline | string | 是 | 截止日期 |
+| retrospective.action_items[].verification | string | 是 | 验证方法 |
+| retrospective.action_items[].status | string | 是 | 状态，枚举值：open/in_progress/done |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 发布说明变更 | 复盘范围和指标回顾 | 更新复盘范围，重新评估指标回顾 |
+| 灰度发布结果 | 做得好/做得不好 | 更新灰度相关复盘内容，标记需人类确认 |
+| 验收报告变更 | 指标回顾和改进建议 | 更新质量相关指标，重新评估改进建议 |
+| 变更日志变更 | 复盘范围 | 更新变更影响评估，标记需人类确认 |
+
+当复盘报告自身变更时，对下游的通知机制：
+
+| 复盘变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 行动项新增 | development-task-breakdown | 标记行动项，触发任务创建 |
+| 行动项状态变更 | retrospective-orchestrator | 标记状态变更，触发行动项追踪 |
+| 指标异常 | analysis-anomaly | 标记异常指标，触发深度分析 |
+
+---
 
 ## 决策规则
 

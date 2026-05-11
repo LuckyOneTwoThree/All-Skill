@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "设计交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -295,6 +295,33 @@ metadata:
 }
 ```
 
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| project_info.product | string | 是 | 产品名称 |
+| project_info.version | string | 是 | 文档版本号 |
+| pages | array | 是 | 页面清单，不可为空 |
+| pages[].name | string | 是 | 页面名称 |
+| pages[].route | string | 是 | 页面路由 |
+| pages[].level | string | 是 | 页面层级（L1/L2/L3） |
+| pages[].design_status | string | 是 | 设计状态 |
+| routes | array | 是 | 路由结构 |
+| tokens | object | 是 | 设计令牌集合 |
+| tokens.colors | array | 是 | 颜色令牌列表 |
+| tokens.typography | array | 是 | 字体令牌列表 |
+| tokens.spacing | array | 是 | 间距令牌列表 |
+| components | array | 是 | 组件清单 |
+| components[].name | string | 是 | 组件名称 |
+| components[].variants | array | 是 | 组件变体 |
+| components[].status | string | 是 | 组件状态（✅/⚠️/❌） |
+| interactions | object | 是 | 交互规则 |
+| interactions.global_rules | array | 是 | 全局交互规则 |
+| responsive | object | 是 | 响应式规格 |
+| responsive.breakpoints | array | 是 | 断点定义 |
+| assets | array | 是 | 资源清单 |
+| open_questions | array | 是 | 待确认项 |
+
 ## 决策规则
 
 | 条件 | 决策 |
@@ -323,3 +350,25 @@ metadata:
 | IA缺失 | 页面清单基于PRD推导 | 路由结构可能不完整 |
 | 用户流程缺失 | 交互规则基于PRD推导 | 交互规则可能不够细致 |
 | 组件库缺失 | 组件清单基于原型推导 | 可能有重复组件未识别 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 原型规格变更（页面增删/交互修改） | 页面清单、组件规格、交互规则 | 标注受影响的页面和组件，建议人类确认是否更新交接文档 |
+| 设计令牌变更（颜色/字体/间距调整） | 令牌映射表、组件规格中的令牌依赖 | 标注受影响的令牌和组件，建议人类确认是否更新CSS变量映射 |
+| IA结构变更（路由/导航调整） | 页面清单、路由结构、响应式适配 | 标注受影响的路由和页面，建议人类确认是否更新路由映射 |
+| 用户流程变更（流程路径修改） | 交互规则、页面级交互 | 标注受影响的交互规则，建议人类确认是否更新交互文档 |
+| PRD需求变更（功能增删） | 组件规格、交互规则、待确认项 | 标注受影响的功能点，建议人类确认是否更新交接范围 |
+
+### 下游通知机制
+
+| 交接文档变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 页面/路由变更 | 开发团队、测试团队 | 标记变更影响范围，触发路由和页面结构重新确认 |
+| 设计令牌变更 | 前端开发 | 标记令牌变更，触发CSS变量和主题系统更新 |
+| 组件规格变更 | 前端开发、测试团队 | 标记组件变更，触发组件实现和测试用例更新 |
+| 交互规则变更 | 前端开发、测试团队 | 标记交互变更，触发交互实现和验收标准更新 |
+| 响应式断点变更 | 前端开发 | 标记断点变更，触发响应式布局更新 |

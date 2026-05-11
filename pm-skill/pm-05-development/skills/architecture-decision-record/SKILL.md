@@ -5,11 +5,8 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - development-task-breakdown
-    - development-auto-review
 ---
 
 # 架构决策记录(ADR)生成
@@ -19,6 +16,10 @@ metadata:
 **重要的决策值得被记录，记录的决策值得被回顾**
 
 架构决策记录(ADR)的核心价值在于让技术决策过程透明化、可追溯。当6个月后有人问"为什么用Redis而不是Memcached"时，ADR能给出当时的上下文、考量和权衡，而非依赖记忆或猜测。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -30,11 +31,11 @@ metadata:
 
 ### 降级策略
 
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无决策背景 | 无法生成，要求用户提供决策问题 |
-| 无备选方案 | 基于决策背景推导常见备选方案，标注"待方案补充" |
-| 无约束条件 | 基于行业通用约束评估，标注"约束待确认" |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无决策背景 | 无法生成，要求用户提供决策问题 | - |
+| 无备选方案 | 基于决策背景推导常见备选方案，标注"待方案补充" | 备选方案可能不全面 |
+| 无约束条件 | 基于行业通用约束评估，标注"约束待确认" | 约束条件可能不精确 |
 
 ## 执行步骤
 
@@ -229,6 +230,46 @@ metadata:
   }
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| adr_records | array | 是 | ADR记录列表，至少1条 |
+| adr_records[].id | string | 是 | ADR编号，格式ADR-NNN |
+| adr_records[].title | string | 是 | 决策标题 |
+| adr_records[].status | string | 是 | 状态，枚举值：proposed/accepted/deprecated/superseded |
+| adr_records[].context | string | 是 | 决策背景 |
+| adr_records[].alternatives | array | 是 | 备选方案列表，至少2个 |
+| adr_records[].alternatives[].name | string | 是 | 方案名称 |
+| adr_records[].alternatives[].pros | array | 是 | 优势列表 |
+| adr_records[].alternatives[].cons | array | 是 | 劣势列表 |
+| adr_records[].decision | string | 是 | 最终决策及理由 |
+| adr_records[].consequences | object | 是 | 决策后果 |
+| adr_records[].consequences.positive | array | 是 | 正面后果 |
+| adr_records[].consequences.negative | array | 是 | 负面后果 |
+| adr_records[].compliance_check | object | 是 | 合规校验结果 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能变更 | ADR的决策背景和备选方案 | 重新评估相关ADR的决策背景，标记需人类确认是否需要新增ADR |
+| 技术架构变更 | ADR的备选方案和决策理由 | 更新受影响ADR的备选方案评估，标记需人类确认 |
+| 安全需求变更 | ADR的合规校验 | 重新执行合规校验，更新consequences |
+| 团队技术栈变更 | ADR的备选方案 | 重新评估备选方案的可行性，标记需人类确认 |
+
+当ADR自身变更时，对下游的通知机制：
+
+| ADR变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| ADR状态变更 | development-task-breakdown | 标记ADR状态变更，触发任务拆解评估 |
+| ADR决策修改 | development-auto-review | 标记决策修改，触发代码审查规则更新 |
+| ADR废弃 | 全部下游 | 标记ADR废弃，触发影响评估 |
+
+---
 
 ## 质量检查
 

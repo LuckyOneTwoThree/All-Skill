@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：决策依据基于全量数据分析，不依赖片段信息或直觉判断
-2. **实时感知**：异常检测和实验结果即时触发DACE循环，缩短从洞察到行动的时间
-3. **自动归因**：洞察自动转化为决策选项，附带决策边界和置信度评估
-4. **决策规则显式化**：data_decision可AI自动执行、data_reference需人类确认、human_decision由人类主导
+1. **Define是方向，Analyze是证据**：没有明确目标的分析和没有证据支撑的决策同样危险
+2. **Conclude权在人类，Execute追踪在系统**：AI提供选项和边界，人类做最终决策，系统负责追踪执行效果
+3. **闭环才是完整**：DACE缺一不可，没有Execute的Conclude是空谈，没有Analyze的Conclude是赌博
 
 ## 交互模式
 
@@ -349,6 +348,44 @@ okr_tracking:
       severity: "critical"
       action: "升级 + OKR调整"
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| dace_status | object | 是 | DACE循环状态 |
+| dace_status.cycle_id | string | 是 | 循环ID |
+| dace_status.current_phase | string | 是 | 当前阶段，枚举值：Define/Analyze/Conclude/Execute |
+| dace_status.phase_history | array | 是 | 阶段历史 |
+| okr_tracking | object | 是 | OKR追踪数据 |
+| okr_tracking.objectives | array | 是 | 目标列表 |
+| okr_tracking.objectives[].id | string | 是 | 目标ID |
+| okr_tracking.objectives[].progress | number | 是 | 进度百分比 |
+| okr_tracking.objectives[].status | string | 是 | 状态，枚举值：on_track/at_risk/behind |
+| action_log | array | 是 | 行动日志 |
+| action_log[].action_id | string | 是 | 行动ID |
+| action_log[].action | string | 是 | 行动描述 |
+| action_log[].status | string | 是 | 状态，枚举值：approved/in_progress/completed |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| OKR数据变更 | Define阶段目标定义 | 重新定义目标，更新KR基线和目标值 |
+| KR进度变更 | Analyze阶段数据分析 | 更新偏差分析，重新评估Conclude选项 |
+| 实验结果变更 | Analyze和Conclude阶段 | 更新实验数据，重新评估决策选项 |
+
+当DACE状态自身变更时，对下游的通知机制：
+
+| 状态变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| Conclude阶段决策完成 | decision-insight | 标记决策完成，触发洞察转化 |
+| Execute阶段执行效果 | decision-culture | 标记执行效果，触发文化报告更新 |
+| KR进度落后>20% | decision-culture | 标记进度风险，触发周报风险标注 |
+
+---
 
 ## 决策规则
 

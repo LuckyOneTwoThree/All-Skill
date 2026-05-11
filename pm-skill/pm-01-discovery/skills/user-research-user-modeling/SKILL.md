@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **Persona是假设不是事实**——Persona是基于数据的推断模型，需持续验证而非固化，低置信度字段必须标注
+2. **声音+行为交叉验证**——用户说的（VOC）和做的（行为）必须交叉印证，矛盾处标记为待验证假设
+3. **推断必须标注来源**——每个特征字段标注data_source（voice/behavior/survey/inferred），推断性内容不可伪装为事实
+4. **低置信度即待验证假设**——置信度<0.5的字段升级人类验证，不自动进入后续流程
 
 ## 交互模式
 
@@ -146,6 +146,33 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| personas | array | 是 | Persona列表，不可为空 |
+| personas[].id | string | 是 | Persona唯一标识 |
+| personas[].name | string | 是 | Persona名称 |
+| personas[].core_goals | array | 是 | 核心目标列表，每项须含goal、confidence、data_source |
+| personas[].core_goals[].data_source | string | 是 | 数据来源枚举：voice/behavior/survey/inferred |
+| personas[].core_goals[].confidence | number | 是 | 目标置信度，0-1 |
+| personas[].key_behaviors | array | 是 | 关键行为列表，每项须含behavior、confidence、data_source |
+| personas[].key_behaviors[].data_source | string | 是 | 数据来源枚举：voice/behavior/survey/inferred |
+| personas[].core_pain_points | array | 是 | 核心痛点列表，每项须含pain_point、severity、confidence、data_source |
+| personas[].core_pain_points[].severity | string | 是 | 痛点等级枚举：P0/P1/P2/P3 |
+| personas[].core_pain_points[].evidence_ref | string | 是 | 证据引用来源 |
+| personas[].representative_quotes | array | 是 | 代表原声列表，每个Persona≥3条 |
+| personas[].size_ratio | number | 是 | 规模占比，0-1 |
+| personas[].confidence | number | 是 | Persona整体置信度，0-1 |
+| personas[].jobs_to_be_done.functional_job | object | 是 | 功能性Job，须含description、confidence |
+| personas[].jobs_to_be_done.emotional_job | object | 是 | 情感性Job，须含description、confidence |
+| personas[].jobs_to_be_done.social_job | object | 是 | 社会性Job，须含description、confidence |
+| personas[].low_confidence_fields | string[] | 是 | 低置信度字段列表 |
+| metadata.analysis_timestamp | string | 是 | 分析时间戳 |
+| metadata.input_sources | string[] | 是 | 输入来源列表 |
+| metadata.clustering_quality_score | number | 是 | 聚类质量评分，0-1 |
+| metadata.confidence_overall | number | 是 | 整体置信度，0-1 |
+
 ```json
 {
   "personas": [
@@ -226,6 +253,18 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| empathy_maps | array | 是 | 同理心地图列表，不可为空 |
+| empathy_maps[].persona_id | string | 是 | 关联Persona ID |
+| empathy_maps[].persona_name | string | 是 | 关联Persona名称 |
+| empathy_maps[].says | array | 是 | Says象限，每项须含content、source、confidence，≥2条 |
+| empathy_maps[].thinks | array | 是 | Thinks象限，每项须含content、inference_basis、confidence，≥2条 |
+| empathy_maps[].does | array | 是 | Does象限，每项须含content、source、confidence，≥2条 |
+| empathy_maps[].feels | array | 是 | Feels象限，每项须含emotion、intensity、inference_basis、confidence，≥2条 |
+
 ```json
 {
   "empathy_maps": [
@@ -281,6 +320,23 @@ metadata:
   }
 }
 ```
+
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| journey_maps | array | 是 | 旅程地图列表，不可为空 |
+| journey_maps[].persona_id | string | 是 | 关联Persona ID |
+| journey_maps[].persona_name | string | 是 | 关联Persona名称 |
+| journey_maps[].stages | array | 是 | 旅程阶段列表，须覆盖核心阶段 |
+| journey_maps[].stages[].stage_name | string | 是 | 阶段名称 |
+| journey_maps[].stages[].user_behaviors | string[] | 是 | 用户行为列表 |
+| journey_maps[].stages[].touchpoints | string[] | 是 | 触点列表 |
+| journey_maps[].stages[].emotion_score | number | 是 | 情绪评分 |
+| journey_maps[].stages[].emotion_confidence | number | 是 | 情绪置信度，0-1 |
+| journey_maps[].stages[].pain_points | string[] | 是 | 痛点列表 |
+| journey_maps[].stages[].opportunities | string[] | 是 | 机会点列表 |
+| journey_maps[].emotional_arc | object | 是 | 情绪弧线，须含high_points、low_points、overall_trend |
 
 ```json
 {
@@ -341,14 +397,14 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| voice-analysis.json | 基于用户口头描述的目标用户特征推断Persona，标注"缺乏声音数据支撑" |
-| behavior-analysis.json | 基于用户口头描述的用户行为推断Persona，标注"缺乏行为数据支撑" |
-| voice-analysis.json + behavior-analysis.json | 用户提供目标用户描述 → 基于描述推断Persona，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版Persona推断 |
-| 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" |
-| 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| voice-analysis.json | 基于用户口头描述的目标用户特征推断Persona，标注"缺乏声音数据支撑" | Persona声音特征和痛点基于推断，representative_quotes缺失，core_pain_points置信度降低 |
+| behavior-analysis.json | 基于用户口头描述的用户行为推断Persona，标注"缺乏行为数据支撑" | Persona行为特征和Aha Moment基于推断，key_behaviors置信度降低，Journey Map行为数据缺失 |
+| voice-analysis.json + behavior-analysis.json | 用户提供目标用户描述 → 基于描述推断Persona，整体置信度降低 | personas整体confidence降低，data_source多为inferred，low_confidence_fields增多 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版Persona推断 | 输出为纯推断Persona，confidence_overall上限0.3，所有字段标注inferred |
+| 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" | 人口统计字段data_source为inferred，置信度降低 |
+| 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） | 使用默认配置，Persona数量和阈值可能非最优 |
 
 数据获取说明：
 - 本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：
@@ -356,3 +412,23 @@ metadata:
   2. 上传voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游Skill | 变更类型 | 影响范围 | 响应动作 |
+|-----------|---------|---------|---------|
+| user-research-voice-analysis | voice-analysis.json结构变更 | 用户分群、痛点、主题数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-voice-analysis | voice-analysis.json内容更新 | 痛点等级、情感分布、分群结果变化 | 重新执行聚类和Persona生成，标注"基于更新数据重建" |
+| user-research-behavior-analysis | behavior-analysis.json结构变更 | 行为分群、Aha Moment、功能使用数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-behavior-analysis | behavior-analysis.json内容更新 | 漏斗、路径、异常检测结果变化 | 重新执行聚类和Persona生成，标注"基于更新数据重建" |
+
+### 下游通知机制
+
+| 下游Skill | 通知触发条件 | 通知方式 | 通知内容 |
+|-----------|------------|---------|---------|
+| user-research-interview-assist | persona.json更新完成 | 写入output文件 | 通知Persona数据已就绪，可用于访谈脚本设计 |
+| user-research-report | persona.json / empathy-map.json / journey-map.json更新完成 | 写入output文件 | 通知用户建模数据已就绪，可用于报告生成 |

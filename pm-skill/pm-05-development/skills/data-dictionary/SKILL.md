@@ -5,11 +5,8 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - design-prd
-    - requirements-srs
 ---
 
 # 数据字典文档生成
@@ -19,6 +16,10 @@ metadata:
 **数据字典是产品与技术之间的共同语言**
 
 数据字典的核心价值在于消除产品需求与技术实现之间的歧义。当产品说"用户状态"时，技术需要知道是枚举值还是布尔值、有哪些合法取值、默认值是什么。数据字典就是这种精确性的保障。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -30,11 +31,11 @@ metadata:
 
 ### 降级策略
 
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无PRD | 无法生成，要求用户提供产品信息 |
-| 无SRS | 基于PRD推导数据实体，标注"待SRS确认" |
-| 无数据模型 | 从PRD业务逻辑推导数据实体和关系，标注"待数据模型验证" |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无PRD | 无法生成，要求用户提供产品信息 | - |
+| 无SRS | 基于PRD推导数据实体，标注"待SRS确认" | 数据实体可能不完整 |
+| 无数据模型 | 从PRD业务逻辑推导数据实体和关系，标注"待数据模型验证" | 数据关系可能不精确 |
 
 ## 执行步骤
 
@@ -209,6 +210,51 @@ metadata:
   "lifecycle_rules": []
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| data_dictionary | object | 是 | 数据字典根对象 |
+| data_dictionary.entities | array | 是 | 数据实体列表，至少1个 |
+| data_dictionary.entities[].name | string | 是 | 实体名称 |
+| data_dictionary.entities[].definition | string | 是 | 实体定义 |
+| data_dictionary.entities[].source | string | 是 | 数据来源 |
+| data_dictionary.entities[].fields | array | 是 | 字段列表，至少1个 |
+| data_dictionary.entities[].fields[].name | string | 是 | 字段名称 |
+| data_dictionary.entities[].fields[].type | string | 是 | 字段类型 |
+| data_dictionary.entities[].fields[].required | boolean | 是 | 是否必填 |
+| data_dictionary.entities[].fields[].description | string | 是 | 字段说明 |
+| data_dictionary.entities[].fields[].constraints | array | 否 | 约束条件列表 |
+| data_dictionary.entities[].fields[].sample_values | array | 否 | 示例值列表 |
+| data_dictionary.relationships | array | 是 | 实体关系列表 |
+| data_dictionary.relationships[].from | string | 是 | 源实体名称 |
+| data_dictionary.relationships[].to | string | 是 | 目标实体名称 |
+| data_dictionary.relationships[].type | string | 是 | 关系类型 |
+| data_dictionary.glossary | array | 是 | 术语表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能变更 | 数据实体和字段定义 | 重新提取数据实体，标记新增/修改/废弃实体，保留人类已确认的定义 |
+| SRS需求变更 | 字段约束和验证规则 | 更新字段约束，标记需人类确认 |
+| 数据模型变更 | 实体关系和字段类型 | 更新实体关系图，标记需人类确认 |
+| 技术架构变更 | 字段类型和数据来源 | 更新字段类型映射，标记需人类确认 |
+
+当数据字典自身变更时，对下游的通知机制：
+
+| 字典变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 实体增删 | development-task-breakdown | 标记实体变更，触发任务拆解评估 |
+| 字段变更 | quality-auto-test | 标记字段变更，触发测试用例更新 |
+| 关系变更 | architecture-decision-record | 标记关系变更，触发ADR评估 |
+
+---
+
+## 决策规则
 
 ## 质量检查
 

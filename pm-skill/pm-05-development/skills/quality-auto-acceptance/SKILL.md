@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -515,6 +515,46 @@ metadata:
 | acceptance_report | JSON | 验收报告主体 |
 | failed_cases_analysis | JSON | 失败用例分析 |
 | gate_decision | JSON | 质量门禁判定结果 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| auto_acceptance | object | 是 | 自动验收根对象 |
+| auto_acceptance.execution_summary | object | 是 | 执行摘要 |
+| auto_acceptance.execution_summary.total_checks | number | 是 | 检查项总数 |
+| auto_acceptance.execution_summary.auto_passed | number | 是 | 自动通过数 |
+| auto_acceptance.execution_summary.auto_failed | number | 是 | 自动失败数 |
+| auto_acceptance.execution_summary.manual_required | number | 是 | 需人工验证数 |
+| auto_acceptance.checks | array | 是 | 检查项列表 |
+| auto_acceptance.checks[].id | string | 是 | 检查项编号 |
+| auto_acceptance.checks[].type | string | 是 | 检查类型，枚举值：functional/performance/security/compatibility |
+| auto_acceptance.checks[].method | string | 是 | 验收方法，枚举值：automated/semi_auto/manual |
+| auto_acceptance.checks[].result | string | 是 | 结果，枚举值：pass/fail/pending |
+| auto_acceptance.checks[].evidence | object | 否 | 验收证据 |
+| auto_acceptance.checks[].confidence | number | 是 | 置信度，0-1 |
+| auto_acceptance.gate_result | string | 是 | 门禁结果，枚举值：pass/fail/conditional_pass |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 验收标准变更 | 检查项和方法 | 重新生成受影响的检查项，保留已通过的历史记录 |
+| 测试用例变更 | 自动验收检查项 | 更新关联的验收检查项，标记需人类确认 |
+| PRD需求变更 | 验收覆盖度 | 重新评估验收覆盖度，标记需人类确认 |
+| 代码变更 | 自动验收执行 | 重新执行受影响的自动验收检查 |
+
+当自动验收结果自身变更时，对下游的通知机制：
+
+| 验收变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 门禁结果变更 | quality-acceptance-report | 标记门禁变更，触发验收报告更新 |
+| P0/P1检查失败 | development-task-breakdown | 标记失败项，触发修复任务创建 |
+| 需人工验证项 | quality-acceptance-report | 标记待验证项，触发人工验收流程 |
+
+---
 
 ## 决策规则
 

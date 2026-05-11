@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -148,16 +148,53 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| IA方案缺失 | 用户提供功能描述，生成低保真原型 | 缺乏IA数据，页面结构可能不够合理 |
+| UserFlow缺失 | 用户提供功能描述，生成低保真原型 | 缺乏UserFlow数据，交互流程可能不够完整 |
+| 设计规范缺失 | 跳过设计规范一致性检查 | 无法验证设计规范合规性 |
+| 设计令牌缺失 | 跳过令牌校验 | 无法验证颜色/间距/字号是否符合令牌规范 |
+| IA+UserFlow+设计规范均缺失 | 基于用户功能描述生成低保真原型 | 整体置信度降低，仅产出低保真级别 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户功能描述生成低保真原型 | 输出仅为低保真原型描述 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| ia_proposals.json（IA方案） | 用户提供功能描述 → 生成低保真原型描述，标注"缺乏IA数据" |
-| userflow.json（UserFlow方案） | 用户提供功能描述 → 生成低保真原型描述，标注"缺乏UserFlow数据" |
-| 设计规范文件 | 用户提供功能描述 → 生成低保真原型描述，标注"缺乏设计规范" |
-| 设计令牌缺失 | 跳过设计规范一致性检查中的令牌校验 | 无法验证颜色/间距/字号是否符合令牌规范 |
-| IA + UserFlow + 设计规范 | 用户提供功能描述 → 生成低保真原型描述，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的功能描述生成低保真原型描述 |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| prototype | object | 是 | 原型数据 |
+| prototype.fidelity | string | 是 | 保真度级别（low/medium） |
+| prototype.pages | array | 是 | 页面列表，不可为空 |
+| prototype.pages[].name | string | 是 | 页面名称 |
+| prototype.pages[].layout | object | 是 | 页面布局 |
+| prototype.pages[].components | array | 是 | 组件列表 |
+| prototype.pages[].interactions | array | 是 | 交互定义 |
+| prototype.pages[].states | object | 是 | 交互状态（含default/loading/empty/error） |
+| prototype.design_system_compliance | object | 是 | 设计规范合规性 |
+| prototype.design_system_compliance.score | number | 是 | 合规性评分（0-1） |
+| prototype.design_system_compliance.violations | array | 是 | 违规项列表 |
+| prototype.heuristic_evaluation | object | 是 | 启发式评估 |
+| prototype.heuristic_evaluation.overall_score | number | 是 | 整体评分（0-10） |
+| prototype.heuristic_evaluation.weak_areas | array | 是 | 弱项列表 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| IA方案变更（页面增删/层级调整） | 页面清单、布局结构 | 标注受影响的页面，建议人类确认是否重新生成原型 |
+| UserFlow变更（流程路径修改） | 交互逻辑、状态变化 | 标注受影响的交互流程，建议人类确认是否更新交互定义 |
+| 设计规范变更（组件/间距/颜色调整） | 设计规范一致性检查结果 | 标注受影响的合规项，建议人类确认是否重新检查 |
+| 设计令牌变更（变量调整） | 令牌校验结果 | 标注受影响的令牌引用，建议人类确认是否更新校验 |
+
+### 下游通知机制
+
+| 原型变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 页面增删 | interaction-spec、design-handoff-spec | 标记页面变更，触发交互规范和交接文档更新 |
+| 交互逻辑变更 | interaction-spec、design-handoff-spec | 标记交互变更，触发交互规范和交接文档更新 |
+| 组件规格变更 | design-handoff-spec | 标记组件变更，触发交接文档更新 |
+| 设计规范合规性变更 | design-handoff-spec | 标记合规性变更，触发交接文档更新 |
 
 数据获取说明：
 - 本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：

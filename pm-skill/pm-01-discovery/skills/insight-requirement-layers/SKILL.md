@@ -1,11 +1,11 @@
 ---
 name: insight-requirement-layers
-description: 当需要将原始需求拆解为表层需求、行为需求、本质需求三层时使用。需求三层模型自动拆解。关键词：需求拆解、三层模型、表层需求、行为需求、本质需求、需求深挖。
+description: 当需要将原始需求拆解为表层需求、行为需求、本质需求三层时使用，通过推断模式库逐层深挖。需求三层模型自动拆解。关键词：需求拆解、三层模型、表层需求、行为需求、本质需求、需求深挖。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **表层是症状不是病因**——用户说出的需求是冰山一角，三层模型要穿透表层直达本质动机，每一层都必须比上一层更接近"为什么"
+2. **推断必须可追溯**——行为需求和本质需求都是推断结果，inference_basis字段必须明确记录推断逻辑和数据来源，拒绝无依据猜测
+3. **置信度逐层递减**——表层需求置信度1.0（直接引用），行为需求0.7-0.9（场景推断），本质需求0.4-0.7（深层推断），每层置信度下降是正常的，关键是标注清楚
+4. **验证标记不可省略**——本质需求置信度<0.5必须标记validation_needed=true，行为需求置信度<0.7必须标记validation_needed=true，低置信度不是错误而是待验证假设
 
 ## 交互模式
 
@@ -75,6 +75,11 @@ metadata:
 - 推断模式：
   - `"希望增加XX功能"` → 场景：XX场景下需要完成YY → 行为：当前通过ZZ方式替代
   - `"需要支持XX"` → 场景：XX条件下无法完成YY → 行为：转向竞品或手动处理
+  - `"XX太慢/太卡"` → 场景：高频操作XX时体验受阻 → 行为：减少使用频率或寻找替代方案
+  - `"找不到XX"` → 场景：信息架构不清晰导致迷失 → 行为：反复搜索或求助他人
+  - `"XX操作太复杂"` → 场景：任务流程步骤过多 → 行为：跳过非必要步骤或放弃使用
+  - `"希望XX能自动"` → 场景：重复性操作消耗精力 → 行为：手动执行但产生挫败感
+  - `"XX数据不准"` → 场景：决策依赖数据但数据不可靠 → 行为：交叉验证或延迟决策
 - 置信度范围：0.7-0.9（基于推断逻辑的合理性和数据佐证程度）
 - 输出格式：`{ behavioral: "场景+行为描述", confidence: 0.7-0.9, inference_basis: "推断依据" }`
 
@@ -90,6 +95,13 @@ metadata:
   - `"批量导出"` → 减少重复劳动 → 追求效率和成就感
   - `"多语言支持"` → 服务海外客户 → 追求业务拓展和竞争力
   - `"实时通知"` → 不想错过信息 → 追求掌控感和安全感
+  - `"操作简化"` → 降低认知负荷 → 追求轻松体验和自主感
+  - `"数据准确性"` → 避免决策失误 → 追求确定性和信任感
+  - `"个性化定制"` → 适配自身工作流 → 追求自主性和归属感
+  - `"协作功能"` → 减少沟通成本 → 追求社交连接和团队认同
+  - `"权限管理"` → 保护敏感信息 → 追求安全感和控制权
+  - `"移动端支持"` → 随时随地处理事务 → 追求灵活性和自由度
+  - `"数据可视化"` → 快速理解复杂信息 → 追求认知确定性和决策信心
 - 置信度范围：0.4-0.7（本质需求推断不确定性较高，需标注验证状态）
 - 输出格式：`{ essential: "底层动机描述", confidence: 0.4-0.7, inference_basis: "推断依据" }`
 
@@ -123,6 +135,29 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| analysis_metadata.source | string | 是 | 必须非空，标识数据来源 |
+| analysis_metadata.total_requirements | integer | 是 | 必须 ≥ 0，与requirement_layers数组长度一致 |
+| analysis_metadata.analysis_timestamp | string | 是 | 必须符合ISO8601格式 |
+| requirement_layers[].id | string | 是 | 必须非空且在数组内唯一 |
+| requirement_layers[].source | string | 是 | 必须非空，标识需求来源 |
+| requirement_layers[].surface.content | string | 是 | 必须非空，保留原始表述 |
+| requirement_layers[].surface.confidence | number | 是 | 必须等于1.0 |
+| requirement_layers[].behavioral.content | string | 是 | 必须非空，包含场景+行为描述 |
+| requirement_layers[].behavioral.confidence | number | 是 | 必须在0.7-0.9范围内 |
+| requirement_layers[].behavioral.inference_basis | string | 是 | 必须非空，记录推断逻辑和数据来源 |
+| requirement_layers[].essential.content | string | 是 | 必须非空，描述底层动机 |
+| requirement_layers[].essential.confidence | number | 是 | 必须在0.4-0.7范围内 |
+| requirement_layers[].essential.inference_basis | string | 是 | 必须非空，记录推断逻辑和数据来源 |
+| requirement_layers[].validation_needed | boolean | 是 | 本质需求置信度<0.5或行为需求置信度<0.7时必须为true |
+| requirement_layers[].validation_reason | string | 条件必填 | 当validation_needed=true时必须非空，说明验证原因 |
+| summary.total | integer | 是 | 必须 ≥ 0，与requirement_layers数组长度一致 |
+| summary.needs_validation | integer | 是 | 必须 ≥ 0且 ≤ summary.total |
+| summary.high_confidence | integer | 是 | 必须 ≥ 0且 ≤ summary.total |
 
 ### Output JSON 格式
 
@@ -206,10 +241,10 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 需求列表 | 用户口述需求 → 直接拆解三层，标注"缺乏结构化需求输入" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的需求直接拆解三层模型 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 需求列表 | 用户口述需求 → 直接拆解三层，标注"缺乏结构化需求输入" | inference_basis缺失数据佐证，行为需求置信度上限降至0.7 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的需求直接拆解三层模型 | 所有推断均无数据佐证，本质需求置信度上限降至0.5，全部标记validation_needed=true |
 
 数据获取说明：
 - 本Skill需要需求列表数据，请通过以下方式之一提供：
@@ -217,3 +252,22 @@ metadata:
   2. 上传需求列表JSON/CSV文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更类型 | 影响范围 | 响应动作 |
+|-------------|---------|---------|
+| 需求列表字段新增 | requirement_layers结构需同步扩展 | 评估新字段是否影响三层拆解逻辑，必要时更新推断模式库 |
+| 需求列表字段删除 | 依赖该字段的推断依据失效 | 标记受影响条目的inference_basis为"字段已删除"，降低对应置信度 |
+| 需求列表格式变更 | Input JSON解析可能失败 | 尝试兼容解析，失败则提示用户提供正确格式 |
+| 上游分析结果更新（如voice-analysis.json） | 行为需求的佐证数据变化 | 重新评估受影响条目的inference_basis和置信度 |
+
+### 下游通知机制
+
+| 本Skill输出变更 | 受影响下游 | 通知方式 |
+|---------------|-----------|---------|
+| requirement_layers结构新增字段 | insight-kano、insight-priority-scoring | 在analysis_metadata中添加schema_version字段，下游按版本适配 |
+| 置信度阈值调整 | insight-5whys、insight-priority-scoring | 更新summary中needs_validation计数，下游重新评估优先级 |
+| 推断模式库扩展 | 无直接影响 | 内部优化，输出格式不变 |

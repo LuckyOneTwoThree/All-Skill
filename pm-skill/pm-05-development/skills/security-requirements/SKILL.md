@@ -5,12 +5,8 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - design-prd
-    - requirements-srs
-    - privacy-compliance-assessment
 ---
 
 # 产品安全需求清单生成
@@ -20,6 +16,10 @@ metadata:
 **安全是需求，不是特性**
 
 安全需求不是开发后追加的检查项，而是与功能需求同等重要的产品需求。安全需求清单确保在需求阶段就将安全内建到产品中，而非事后打补丁。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -32,12 +32,12 @@ metadata:
 
 ### 降级策略
 
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无PRD | 基于用户提供的产品描述推导安全需求，标注"需求来源待确认" |
-| 无SRS | 安全需求独立编号，后续与SRS交叉引用，标注"待对齐SRS编号" |
-| 无隐私合规评估 | 安全需求清单不含隐私专项，标注"建议补充隐私合规评估" |
-| 无安全标准 | 默认采用OWASP Top 10 + CIS基准，标注"标准待确认" |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无PRD | 基于用户提供的产品描述推导安全需求，标注"需求来源待确认" | 安全需求可能不完整 |
+| 无SRS | 安全需求独立编号，后续与SRS交叉引用，标注"待对齐SRS编号" | 无法与功能需求关联 |
+| 无隐私合规评估 | 安全需求清单不含隐私专项，标注"建议补充隐私合规评估" | 隐私安全需求缺失 |
+| 无安全标准 | 默认采用OWASP Top 10 + CIS基准，标注"标准待确认" | 安全标准可能不全面 |
 
 ## 执行步骤
 
@@ -222,3 +222,46 @@ metadata:
 | 安全需求可追溯 | 每个安全需求关联到具体威胁 | 补充威胁关联 |
 | 合规映射完整 | OWASP Top 10全部映射 | 补充缺失映射项 |
 | 验收标准可验证 | 每个需求有明确的验证方法 | 补充验证方法 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| security_requirements | object | 是 | 安全需求根对象 |
+| security_requirements.threat_model | object | 是 | 威胁模型 |
+| security_requirements.threat_model.threats | array | 是 | 威胁列表，至少1项 |
+| security_requirements.threat_model.threats[].id | string | 是 | 威胁编号 |
+| security_requirements.threat_model.threats[].category | string | 是 | 威胁类别，枚举值：spoofing/tampering/repudiation/information_disclosure/denial_of_service/elevation_of_privilege |
+| security_requirements.threat_model.threats[].severity | string | 是 | 严重级别，枚举值：critical/high/medium/low |
+| security_requirements.threat_model.threats[].mitigation | string | 是 | 缓解措施 |
+| security_requirements.requirements | array | 是 | 安全需求列表，至少1项 |
+| security_requirements.requirements[].id | string | 是 | 需求编号，格式SEC-NNN |
+| security_requirements.requirements[].category | string | 是 | 需求类别 |
+| security_requirements.requirements[].description | string | 是 | 需求描述 |
+| security_requirements.requirements[].priority | string | 是 | 优先级，枚举值：P0/P1/P2/P3 |
+| security_requirements.requirements[].verification | string | 是 | 验证方法 |
+| security_requirements.compliance_mapping | object | 是 | 合规映射 |
+| security_requirements.compliance_mapping.standards | array | 是 | 适用标准列表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能变更 | 威胁模型和安全需求 | 重新评估威胁面，更新安全需求，标记需人类确认 |
+| 数据字典变更 | 数据安全需求 | 更新数据安全相关需求，重新评估敏感数据保护 |
+| 隐私评估变更 | 安全需求和合规映射 | 更新安全需求，重新评估合规状态 |
+| 安全标准变更 | 合规映射 | 更新合规映射，标记需人类确认 |
+
+当安全需求自身变更时，对下游的通知机制：
+
+| 安全需求变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 威胁新增 | development-task-breakdown | 标记威胁，触发安全任务创建 |
+| 需求优先级变更 | quality-auto-test | 标记优先级变更，触发安全测试用例更新 |
+| 合规状态变更 | privacy-compliance-assessment | 标记合规变更，触发隐私评估更新 |
+
+---
+
+## 决策规则

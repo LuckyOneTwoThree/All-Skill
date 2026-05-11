@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **三方案对比**——必须生成渗透/价值/混合3个差异化定价方案供人类选择
+2. **数据锚定定价**——竞品定价和支付意愿是定价的硬约束，不可凭感觉定价
+3. **单位经济验证**——每个方案必须通过LTV/CAC等单位经济指标验证可行性
+4. **风险前置**——定价过低损害品牌、过高阻碍获客等风险必须显式标注
 
 **执行周期**：在Pipeline 2（价值主张匹配）完成后触发
 
@@ -370,6 +370,20 @@ metadata:
 
 **输出文件**：pricing_analysis.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| pricing_analysis.competitor_pricing_matrix | object | 是 | 含premium/mid/budget三段分析 |
+| pricing_analysis.willingness_to_pay | object | 是 | 含整体区间、置信度、细分分析 |
+| pricing_analysis.pricing_options.option_a | object | 是 | 渗透定价方案，含tiers和unit_economics |
+| pricing_analysis.pricing_options.option_b | object | 是 | 价值定价方案，含tiers和unit_economics |
+| pricing_analysis.pricing_options.option_c | object | 是 | 混合定价方案，含tiers和unit_economics |
+| pricing_options.*.unit_economics.ltv_cac_ratio | number | 是 | LTV/CAC比值，健康标准≥3 |
+| pricing_options.*.unit_economics.payback_period_months | number | 是 | 回本周期（月） |
+| pricing_analysis.recommendation.recommended_option | string | 是 | A/B/C |
+| pricing_analysis.recommendation.reasoning | string | 是 | 推荐理由 |
+
 ### 完整定价分析报告
 
 ```json
@@ -448,13 +462,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| bmc.json | 用户提供产品描述 → 基于行业基准推荐定价，标注"缺乏BMC数据" |
-| 竞品定价数据（competitor-intel.json） | 用户提供产品描述 → 基于行业基准推荐定价，标注"缺乏竞品定价数据" |
-| bmc.json + 竞品定价数据 | 用户提供产品描述和目标市场 → 基于行业基准推荐定价，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和行业基准推荐定价 |
-| 支付意愿推断数据（用户提供） | 若用户未提供支付意愿推断数据，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| bmc.json | 用户提供产品描述 → 基于行业基准推荐定价 | 价值主张和成本结构缺乏BMC数据支撑，定价可能偏离实际 |
+| 竞品定价数据（competitor-intel.json） | 用户提供产品描述 → 基于行业基准推荐定价 | 竞品矩阵为空，市场空白无法识别，定价缺乏竞品锚定 |
+| bmc.json + 竞品定价数据 | 用户提供产品描述和目标市场 → 基于行业基准推荐定价 | 整体置信度降低，方案缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和行业基准推荐定价 | 整体置信度显著降低，方案仅为行业基准参考 |
+| 支付意愿推断数据（用户提供） | 若用户未提供支付意愿推断数据，提示用户提供或跳过该输入相关步骤 | 支付意愿分析缺失，定价方案缺乏用户端验证 |
 
 数据获取说明：
 - 本Skill需要BMC和竞品定价数据，请通过以下方式之一提供：
@@ -462,6 +476,27 @@ metadata:
   2. 上传bmc.json / competitor-intel.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json价值主张更新 | 定价方案的价值锚点需调整 | 重新评估各方案定价合理性，更新价值溢价依据 |
+| bmc.json客户细分变更 | 支付意愿分段和套餐目标用户 | 重新执行Step 2和Step 3，按新细分调整定价 |
+| bmc.json成本结构变更 | 单位经济指标需重新计算 | 重新计算LTV/CAC和回本周期 |
+| competitor-intel竞品定价更新 | 竞品定价矩阵和市场空白 | 重新执行Step 1，更新竞品对标 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 定价方案调整 | business-strategy-report、stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
+| 单位经济指标变更 | business-strategy-report | 输出文件版本号+变更摘要 |
+| 竞品定价矩阵更新 | positioning-value-curve | 输出文件版本号+变更摘要 |
 
 ---
 

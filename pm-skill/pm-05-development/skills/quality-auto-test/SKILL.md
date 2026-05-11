@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -431,6 +431,49 @@ metadata:
 | coverage_report | JSON | 覆盖率统计报告 |
 | code_case_mapping | JSON | 用例与代码的映射关系 |
 | unmapped_cases | JSON数组 | 未关联到代码的用例 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| test_suite | object | 是 | 测试套件根对象 |
+| test_suite.summary | object | 是 | 测试摘要 |
+| test_suite.summary.total_cases | number | 是 | 测试用例总数 |
+| test_suite.summary.auto_generated | number | 是 | 自动生成数 |
+| test_suite.summary.coverage_rate | number | 是 | 覆盖率，0-1 |
+| test_suite.cases | array | 是 | 测试用例列表 |
+| test_suite.cases[].id | string | 是 | 用例编号 |
+| test_suite.cases[].type | string | 是 | 用例类型，枚举值：unit/integration/e2e/performance/security |
+| test_suite.cases[].priority | string | 是 | 优先级，枚举值：P0/P1/P2/P3 |
+| test_suite.cases[].title | string | 是 | 用例标题 |
+| test_suite.cases[].preconditions | array | 是 | 前置条件 |
+| test_suite.cases[].steps | array | 是 | 测试步骤 |
+| test_suite.cases[].expected_result | string | 是 | 预期结果 |
+| test_suite.cases[].linked_requirement | string | 是 | 关联需求ID |
+| test_suite.execution_result | object | 否 | 执行结果 |
+| test_suite.execution_result.pass_rate | number | 条件必填 | 通过率，有执行结果时必填 |
+| test_suite.execution_result.fail_cases | array | 条件必填 | 失败用例列表 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | 测试用例和覆盖度 | 重新生成受影响的测试用例，标记新增/修改/废弃用例 |
+| 验收标准变更 | 测试用例预期结果 | 更新受影响用例的预期结果，标记需人类确认 |
+| 代码变更 | 测试用例执行 | 增量执行受影响的测试用例，更新执行结果 |
+| 数据字典变更 | 测试数据设计 | 更新测试数据生成规则，标记需人类确认 |
+
+当测试套件自身变更时，对下游的通知机制：
+
+| 测试变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 用例增删 | quality-auto-acceptance | 标记用例变更，触发自动验收更新 |
+| P0用例失败 | development-task-breakdown | 标记失败用例，触发修复任务创建 |
+| 覆盖率下降 | quality-acceptance-report | 标记覆盖率变化，触发验收报告更新 |
+
+---
 
 ## 决策规则
 

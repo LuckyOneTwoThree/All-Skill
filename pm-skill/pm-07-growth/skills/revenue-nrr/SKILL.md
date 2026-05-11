@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "变现"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **千人千面**：不同客户分群采用差异化续费和扩张策略
-2. **自动实验持续优化**：续费策略通过数据持续验证和迭代
-3. **实时优化**：NRR数据实时追踪，流失预警即时触发
-4. **数据驱动归因**：量化流失和扩张的收入影响，明确NRR变化根因
+1. **NRR是收入健康体温计**：NRR>100%意味着产品在自我增长，NRR<100%意味着产品在自我消耗
+2. **扩张与流失同等重要**：提升NRR既要减少流失，也要主动识别扩张机会
+3. **信号驱动而非周期驱动**：基于风险信号和扩张信号触发行动，而非等待月度报告
 
 ## 交互模式
 
@@ -233,6 +232,19 @@ expansion_score = (
 }
 ```
 
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| current_nrr | number | 是 | 当前NRR，须>0 |
+| nrr_breakdown | object | 是 | NRR分解，须含expansion_revenue_ratio/contraction_revenue_ratio/churned_revenue_ratio |
+| nrr_breakdown.expansion_revenue_ratio | number | 是 | 扩张收入占比，须≥0 |
+| nrr_breakdown.churned_revenue_ratio | number | 是 | 流失收入占比，须≥0 |
+| trend | array | 否 | NRR趋势数据，每项须含month/nrr |
+| churn_warnings | array | 否 | 流失预警列表，每项须含user_id/risk_signals/risk_level |
+| expansion_opportunities | array | 否 | 扩张机会列表，每项须含user_id/expansion_signals/recommended_upgrade |
+| summary | object | 否 | 收入汇总，须含total_active_revenue |
+
 ## 决策规则
 
 | 情况 | 处理方式 |
@@ -253,7 +265,7 @@ expansion_score = (
 
 ### 上游文件缺失降级方案
 
-| 缺失范围 | 降级方案 | 输出影响 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
 |----------|----------|----------|
 | 收入数据缺失 | 用户提供收入和流失数据 → 计算NRR | NRR计算基于用户提供的汇总数据 |
 | 账户数据缺失 | 跳过账户级NRR分析，仅计算整体NRR | 无法识别高流失风险账户 |
@@ -266,6 +278,24 @@ expansion_score = (
 - **收入数据**：月初MRR、扩张MRR、收缩MRR、流失MRR
 - **流失数据**（可选）：流失客户数和流失MRR
 - **客户分层**（可选）：按规模或价值分的客户分布
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| 用户提供-收入数据 | MRR口径变更 | NRR计算和趋势分析 | 按新口径重新计算NRR |
+| 用户提供-账户数据 | 付费状态变更 | 流失预警和扩张机会 | 更新风险评分和扩张信号 |
+| 用户提供-行为数据 | 使用指标变更 | 流失信号和扩张信号 | 更新信号权重和触发规则 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| revenue-upsell | 扩张机会变更 | 写入输出文件 | 新的扩张机会和升级推荐 |
+| revenue-funnel | NRR数据更新 | 写入输出文件 | NRR趋势和付费转化基准 |
+| revenue-orchestrator | NRR追踪完成 | 输出文件更新 | NRR追踪完成状态和关键结论 |
 
 ## 关键成功指标
 

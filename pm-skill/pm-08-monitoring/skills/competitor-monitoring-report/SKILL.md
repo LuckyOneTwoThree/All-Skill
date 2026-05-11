@@ -5,12 +5,8 @@ metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - diagnosis-competition
-    - market-competitor-intel
-    - market-competitor-quadrant
 ---
 
 # 竞品动态监控报告生成
@@ -20,6 +16,10 @@ metadata:
 **竞品监控不是窥探，而是战略感知**
 
 竞品动态监控报告的核心价值在于将零散的竞品信息转化为结构化的战略洞察。监控的目的不是模仿竞品，而是理解市场格局变化，识别威胁和机会。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -32,12 +32,12 @@ metadata:
 
 ### 降级策略
 
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无竞品追踪数据 | 基于竞品情报生成报告，标注"追踪数据缺失" |
-| 无竞品情报 | 基于用户提供信息生成框架，标注"待情报补充" |
-| 无竞品分类 | 默认监控直接竞品，标注"分类待补充" |
-| 无监控周期 | 若用户未提供监控周期，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|----------|----------|----------|
+| 无竞品追踪数据 | 基于竞品情报生成报告，标注"追踪数据缺失" | 报告缺乏功能变更追踪细节 |
+| 无竞品情报 | 基于用户提供信息生成框架，标注"待情报补充" | 报告为框架级，缺乏情报支撑 |
+| 无竞品分类 | 默认监控直接竞品，标注"分类待补充" | 仅覆盖直接竞品，间接/替代竞品缺失 |
+| 无监控周期 | 默认最近30天，标注"周期待确认" | 报告覆盖范围可能不准确 |
 
 ## 执行步骤
 
@@ -204,3 +204,31 @@ metadata:
 | 威胁评估有依据 | 每个威胁有具体竞品动态支撑 | 补充威胁依据 |
 | 应对建议可执行 | 每项建议有时间范围和责任方 | 补充执行细节 |
 | 功能对比已更新 | 对比矩阵反映最新竞品状态 | 更新对比数据 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| monitoring_period | object | 是 | 监控周期，须含start/end |
+| summary | object | 是 | 执行摘要，须含competitors_monitored/major_events/threat_level |
+| summary.threat_level | string | 是 | 威胁等级，仅允许severe/high/medium/low |
+| dynamics | object | 是 | 竞品动态，须含major/product/market/sentiment |
+| threat_assessment | object | 是 | 威胁评估，须含direct_threats/indirect_threats/opportunities |
+| response_recommendations | object | 否 | 应对建议，须含immediate/short_term/long_term |
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| diagnosis-competition | 功能变更数据更新 | 功能变更追踪和威胁评估 | 更新功能对比矩阵和威胁等级 |
+| market-competitor-intel | 竞品情报更新 | 竞品动态汇总和市场策略分析 | 更新动态汇总和策略变化 |
+| market-competitor-quadrant | 竞品分类变更 | 监控范围和威胁评估 | 调整监控竞品范围 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| diagnosis-orchestrator | 监控报告生成完成 | 输出文件更新 | 报告完成状态和关键威胁等级 |
+| iteration-backlog | 威胁等级为severe/high | 写入输出文件 | 竞品威胁和即时应对建议 |

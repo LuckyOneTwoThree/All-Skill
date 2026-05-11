@@ -5,7 +5,7 @@ metadata:
   module: "度量运营与决策"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -262,6 +262,53 @@ metadata:
   ]
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_metadata | object | 是 | 报告元数据 |
+| report_metadata.product | string | 是 | 产品名称 |
+| report_metadata.time_range | string | 是 | 分析时间范围 |
+| report_metadata.data_sources | array | 是 | 数据来源列表 |
+| report_metadata.data_quality | string | 是 | 数据质量声明 |
+| executive_summary | object | 是 | 执行摘要 |
+| executive_summary.key_findings | array | 是 | 关键发现列表，至少3条 |
+| executive_summary.top_recommendation | string | 是 | 首要建议 |
+| funnel_analysis | object | 否 | 漏斗分析章节 |
+| retention_analysis | object | 否 | 留存分析章节 |
+| anomaly_analysis | object | 否 | 异常分析章节 |
+| insights | array | 是 | 洞察列表，至少1条 |
+| insights[].id | string | 是 | 洞察编号 |
+| insights[].fact | string | 是 | 数据事实 |
+| insights[].implication | string | 是 | 业务含义 |
+| insights[].action_direction | string | 是 | 行动方向 |
+| recommendations | array | 是 | 建议列表，至少3条 |
+| recommendations[].id | string | 是 | 建议编号 |
+| recommendations[].priority | string | 是 | 优先级，枚举值：P0/P1/P2 |
+| recommendations[].validation_method | string | 是 | 验证方式 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 漏斗分析数据更新 | 漏斗分析章节 | 更新漏斗数据，重新评估流失点和提升机会 |
+| 留存分析数据更新 | 留存分析章节 | 更新留存数据，重新评估生命周期和流失预警 |
+| 异常检测数据更新 | 异常分析章节 | 更新异常事件和归因，重新评估洞察 |
+| 决策洞察更新 | 洞察和建议章节 | 更新洞察和建议，标记需人类确认 |
+| 度量体系变更 | 核心指标仪表盘 | 更新指标定义和基线，重新评估数据概览 |
+
+当分析报告自身变更时，对下游的通知机制：
+
+| 报告变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| P0建议新增 | decision-dace | 标记P0建议，触发DACE Conclude |
+| 关键发现变更 | decision-culture | 标记发现变更，触发报告推送 |
+| 数据质量声明变更 | 全部下游 | 标记质量变更，触发数据源检查 |
+
+---
 
 ## 决策规则
 

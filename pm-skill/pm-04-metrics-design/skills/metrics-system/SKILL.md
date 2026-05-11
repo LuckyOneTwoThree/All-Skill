@@ -5,7 +5,7 @@ metadata:
   module: "产品度量设计"
   sub-module: "指标体系"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -545,6 +545,34 @@ THEN 标记为「不可操作」虚荣指标
   }
 }
 ```
+
+---
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| metric_system | object | 是 | 指标体系根对象 |
+| metric_system.north_star | object | 是 | 北极星指标 |
+| metric_system.north_star.name | string | 是 | 北极星指标名称 |
+| metric_system.north_star.definition | string | 是 | 北极星指标定义 |
+| metric_system.north_star.calculation | string | 是 | 计算公式 |
+| metric_system.north_star.data_source | string | 是 | 数据来源 |
+| metric_system.north_star.validation | object | 是 | 校验结果 |
+| metric_system.north_star.validation.is_vanity_free | boolean | 是 | 是否无虚荣特征 |
+| metric_system.l1_metrics | array | 是 | L1指标列表，至少3个维度 |
+| metric_system.l1_metrics[].layer | string | 是 | AARRR维度枚举值 |
+| metric_system.l1_metrics[].name | string | 是 | L1指标名称 |
+| metric_system.l1_metrics[].weight | number | 是 | 权重，所有L1权重之和应为1.0 |
+| metric_system.l1_metrics[].l2_metrics | array | 是 | L2指标列表，每L1至少3个 |
+| metric_system.l1_metrics[].l2_metrics[].name | string | 是 | L2指标名称 |
+| metric_system.l1_metrics[].l2_metrics[].calculation | string | 是 | 计算公式 |
+| metric_system.l1_metrics[].l2_metrics[].is_actionable | boolean | 是 | 是否为行动指标 |
+| metric_system.actionable_metrics | array | 是 | 行动指标列表 |
+| metric_system.actionable_metrics[].name | string | 是 | 行动指标名称 |
+| metric_system.actionable_metrics[].linked_l2 | string | 是 | 关联L2指标 |
+| metric_system.actionable_metrics[].optimization_approach | string | 是 | 优化方案 |
+| metric_system.vanity_alerts | array | 否 | 虚荣指标告警列表 |
 
 ---
 

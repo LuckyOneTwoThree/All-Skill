@@ -1,132 +1,243 @@
 ---
 name: stakeholder-strategy-doc
-description: 当需要组装完整的产品战略文档时使用。产品战略文档自动生成，根据BMC、定位陈述、SWOT、OKR、路线图等输入，自动组装完整的产品战略文档。关键词：战略文档、产品战略、商业模式、SWOT分析。
+description: 当需要制定利益相关者战略文档时使用。利益相关者战略文档自动生成，整合利益相关者地图、沟通策略和战略报告，输出完整的利益相关者管理文档。关键词：利益相关者战略、沟通策略、利益相关者管理、战略文档。
 metadata:
   module: "产品商业与战略"
-  sub-module: "Stakeholder对齐"
+  sub-module: "利益相关者管理"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 13: 产品战略文档自动生成
+# 利益相关者战略文档自动生成
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **六章节闭环**——背景→机会→选择→成功→风险→资源形成完整逻辑闭环
+2. **数据源标注**——每个章节标注数据来源，不可无据推演
+3. **质量评分门控**——文档质量<60分自动修改，修改后仍不达标则人类审核
+4. **跨部门强制审批**——涉及≥3个部门资源时强制人类审批
 
 ## 交互模式
-
 🤖→👤 AI建议人类审批
 
 ## 输入
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| BMC | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 商业模式画布 |
-| 定位陈述 | JSON | 是 | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位和价值主张 |
-| SWOT | JSON | 是 | output/pm-strategy/planning-swot/swot.json | 优势/劣势/机会/威胁分析 |
-| OKR | JSON | 是 | output/pm-strategy/planning-okr/okr.json | 目标和关键结果 |
-| 路线图 | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | 产品路线图规划 |
-| Stakeholder地图 | JSON | ○ | output/pm-strategy/stakeholder-map/stakeholder-map.json | Pipeline 12输出 |
+| 利益相关者地图 | JSON | 是 | output/pm-strategy/stakeholder-map/stakeholder-map.json | 利益相关者列表、四象限分类 |
+| 商业战略报告 | JSON | 是 | output/pm-strategy/business-strategy-report/business-strategy-report.json | 战略方向、OKR、路线图 |
+| 战略简报 | JSON | ○ | output/pm-strategy/stakeholder-brief/stakeholder-brief.json | 受众适配的简报内容 |
 
 ## 执行步骤
 
-### 自动组装流程
+### Step 1: 文档结构规划
 
-#### Chapter 1: 背景与现状
+确定文档的6个核心章节：
 
-**包含内容**:
-- **市场现状**: 市场规模、趋势、竞争格局
-- **用户问题**: 目标用户的痛点和需求
-- **当前位置**: 我们当前的处境和基础
+1. **背景与现状**：为什么需要利益相关者管理
+2. **机会与挑战**：利益相关者带来的机会和挑战
+3. **策略选择**：针对不同利益相关者的策略
+4. **成功标准**：如何衡量策略成功
+5. **风险与预案**：利益相关者管理中的风险
+6. **资源与行动**：需要的资源和行动计划
 
-**数据来源**: 市场调研、用户研究、内部数据
+### Step 2: 背景与现状
 
-#### Chapter 2: 我们的机会
+整合利益相关者地图和战略报告：
 
-**包含内容**:
-- **机会评分**: 基于市场吸引力和自身能力的机会评级
-- **SWOT的O (Opportunities)**: 重点展开外部机会
+**内容要点**：
+- 产品战略背景
+- 利益相关者全景图
+- 关键利益相关者识别
+- 当前关系状态
 
-**数据来源**: SWOT分析、竞品分析
+### Step 3: 机会与挑战
 
-#### Chapter 3: 我们的选择
+分析利益相关者带来的机会和挑战：
 
-**包含内容**:
-- **定位陈述**: 清晰的产品定位和差异化价值
-- **路线图**: 做什么、不做什么、为什么
-- **战略选择依据**: 决策背后的逻辑
+**机会分析**：
+- 哪些利益相关者可以成为战略助力
+- 如何利用影响力高的支持者
+- 合作机会识别
 
-**数据来源**: 定位陈述、路线图、BMC
+**挑战分析**：
+- 哪些利益相关者可能成为阻碍
+- 利益冲突识别
+- 潜在风险点
 
-#### Chapter 4: 成功定义
+### Step 4: 策略选择
 
-**包含内容**:
-- **OKR**: 目标和关键结果
-- **北极星指标**: 衡量成功的一指标
+为每个关键利益相关者制定策略：
 
-**数据来源**: OKR文档
+| 利益相关者 | 当前态度 | 目标态度 | 策略 | 关键行动 |
+|-----------|---------|---------|------|---------|
+| 产品VP | 支持 | 强力支持 | 深度参与 | 周度战略对齐会 |
+| 技术总监 | 中立 | 支持 | 利益绑定 | 技术方案联合评审 |
+| 财务总监 | 观望 | 支持 | 数据说服 | ROI专项汇报 |
 
-#### Chapter 5: 关键假设与风险
+### Step 5: 成功标准
 
-**包含内容**:
-- **假设清单**: 战略依赖的关键假设
-- **风险等级**: 高/中/低风险评估
-- **缓解措施**: 降低风险的行动
+定义策略成功的衡量标准：
 
-**数据来源**: 风险分析、团队讨论
+| 指标 | 当前值 | 目标值 | 衡量方式 |
+|------|--------|--------|---------|
+| 关键决策者支持率 | 60% | 90% | 决策通过率 |
+| 资源获取效率 | 中 | 高 | 资源申请周期 |
+| 利益相关者满意度 | 3.5 | 4.5 | 季度调研 |
 
-#### Chapter 6: 资源需求
+### Step 6: 风险与预案
 
-**包含内容**:
-- **人力资源**: 团队规模、技能需求
-- **时间资源**: 关键里程碑和时间线
-- **资金资源**: 预算需求
+识别利益相关者管理中的风险：
 
-**数据来源**: 路线图、HR规划、财务估算
+| 风险 | 概率 | 影响 | 预案 |
+|------|------|------|------|
+| 关键决策者变更 | 中 | 高 | 建立多决策者关系 |
+| 利益冲突升级 | 低 | 高 | 提前识别+调解机制 |
+| 沟通不畅 | 中 | 中 | 定期沟通+反馈机制 |
+
+### Step 7: 文档组装
+
+**文档结构**：
+
+```
+# {产品名}利益相关者战略文档
+
+## 1. 背景与现状
+### 1.1 战略背景
+### 1.2 利益相关者全景图
+### 1.3 关键利益相关者
+
+## 2. 机会与挑战
+### 2.1 战略助力识别
+### 2.2 潜在阻碍分析
+### 2.3 利益冲突地图
+
+## 3. 策略选择
+### 3.1 重点管理策略
+### 3.2 保持满意策略
+### 3.3 保持告知策略
+### 3.4 最小关注策略
+
+## 4. 成功标准
+### 4.1 关键指标
+### 4.2 衡量方式
+### 4.3 评估周期
+
+## 5. 风险与预案
+### 5.1 风险矩阵
+### 5.2 缓解措施
+### 5.3 应急预案
+
+## 6. 资源与行动
+### 6.1 资源需求
+### 6.2 行动计划
+### 6.3 时间线
+
+## 附录
+- 利益相关者详细档案
+- 沟通记录模板
+- 数据来源
+```
 
 ## 输出
 
-**存储路径**：`output/pm-strategy/stakeholder-strategy-doc/strategy-doc.md`
+**存储路径**：`output/pm-strategy/stakeholder-strategy-doc/`
 
-**输出文件**：strategy-doc.md
+**输出文件**：
 
-**文件**: `strategy-doc.md`
+| 文件 | 格式 | 说明 |
+|------|------|------|
+| stakeholder-strategy-doc.md | Markdown | 完整利益相关者战略文档 |
+| stakeholder-strategy-doc.json | JSON | 结构化数据 |
 
-**格式要求**:
-- Markdown格式
-- 章节编号清晰
-- 要点使用列表
-- 关键数据突出显示
-- 便于打印和分享
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| doc_metadata.product_name | string | 是 | 产品名称 |
+| doc_metadata.generated_at | string | 是 | 生成时间戳 |
+| doc_metadata.data_sources | array | 是 | 数据来源列表 |
+| doc_metadata.quality_score | number | 是 | 文档质量评分0-100 |
+| background.strategic_context | string | 是 | 战略背景 |
+| background.stakeholder_overview | array | 是 | 利益相关者全景 |
+| background.key_stakeholders | array | 是 | 关键利益相关者 |
+| opportunities_and_challenges.opportunities | array | 是 | 机会列表 |
+| opportunities_and_challenges.challenges | array | 是 | 挑战列表 |
+| strategies | array | 是 | 策略列表，每项含stakeholder/current_attitude/target_attitude/strategy/key_actions |
+| success_criteria | array | 是 | 成功标准列表 |
+| risks_and_contingencies | array | 是 | 风险与预案列表 |
+| resources_and_actions | object | 是 | 资源与行动计划 |
+
+```json
+{
+  "doc_metadata": {
+    "product_name": "产品名",
+    "generated_at": "时间戳",
+    "data_sources": [],
+    "quality_score": 75
+  },
+  "background": {
+    "strategic_context": "",
+    "stakeholder_overview": [],
+    "key_stakeholders": []
+  },
+  "opportunities_and_challenges": {
+    "opportunities": [],
+    "challenges": []
+  },
+  "strategies": [
+    {
+      "stakeholder": "产品VP",
+      "current_attitude": "supportive",
+      "target_attitude": "strongly_supportive",
+      "strategy": "深度参与",
+      "key_actions": ["周度战略对齐会", "关键决策预沟通"]
+    }
+  ],
+  "success_criteria": [
+    {
+      "metric": "关键决策者支持率",
+      "current": "60%",
+      "target": "90%",
+      "measurement": "决策通过率"
+    }
+  ],
+  "risks_and_contingencies": [
+    {
+      "risk": "关键决策者变更",
+      "probability": "medium",
+      "impact": "high",
+      "contingency": "建立多决策者关系"
+    }
+  ],
+  "resources_and_actions": {
+    "resource_needs": [],
+    "action_plan": [],
+    "timeline": ""
+  }
+}
+```
 
 ## 决策规则
 
 | 条件 | 决策 |
 |------|------|
-| 文档质量评分<60分 | 自动修改1次，重新检查 |
-| 自动修改后质量评分仍<60分 | 标记需人类审核精炼，附修改记录 |
-| 自动修改后质量评分60-80分 | 标记"建议人工复核"，可发布 |
-| 质量评分≥80分 | 直接发布 |
-| 关键假设≥5个未标注验证方法 | 退回补充，每个假设必须有验证方法和截止日期 |
-| 文档涉及≥3个部门资源 | 强制人类审批，不可自动发布 |
-| 战略文档与OKR对齐度<50% | 标记"与OKR对齐不足"，建议调整 |
+| 文档质量评分≥60 | 通过，可输出 |
+| 文档质量评分<60 | 自动修改后重新评分 |
+| 修改后仍<60 | 升级人类审核 |
+| 涉及≥3个部门资源 | 强制人类审批 |
+| 关键利益相关者未覆盖 | 退回补充 |
 
 ## 质量检查
 
-| 检查项 | 标准 |
-|--------|------|
-| 一页纸测试 | 能否用一页说清核心逻辑 |
-| 边界清晰 | 有明确"不做什么" |
-| 假设透明 | 所有关键假设已显式列出 |
-| 商业语言 | 用业务术语而非技术术语 |
-| 逻辑完整 | 背景→机会→选择→成功→风险→资源 闭环 |
-| Chapter 1-6 全部完整 | 所有章节内容完整 |
-| 数据支撑 | 有数据支撑（而非纯观点） |
+- [ ] 6个章节完整
+- [ ] 每个章节有数据来源标注
+- [ ] 利益相关者覆盖完整
+- [ ] 策略具体可执行
+- [ ] 成功标准可衡量
+- [ ] 风险有预案
+- [ ] 文档质量评分≥60
 
 ---
 
@@ -134,17 +245,30 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| bmc.json | 用户提供产品战略要点 → 组装文档，标注"缺乏BMC数据" |
-| positioning-statement.json / value-curve.json | 用户提供产品战略要点 → 组装文档，标注"缺乏定位数据" |
-| swot.json / okr.json | 用户提供产品战略要点 → 组装文档，标注"缺乏SWOT和OKR数据" |
-| roadmap.json | 用户提供产品战略要点 → 组装文档，标注"缺乏路线图数据" |
-| 多个前序文件缺失 | 用户提供产品战略要点 → 组装简化版文档，标注各缺失数据源 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| stakeholder-map.json | 用户提供利益相关者信息 → 生成战略文档 | 缺乏结构化利益相关者地图，四象限分类可能不完整 |
+| business-strategy-report.json | 用户提供战略要点 → 生成战略文档 | 缺乏结构化战略数据，策略与战略对齐度可能不足 |
+| stakeholder-map.json + business-strategy-report.json | 用户提供利益相关者和战略要点 → 生成战略文档 | 整体置信度降低，文档缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的利益相关者和战略信息生成文档 | 整体置信度显著降低，文档仅为用户提供信息的重组 |
+| stakeholder-brief.json | 若战略简报缺失，不影响核心文档生成 | 简报内容需从战略报告中重新提取 |
 
-数据获取说明：
-- 本Skill需要BMC、定位、SWOT、OKR和路线图数据，请通过以下方式之一提供：
-  1. 直接描述产品战略要点、核心逻辑和关键决策
-  2. 上传bmc.json / positioning-statement.json / swot.json / okr.json / roadmap.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| stakeholder-map利益相关者变更 | 背景与现状、策略选择 | 重新执行Step 2-4，更新利益相关者分析和策略 |
+| business-strategy-report战略调整 | 背景与现状、机会与挑战 | 重新执行Step 2-3，更新战略背景和机会挑战分析 |
+| stakeholder-brief简报内容变更 | 策略选择中的沟通内容 | 更新策略中的关键行动 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 策略调整 | stakeholder-brief | 输出文件版本号+变更摘要 |
+| 风险预案更新 | stakeholder-brief | 输出文件版本号+变更摘要 |
+| 文档质量评分变更 | 无下游 | 无需通知 |

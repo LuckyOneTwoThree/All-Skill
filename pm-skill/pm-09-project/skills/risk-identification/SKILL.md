@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -216,6 +216,30 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| risk_register.risks | array | 是 | 风险列表，每项须含id、description、category、probability、impact、priority |
+| risk_register.risks[].id | string | 是 | 风险唯一标识，格式RISK-NNN |
+| risk_register.risks[].category | string | 是 | 风险类别，枚举值technical/team/external/business |
+| risk_register.risks[].probability | number | 是 | 发生概率，范围0.0-1.0 |
+| risk_register.risks[].impact | number | 是 | 影响程度，范围0.0-1.0 |
+| risk_register.risks[].priority | string | 是 | 优先级，枚举值critical/high/medium/low |
+| risk_register.risks[].mitigation_strategy | string | 否 | 应对策略描述 |
+| risk_register.risks[].owner | string | 否 | 风险负责人 |
+| risk_register.risks[].status | string | 是 | 风险状态，枚举值active/mitigated/resolved/closed |
+| risk_register.risks[].identified_date | string | 是 | 识别日期，ISO 8601格式 |
+| risk_register.risks[].last_updated | string | 是 | 最后更新日期，ISO 8601格式 |
+| risk_register.summary.total_risks | number | 是 | 风险总数 |
+| risk_register.summary.by_priority | object | 是 | 按优先级分布统计，含critical/high/medium/low计数 |
+| risk_register.summary.trend | string | 是 | 趋势，枚举值stable/increasing/decreasing |
+| metadata.scan_time | string | 是 | 扫描时间，ISO 8601格式 |
+| metadata.data_sources | array | 是 | 数据来源列表 |
+| metadata.confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+| metadata.new_risks_identified | number | 是 | 新识别风险数 |
+| metadata.risks_resolved | number | 是 | 已解决风险数 |
+
 ```json
 {
   "risk_register": {
@@ -281,12 +305,12 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 项目数据 | 无法基于实际数据扫描风险 | 用户描述项目范围和关键依赖，AI基于行业经验识别风险 | 基于行业经验的风险清单 |
-| 历史风险库 | 无法匹配历史案例 | 完全依赖AI行业知识识别风险，标注"无历史数据参考" | 基于AI知识的风险登记册 |
-| 外部数据 | 无法评估外部风险 | 跳过外部风险扫描，仅识别技术/团队/业务风险 | 缺少外部维度的风险登记册 |
-| 当前风险登记册 | 无法增量更新 | 从零生成风险登记册，无法与已有风险对比 | 全新风险登记册 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 项目数据 | 用户描述项目范围和关键依赖，AI基于行业经验识别风险 | 基于行业经验的风险清单，缺少项目实际数据支撑 |
+| 历史风险库 | 完全依赖AI行业知识识别风险，标注"无历史数据参考" | 基于AI知识的风险登记册，评估置信度较低 |
+| 外部数据 | 跳过外部风险扫描，仅识别技术/团队/业务风险 | 缺少外部维度的风险登记册，需人工补充外部风险 |
+| 当前风险登记册 | 从零生成风险登记册，无法与已有风险对比 | 全新风险登记册，无法进行增量对比和趋势分析 |
 
 ### 数据获取说明
 
@@ -295,3 +319,21 @@ metadata:
 1. **项目数据缺失**：请用户描述项目范围、技术栈、团队规模和关键依赖，AI将基于行业经验识别常见风险并评估概率和影响
 2. **历史风险库缺失**：AI将完全依赖行业知识和通用风险模式识别风险，输出中标注"无历史数据参考，评估置信度较低"，建议人工审核
 3. **外部数据缺失**：跳过外部风险扫描维度（市场/政策/竞争），风险登记册中标注"外部风险需人工补充评估"
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 项目数据变更（进度偏差/依赖变化/范围调整） | 风险来源扫描、风险评估、优先级排序 | 重新扫描风险来源，更新风险评估和优先级 |
+| 外部数据更新（市场/政策/竞争变化） | 外部风险扫描、风险评估 | 更新外部风险扫描结果，重新评估相关风险 |
+| 历史风险库更新（新增案例/教训） | 风险匹配、评估置信度 | 重新匹配历史案例，更新评估置信度 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 风险登记册变更（新增/更新/关闭风险） | 风险监控、风险升级、项目经理 | 更新risk_register.json，通知risk-monitoring、risk-escalation |
+| 风险优先级变更 | 风险升级判断、资源分配 | 更新risk_register.json，通知risk-escalation和项目经理 |
+| 风险应对策略变更 | 风险监控应对追踪 | 更新risk_register.json，通知risk-monitoring |

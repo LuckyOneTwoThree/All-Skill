@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **九格联动**——画布9要素必须逻辑自洽，客户细分→价值主张→渠道→收入形成闭环
+2. **选项优于定论**——收入模式等关键决策点生成2-3个可比较选项，由人类选择
+3. **假设显式标注**——所有推断内容标注为假设，含风险等级和验证方法
+4. **财务自动推算**——单位经济、敏感性分析由AI自动完成，人类只审核结论
 
 **执行周期**：在产品探索阶段完成后触发
 
@@ -329,7 +329,7 @@ metadata:
 }
 ```
 
-**验收标准****
+**验收标准**
 - 关键活动覆盖价值创造全流程
 - 资源需求与能力匹配
 - 伙伴关系设计合理
@@ -367,6 +367,25 @@ metadata:
 **存储路径**：`output/pm-strategy/business-model-canvas/`
 
 **输出文件**：bmc.json, assumptions.json
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| business_model_canvas.customer_segments | array | 是 | 至少包含2个客户细分群体 |
+| business_model_canvas.value_propositions | array | 是 | 每个细分群体至少1个价值主张 |
+| business_model_canvas.channels | array | 是 | 覆盖客户旅程全阶段 |
+| business_model_canvas.customer_relationships | array | 是 | 每个细分群体有对应关系类型 |
+| business_model_canvas.revenue_streams | array | 是 | 至少2个收入模式选项 |
+| business_model_canvas.key_resources | array | 是 | 覆盖实体/知识产权/人力/财务 |
+| business_model_canvas.key_activities | array | 是 | 覆盖价值创造全流程 |
+| business_model_canvas.key_partners | array | 是 | 含供应商/战略联盟/合资伙伴 |
+| business_model_canvas.cost_structure | object | 是 | 含固定成本、可变成本、单位经济 |
+| metadata.confidence | number | 是 | 0-1之间，整体置信度 |
+| metadata.requires_human_review | boolean | 是 | 是否需要人类审核 |
+| assumptions[].assumption_id | string | 是 | 假设唯一标识 |
+| assumptions[].risk_level | string | 是 | low/medium/high |
+| assumptions[].verification_status | string | 是 | verified/pending/not_verifiable |
 
 ### 完整商业画布JSON
 
@@ -460,11 +479,11 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| persona.json / opportunity-brief.json | 用户提供产品描述和目标用户 → 基于描述生成BMC，标注"缺乏探索阶段数据支撑" |
-| exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC，各模块置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| persona.json / opportunity-brief.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，置信度降低 |
+| exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块置信度降低，假设条目增多 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度显著降低，大部分内容为假设推断 |
 
 数据获取说明：
 - 本Skill需要探索阶段输出数据（Persona、机会简报等），请通过以下方式之一提供：
@@ -472,6 +491,28 @@ metadata:
   2. 上传persona.json / opportunity-brief.json等文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| persona.json用户画像更新 | 客户细分、客户关系模块需重新填充 | 重新执行Step 1和Step 7，标注变更来源 |
+| opportunity-brief机会简报更新 | 价值主张、收入模式可能需调整 | 重新评估价值主张优先级，检查收入模式匹配度 |
+| competitor-intel竞品数据更新 | 价值主张差异化、收入模式定价参考 | 重新执行Step 2和Step 3，更新竞品对标数据 |
+| 市场规模数据变更 | 收入预期和成本结构 | 重新计算单位经济指标，更新市场规模假设 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 客户细分调整 | business-value-fit、business-pricing | 输出文件版本号+变更摘要 |
+| 价值主张变更 | business-value-fit、positioning-statement | 输出文件版本号+变更摘要 |
+| 收入模式变更 | business-pricing | 输出文件版本号+变更摘要 |
+| 成本结构变更 | business-pricing、business-strategy-report | 输出文件版本号+变更摘要 |
 
 ---
 

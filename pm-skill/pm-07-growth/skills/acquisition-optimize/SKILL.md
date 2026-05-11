@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "获客"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **千人千面**：不同用户群体采用差异化漏斗优化策略
-2. **自动实验持续优化**：优化方案通过A/B测试持续验证，让数据决定最优方案
-3. **实时优化**：基于实时漏斗数据动态调整优化策略
-4. **数据驱动归因**：量化每个优化步骤对转化的贡献
+1. **流失即信号**：每个流失节点都是用户在用脚投票，流失率最高的节点就是最大优化杠杆
+2. **障碍分类定向击破**：认知/信任/行动/价值四类障碍需要完全不同的优化手段
+3. **实验验证不猜测**：优化方案必须通过A/B测试验证，用数据替代直觉
 
 ## 交互模式
 
@@ -73,7 +72,7 @@ metadata:
 
 ### Step 2: 最大流失节点识别
 
-1. **计算流失影响系数**: 
+1. **计算流失影响系数**:
    ```
    影响系数 = 该层流失率 × 该层到最终的转化率权重
    ```
@@ -196,6 +195,17 @@ success_criteria:
   - guardrail_metrics: "无显著下降"
 ```
 
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| funnel_analysis | object | 是 | 漏斗分析，须含stages和critical_drop_off |
+| funnel_analysis.stages | array | 是 | 各阶段数据，每项须含name/volume/conversion_rate/drop_off_rate |
+| funnel_analysis.critical_drop_off | object | 是 | 关键流失节点，须含from_stage/to_stage/drop_off_rate/impact_score |
+| optimization_suggestions | array | 是 | 优化建议列表，每项须含priority/stage/issue/solution/expected_improvement |
+| optimization_suggestions[].priority | number | 是 | 优先级，从1开始递增 |
+| ab_test_designs | array | 否 | A/B测试设计方案列表，每项须含test_id/hypothesis/primary_metric |
+
 ## 决策规则
 
 | 情况 | 处理方式 |
@@ -216,7 +226,7 @@ success_criteria:
 
 ### 上游文件缺失降级方案
 
-| 缺失范围 | 降级方案 | 输出影响 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
 |----------|----------|----------|
 | 获客漏斗数据缺失 | 用户提供漏斗数据 → 直接分析优化 | 漏斗步骤和转化率基于用户输入 |
 | 历史优化数据缺失 | 跳过历史对比，仅基于当前数据分析 | 无法评估优化趋势 |
@@ -229,4 +239,19 @@ success_criteria:
 - **当前优化措施**（可选）：已实施的优化策略
 - **优化目标**（可选）：期望提升的关键转化率
 
+## 上游变更响应
 
+### 上游变更影响表
+
+| 上游来源 | 变更类型 | 影响范围 | 响应动作 |
+|----------|----------|----------|----------|
+| acquisition-channel | 渠道分级变更 | 漏斗分析的渠道维度拆分 | 按新分级重新拆分漏斗数据 |
+| acquisition-channel | 渠道数据格式变更 | funnel_analysis字段解析 | 适配新格式，补充缺失字段默认值 |
+| 用户提供-历史优化数据 | 实验结果更新 | 优化建议的基准对比 | 更新对比基准，调整优化优先级 |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
+|------------|----------|----------|----------|
+| activation-aha | 激活阶段流失率变更 | 写入输出文件 | 注册→激活转化率和流失分析 |
+| acquisition-orchestrator | 优化方案输出完成 | 输出文件更新 | 漏斗优化完成状态和关键结论 |

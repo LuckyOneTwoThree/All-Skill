@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "激活"
   type: "orchestrator"
-  version: "3.0"
+  version: "4.0"
 ---
 
 # 用户激活指挥官
@@ -16,12 +16,10 @@ metadata:
 
 用户激活的本质是帮助用户尽快到达Aha Moment——那个让用户感受到产品核心价值的瞬间。没有Aha Moment的激活只是流程完成，不是价值传递。
 
-## 执行步骤
+## 编排理念
 
-1. **千人千面**：不同用户分群采用差异化Onboarding路径，确保每类用户都能高效到达Aha Moment
-2. **自动实验持续优化**：Aha Moment候选和Onboarding策略通过A/B测试持续验证，让数据决定最优路径
-3. **实时优化**：基于实时激活数据动态调整Onboarding内容和序列
-4. **数据驱动归因**：量化每个Onboarding步骤对激活的贡献，识别关键路径和流失节点
+1. **Aha Moment锚定Onboarding**：先识别Aha Moment，再以Aha Moment为终点设计Onboarding路径，确保引导有明确目标
+2. **数据从识别流向设计**：Aha Moment的到达率和路径数据直接驱动Onboarding的流程设计
 
 ## 子Skill执行协议
 
@@ -82,8 +80,18 @@ metadata:
 |--------|----------|----------|
 | Aha Moment确认 | Aha Moment候选识别完成 | 确认主Aha Moment的选择和Onboarding路径设计 |
 
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| Aha Moment无候选通过筛选阈值 | 降低相关性阈值至0.3重新搜索；仍无结果则基于产品功能推断候选，标注"待数据验证" |
+| Onboarding数据完全缺失 | 基于Aha Moment数据设计通用Onboarding框架，标注"待Onboarding数据补充" |
+| 子Skill输出校验未通过 | 回退至当前阶段重新执行，最多重试1次；仍失败则标记异常并上报人类 |
+| 上下游数据格式不兼容 | 按下游子Skill输入Schema做字段映射和默认值填充，记录映射关系 |
+
 ## 变更记录
 
 - v1.0: 初始版本
 - v2.0: description触发词优化
 - v3.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格
+- v4.0: 执行步骤替换为编排理念，新增异常处理表

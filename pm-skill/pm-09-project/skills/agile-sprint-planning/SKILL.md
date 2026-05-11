@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -200,6 +200,24 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| sprint_plan.sprint_goal | string | 是 | Sprint目标描述，须具体可衡量 |
+| sprint_plan.stories | array | 是 | 计划Story列表，每项须含id、title、story_points、assignee |
+| sprint_plan.stories[].story_points | number | 是 | 故事点估算值，须为正整数 |
+| sprint_plan.stories[].status | string | 是 | Story状态，枚举值planned |
+| sprint_plan.capacity_validation.status | string | 是 | 容量验证结果，枚举值green/yellow/red |
+| sprint_plan.capacity_validation.message | string | 是 | 验证说明信息 |
+| sprint_plan.risks | array | 否 | 风险列表，每项须含description和priority |
+| sprint_plan.risks[].priority | string | 是 | 风险优先级，枚举值high/medium/low |
+| metadata.sprint_id | string | 是 | Sprint唯一标识 |
+| metadata.generated_at | string | 是 | 生成时间，ISO 8601格式 |
+| metadata.confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+| metadata.human_approval_required | boolean | 是 | 是否需要人类审批，Sprint Planning须为true |
+| metadata.approval_status | string | 是 | 审批状态，枚举值pending/approved/rejected |
+
 ```json
 {
   "sprint_plan": {
@@ -266,12 +284,12 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| Product Backlog | 无法选取和排序Stories | 用户提供需求列表（标题+优先级+估算），AI据此生成Sprint计划 | 基于用户输入的Sprint计划 |
-| Sprint目标 | 无法确定Sprint聚焦方向 | AI基于高优先级Stories自动推断Sprint Goal，标注需PO确认 | AI推断的Sprint Goal |
-| 团队容量 | 无法验证计划可行性 | 跳过容量验证，计划中标注"需人工确认容量匹配" | 无容量验证的Sprint计划 |
-| Sprint天数 | 无法确定Sprint时间范围 | 若用户未提供Sprint天数，提示用户提供或跳过该输入相关步骤 | — |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| Product Backlog | 用户提供需求列表（标题+优先级+估算），AI据此生成Sprint计划 | 基于用户输入生成Sprint计划，缺少结构化Backlog数据支撑 |
+| Sprint目标 | AI基于高优先级Stories自动推断Sprint Goal，标注需PO确认 | Sprint Goal为AI推断，需Product Owner确认后方可执行 |
+| 团队容量 | 跳过容量验证，计划中标注"需人工确认容量匹配" | Sprint计划无容量验证结果，需人工补充确认 |
+| Sprint天数 | 若用户未提供Sprint天数，提示用户提供或跳过该输入相关步骤 | 容量计算和排期缺少时间范围，需人工补充 |
 
 ### 数据获取说明
 
@@ -280,3 +298,21 @@ metadata:
 1. **Product Backlog缺失**：请用户提供需求列表，包含需求标题、优先级（P0-P3）和粗略估算，AI将据此进行Story选取和Sprint计划生成
 2. **Sprint目标缺失**：AI将基于最高优先级Stories自动推断Sprint Goal，输出中标注"AI推断，需Product Owner确认"
 3. **团队容量缺失**：跳过容量匹配验证步骤，Sprint计划中标注"需人工确认团队容量是否支持"，建议与团队确认后再提交审批
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| Product Backlog变更（优先级调整/Story增减） | Story选取结果、Sprint Goal建议 | 重新执行Story选取，更新Sprint计划和Goal建议 |
+| 团队容量变更（人员变动/假期调整） | 容量验证结果、Story选取上限 | 重新计算容量，调整Story选取和容量验证 |
+| Sprint天数调整 | 容量计算、排期时间线 | 重新计算可用容量，更新Sprint计划时间范围 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| Sprint计划变更（Story增减/Goal调整） | 每日同步、Sprint评审、风险监控 | 更新sprint_plan.json，通知agile-daily-sync、agile-review、risk-monitoring |
+| 容量验证结果变更 | 资源规划、团队排期 | 更新sprint_plan.json，通知planning-resource |
+| 审批状态变更 | 所有下游依赖Sprint计划的Pipeline | 更新metadata.json，通知所有下游消费者 |

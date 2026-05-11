@@ -6,7 +6,7 @@ metadata:
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "1"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -14,10 +14,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **需求≠问题**——用户描述的是解决方案不是问题本身，收集阶段就要开始还原
+2. **可信度是需求的信用评级**——来源可信度决定需求的初始权重，"老板说"不是高可信度
+3. **去噪不是丢弃**——标记无效需求而非删除，保留审计轨迹
+4. **分类置信度是安全阀**——低置信度分类必须升级人类复核，避免错误分类污染下游
 
 ### 基本信息
 
@@ -207,12 +207,42 @@ sources:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无（本Skill为起始Skill） | 无上游依赖，但需要用户需求输入 | — |
+| 所有数据源均缺失 | 提示用户提供需求文本/截图，直接分类整理 | 输出依赖用户输入质量 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 无（本Skill为起始Skill） | 无上游依赖，但需要用户需求输入 |
-| 所有数据源均缺失 | 提示用户提供需求文本/截图 → 直接分类整理 |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| requirements | array | 是 | 需求列表，不可为空 |
+| requirements[].id | string | 是 | 唯一标识，格式REQ-YYYY-NNNN |
+| requirements[].source | string | 是 | 来源类型 |
+| requirements[].original_text | string | 是 | 原始需求文本 |
+| requirements[].category | string | 是 | 分类（bug/optimization/new_feature/strategic） |
+| requirements[].classification_confidence | number | 是 | 分类置信度（0-1） |
+| requirements[].source_credibility | number | 是 | 来源可信度（0-1） |
+| requirements[].duplicate_count | integer | 是 | 重复出现次数 |
+| requirements[].frequency_trend | string | 是 | 频率趋势（rising/stable/declining） |
+| requirements[].pending_human_review | boolean | 是 | 是否需要人工复核 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 数据源配置变更 | 采集范围、需求完整性 | 标注新增/删除的数据源，建议人类确认是否重新采集 |
+| 数据源同步频率变更 | 需求时效性 | 标注频率变更，建议人类确认是否触发增量同步 |
+
+### 下游通知机制
+
+| 需求列表变更类型 | 通知范围 | 通知方式 |
+|-----------------|----------|----------|
+| 需求新增 | requirements-understanding | 标记新增需求，触发需求理解流程 |
+| 需求分类变更 | requirements-understanding | 标记分类变更，触发理解模板更新 |
+| 需求去噪结果变更 | requirements-understanding | 标记去噪变更，触发需求列表更新 |
 
 数据获取说明：
 - 本Skill需要需求文本数据，请通过以下方式之一提供：

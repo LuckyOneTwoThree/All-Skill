@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -135,14 +135,48 @@ AI模拟开放式卡片分类测试：
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| PRD文档缺失 | 用户提供功能列表，直接设计IA | 缺乏PRD结构化数据，分类可能不够完整 |
+| 现有IA数据缺失 | 从零设计IA，无参考基线 | 缺乏现有IA参考，可能遗漏已有结构 |
+| 用户研究数据缺失 | 基于PRD功能推导分类 | 缺乏用户研究数据，分类可能与用户心智模型偏差 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的功能列表直接设计IA | 整体置信度降低 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| PRD文档 | 用户提供功能列表 → 直接设计IA，标注"缺乏PRD结构化数据" |
-| 现有IA数据 | 用户提供功能列表 → 直接设计IA，标注"缺乏现有IA参考" |
-| 用户研究数据（persona / voice-analysis） | 用户提供功能列表 → 直接设计IA，标注"缺乏用户研究数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的功能列表直接设计IA |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| ia_proposals | array | 是 | IA候选方案列表，至少2个 |
+| ia_proposals[].name | string | 是 | 方案名称 |
+| ia_proposals[].structure | object | 是 | 层级结构定义 |
+| ia_proposals[].navigation_pattern | string | 是 | 导航模式选择 |
+| ia_proposals[].routes | array | 是 | 路由列表 |
+| ia_proposals[].routes[].path | string | 是 | 路由路径 |
+| ia_proposals[].routes[].page | string | 是 | 页面名称 |
+| ia_proposals[].routes[].depth | integer | 是 | 层级深度 |
+| ia_proposals[].avg_clicks_to_core | number | 是 | 核心功能平均点击次数 |
+| ia_proposals[].alignment_with_user_model | string | 是 | 与用户心智模型对齐度 |
+| ia_proposals[].needs_user_validation | array | 是 | 需用户验证的节点 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能模块增删 | 内容清单、分类结构、路由定义 | 标注受影响的功能点和分类节点，建议人类确认是否重新聚类 |
+| PRD优先级调整 | IA层级结构、导航模式 | 标注受影响的层级关系，建议人类确认是否调整层级深度 |
+| 用户研究数据更新 | 分类方案、用户心智模型对齐度 | 标注受影响的分类判断，建议人类确认是否调整分类方案 |
+| 现有IA结构调整 | 路由映射、导航模式 | 标注受影响的路由和导航，建议人类确认是否重新设计 |
+
+### 下游通知机制
+
+| IA变更类型 | 通知范围 | 通知方式 |
+|-----------|----------|----------|
+| 路由结构变更 | design-userflow、design-prototype、design-handoff-spec | 标记路由变更，触发用户流程和原型重新设计 |
+| 导航模式变更 | design-prototype、interaction-spec | 标记导航变更，触发原型和交互规范更新 |
+| 层级深度变更 | design-userflow、design-handoff-spec | 标记层级变更，触发流程和交接文档更新 |
+| 分类节点变更 | design-userflow、design-prototype | 标记分类变更，触发流程和原型更新 |
 
 数据获取说明：
 - 本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：

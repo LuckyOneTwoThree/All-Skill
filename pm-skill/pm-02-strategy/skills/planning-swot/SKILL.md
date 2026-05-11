@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **内外交叉验证**——S/W来自内部能力评估，O/T来自外部数据，不可混淆来源
+2. **证据强制标注**——每项SWOT条目必须有数据或事实支撑，标注置信度
+3. **四策略必生成**——SO/ST/WO/WT四种战略方向缺一不可，交叉分析是核心
+4. **低置信度升级**——置信度<0.6的条目自动升级人类校准
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -88,6 +88,20 @@ metadata:
 
 **输出文件**：swot.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| swot.strengths | array | 是 | 优势列表，每项含item、confidence、evidence |
+| swot.weaknesses | array | 是 | 劣势列表，每项含item、confidence、evidence |
+| swot.opportunities | array | 是 | 机会列表，每项含item、confidence、evidence |
+| swot.threats | array | 是 | 威胁列表，每项含item、confidence、evidence |
+| swot.strategies | array | 是 | 4种战略方向 |
+| swot.strategies[].type | string | 是 | SO/ST/WO/WT |
+| swot.strategies[].strategy | string | 是 | 战略名称 |
+| swot.strategies[].key_actions | array | 是 | 关键行动列表 |
+| swot.strategies[].expected_outcome | string | 是 | 预期成果 |
+
 ```yaml
 swot:
   strengths:
@@ -153,13 +167,13 @@ swot:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| exploration_outputs（persona / opportunity-brief等） | 用户提供产品现状描述 → 基于描述生成SWOT，标注"缺乏探索阶段数据" |
-| competitor-intel.json | 用户提供产品现状描述 → 基于描述生成SWOT，标注"缺乏竞品分析数据" |
-| bmc.json | 用户提供产品现状描述 → 基于描述生成SWOT，标注"缺乏BMC数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状描述直接生成SWOT |
-| 内部能力评估（用户提供） | 若用户未提供内部能力评估，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| exploration_outputs（persona / opportunity-brief等） | 用户提供产品现状描述 → 基于描述生成SWOT | 缺乏探索阶段数据，O/T可能缺乏用户端实证 |
+| competitor-intel.json | 用户提供产品现状描述 → 基于描述生成SWOT | 缺乏竞品分析数据，T和部分O缺乏竞品参照 |
+| bmc.json | 用户提供产品现状描述 → 基于描述生成SWOT | 缺乏BMC数据，S/W与商业模型关联度可能偏弱 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状描述直接生成SWOT | 整体置信度显著降低，SWOT主要为AI推断 |
+| 内部能力评估（用户提供） | 若用户未提供内部能力评估，提示用户提供或跳过该输入相关步骤 | S/W缺乏内部数据支撑，可能偏主观 |
 
 数据获取说明：
 - 本Skill需要探索输出、竞品分析和BMC数据，请通过以下方式之一提供：
@@ -167,3 +181,23 @@ swot:
   2. 上传competitor-intel.json / bmc.json / persona.json等文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| persona/opportunity-brief用户洞察更新 | O和T的评估 | 重新执行Step 3-4，更新机会和威胁 |
+| competitor-intel竞品数据更新 | T和部分O | 重新执行Step 3-4，更新威胁评估 |
+| bmc.json商业模式变更 | S和W的评估 | 重新执行Step 1-2，更新优势和劣势 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| SWOT条目变更 | planning-okr、planning-ansoff、business-strategy-report | 输出文件版本号+变更摘要 |
+| 战略方向调整 | planning-okr、planning-roadmap | 输出文件版本号+变更摘要 |
+| 置信度变化 | planning-okr | 输出文件版本号+变更摘要 |

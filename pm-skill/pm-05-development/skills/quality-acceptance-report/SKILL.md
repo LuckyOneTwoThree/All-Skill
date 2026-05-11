@@ -5,7 +5,7 @@ metadata:
   module: "开发与上线"
   sub-module: "质量保障"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -265,6 +265,48 @@ Must需求通过率：{X}%
   }
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| acceptance_report | object | 是 | 验收报告根对象 |
+| acceptance_report.summary | object | 是 | 验收摘要 |
+| acceptance_report.summary.total_items | number | 是 | 验收项总数 |
+| acceptance_report.summary.passed | number | 是 | 通过项数 |
+| acceptance_report.summary.failed | number | 是 | 失败项数 |
+| acceptance_report.summary.blocked | number | 是 | 阻断项数 |
+| acceptance_report.items | array | 是 | 验收项列表 |
+| acceptance_report.items[].id | string | 是 | 验收项编号 |
+| acceptance_report.items[].category | string | 是 | 验收类别 |
+| acceptance_report.items[].description | string | 是 | 验收描述 |
+| acceptance_report.items[].result | string | 是 | 结果，枚举值：pass/fail/blocked/waived |
+| acceptance_report.items[].evidence | string | 否 | 证据链接 |
+| acceptance_report.items[].severity | string | 是 | 严重级别，枚举值：P0/P1/P2/P3 |
+| acceptance_report.risk_assessment | object | 是 | 风险评估 |
+| acceptance_report.sign_off | object | 是 | 签收记录 |
+| acceptance_report.sign_off.status | string | 是 | 签收状态，枚举值：pending/signed/rejected |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 验收标准变更 | 验收项和结果 | 重新生成受影响的验收项，保留已通过的历史记录 |
+| 测试报告变更 | 验收项结果 | 更新关联验收项的结果和证据 |
+| PRD需求变更 | 验收项完整性 | 重新评估验收项覆盖度，标记需人类确认 |
+| 安全需求变更 | 安全验收项 | 更新安全验收项，重新评估安全风险 |
+
+当验收报告自身变更时，对下游的通知机制：
+
+| 报告变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| P0/P1失败 | release-orchestrator | 标记阻断项，阻止发布流程 |
+| 验收项新增 | quality-auto-acceptance | 标记新增项，触发自动验收更新 |
+| 签收状态变更 | release-orchestrator | 标记签收状态，触发发布决策 |
+
+---
 
 ## 决策规则
 

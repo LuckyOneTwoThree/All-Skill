@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -347,6 +347,50 @@ metadata:
 | sprint_assignment | JSON | Sprint分配结果 |
 | dependency_graph | JSON | 依赖关系图 |
 | tech_clarifications | JSON | 技术细节澄清 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| task_breakdown | object | 是 | 任务拆解根对象 |
+| task_breakdown.epics | array | 是 | Epic列表 |
+| task_breakdown.epics[].id | string | 是 | Epic编号 |
+| task_breakdown.epics[].name | string | 是 | Epic名称 |
+| task_breakdown.epics[].priority | string | 是 | 优先级，枚举值：P0/P1/P2/P3 |
+| task_breakdown.epics[].stories | array | 是 | Story列表，至少1个 |
+| task_breakdown.epics[].stories[].id | string | 是 | Story编号 |
+| task_breakdown.epics[].stories[].title | string | 是 | Story标题 |
+| task_breakdown.epics[].stories[].points | number | 是 | 故事点数 |
+| task_breakdown.epics[].stories[].tasks | array | 是 | Task列表，至少1个 |
+| task_breakdown.epics[].stories[].tasks[].id | string | 是 | Task编号 |
+| task_breakdown.epics[].stories[].tasks[].title | string | 是 | Task标题 |
+| task_breakdown.epics[].stories[].tasks[].estimate_hours | number | 是 | 预估工时 |
+| task_breakdown.epics[].stories[].tasks[].assignee | string | 否 | 负责人 |
+| task_breakdown.dependencies | array | 是 | 依赖关系列表 |
+| task_breakdown.milestone | object | 是 | 里程碑规划 |
+| task_breakdown.milestone.sprint_count | number | 是 | Sprint数量 |
+| task_breakdown.milestone.total_points | number | 是 | 总故事点 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD需求变更 | Epic和Story拆解 | 重新拆解受影响的Epic，标记新增/修改/废弃的Story，保留人类已确认的任务 |
+| ADR决策变更 | Task技术实现 | 更新受影响Task的实现方案，标记需人类确认 |
+| 需求变更日志 | 优先级和里程碑 | 重新评估优先级排序，更新里程碑规划 |
+| 数据字典变更 | Task数据相关实现 | 更新数据相关Task，标记需人类确认 |
+
+当任务拆解自身变更时，对下游的通知机制：
+
+| 拆解变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| Epic增删 | development-auto-review | 标记Epic变更，触发审查范围更新 |
+| Story优先级变更 | development-prd-sync | 标记优先级变更，触发PRD同步评估 |
+| Task增删 | quality-auto-test | 标记Task变更，触发测试用例更新 |
+
+---
 
 ## 决策规则
 

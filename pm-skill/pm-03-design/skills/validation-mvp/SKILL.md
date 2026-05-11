@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **MVP验证的是假设不是方案**——MVP的目标是学习而非交付，用最小成本获取最大置信度
+2. **Must Have是MVP的底线**——Must Have功能不可裁剪，Nice to Have功能全部可裁剪
+3. **2周是MVP的时间红线**——超过2周的MVP不是MVP，是完整产品
+4. **验证结果只有三种**——验证通过/验证失败/需更多数据，不允许模糊结论
 
 ### 基本信息
 
@@ -211,22 +211,52 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 假设地图缺失 | 用户描述关键假设，界定MVP | 缺乏结构化假设数据，MVP范围可能不够精准 |
+| 方案设计数据缺失 | 用户描述方案，界定MVP | 缺乏方案数据，功能裁剪可能不够合理 |
+| 资源约束数据缺失 | 用户描述资源约束，界定MVP | 缺乏资源约束数据，时间规划可能不够合理 |
+| 假设地图+方案设计+资源约束均缺失 | 用户描述假设和方案，界定MVP | 整体置信度降低，MVP范围可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述界定MVP | 输出仅为基本MVP框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| assumption-map.json（假设地图） | 用户提供功能列表和假设 → 界定MVP，标注"缺乏假设地图数据" |
-| converged_solutions.json（方案设计） | 用户提供功能列表和假设 → 界定MVP，标注"缺乏方案设计数据" |
-| 资源约束数据 | 用户提供功能列表和假设 → 界定MVP，标注"缺乏资源约束数据" |
-| 假设地图 + 方案设计 + 资源约束 | 用户提供功能列表和假设 → 界定MVP，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的功能列表和假设界定MVP |
+## 输出校验规则
 
-数据获取说明：
-- 本Skill需要假设地图、方案设计和资源约束数据，请通过以下方式之一提供：
-  1. 直接描述功能列表、核心假设和资源约束
-  2. 上传assumption-map.json / converged_solutions.json文件
-  3. 提供数据文件路径
-- AI不负责外部数据采集，仅负责分析
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| mvp_scope | object | 是 | MVP范围定义 |
+| mvp_scope.core_hypothesis | array | 是 | 核心假设列表 |
+| mvp_scope.must_have | array | 是 | Must Have功能列表 |
+| mvp_scope.nice_to_have | array | 是 | Nice to Have功能列表 |
+| mvp_scope.cut_features | array | 是 | 裁剪功能列表 |
+| mvp_scope.timeline | object | 是 | 时间规划 |
+| mvp_scope.timeline.total_weeks | number | 是 | 总周数（≤2） |
+| mvp_scope.timeline.milestones | array | 是 | 里程碑列表 |
+| mvp_scope.resource_estimate | object | 是 | 资源估算 |
+| mvp_scope.success_criteria | array | 是 | 成功标准 |
+| mvp_scope.risk_mitigation | array | 是 | 风险缓解措施 |
+| mvp_scope.go_no_go | object | 是 | Go/No-Go决策框架 |
+| mvp_scope.go_no_go.metrics | array | 是 | 决策指标 |
+| mvp_scope.go_no_go.thresholds | object | 是 | 阈值定义 |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 假设地图变更（假设增删/风险评分变更） | 核心假设、Must Have功能 | 标注受影响的假设和功能，建议人类确认是否重新界定MVP |
+| 方案设计变更 | 功能列表、裁剪决策 | 标注受影响的功能，建议人类确认是否调整MVP范围 |
+| 资源约束变更 | 时间规划、资源估算 | 标注受影响的时间线，建议人类确认是否调整MVP范围 |
+| 实验结果更新 | 核心假设验证状态 | 标注受影响的假设，建议人类确认是否调整MVP策略 |
+
+### 下游通知机制
+
+| MVP范围变更类型 | 通知范围 | 通知方式 |
+|----------------|----------|----------|
+| Must Have功能增删 | validation-experiment、validation-usability | 标记功能变更，触发实验设计和可用性测试更新 |
+| 时间规划变更 | validation-experiment | 标记时间变更，触发实验周期调整 |
+| 成功标准变更 | validation-experiment | 标记标准变更，触发实验指标更新 |
+| Go/No-Go决策变更 | 所有下游Skill | 标记决策变更，触发全流程更新 |
 
 ---
 

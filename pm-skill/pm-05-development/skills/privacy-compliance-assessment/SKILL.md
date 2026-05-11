@@ -5,7 +5,7 @@ metadata:
   module: "开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -250,6 +250,48 @@ metadata:
   "compliance_rate": 0.0
 }
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| privacy_assessment | object | 是 | 隐私合规评估根对象 |
+| privacy_assessment.data_inventory | array | 是 | 数据资产清单，至少1项 |
+| privacy_assessment.data_inventory[].category | string | 是 | 数据类别 |
+| privacy_assessment.data_inventory[].data_types | array | 是 | 数据类型列表 |
+| privacy_assessment.data_inventory[].sensitivity | string | 是 | 敏感级别，枚举值：public/internal/confidential/restricted |
+| privacy_assessment.data_inventory[].retention | string | 是 | 保留期限 |
+| privacy_assessment.pia_results | array | 是 | 隐私影响评估结果 |
+| privacy_assessment.pia_results[].risk_id | string | 是 | 风险编号 |
+| privacy_assessment.pia_results[].description | string | 是 | 风险描述 |
+| privacy_assessment.pia_results[].severity | string | 是 | 严重级别，枚举值：high/medium/low |
+| privacy_assessment.pia_results[].mitigation | string | 是 | 缓解措施 |
+| privacy_assessment.compliance_status | object | 是 | 合规状态 |
+| privacy_assessment.compliance_status.regulation | string | 是 | 法规名称 |
+| privacy_assessment.compliance_status.status | string | 是 | 合规状态，枚举值：compliant/partially_compliant/non_compliant |
+| privacy_assessment.consent_design | object | 是 | 同意机制设计 |
+| privacy_assessment.data_subject_rights | array | 是 | 数据主体权利保障措施 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能变更 | 数据资产清单和PIA | 重新评估数据收集范围，更新PIA，标记需人类确认 |
+| 数据字典变更 | 数据资产清单 | 更新数据资产清单，重新评估敏感级别 |
+| 安全需求变更 | PIA和合规状态 | 重新执行PIA，更新合规状态 |
+| 法规变更 | 合规状态 | 重新评估合规状态，标记需人类确认 |
+
+当隐私评估自身变更时，对下游的通知机制：
+
+| 评估变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 数据资产变更 | security-requirements | 标记数据资产变更，触发安全需求更新 |
+| PIA风险变更 | development-task-breakdown | 标记风险变更，触发缓解任务创建 |
+| 合规状态变更 | 全部下游 | 标记合规状态变更，触发阻断/放行决策 |
+
+---
 
 ## 决策规则
 

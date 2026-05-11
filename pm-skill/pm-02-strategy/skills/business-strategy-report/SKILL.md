@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "商业战略"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -187,6 +187,26 @@ metadata:
 | business-strategy-report.md | Markdown | 完整商业战略规划报告 |
 | business-strategy-report.json | JSON | 结构化数据（供下游Skill引用） |
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_metadata.product | string | 是 | 产品名称 |
+| report_metadata.generated_at | string | 是 | 生成时间戳 |
+| report_metadata.data_sources | array | 是 | 数据来源列表 |
+| report_metadata.overall_confidence | number | 是 | 整体置信度0-1 |
+| executive_summary.strategic_posture | string | 是 | 进攻/防御/扭转/生存 |
+| executive_summary.recommended_direction | string | 是 | 推荐战略方向 |
+| executive_summary.core_okr | object | 是 | 核心OKR |
+| executive_summary.key_risks | array | 是 | 关键风险列表 |
+| strategic_assessment.external | object | 是 | 外部环境评估 |
+| strategic_assessment.internal | object | 是 | 内部能力评估 |
+| strategic_assessment.posture_matrix.quadrant | string | 是 | 态势象限 |
+| strategic_directions | array | 是 | 至少2个战略方向 |
+| execution_path.okr | object | 是 | OKR体系 |
+| execution_path.roadmap | object | 是 | 路线图 |
+| risks_and_contingencies | array | 是 | 风险与预案 |
+
 **business-strategy-report.json 结构**：
 
 ```json
@@ -267,9 +287,32 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| bmc缺失 | 基于产品信息推导商业模式 | 商业模式分析可能不够完整 |
-| swot缺失 | 基于产品信息和AI知识推导态势 | 态势评估缺乏结构化依据 |
-| okr缺失 | 基于战略方向推导OKR | OKR需人工校准 |
-| roadmap缺失 | 基于OKR推导里程碑 | 时间线需人工调整 |
-| positioning缺失 | 战略方向缺少定位验证 | 差异化策略需补充验证 |
-| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | — |
+| bmc缺失 | 基于产品信息推导商业模式 | 商业模式分析可能不够完整，缺乏9格画布结构化支撑 |
+| swot缺失 | 基于产品信息和AI知识推导态势 | 态势评估缺乏结构化依据，战略方向可能偏主观 |
+| okr缺失 | 基于战略方向推导OKR | OKR需人工校准，可量化性可能不足 |
+| roadmap缺失 | 基于OKR推导里程碑 | 时间线需人工调整，里程碑依赖关系可能不准确 |
+| positioning缺失 | 战略方向缺少定位验证 | 差异化策略需补充验证，竞争定位可能模糊 |
+| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | 报告无法生成核心内容 |
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json商业模式变更 | 战略态势内部能力评估、执行路径商业模型 | 重新评估内部能力，更新执行路径中的商业模型部分 |
+| swot.json SWOT更新 | 战略态势评估、战略方向推演 | 重新执行Step 1和Step 2，更新态势矩阵和方向推荐 |
+| okr.json OKR调整 | 执行路径OKR对齐 | 重新执行Step 3，更新OKR体系和路线图映射 |
+| roadmap.json路线图变更 | 执行路径里程碑 | 重新执行Step 3路线图映射部分 |
+| positioning定位变更 | 战略方向差异化策略 | 重新评估战略方向的差异化逻辑 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 战略方向调整 | stakeholder-strategy-doc、stakeholder-brief | 输出文件版本号+变更摘要 |
+| OKR变更 | planning-roadmap | 输出文件版本号+变更摘要 |
+| 风险预案更新 | stakeholder-brief | 输出文件版本号+变更摘要 |
+| 态势评估变更 | planning-ansoff | 输出文件版本号+变更摘要 |

@@ -5,11 +5,8 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
-  upstream:
-    - development-auto-review
-    - development-prd-sync
 ---
 
 # 技术债务登记册生成
@@ -19,6 +16,10 @@ metadata:
 **技术债务不是罪恶，忽视才是**
 
 技术债务和金融债务一样，本身不是坏事——关键在于是否有意识地借债、有计划地还债。技术债务登记册让隐性的技术债务显性化、可量化、可管理。
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
 
 ## 输入
 
@@ -30,11 +31,11 @@ metadata:
 
 ### 降级策略
 
-| 缺失输入 | 降级方案 |
-|----------|----------|
-| 无代码审查结果 | 基于团队反馈和用户提供信息识别债务，标注"待代码审查验证" |
-| 无PRD同步记录 | 跳过需求变更导致的债务识别，标注"待PRD同步补充" |
-| 无技术信息 | 无法生成，要求用户提供基本技术背景 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 无代码审查结果 | 基于团队反馈和用户提供信息识别债务，标注"待代码审查验证" | 代码债务识别可能不完整 |
+| 无PRD同步记录 | 跳过需求变更导致的债务识别，标注"待PRD同步补充" | 需求变更债务缺失 |
+| 无技术信息 | 无法生成，要求用户提供基本技术背景 | - |
 
 ## 执行步骤
 
@@ -217,3 +218,47 @@ metadata:
 | 影响评估量化 | 每项债务有5维评分 | 补充缺失维度 |
 | 优先级有依据 | 优先级基于影响×利息/成本计算 | 重新计算优先级 |
 | 偿还计划可执行 | 紧急/高优债务有Sprint分配 | 补充偿还时间线 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| tech_debt_register | object | 是 | 技术债务登记根对象 |
+| tech_debt_register.debts | array | 是 | 债务列表，至少1项 |
+| tech_debt_register.debts[].id | string | 是 | 债务编号，格式TD-NNN |
+| tech_debt_register.debts[].title | string | 是 | 债务标题 |
+| tech_debt_register.debts[].category | string | 是 | 债务类别，枚举值：architecture/code/test/infrastructure/documentation |
+| tech_debt_register.debts[].severity | string | 是 | 严重级别，枚举值：critical/high/medium/low |
+| tech_debt_register.debts[].interest_rate | string | 是 | 利息率，枚举值：accelerating/stable/decelerating |
+| tech_debt_register.debts[].principal | string | 是 | 本金描述 |
+| tech_debt_register.debts[].repayment_plan | object | 否 | 偿还计划 |
+| tech_debt_register.debts[].repayment_plan.effort | string | 条件必填 | 偿还工作量，有repayment_plan时必填 |
+| tech_debt_register.debts[].repayment_plan.timeline | string | 条件必填 | 偿还时间线，有repayment_plan时必填 |
+| tech_debt_register.debts[].status | string | 是 | 状态，枚举值：identified/planned/in_progress/resolved/wontfix |
+| tech_debt_register.summary | object | 是 | 债务摘要 |
+| tech_debt_register.summary.total_count | number | 是 | 债务总数 |
+| tech_debt_register.summary.critical_count | number | 是 | 严重债务数 |
+| tech_debt_register.summary.estimated_effort | string | 是 | 预估总工作量 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 代码审查结果变更 | 债务识别和严重级别 | 更新代码债务，重新评估严重级别 |
+| PRD同步记录变更 | 需求变更债务 | 更新需求变更导致的债务，标记需人类确认 |
+| ADR决策变更 | 架构债务 | 更新架构债务，重新评估偿还计划 |
+| 安全需求变更 | 安全相关债务 | 更新安全相关债务，重新评估优先级 |
+
+当技术债务登记自身变更时，对下游的通知机制：
+
+| 债务变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 严重债务新增 | development-task-breakdown | 标记严重债务，触发偿还任务创建 |
+| 债务状态变更 | retrospective-auto | 标记状态变更，触发复盘输入 |
+| 偿还计划变更 | development-task-breakdown | 标记计划变更，触发任务排期调整 |
+
+---
+
+## 决策规则

@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **象限定位先行**——先明确当前产品/市场象限，再推演增长路径
+2. **双路径推演**——至少推荐2条增长路径，含风险等级和可行性评估
+3. **风险递增原则**——从市场渗透到多元化，风险递增需显式标注
+4. **能力匹配验证**——增长路径必须与SWOT优势/劣势交叉验证
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -93,6 +93,23 @@ metadata:
 **存储路径**：`output/pm-strategy/planning-ansoff/`
 
 **输出文件**：ansoff.json
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| ansoff.current_position.quadrant | string | 是 | 当前象限：市场渗透/市场开发/产品开发/多元化 |
+| ansoff.current_position.description | string | 是 | 当前定位描述 |
+| ansoff.current_position.rationale | array | 是 | 定位理由列表 |
+| ansoff.growth_paths | array | 是 | 至少2条增长路径 |
+| ansoff.growth_paths[].path | string | 是 | 路径名称 |
+| ansoff.growth_paths[].quadrant | string | 是 | 目标象限 |
+| ansoff.growth_paths[].risk_level | string | 是 | high/medium/low |
+| ansoff.growth_paths[].feasibility.overall | number | 是 | 可行性综合评分0-1 |
+| ansoff.growth_paths[].key_actions | array | 是 | 关键行动列表 |
+| ansoff.growth_paths[].risks | array | 是 | 风险列表，含mitigation |
+| ansoff.recommendations.primary | string | 是 | 推荐主路径 |
+| ansoff.recommendations.rationale | string | 是 | 推荐理由 |
 
 ```yaml
 ansoff:
@@ -180,11 +197,12 @@ ansoff:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 当前产品/市场定义数据 | 用户提供产品现状 → 定位Ansoff象限，标注"缺乏结构化产品市场定义" |
-| 增长目标数据 | 用户提供产品现状和增长期望 → 定位Ansoff象限，标注"缺乏增长目标数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状定位Ansoff象限 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 当前产品/市场定义数据 | 用户提供产品现状 → 定位Ansoff象限 | 缺乏结构化产品市场定义，象限定位可能不够精准 |
+| 增长目标数据 | 用户提供产品现状和增长期望 → 定位Ansoff象限 | 缺乏增长目标数据，路径推荐缺乏方向锚定 |
+| SWOT分析数据 | 用户提供产品现状 → 基于AI知识推演路径 | 缺乏SWOT交叉验证，可行性评估偏主观 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状定位Ansoff象限 | 整体置信度显著降低，路径推荐仅为假设推断 |
 
 数据获取说明：
 - 本Skill需要当前产品/市场定义和增长目标数据，请通过以下方式之一提供：
@@ -192,3 +210,24 @@ ansoff:
   2. 上传bmc.json / swot.json等文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 产品定义变更 | 当前象限定位需重新判断 | 重新执行Step 1，更新象限定位 |
+| 市场定义变更 | 当前象限和增长路径 | 重新执行Step 1-3，更新象限和路径 |
+| okr.json增长目标调整 | 增长路径推荐方向 | 重新执行Step 2，更新路径推荐 |
+| swot.json SWOT更新 | 路径可行性评估 | 重新执行Step 3，更新可行性评分 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 象限定位变更 | business-strategy-report | 输出文件版本号+变更摘要 |
+| 增长路径推荐变更 | planning-roadmap、business-strategy-report | 输出文件版本号+变更摘要 |
+| 可行性评分变更 | planning-roadmap | 输出文件版本号+变更摘要 |

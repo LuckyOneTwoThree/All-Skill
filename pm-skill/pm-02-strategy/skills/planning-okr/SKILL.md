@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **O从战略来**——Objective必须源于SWOT战略方向，不可脱离战略凭空设定
+2. **KR必须可量化**——每个KR有明确数字目标和验证方法，拒绝模糊表述
+3. **可行性硬检查**——达成概率<0.3升级调整目标，>0.9升级增加挑战
+4. **对齐闭环**——O与KR逻辑一致、KR之间相互支撑、与北极星指标关联
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -90,6 +90,23 @@ kr_assessment:
 
 **输出文件**：okr.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| okr_candidates | array | 是 | 至少2个Objective候选 |
+| okr_candidates[].objective | string | 是 | Objective描述 |
+| okr_candidates[].key_results | array | 是 | 每个O至少3个KR |
+| okr_candidates[].key_results[].kr | string | 是 | KR描述 |
+| okr_candidates[].key_results[].baseline | string | 是 | 当前基线值 |
+| okr_candidates[].key_results[].target | string | 是 | 目标值 |
+| okr_candidates[].key_results[].growth_needed | string | 是 | 需增长率 |
+| okr_candidates[].key_results[].achievability | number | 是 | 达成概率0-1 |
+| okr_candidates[].key_results[].confidence_level | number | 是 | 置信度0-1 |
+| okr_candidates[].alignment_check.strategic_alignment | boolean | 是 | 战略对齐检查 |
+| okr_candidates[].alignment_check.kr_coherence | boolean | 是 | KR一致性检查 |
+| okr_candidates[].alignment_check.timeline_feasibility | boolean | 是 | 时间线可行性 |
+
 ```yaml
 okr_candidates:
   - objective: "O1: 提升用户活跃度"
@@ -159,14 +176,14 @@ okr_candidates:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| swot.json | 用户提供业务目标 → 直接生成OKR候选，标注"缺乏SWOT数据支撑" |
-| north-star.json | 用户提供业务目标 → 直接生成OKR候选，标注"缺乏北极星指标对齐" |
-| bmc.json | 用户提供业务目标 → 直接生成OKR候选，标注"缺乏BMC数据" |
-| swot.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 |
-| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| swot.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏SWOT数据支撑，O与战略方向对齐度可能不足 |
+| north-star.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏北极星指标对齐，KR可能与核心指标脱节 |
+| bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏BMC数据，OKR与商业模型关联度可能偏弱 |
+| swot.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 整体置信度降低，OKR缺乏战略和指标锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 | 整体置信度显著降低，OKR仅为通用目标参考 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，KR目标值缺乏参照 |
 
 数据获取说明：
 - 本Skill需要SWOT、北极星指标和BMC数据，请通过以下方式之一提供：
@@ -174,3 +191,23 @@ okr_candidates:
   2. 上传swot.json / north-star.json / bmc.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| swot.json战略方向调整 | Objective生成需重新对齐 | 重新执行Step 1，更新O候选 |
+| north-star.json北极星变更 | KR需与北极星重新对齐 | 重新执行Step 2，更新KR和关联关系 |
+| bmc.json商业模式变更 | OKR与商业模型关联 | 重新评估OKR与收入/成本结构对齐 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| Objective调整 | planning-roadmap、business-strategy-report | 输出文件版本号+变更摘要 |
+| KR目标值变更 | planning-roadmap | 输出文件版本号+变更摘要 |
+| 对齐检查结果变更 | planning-roadmap | 输出文件版本号+变更摘要 |

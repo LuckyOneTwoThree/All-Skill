@@ -6,7 +6,7 @@ metadata:
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "3"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -14,10 +14,10 @@ metadata:
 
 ## 核心原则
 
-1. **批量生成人类筛选**：AI批量生成分类/排序建议，人类做最终筛选和判定
-2. **结构化发散**：用固定模板和框架引导需求拆解，避免遗漏和随意性
-3. **假设驱动而非功能驱动**：每个需求背后必须还原为用户假设，而非直接进入功能设计
-4. **设计规范即约束**：需求分析阶段就引入设计规范约束，避免后期返工
+1. **RICE是客观标尺，MoSCoW是主观判断**——RICE提供量化排序，MoSCoW融入战略考量，两者缺一不可
+2. **人类拥有最终定级权**——AI建议MoSCoW分类，人类可覆盖，但覆盖需记录原因
+3. **投入估算的不确定性必须显性化**——effort_confidence<0.5必须升级技术团队评估
+4. **战略对齐是优先级的放大器**——与战略目标对齐的需求在RICE基础上获得额外加权
 
 ### 基本信息
 
@@ -290,13 +290,48 @@ ELSE
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 需求理解数据缺失 | 用户提供需求列表，直接RICE评分 | 缺乏需求理解数据，评分依据可能不够充分 |
+| KANO/优先级评分数据缺失 | 用户提供需求列表，直接RICE评分 | 缺乏KANO和优先级数据，分类参考维度减少 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户需求列表直接RICE评分 | 输出仅为基本RICE排序 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| requirement_analysis.json（理解后的需求列表） | 用户提供需求列表 → 直接RICE评分，标注"缺乏需求理解数据" |
-| kano.json / priority-scoring.json | 用户提供需求列表 → 直接RICE评分，标注"缺乏KANO和优先级数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的需求列表直接RICE评分 |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| requirement_prioritization | array | 是 | 优先级排序后的需求列表 |
+| requirement_prioritization[].id | string | 是 | 关联原始需求ID |
+| requirement_prioritization[].rice_score | number | 是 | RICE综合评分 |
+| requirement_prioritization[].rice_detail | object | 是 | RICE各维度详细评分 |
+| requirement_prioritization[].rice_detail.reach | object | 是 | 影响范围评分 |
+| requirement_prioritization[].rice_detail.impact | object | 是 | 影响程度评分 |
+| requirement_prioritization[].rice_detail.confidence | object | 是 | 置信度评分 |
+| requirement_prioritization[].rice_detail.effort | object | 是 | 投入评分 |
+| requirement_prioritization[].effort_confidence | number | 是 | 投入估算置信度 |
+| requirement_prioritization[].moscow_suggestion | string | 是 | AI建议MoSCoW分类 |
+| requirement_prioritization[].strategic_alignment | object | 是 | 战略对齐情况 |
+| requirement_prioritization[].priority_rank | integer | 是 | 综合优先级排名 |
+| requirement_prioritization[].human_decision | object | 否 | 人类最终决策（审批后填充） |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 需求理解结果变更 | RICE评分的依据 | 标注受影响的需求，建议人类确认是否重新评分 |
+| 需求增删 | RICE排序、MoSCoW分类 | 标注新增/删除的需求，建议人类确认是否重新排序 |
+| 资源约束变更 | MoSCoW分类边界 | 标注约束变更，建议人类确认是否调整分类 |
+| 战略目标变更 | 战略对齐评分 | 标注受影响的战略对齐评分，建议人类确认是否重新评分 |
+
+### 下游通知机制
+
+| 优先级排序变更类型 | 通知范围 | 通知方式 |
+|-------------------|----------|----------|
+| RICE评分变更 | design-prd | 标记评分变更，触发PRD优先级调整 |
+| MoSCoW分类变更 | design-prd | 标记分类变更，触发PRD功能优先级更新 |
+| 优先级排名变更 | design-prd | 标记排名变更，触发PRD章节排序更新 |
 
 数据获取说明：
 - 本Skill需要理解后的需求列表，请通过以下方式之一提供：

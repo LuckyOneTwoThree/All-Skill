@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **选项生成优于单一推荐**：每个关键决策点生成2-3个可比较选项，由人类选择而非AI替选
-2. **数据驱动填充人类驱动选择**：AI负责数据整合与逻辑推导，人类负责方向判断与最终决策
-3. **假设显式化**：所有推断内容必须标注为假设，包含风险等级和验证方法
-4. **财务建模自动化**：单位经济、敏感性分析等财务计算由AI自动完成，人类只审核结论
+1. **战略主题驱动**——Epic必须从OKR和SWOT战略主题分解而来，不可凭空规划
+2. **RICE量化排序**——所有Epic使用RICE公式量化评分，排序有据可依
+3. **Now/Next/Later分层**——按优先级和时间维度三层层级规划，避免扁平化罗列
+4. **依赖风险显式**——每个Epic标注依赖项和风险，含缓解措施
 
 ## 交互模式
 🤖→👤 AI建议人类审批
@@ -115,6 +115,23 @@ RICE Score = (Reach × Impact × Confidence) ÷ Effort
 
 **输出文件**：roadmap.json
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| roadmap.strategic_themes | array | 是 | 3-5个战略主题 |
+| roadmap.strategic_themes[].theme | string | 是 | 主题名称 |
+| roadmap.strategic_themes[].okr_reference | string | 是 | 关联OKR |
+| roadmap.quarterly_epics | array | 是 | 季度Epic列表 |
+| roadmap.quarterly_epics[].quarter | string | 是 | 季度标识 |
+| roadmap.quarterly_epics[].epics[].rice_score | number | 是 | RICE评分 |
+| roadmap.quarterly_epics[].epics[].effort | number | 是 | 工作量（人月） |
+| roadmap.quarterly_epics[].epics[].risks | array | 是 | 风险列表 |
+| roadmap.now_next_later | object | 是 | 三层分层 |
+| roadmap.now_next_later.now | array | 是 | 当前季度Epic |
+| roadmap.now_next_later.next | array | 是 | 下一季度Epic |
+| roadmap.now_next_later.later | array | 是 | 远期Epic |
+
 ```yaml
 roadmap:
   strategic_themes:
@@ -188,14 +205,14 @@ roadmap:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| okr.json | 用户提供目标列表 → 直接规划路线图，标注"缺乏OKR结构化数据" |
-| swot.json | 用户提供目标列表 → 直接规划路线图，标注"缺乏SWOT数据" |
-| 需求优先级数据（priority-scoring / kano） | 用户提供目标列表 → 直接规划路线图，标注"缺乏需求优先级数据" |
-| okr.json + swot.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 |
-| 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| okr.json | 用户提供目标列表 → 直接规划路线图 | 缺乏OKR结构化数据，战略主题与OKR对齐度不足 |
+| swot.json | 用户提供目标列表 → 直接规划路线图 | 缺乏SWOT数据，战略主题可能偏离战略方向 |
+| 需求优先级数据（priority-scoring / kano） | 用户提供目标列表 → 直接规划路线图 | 缺乏需求优先级数据，RICE评分缺乏输入依据 |
+| okr.json + swot.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图 | 整体置信度降低，Epic排序缺乏数据锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 | 整体置信度显著降低，路线图仅为通用规划参考 |
+| 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 | 缺乏资源约束，Epic工作量估算可能不切实际 |
 
 数据获取说明：
 - 本Skill需要OKR、SWOT和需求优先级数据，请通过以下方式之一提供：
@@ -203,3 +220,23 @@ roadmap:
   2. 上传okr.json / swot.json / priority-scoring.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| okr.json OKR调整 | 战略主题和Epic规划 | 重新执行Step 1-2，更新战略主题和Epic |
+| swot.json SWOT更新 | 战略主题方向 | 重新执行Step 1，更新战略主题 |
+| 需求优先级数据变更 | RICE评分和排序 | 重新执行Step 4，更新RICE评分和分层 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 战略主题调整 | business-strategy-report、stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
+| Epic优先级变更 | business-strategy-report | 输出文件版本号+变更摘要 |
+| Now/Next/Later分层变更 | stakeholder-brief | 输出文件版本号+变更摘要 |

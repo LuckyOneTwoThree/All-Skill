@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -200,6 +200,46 @@ metadata:
 }
 ```
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_metadata | object | 是 | 报告元数据 |
+| report_metadata.product | string | 是 | 产品名称 |
+| report_metadata.research_goals | string[] | 是 | 研究目标列表，不可为空 |
+| report_metadata.generated_at | string | 是 | 生成时间戳 |
+| report_metadata.data_sources | string[] | 是 | 数据来源列表 |
+| report_metadata.overall_confidence | number | 是 | 整体置信度，0-1 |
+| executive_summary | object | 是 | 执行摘要 |
+| executive_summary.overview | string | 是 | 研究概述，一段话 |
+| executive_summary.key_findings | string[] | 是 | 核心发现，须≥3条 |
+| executive_summary.top_recommendation | string | 是 | Top1行动建议 |
+| personas | array | 是 | 用户画像列表，2-4个 |
+| personas[].name | string | 是 | 用户群名称 |
+| personas[].quotes | string[] | 是 | 代表性原话，每个Persona≥2条 |
+| journey | object | 否 | 用户旅程 |
+| journey.stages | array | 否 | 旅程阶段列表 |
+| journey.stages[].name | string | 是 | 阶段名称 |
+| journey.stages[].behaviors | string[] | 是 | 用户行为 |
+| journey.stages[].pain_points | string[] | 是 | 痛点 |
+| journey.stages[].opportunities | string[] | 是 | 机会点 |
+| journey.aha_moment | string | 否 | Aha Moment描述 |
+| journey.churn_signals | string[] | 否 | 流失信号列表 |
+| insights | array | 是 | 核心洞察列表，≤15条 |
+| insights[].id | string | 是 | 洞察编号，格式INS-XXX |
+| insights[].category | string | 是 | 洞察类别枚举：需求/痛点/行为/机会 |
+| insights[].observation | string | 是 | 观察描述 |
+| insights[].evidence | string | 是 | 证据及来源 |
+| insights[].implication | string | 是 | 产品含义 |
+| insights[].scope | string | 是 | 影响范围枚举：全局/局部 |
+| recommendations | array | 是 | 行动建议列表，≥3条 |
+| recommendations[].id | string | 是 | 建议编号，格式REC-XXX |
+| recommendations[].description | string | 是 | 建议描述 |
+| recommendations[].linked_insights | string[] | 是 | 关联洞察编号列表 |
+| recommendations[].expected_impact | string | 是 | 预期影响 |
+| recommendations[].priority | string | 是 | 优先级枚举：P0/P1/P2 |
+| recommendations[].validation_method | string | 是 | 验证方式 |
+
 ```json
 {
   "report_metadata": {
@@ -290,5 +330,26 @@ metadata:
 | persona缺失 | 基于VOC和行为数据推导用户画像 | 画像可能不够精细 |
 | interview数据缺失 | 洞察基于VOC和行为数据 | 缺乏深度定性洞察 |
 | 所有上游数据均缺失 | 基于研究目标和AI知识库生成，整体置信度降低 | 报告需人类大量补充验证 |
-| 若用户未提供研究目标 | 提示用户提供研究目标，否则无法确定报告聚焦方向 | - |
+| 若用户未提供研究目标 | 提示用户提供研究目标，否则无法确定报告聚焦方向 | 无法生成定向报告 |
 | 若用户未提供产品/品类信息 | 跳过该输入相关步骤，报告中产品相关描述基于推断 | 产品背景描述可能不够准确 |
+
+---
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游Skill | 变更类型 | 影响范围 | 响应动作 |
+|-----------|---------|---------|---------|
+| user-research-voice-analysis | voice-analysis.json结构变更 | 情感分布、痛点、主题数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-voice-analysis | voice-analysis.json内容更新 | 痛点等级、情感分布、分群结果变化 | 重新整合用户画像和痛点洞察，标注"基于更新数据重建" |
+| user-research-behavior-analysis | behavior-analysis.json结构变更 | 漏斗、Aha Moment、功能使用数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-behavior-analysis | behavior-analysis.json内容更新 | 漏斗健康度、行为路径、异常检测结果变化 | 重新整合用户旅程和行为洞察，标注"基于更新数据重建" |
+| user-research-user-modeling | persona.json结构变更 | Persona字段映射变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-user-modeling | persona.json内容更新 | Persona特征、痛点、JTBD变化 | 重新整合用户画像章节，标注"基于更新Persona重建" |
+| user-research-interview-assist | interview-insights.json结构变更 | 访谈洞察、跨访谈模式数据格式变化 | 检查输入字段映射，适配新结构，不兼容时标记"上游数据格式异常" |
+| user-research-interview-assist | interview-insights.json内容更新 | 验证/推翻假设、新发现、Persona更新变化 | 重新整合洞察和行动建议，标注"基于更新访谈数据重建" |
+
+### 下游通知机制
+
+本Skill为终端Skill，无下游依赖，不涉及下游通知。

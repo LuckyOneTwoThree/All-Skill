@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -13,10 +13,9 @@ metadata:
 
 ## 核心原则
 
-1. **全量分析**：报告基于全量数据生成，确保结论的统计可靠性
-2. **实时感知**：每日/每周/每月定时自动生成报告，确保团队始终基于最新数据决策
-3. **自动归因**：报告中自动标注关键变化的原因和影响
-4. **决策规则显式化**：报告模板和关键指标阈值前置定义，确保报告的一致性和可比性
+1. **无异常不打扰**：报告的价值不在于数量而在于信噪比，噪音报告会杀死数据文化
+2. **节奏即习惯**：每日/每周/每月/每季的自动化节奏，让数据驱动从"要求"变成"习惯"
+3. **行动导向**：每份报告都要有明确的下一步，没有行动建议的报告是数据堆砌
 
 ## 交互模式
 
@@ -466,6 +465,44 @@ data_culture_metrics:
     self_service_usage: 0.70
     sql_query_growth: "+20%"
 ```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_type | string | 是 | 报告类型，枚举值：daily/weekly/monthly/quarterly |
+| report_date | string | 是 | 报告日期 |
+| key_metrics | array | 是 | 关键指标列表，至少1项 |
+| key_metrics[].name | string | 是 | 指标名称 |
+| key_metrics[].value | number | 是 | 当前值 |
+| key_metrics[].change | string | 是 | 变化趋势 |
+| key_metrics[].status | string | 是 | 状态，枚举值：healthy/warning/critical |
+| anomalies | array | 否 | 异常指标列表 |
+| action_items | array | 是 | 行动项列表 |
+| action_items[].description | string | 是 | 行动描述 |
+| action_items[].owner | string | 否 | 负责人 |
+| action_items[].deadline | string | 否 | 截止日期 |
+| engagement_stats | object | 否 | 报告参与度统计 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| OKR数据变更 | OKR追踪章节 | 更新OKR进度，重新评估偏差分析 |
+| 决策记录变更 | 数据文化指标 | 更新数据驱动决策率，重新评估文化健康度 |
+| 团队反馈变更 | 报告模板和推送策略 | 调整报告格式和推送时机 |
+
+当文化报告自身变更时，对下游的通知机制：
+
+| 报告变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| OKR进度落后>20% | decision-dace | 标记进度风险，触发DACE Conclude |
+| 数据驱动决策率下降 | 全部下游 | 标记文化风险，触发培训建议 |
+| 报告参与度下降 | decision-culture | 标记参与度问题，触发报告优化 |
+
+---
 
 ## 决策规则
 

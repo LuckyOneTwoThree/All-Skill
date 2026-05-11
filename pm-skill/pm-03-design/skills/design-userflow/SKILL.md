@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -139,14 +139,49 @@ metadata:
 
 ## 降级策略
 
-当上游文件不存在时，本Skill仍可独立执行：
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| PRD文档缺失 | 用户提供功能描述，直接设计流程 | 缺乏PRD结构化数据，流程可能遗漏功能点 |
+| IA方案缺失 | 用户提供功能描述，直接设计流程 | 缺乏IA数据，流程与页面结构可能不匹配 |
+| PRD+IA方案均缺失 | 用户提供功能描述，直接设计流程 | 整体置信度降低，流程可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户功能描述直接设计流程 | 输出仅为基本流程框架 |
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| PRD文档 | 用户提供功能描述 → 直接设计流程，标注"缺乏PRD结构化数据" |
-| ia_proposals.json（IA方案） | 用户提供功能描述 → 直接设计流程，标注"缺乏IA数据" |
-| PRD + IA方案 | 用户提供功能描述 → 直接设计流程，整体置信度降低 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的功能描述直接设计流程 |
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| user_flow | object | 是 | 用户流程数据 |
+| user_flow.task | string | 是 | 核心任务名称 |
+| user_flow.flow_type | string | 是 | 流程类型（task_flow/user_flow） |
+| user_flow.steps | array | 是 | 流程步骤列表，不可为空 |
+| user_flow.steps[].step | integer | 是 | 步骤序号 |
+| user_flow.steps[].action | string | 是 | 用户操作 |
+| user_flow.steps[].system_response | string | 是 | 系统反馈 |
+| user_flow.quality_check | object | 是 | 质量检查结果 |
+| user_flow.quality_check.shortest_path_steps | integer | 是 | 最短路径步骤数 |
+| user_flow.quality_check.exception_coverage | number | 是 | 异常路径覆盖率（0-1） |
+| user_flow.quality_check.dead_ends | integer | 是 | 死胡同数量（必须为0） |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能需求增删 | 任务流程、步骤序列 | 标注受影响的任务和步骤，建议人类确认是否重新生成流程 |
+| PRD交互逻辑变更 | 条件分支、异常路径 | 标注受影响的分支和异常路径，建议人类确认是否更新流程 |
+| IA方案变更（页面增删） | 流程步骤中的页面引用 | 标注受影响的步骤，建议人类确认是否调整流程 |
+| IA路由变更 | 流程中的页面跳转 | 标注受影响的跳转路径，建议人类确认是否更新 |
+| 用户研究数据更新 | 流程优化建议 | 标注受影响的优化点，建议人类确认是否调整流程 |
+
+### 下游通知机制
+
+| 流程变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 任务流程变更 | design-prototype、interaction-spec | 标记流程变更，触发原型和交互规范更新 |
+| 条件分支变更 | design-prototype、interaction-spec | 标记分支变更，触发原型和交互规范更新 |
+| 异常路径变更 | design-prototype、interaction-spec | 标记异常路径变更，触发原型和交互规范更新 |
+| 死胡同修复 | design-prototype | 标记修复内容，触发原型更新 |
 
 数据获取说明：
 - 本Skill需要PRD和IA方案数据，请通过以下方式之一提供：

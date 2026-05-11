@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -202,6 +202,40 @@ metadata:
 
 **输出文件**：risk_monitoring.json、metadata.json
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["risk_monitoring", "metadata"],
+  "properties": {
+    "risk_monitoring": {"type": "object", "description": "风险监控数据，包含追踪风险、预警和应对效果"},
+    "metadata": {"type": "object", "description": "元数据，包含监控周期和置信度"}
+  }
+}
+```
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| risk_monitoring.tracked_risks | array | 是 | 追踪风险列表，每项须含id、status |
+| risk_monitoring.tracked_risks[].id | string | 是 | 风险唯一标识，格式RISK-NNN |
+| risk_monitoring.tracked_risks[].status | string | 是 | 风险状态，枚举值active/escalated/improving/resolved |
+| risk_monitoring.tracked_risks[].triggered_conditions | array | 否 | 触发条件列表 |
+| risk_monitoring.tracked_risks[].latest_update | string | 是 | 最近更新时间，ISO 8601格式 |
+| risk_monitoring.new_risks_identified | number | 是 | 新识别风险数 |
+| risk_monitoring.alerts_triggered | array | 否 | 触发预警列表 |
+| risk_monitoring.alerts_triggered[].id | string | 是 | 预警唯一标识 |
+| risk_monitoring.alerts_triggered[].severity | string | 是 | 预警严重度，枚举值critical/high/medium/low |
+| risk_monitoring.alerts_triggered[].message | string | 是 | 预警消息 |
+| risk_monitoring.mitigation_effectiveness | object | 否 | 应对效果追踪数据 |
+| metadata.monitoring_cycle | string | 是 | 监控周期，ISO 8601格式 |
+| metadata.monitoring_duration | string | 是 | 监控持续时间 |
+| metadata.risks_monitored | number | 是 | 监控风险数 |
+| metadata.alerts_generated | number | 是 | 生成预警数 |
+| metadata.confidence | number | 是 | 整体置信度，范围0.0-1.0 |
+
 ```json
 {
   "risk_monitoring": {
@@ -274,12 +308,12 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 影响范围 | 降级方案 | 降级输出 |
-|---------------|---------|---------|---------|
-| 风险登记册 | 无法追踪已知风险状态 | 用户提供风险列表（风险描述+优先级），AI生成监控方案 | 基于用户输入的监控方案 |
-| 项目数据 | 无法获取实时指标 | 跳过指标自动采集，用户手动提供关键指标数值 | 基于手动数据的监控报告 |
-| 触发条件 | 无法自动触发预警 | 使用默认预警阈值，标注需人工确认 | 基于默认阈值的预警配置 |
-| 应对措施 | 无法追踪应对效果 | 跳过应对效果追踪，仅监控风险状态变化 | 无应对效果追踪的监控 |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 风险登记册 | 用户提供风险列表（风险描述+优先级），AI生成监控方案 | 基于用户输入的监控方案，缺少结构化风险数据支撑 |
+| 项目数据 | 跳过指标自动采集，用户手动提供关键指标数值 | 基于手动数据的监控报告，缺少实时指标自动采集 |
+| 触发条件 | 使用默认预警阈值，标注需人工确认 | 基于默认阈值的预警配置，需人工确认阈值合理性 |
+| 应对措施 | 跳过应对效果追踪，仅监控风险状态变化 | 无应对效果追踪的监控，缺少应对效果评估维度 |
 
 ### 数据获取说明
 
@@ -288,3 +322,21 @@ metadata:
 1. **风险登记册缺失**：请用户提供风险列表，包含风险描述和优先级，AI将据此生成监控指标定义和预警方案
 2. **项目数据缺失**：跳过指标自动采集，请用户定期手动提供关键指标数值，AI将基于手动数据进行趋势分析和预警判断
 3. **触发条件缺失**：采用默认预警阈值模板（概率变化>20%触发Warning，>40%触发Critical），输出中标注默认阈值需人工审核
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 风险登记册变更（新增/关闭/优先级调整） | 监控指标定义、预警阈值、追踪范围 | 更新监控指标和预警配置，调整追踪范围 |
+| 项目数据变更（进度/质量/资源变化） | 风险指标值、趋势分析、预警触发 | 重新采集指标数据，更新趋势分析和预警判断 |
+| 触发条件变更（阈值调整/新增条件） | 预警触发逻辑、预警通知 | 重新应用触发条件，更新预警评估结果 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 风险状态变更（升级/降级/解决） | 风险升级、项目经理、相关方 | 更新risk_monitoring.json，通知risk-escalation和项目经理 |
+| 预警触发/解除 | 项目经理、风险负责人 | 更新risk_monitoring.json，按预警通知配置发送通知 |
+| 应对效果评估变更 | 风险负责人、项目经理 | 更新risk_monitoring.json，通知风险负责人和项目经理 |

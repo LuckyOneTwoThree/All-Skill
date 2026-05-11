@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
   interaction_mode: "ai_auto"
 ---
 
@@ -13,10 +13,10 @@ metadata:
 
 ## 核心原则
 
-1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
-2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
-3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+1. **评分是建议不是决策**——AI输出为决策参考，最终优先级排序需人类综合判断
+2. **战略契合度必须人类判定**——AI仅提供分析建议，该维度得分必须由人类确定
+3. **多维度独立贡献**——各维度独立评分，不因某维度高分而抬高其他维度
+4. **未评分维度显式标注**——任何缺失评分的维度必须标记needs_human，加权总分保持null
 
 ## 交互模式
 
@@ -106,6 +106,22 @@ metadata:
 }
 ```
 
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| `opportunities` | array | 是 | 机会评分列表，不可为空数组 |
+| `opportunities[].name` | string | 是 | 机会名称，不可为空字符串 |
+| `opportunities[].scores.{dimension}.score` | number\|null | 是 | 维度得分1-5，待人类判定时必须为null |
+| `opportunities[].scores.{dimension}.weight` | number | 是 | 维度权重，5个维度权重之和必须等于1.00 |
+| `opportunities[].scores.{dimension}.evidence` | string | 是 | 评分依据，不可为空字符串 |
+| `opportunities[].scores.{dimension}.needs_human` | boolean | 是 | 是否需要人类判定，strategic_fit维度必须为true |
+| `opportunities[].weighted_total` | number\|null | 是 | 加权总分，任一维度score为null时必须为null |
+| `opportunities[].provisional_rank` | number\|null | 是 | 暂定排名，基于已评分维度计算 |
+| `metadata.scoring_version` | string | 是 | 评分版本号 |
+| `metadata.awaiting_human_input` | boolean | 是 | 是否有待人类输入，strategic_fit未评分时必须为true |
+| `metadata.pending_dimensions` | array | 是 | 待人类判定的维度列表，不可为空当awaiting_human_input为true |
+
 ```json
 {
   "opportunities": [
@@ -188,13 +204,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游文件 | 降级方案 |
-|---------------|---------|
-| 用户研究数据（voice-analysis / behavior-analysis） | 用户描述机会 → 基于描述评分，问题真实性维度使用默认值，标注置信度较低 |
-| 市场分析数据（tam-som） | 用户描述机会 → 市场规模维度基于用户估算评分，标注"缺乏市场数据" |
-| 竞品分析数据（competitor-intel） | 用户描述机会 → 竞争壁垒维度基于用户描述评分，标注"缺乏竞品数据" |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的机会直接评分（标注置信度较低） |
-| 若用户未提供技术团队评估 | 跳过该输入相关步骤，可解决性维度使用默认值3（中等），标记confirmed=false |
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|----------|
+| 用户研究数据（voice-analysis / behavior-analysis） | 用户描述机会 → 基于描述评分，问题真实性维度使用默认值，标注置信度较低 | `problem_validity.score` 降为默认值2，`evidence` 标注"缺乏用户研究数据"，置信度<0.5 |
+| 市场分析数据（tam-som） | 用户描述机会 → 市场规模维度基于用户估算评分，标注"缺乏市场数据" | `market_size.score` 基于用户估算，`evidence` 标注"缺乏市场数据"，置信度<0.5 |
+| 竞品分析数据（competitor-intel） | 用户描述机会 → 竞争壁垒维度基于用户描述评分，标注"缺乏竞品数据" | `competitive_moat.score` 基于用户描述，`evidence` 标注"缺乏竞品数据"，置信度<0.5 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户描述的机会直接评分（标注置信度较低） | 多个维度使用默认值，`weighted_total` 可信度极低，`metadata` 中标注全量降级 |
+| 若用户未提供技术团队评估 | 跳过该输入相关步骤，可解决性维度使用默认值3（中等），标记confirmed=false | `feasibility.score` 为默认值3，`evidence` 标注"缺乏技术评估"，`needs_human` 可能为true |
 
 数据获取说明：
 - 本Skill需要用户研究、市场分析和竞品分析数据，请通过以下方式之一提供：
@@ -202,3 +218,21 @@ metadata:
   2. 上传voice-analysis.json / tam-som.json / competitor-intel.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游数据源 | 变更类型 | 影响维度 | 影响描述 | 响应策略 |
+|-----------|----------|----------|----------|----------|
+| voice-analysis.json | 痛点提及率更新 | problem_validity | 痛点频率变化可能导致问题真实性得分升降 | 重新计算problem_validity得分，更新evidence |
+| behavior-analysis.json | 行为数据更新 | problem_validity | 行为印证变化影响问题真实性评分 | 重新评估行为印证，更新score和evidence |
+| tam-som.json | SOM估算值调整 | market_size | SOM数值变化直接影响市场规模得分 | 重新计算market_size得分，更新evidence |
+| competitor-intel.json | 竞品能力变更 | competitive_moat | 竞品新增能力或壁垒变化影响竞争壁垒评分 | 重新计算competitive_moat得分，更新evidence |
+
+### 下游通知机制表
+
+| 下游消费者 | 通知字段 | 通知时机 | 通知内容 |
+|-----------|----------|----------|----------|
+| opportunity-problem-statement | `metadata.scoring_version` | 评分结果更新后 | 通知评分版本变更及受影响的维度得分 |
+| opportunity-brief | `opportunities[].weighted_total` | 加权总分计算完成后 | 通知最终评分结果及排名变化 |
