@@ -41,9 +41,50 @@
 
 1. **全量部署**：将所有 `{skill-name}/` 文件夹复制到 `.trae/skills/` 下，扁平平铺
 2. **按需部署**：只复制当前项目阶段需要的 Skill 文件夹
-3. **触发使用**：在对话中描述需求，AI 自动匹配对应 Skill
 
 > ⚠️ 部署时只需复制最内层的 `{skill-name}/` 文件夹（含 SKILL.md），不需要保留外层的目录结构。
+
+### 调用方式
+
+部署完成后，在 Trae 对话中通过以下方式调用 Skill：
+
+**1. 自然语言触发**
+
+直接描述你的需求，AI 根据 Skill 的 `description` 字段自动匹配：
+
+```
+帮我分析一下竞品情况
+→ 自动匹配 market-competitor-intel 或 market-orchestrator
+
+我需要写一份PRD
+→ 自动匹配 design-prd
+
+设计一下API接口
+→ 自动匹配 api-design-orchestrator
+```
+
+**2. 命令式调用**
+
+直接使用 Skill 的 `name` 字段精确调用：
+
+```
+/insight-orchestrator
+/market-competitor-intel
+/design-prd
+/api-contract
+```
+
+**3. 编排器调度**
+
+调用编排器后，编排器会按阶段自动调度子 Skill 执行。你也可以在对话中逐步引导：
+
+```
+请按 insight-orchestrator 的流程执行需求洞察分析
+→ 编排器依次调度 insight-jtbd → insight-requirement-layers → insight-5whys → insight-kano → insight-priority-scoring
+→ 每个阶段卡口等待人类确认后继续
+```
+
+> 💡 **提示**：编排器会在每个阶段卡口暂停，等待人类审批后才进入下一阶段。这是人机协作的关键设计，不要跳过。
 
 ## 四大领域总览
 
