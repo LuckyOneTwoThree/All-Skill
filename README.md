@@ -427,12 +427,15 @@ PM 领域的 119 个 Pipeline Skill 中，24 个产出人类可读的 Markdown �
 
 ```
 PM探索发现 → PM商业战略 → PM构思设计(PRD) ──┬── UI设计系统 → UI前端生成 → 前端集成
-                                              │         ↑              ↑           ↑
-                                              │    positioning     IA/原型    openapi.yaml
-                                              │         │           │           │
-                                              └── API设计 ─────→ 数据架构 → 后端架构 ──┘
+                                              │                              ↑
+                                              └── API设计 → 数据架构 → 后端架构
                                                        ↑
                                                  PRD+数据模型(可选)
+
+跨领域数据流：
+  positioning-statement → UI设计系统(design-token)
+  IA/原型/令牌 → UI前端生成(component-library)
+  openapi.yaml → 前端集成(api-contract-consume)
 ```
 
 ### 路径2：已有产品需要优化
