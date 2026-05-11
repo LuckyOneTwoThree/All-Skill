@@ -1,0 +1,71 @@
+name: 改进 Skill
+description: 改进现有 Skill 的内容、结构或质量
+labels: ["enhancement", "improve-skill"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你帮助改进现有 Skill！请填写以下信息。
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: 目标 Skill 名称
+      description: 你要改进哪个 Skill？
+      placeholder: "例：insight-5whys"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: improve-type
+    attributes:
+      label: 改进类型
+      options:
+        - 补全降级策略
+        - 补全 Input/Output JSON 示例
+        - 细化执行步骤
+        - 补充决策规则
+        - 增加质量检查项
+        - 完善上游变更响应
+        - 优化 description 触发词
+        - 修正逻辑错误
+        - 其他（请在下方说明）
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: 当前状态
+      description: 当前这个 Skill 在哪方面不足？
+      placeholder: "例：insight-5whys 的降级策略只覆盖了上游文件缺失的场景，未覆盖输入数据质量不足的场景"
+    validations:
+      required: true
+
+  - type: textarea
+    id: improvement
+    attributes:
+      label: 改进方案
+      description: 你打算怎么改进？
+      placeholder: "例：增加数据质量降级策略——当输入的 jtbd.json 中 Functional Job 数量 < 3 时，标注'数据不足'并基于用户补充描述执行"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impact-scope
+    attributes:
+      label: 影响范围
+      description: 这次改进是否会影响上下游 Skill？
+      options:
+        - 不影响（仅修改内部逻辑/措辞/示例）
+        - 可能影响（涉及输出 Schema 或输出路径变更）
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact-detail
+    attributes:
+      label: 影响说明（如选"可能影响"或"不确定"）
+      description: 列出可能受影响的下游 Skill 和你的应对方案
+      placeholder: "例：输出 Schema 新增 boundary_cases 字段，下游 insight-priority-scoring 不消费该字段，无影响"

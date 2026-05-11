@@ -1,0 +1,98 @@
+name: 新增 Skill
+description: 提案新增一个 Pipeline Skill 或 Orchestrator
+labels: ["enhancement", "new-skill"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你提议新增 Skill！请填写以下信息，帮助维护者快速评估。
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill 名称
+      description: 遵循命名规范 `{领域}-{方法论名}`，如 `insight-5whys`
+      placeholder: "例：insight-5whys"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: skill-type
+    attributes:
+      label: Skill 类型
+      options:
+        - pipeline（单个方法论 Pipeline）
+        - orchestrator（编排器，调度子 Skill）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: 所属领域
+      options:
+        - pm-skill（产品方法论）
+        - ui-skill（UI设计与前端开发）
+        - backend-skill（后端架构与开发）
+        - cross-domain（跨领域协调）
+        - 新领域（请在下方说明）
+    validations:
+      required: true
+
+  - type: input
+    id: module
+    attributes:
+      label: 所属模块
+      description: 放入哪个模块下？如 pm-01-discovery、backend-01-api-design
+      placeholder: "例：pm-01-discovery"
+    validations:
+      required: true
+
+  - type: textarea
+    id: methodology
+    attributes:
+      label: 方法论名称与来源
+      description: 这个 Skill 基于什么方法论？是否有经典著作或行业实践支撑？
+      placeholder: "例：5 Whys —— 丰田生产系统中的根因分析法，由 Sakichi Toyoda 提出"
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger-scenario
+    attributes:
+      label: 触发场景
+      description: 用户在什么情况下会需要这个 Skill？
+      placeholder: "例：当需要对关键痛点或问题现象进行根因深挖时使用"
+    validations:
+      required: true
+
+  - type: textarea
+    id: core-output
+    attributes:
+      label: 核心产出
+      description: 这个 Skill 执行后产出什么？
+      placeholder: "例：因果链 + 根因 + 可行动改进建议，输出 5whys.json"
+    validations:
+      required: true
+
+  - type: textarea
+    id: upstream-downstream
+    attributes:
+      label: 上下游依赖
+      description: 这个 Skill 的输入来自哪个上游 Skill？输出被哪个下游 Skill 消费？
+      placeholder: |
+        上游：insight-jtbd（jtbd.json）
+        下游：insight-kano（消费 5whys.json 中的痛点数据）
+        若无上下游依赖，填写"无"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 已查阅 ROADMAP.md，确认该 Skill 尚未被认领
+          required: true
+        - label: 已查阅 CONTRIBUTING.md 中的命名规范和编写规范
+          required: true
+        - label: 已查阅 templates/ 中的对应模板，了解 Skill 结构要求
+          required: true

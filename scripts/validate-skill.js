@@ -1,0 +1,429 @@
+const fs = require("fs");
+const path = require("path");
+
+const VALID_TYPES = new Set(["pipeline", "orchestrator", "guide"]);
+const VALID_INTERACTION_MODES = new Set([
+  "ai_auto",
+  "ai_suggest_human_approve",
+  "human_ai_collaborate",
+]);
+
+const OUTPUT_PATH_MAP = {
+  "pm-skill": [
+    "pm-discovery",
+    "pm-strategy",
+    "pm-design",
+    "pm-metrics-design",
+    "pm-development",
+    "pm-metrics-ops",
+    "pm-growth",
+    "pm-monitoring",
+    "pm-project",
+  ],
+  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration"],
+  "backend-skill": [
+    "backend-api-design",
+    "backend-data-architecture",
+    "backend-architecture",
+  ],
+};
+
+const ALL_VALID_OUTPUT_PREFIXES = Object.values(OUTPUT_PATH_MAP).flat();
+
+function parseFrontmatter(content) {
+  const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+  if (!fmMatch) return null;
+  const fmText = fmMatch[1];
+  const result = {};
+  let currentKey = null;
+  let currentIndent = 0;
+
+  for (const line of fmText.split("\n")) {
+    if (!line.trim()) continue;
+    const indent = line.length - line.trimStart().length;
+    const kvMatch = line.match(/^(\s*)([\w_-]+):\s*(.*)/);
+    if (kvMatch) {
+      const key = kvMatch[2].trim();
+      const value = kvMatch[3].trim().replace(/^["']|["']$/g, "");
+      if (indent === 0) {
+        result[key] = value;
+        currentKey = key;
+      } else if (currentKey && typeof result[currentKey] === "object" && !Array.isArray(result[currentKey])) {
+        result[currentKey][key] = value;
+      } else if (currentKey && typeof result[currentKey] === "string") {
+        result[currentKey] = { _value: result[currentKey], [key]: value };
+      }
+    } else if (line.trim().startsWith("- ") && currentKey) {
+      if (!Array.isArray(result[currentKey])) {
+        result[currentKey] = [];
+      }
+      result[currentKey].push(
+        line
+          .trim()
+          .slice(2)
+          .trim()
+          .replace(/^["']|["']$/g, "")
+      );
+    }
+  }
+
+  if (result.metadata && typeof result.metadata === "object") {
+    if (result.metadata._value) delete result.metadata._value;
+  }
+
+  return result;
+}
+
+function detectDomain(skillPath) {
+  const parts = skillPath.replace(/\\/g, "/").split("/");
+  for (const part of parts) {
+    if (OUTPUT_PATH_MAP[part]) return part;
+  }
+  return null;
+}
+
+function validateFrontmatter(fm, skillPath) {
+  const errors = [];
+  const warnings = [];
+
+  if (!fm) {
+    errors.push(["frontmatter", "Missing YAML frontmatter (--- delimiters)"]);
+    return { errors, warnings };
+  }
+
+  const requiredFields = ["name", "description", "metadata"];
+  for (const field of requiredFields) {
+    if (!(field in fm)) {
+      errors.push([`frontmatter.${field}`, `Missing required field: ${field}`]);
+    }
+  }
+
+  if ("name" in fm) {
+    const name = fm.name;
+    const parentDir = path.basename(path.dirname(skillPath));
+    if (name !== parentDir) {
+      errors.push([
+        "frontmatter.name",
+        `name field '${name}' does not match parent directory '${parentDir}'`,
+      ]);
+    }
+    if (/[A-Z_]/.test(name)) {
+      errors.push([
+        "frontmatter.name",
+        `name '${name}' should use lowercase with hyphens (no uppercase or underscores)`,
+      ]);
+    }
+  }
+
+  if ("description" in fm) {
+    const desc = fm.description;
+    if (!desc.startsWith("当需要") && !desc.startsWith("When ")) {
+      warnings.push([
+        "frontmatter.description",
+        "description should start with trigger pattern: '当需要{场景}时使用'",
+      ]);
+    }
+    if (!desc.includes("关键词") && !desc.toLowerCase().includes("keywords")) {
+      warnings.push([
+        "frontmatter.description",
+        "description should include keywords section: '关键词：...'",
+      ]);
+    }
+  }
+
+  if (typeof fm.metadata === "object" && fm.metadata !== null && !Array.isArray(fm.metadata)) {
+    const meta = fm.metadata;
+    const requiredMeta = ["module", "sub-module", "type", "version"];
+    for (const field of requiredMeta) {
+      if (!(field in meta)) {
+        errors.push([
+          `frontmatter.metadata.${field}`,
+          `Missing required metadata field: ${field}`,
+        ]);
+      }
+    }
+
+    if ("type" in meta && !VALID_TYPES.has(meta.type)) {
+      errors.push([
+        "frontmatter.metadata.type",
+        `Invalid type '${meta.type}', must be one of: ${[...VALID_TYPES].join(", ")}`,
+      ]);
+    }
+
+    if (
+      "interaction_mode" in meta &&
+      !VALID_INTERACTION_MODES.has(meta.interaction_mode)
+    ) {
+      errors.push([
+        "frontmatter.metadata.interaction_mode",
+        `Invalid interaction_mode '${meta.interaction_mode}', must be one of: ${[...VALID_INTERACTION_MODES].join(", ")}`,
+      ]);
+    }
+  } else {
+    errors.push([
+      "frontmatter.metadata",
+      "metadata must be a YAML mapping with indented fields",
+    ]);
+  }
+
+  return { errors, warnings };
+}
+
+function validateStructure(content, skillType) {
+  const errors = [];
+  const warnings = [];
+  const sections = [];
+  const regex = /^##\s+(.+)$/gm;
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    sections.push(match[1]);
+  }
+
+  let requiredSections = [];
+  let recommendedSections = [];
+
+  if (skillType === "pipeline") {
+    requiredSections = [
+      "核心原则",
+      "交互模式",
+      "输入",
+      "执行步骤",
+      "输出",
+      "质量检查",
+    ];
+    recommendedSections = ["降级策略", "决策规则"];
+  } else if (skillType === "orchestrator") {
+    requiredSections = [
+      "核心原则",
+      "子Skill执行协议",
+      "阶段执行计划",
+      "阶段卡口",
+    ];
+    recommendedSections = ["调度规则", "人类决策点"];
+  }
+
+  for (const section of requiredSections) {
+    if (!sections.includes(section)) {
+      errors.push(["structure", `Missing required section: ## ${section}`]);
+    }
+  }
+
+  for (const section of recommendedSections) {
+    if (!sections.includes(section)) {
+      warnings.push([
+        "structure",
+        `Missing recommended section: ## ${section}`,
+      ]);
+    }
+  }
+
+  return { errors, warnings };
+}
+
+function validateInputTable(content) {
+  const errors = [];
+  const warnings = [];
+  const inputMatch = content.match(/##\s+输入\s*\n([\s\S]*?)(?=\n##\s|\Z)/);
+  if (!inputMatch) return { errors, warnings };
+
+  const inputSection = inputMatch[1];
+  const tableRows = inputSection.match(/\|.*\|.*\|.*\|.*\|.*\|/g) || [];
+  if (tableRows.length <= 1) {
+    warnings.push([
+      "input",
+      "Input section should have a table with columns: 输入项/类型/必填/来源/说明",
+    ]);
+    return { errors, warnings };
+  }
+
+  const header = tableRows[0];
+  const requiredCols = ["输入项", "类型", "必填", "来源", "说明"];
+  for (const col of requiredCols) {
+    if (!header.includes(col)) {
+      errors.push(["input", `Input table missing required column: ${col}`]);
+    }
+  }
+
+  return { errors, warnings };
+}
+
+function validateOutput(content, skillType) {
+  const errors = [];
+  const warnings = [];
+  if (skillType !== "pipeline") return { errors, warnings };
+
+  const outputMatch = content.match(/##\s+输出\s*\n([\s\S]*?)(?=\n##\s|\Z)/);
+  if (!outputMatch) return { errors, warnings };
+
+  const outputSection = outputMatch[1];
+  if (!outputSection.includes("output/")) {
+    warnings.push([
+      "output",
+      "Output section should specify output file path starting with 'output/'",
+    ]);
+  }
+
+  if (
+    !outputSection.includes("Schema") &&
+    !outputSection.includes("校验规则")
+  ) {
+    warnings.push([
+      "output",
+      "Output section should include output Schema or validation rules",
+    ]);
+  }
+
+  return { errors, warnings };
+}
+
+function validateOutputPathConsistency(content, domain) {
+  const warnings = [];
+  if (!domain || !OUTPUT_PATH_MAP[domain]) return warnings;
+
+  const ownPrefixes = OUTPUT_PATH_MAP[domain];
+  const outputPaths = content.match(/output\/([\w-]+)\//g) || [];
+
+  for (const p of outputPaths) {
+    const prefix = p.replace("output/", "").replace("/", "");
+    if (!ALL_VALID_OUTPUT_PREFIXES.includes(prefix)) {
+      warnings.push([
+        "output-path",
+        `Output path 'output/${prefix}/' is not a recognized output path prefix. Valid prefixes: ${ALL_VALID_OUTPUT_PREFIXES.join(", ")}`,
+      ]);
+    } else if (!ownPrefixes.includes(prefix)) {
+      warnings.push([
+        "output-path-cross-domain",
+        `Output path 'output/${prefix}/' belongs to another domain (cross-domain data contract reference). This is valid but verify the dependency is intentional.`,
+      ]);
+    }
+  }
+
+  return warnings;
+}
+
+function validateSkill(skillPath) {
+  if (!fs.existsSync(skillPath)) {
+    console.log(`ERROR: File not found: ${skillPath}`);
+    return false;
+  }
+
+  const content = fs.readFileSync(skillPath, "utf-8");
+  const fm = parseFrontmatter(content);
+  const domain = detectDomain(skillPath);
+  let skillType = null;
+
+  if (fm && typeof fm.metadata === "object" && fm.metadata !== null) {
+    skillType = fm.metadata.type || null;
+  }
+
+  let allErrors = [];
+  let allWarnings = [];
+
+  const fmResult = validateFrontmatter(fm, skillPath);
+  allErrors.push(...fmResult.errors);
+  allWarnings.push(...fmResult.warnings);
+
+  const structResult = validateStructure(content, skillType);
+  allErrors.push(...structResult.errors);
+  allWarnings.push(...structResult.warnings);
+
+  const inputResult = validateInputTable(content);
+  allErrors.push(...inputResult.errors);
+  allWarnings.push(...inputResult.warnings);
+
+  const outputResult = validateOutput(content, skillType);
+  allErrors.push(...outputResult.errors);
+  allWarnings.push(...outputResult.warnings);
+
+  const pathWarnings = validateOutputPathConsistency(content, domain);
+  allWarnings.push(...pathWarnings);
+
+  console.log(`\n${"=".repeat(60)}`);
+  console.log(`Validating: ${skillPath}`);
+  console.log(`${"=".repeat(60)}`);
+
+  if (allErrors.length > 0) {
+    console.log(`\n  ERRORS (${allErrors.length}):`);
+    for (const [loc, msg] of allErrors) {
+      console.log(`    [${loc}] ${msg}`);
+    }
+  }
+
+  if (allWarnings.length > 0) {
+    console.log(`\n  WARNINGS (${allWarnings.length}):`);
+    for (const [loc, msg] of allWarnings) {
+      console.log(`    [${loc}] ${msg}`);
+    }
+  }
+
+  if (allErrors.length === 0 && allWarnings.length === 0) {
+    console.log("\n  All checks passed!");
+  }
+
+  console.log();
+  return allErrors.length === 0;
+}
+
+function findAllSkills(rootDir) {
+  const skills = [];
+  function walk(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(fullPath);
+      } else if (entry.name === "SKILL.md") {
+        skills.push(fullPath);
+      }
+    }
+  }
+  walk(rootDir);
+  return skills;
+}
+
+function main() {
+  const args = process.argv.slice(2);
+
+  if (args.length === 0) {
+    console.log("Usage: node validate-skill.js <skill-path-or-directory>");
+    console.log("");
+    console.log("Examples:");
+    console.log(
+      "  node validate-skill.js pm-skill/pm-01-discovery/skills/insight-5whys/SKILL.md"
+    );
+    console.log("  node validate-skill.js .                              (validate all)");
+    process.exit(1);
+  }
+
+  const target = args[0];
+  let skills = [];
+
+  if (fs.statSync(target).isDirectory()) {
+    skills = findAllSkills(target);
+    if (skills.length === 0) {
+      console.log(`No SKILL.md files found in: ${target}`);
+      process.exit(1);
+    }
+  } else {
+    skills = [target];
+  }
+
+  let allPassed = true;
+  for (const skillPath of skills) {
+    if (!validateSkill(skillPath)) {
+      allPassed = false;
+    }
+  }
+
+  console.log(`${"=".repeat(60)}`);
+  if (allPassed) {
+    console.log(`All ${skills.length} skill(s) passed validation.`);
+  } else {
+    console.log("Some skills have errors. Please fix before submitting PR.");
+  }
+  console.log(`${"=".repeat(60)}`);
+
+  process.exit(allPassed ? 0 : 1);
+}
+
+main();

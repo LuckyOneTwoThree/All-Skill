@@ -1,0 +1,67 @@
+name: Skill 执行问题
+description: 使用 Skill 时遇到执行异常或产出不符合预期
+labels: ["bug", "skill-bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你反馈问题！请提供足够的信息帮助定位原因。
+
+  - type: input
+    id: skill-name
+    attributes:
+      label: 目标 Skill 名称
+      placeholder: "例：insight-5whys"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: 运行环境
+      options:
+        - Trae
+        - Claude Code
+        - 其他（请在下方说明）
+    validations:
+      required: true
+
+  - type: textarea
+    id: input-data
+    attributes:
+      label: 输入数据
+      description: 你提供了什么输入？（可粘贴关键部分，注意脱敏）
+      placeholder: |
+        例：提供了用户反馈数据（voice-analysis.json），包含 50 条用户评论
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-output
+    attributes:
+      label: 期望输出
+      description: 根据 Skill 的定义，你期望得到什么结果？
+      placeholder: |
+        例：期望输出 5whys.json，包含 4 层因果链和根因定位
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-output
+    attributes:
+      label: 实际输出
+      description: 实际得到了什么结果？（可粘贴关键部分）
+      placeholder: |
+        例：输出只有 2 层因果链就终止了，root_cause 为空
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 你是如何触发这个问题的？
+      placeholder: |
+        1. 在 Trae 中输入"帮我分析注册流程放弃的原因"
+        2. AI 匹配到 insight-5whys
+        3. 执行到 Round 2 后终止

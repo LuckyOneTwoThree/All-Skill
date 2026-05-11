@@ -1,0 +1,41 @@
+name: Validate SKILL.md
+on:
+  pull_request:
+    paths:
+      - '**/SKILL.md'
+      - 'templates/**'
+      - 'scripts/validate-skill.js'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate changed SKILL.md files
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep 'SKILL.md$' || true)
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No SKILL.md files changed, skipping validation."
+            exit 0
+          fi
+
+          echo "Validating changed SKILL.md files:"
+          echo "$CHANGED_FILES"
+          echo ""
+
+          FAILED=0
+          for file in $CHANGED_FILES; do
+            if [ -f "$file" ]; then
+              node scripts/validate-skill.js "$file" || FAILED=1
+            else
+              echo "WARNING: File $file not found (may have been deleted)"
+            fi
+          done
+
+          exit $FAILED

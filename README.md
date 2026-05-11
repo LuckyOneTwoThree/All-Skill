@@ -1,5 +1,11 @@
 # All-Skill：产品×设计×工程 AI Agent Skills 全集
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Skill Count](https://img.shields.io/badge/Skills-179-orange.svg)](#四大领域总览)
+
+> 🌟 **推荐**：访问 [PM Skill Galaxy](https://LuckyOneTwoThree.github.io/pm-skill) 体验可视化浏览 —— 星空背景、9大模块星系、完整产品全流程时间线，151个AI Agent Skills一目了然！
+
 > ## ⚠ 声明：AI 是杠杆，不是替代
 >
 > 这套 Skill 体系将产品方法论结构化为可执行的 Pipeline，让 AI 成为方法论的**忠实执行者**——但它永远无法替代人的**判断力**。
@@ -530,3 +536,16 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 - **审查闭环**：P0问题阻塞发布，不通过不放过
 - **数据驱动决策**：用数据减少猜测，但决策权在人类
 - **简单方案优先**：架构按需演进，不过度设计
+
+## 参与贡献
+
+我们欢迎各种形式的贡献——新增 Skill、改进现有 Skill、报告问题、翻译文档。
+
+- 📋 [贡献指南](CONTRIBUTING.md) —— 命名规范、编写模板、PR 流程
+- 🗺️ [路线图](ROADMAP.md) —— 待认领 Skill 和新领域扩展方向
+- 🐛 [提交 Issue](https://github.com/LuckyOneTwoThree/All-Skill/issues/new?template=bug-skill.yml) —— 报告 Skill 执行问题
+- 💡 [提议新 Skill](https://github.com/LuckyOneTwoThree/All-Skill/issues/new?template=new-skill.yml) —— 提案新增方法论 Pipeline
+
+## 许可证
+
+本项目基于 [MIT License](LICENSE) 开源。
