@@ -156,7 +156,20 @@
 
 ```
 All-Skill/
-├── pm-skill/                          产品方法论
+├── .github/                          ← 项目基础设施（非 Skill）
+│   ├── ISSUE_TEMPLATE/                   Issue 模板
+│   ├── workflows/                        PR 自动校验
+│   └── config.yml                        Issue 配置
+├── scripts/                          ← 项目基础设施（非 Skill）
+│   └── validate-skill.js                 SKILL.md 校验脚本
+├── templates/                        ← 项目基础设施（非 Skill）
+│   ├── pipeline-skill-template/          Pipeline Skill 编写模板
+│   └── orchestrator-skill-template/      Orchestrator Skill 编写模板
+├── CONTRIBUTING.md                   ← 项目基础设施（非 Skill）
+├── LICENSE                           ← 项目基础设施（非 Skill）
+├── ROADMAP.md                        ← 项目基础设施（非 Skill）
+│
+├── pm-skill/                         ✅ Skill 文件 —— 产品方法论
 │   ├── pm-00-guide/                       导航入口
 │   ├── pm-01-discovery/                   模块1：产品探索与发现
 │   │   ├── orchestrators/                     insight / market / opportunity / user-research
@@ -187,7 +200,7 @@ All-Skill/
 │   │   └── skills/                            10个Pipeline Skill
 │   └── docs/                              可视化文档站
 │
-├── ui-skill/                          UI设计与前端开发
+├── ui-skill/                         ✅ Skill 文件 —— UI设计与前端开发
 │   ├── ui-01-design-system/               模块1：UI设计系统
 │   │   ├── orchestrators/                     design-system-orchestrator
 │   │   └── skills/                            design-token / component-library / design-system-doc
@@ -198,7 +211,7 @@ All-Skill/
 │       ├── orchestrators/                     frontend-integration-orchestrator
 │       └── skills/                            api-contract-consume / frontend-build-deploy / frontend-performance
 │
-├── backend-skill/                     后端架构与开发
+├── backend-skill/                     ✅ Skill 文件 —— 后端架构与开发
 │   ├── backend-01-api-design/             模块1：API设计
 │   │   ├── orchestrators/                     api-design-orchestrator
 │   │   └── skills/                            api-contract / api-security / auth-design
@@ -209,9 +222,11 @@ All-Skill/
 │       ├── orchestrators/                     backend-architecture-orchestrator
 │       └── skills/                            architecture-pattern / service-design / backend-review
 │
-└── cross-domain/                      跨领域协调
+└── cross-domain/                      ✅ Skill 文件 —— 跨领域协调
     └── orchestrators/                     product-iteration-orchestrator / product-launch-orchestrator
 ```
+
+> **Skill 提取规则**：只有标记 ✅ 的目录下包含可部署的 Skill 文件。每个 Skill 的最小单元是 `{skill-name}/SKILL.md`，部署时只需将最内层的 `{skill-name}/` 文件夹扁平复制到 `.trae/skills/` 下。`templates/`、`scripts/`、`.github/` 等为项目基础设施，不需要部署。
 
 ## 各领域模块详解
 
