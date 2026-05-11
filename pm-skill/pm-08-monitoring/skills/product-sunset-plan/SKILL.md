@@ -6,6 +6,7 @@ metadata:
   sub-module: "问题诊断"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - diagnosis-health
     - retention-churn
@@ -148,6 +149,26 @@ metadata:
 |------|------|------|
 | 产品下线方案 | `output/pm-monitoring/product-sunset-plan/product-sunset-plan.md` | 人类可读的完整方案 |
 | 结构化数据 | `output/pm-monitoring/product-sunset-plan/product-sunset-plan.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "sunset_date", "decision_assessment", "migration_plan"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "sunset_date": {"type": "string", "description": "下线日期"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "decision_assessment": {"type": "object", "description": "下线决策评估，包含理由、替代方案和影响"},
+    "migration_plan": {"type": "object", "description": "用户迁移方案，包含替代方案、路径和激励"},
+    "data_disposal": {"type": "object", "description": "数据处置策略，包含分类、方式和保留期限"},
+    "timeline": {"type": "object", "description": "下线时间线，包含预告/过渡/只读/下线/清理"},
+    "communication_plan": {"type": "object", "description": "沟通计划，包含用户/内部/外部沟通"},
+    "risks": {"type": "array", "description": "风险清单"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

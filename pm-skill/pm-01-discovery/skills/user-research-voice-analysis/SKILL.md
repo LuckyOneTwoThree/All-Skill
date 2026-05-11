@@ -6,7 +6,7 @@ metadata:
   sub-module: "用户研究"
   type: "pipeline"
   version: "1.0"
-  execution_mode: "🤖 AI自动执行"
+  interaction_mode: "ai_auto"
 ---
 
 # 大规模用户声音分析
@@ -130,6 +130,19 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/user-research-voice-analysis/voice-analysis.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["summary", "metadata"],
+  "properties": {
+    "summary": {"type": "object", "description": "分析摘要，含反馈总量、情感分布、主题、痛点和用户分群"},
+    "metadata": {"type": "object", "description": "元数据，含时间戳、数据质量标记和整体置信度"}
+  }
+}
+```
 
 ```json
 {

@@ -6,6 +6,7 @@ metadata:
   sub-module: "敏捷执行"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 5: Daily Sync自动化
@@ -224,6 +225,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/agile-daily-sync/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["daily_sync", "metadata"],
+  "properties": {
+    "daily_sync": {"type": "object", "description": "每日同步数据，包含进展、障碍、建议和行动项"},
+    "metadata": {"type": "object", "description": "元数据，包含日期、Sprint ID和生成时间"}
+  }
+}
+```
 
 ```json
 {

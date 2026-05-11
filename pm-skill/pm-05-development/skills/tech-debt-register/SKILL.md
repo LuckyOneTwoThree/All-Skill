@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - development-auto-review
     - development-prd-sync
@@ -118,6 +119,22 @@ metadata:
 |------|------|------|
 | 技术债务登记册 | `output/pm-development/tech-debt-register/tech-debt-register.md` | 人类可读的完整登记册 |
 | 结构化数据 | `output/pm-development/tech-debt-register/tech-debt-register.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "summary", "debts"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "summary": {"type": "object", "description": "债务概览，包含总数、分类分布和偿还进度"},
+    "debts": {"type": "array", "description": "债务清单，包含类型、影响评分、优先级和偿还计划"},
+    "prevention_strategies": {"type": "array", "description": "预防策略列表"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

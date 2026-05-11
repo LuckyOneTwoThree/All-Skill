@@ -6,6 +6,7 @@ metadata:
   sub-module: "项目规划"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "human_execute_ai_assist"
 ---
 
 # Pipeline 3: Kickoff会议自动化
@@ -215,6 +216,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/planning-kickoff/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["kickoff", "metadata"],
+  "properties": {
+    "kickoff": {"type": "object", "description": "启动会数据，包含议程、背景材料、预判问题和会议纪要"},
+    "metadata": {"type": "object", "description": "元数据，包含会议安排和准备状态"}
+  }
+}
+```
 
 ```json
 {

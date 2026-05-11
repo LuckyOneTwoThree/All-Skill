@@ -1,4 +1,4 @@
----
+﻿---
 name: stakeholder-brief
 description: 当需要向高管或利益方汇报产品战略时使用。一页纸战略简报自动生成，基于产品战略文档，生成适合邮件或消息发送的精炼战略简报。关键词：战略简报、执行摘要、一页纸、高管沟通。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "Stakeholder对齐"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 14: 战略简报自动生成

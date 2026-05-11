@@ -6,6 +6,7 @@ metadata:
   sub-module: "发布上线"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 6: 灰度发布自动执行
@@ -525,6 +526,25 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/release-gradual/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "release_id", "release_status"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "release_id": {"type": "string", "description": "发布ID"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "release_status": {"type": "object", "description": "当前发布状态，包含阶段、流量比例和进度"},
+    "phase_transitions": {"type": "array", "description": "阶段转换历史记录"},
+    "rollback_history": {"type": "array", "description": "回滚历史记录"},
+    "monitoring_metrics": {"type": "object", "description": "监控数据汇总，包含当前和历史指标"},
+    "canary_plan": {"type": "object", "description": "灰度发布计划"}
+  }
+}
+```
 
 ### 最终输出结构
 

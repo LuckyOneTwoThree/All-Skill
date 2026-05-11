@@ -1,4 +1,4 @@
----
+﻿---
 name: insight-priority-scoring
 description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "需求洞察"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 需求优先级自动评分
@@ -121,7 +122,7 @@ metadata:
 
 - 痛点强度：基于jtbd.json的sentiment_intensity和5whys.json的根因确认情况
 - 频率权重：基于反馈频率和影响用户占比
-- 可解决性：需技术团队输入，默认值为3（中等），标记为"待技术确认"
+- 可解决性：需技术团队输入，默认值为3（中等），标记为"待技术确认"，该需求整体评分置信度降级为low
 - KANO系数：基于kano.json的分类结果
 
 ### Step 3: 加权计算
@@ -136,13 +137,28 @@ metadata:
 
 对评分结果进行标注和分类。
 
-- 标记可解决性维度是否已获技术团队确认
+- 标记可解决性维度是否已获技术团队确认（未确认的需求整体评分置信度降级为low）
 - 标记KANO分类置信度是否足够
 - 标记整体评分的可信度等级
 
 ## 输出
 
 输出文件：`output/pm-discovery/insight-priority-scoring/priority-scoring.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["analysis_metadata", "priority_list", "scoring_summary"],
+  "properties": {
+    "analysis_metadata": {"type": "object", "description": "分析元数据，包含来源文件、评分公式和确认状态"},
+    "priority_list": {"type": "array", "description": "需求优先级评分排序列表"},
+    "scoring_summary": {"type": "object", "description": "评分统计摘要"},
+    "priority_thresholds": {"type": "object", "description": "优先级分级阈值定义"}
+  }
+}
+```
 
 ### Output JSON 格式
 
@@ -233,7 +249,7 @@ metadata:
 | 规则 | 条件 | 动作 |
 |---|---|---|
 | 权重需人类确认 | 首次执行或权重调整后 | 暂停评分输出，等待人类确认评分维度和权重 |
-| 可解决性需技术输入 | 可解决性维度未获技术团队确认 | 使用默认值3，标记confirmed=false，提示需技术确认 |
+| 可解决性需技术输入 | 可解决性维度未获技术团队确认 | 使用默认值3，标记confirmed=false，该需求score_confidence强制为low，提示需技术确认 |
 | KANO分类不确定 | KANO分类置信度 < 0.7 | 标记score_confidence=low，建议确认分类后重新评分 |
 | 数据不完整 | 需求无法关联痛点或KANO数据 | 相关维度使用默认值，标记数据不完整 |
 

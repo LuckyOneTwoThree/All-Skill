@@ -1,4 +1,4 @@
----
+﻿---
 name: service-design
 description: 当需要设计服务拆分方案时使用。服务设计自动生成，基于领域驱动设计，自动识别限界上下文、设计服务拆分方案、定义服务间通信和依赖治理策略。关键词：服务设计、领域驱动、DDD、限界上下文、服务拆分、依赖治理。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "后端架构"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 19: 服务设计自动生成

@@ -1,4 +1,4 @@
----
+﻿---
 name: data-model
 description: 当需要设计数据模型和表结构时使用。数据模型自动设计，基于PRD和API契约，自动设计ER模型、表结构、索引策略和分库分表方案，输出数据库DDL和数据字典。关键词：数据模型、ER图、表结构、索引、分库分表、DDL。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据架构"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 15: 数据模型自动设计

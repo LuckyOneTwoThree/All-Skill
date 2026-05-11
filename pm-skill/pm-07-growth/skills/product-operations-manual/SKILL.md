@@ -6,6 +6,7 @@ metadata:
   sub-module: "增长模式"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - growth-model
     - activation-onboarding
@@ -114,6 +115,24 @@ metadata:
 |------|------|------|
 | 产品运营手册 | `output/pm-growth/product-operations-manual/product-operations-manual.md` | 人类可读的完整手册 |
 | 结构化数据 | `output/pm-growth/product-operations-manual/product-operations-manual.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "daily_sop", "user_operations", "emergency_response"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "daily_sop": {"type": "object", "description": "日常运营SOP，包含日/周/月检查清单"},
+    "content_operations": {"type": "object", "description": "内容运营规范，包含类型矩阵、生产流程和质量标准"},
+    "user_operations": {"type": "object", "description": "用户运营策略，包含分层模型和触达策略"},
+    "activity_operations": {"type": "object", "description": "活动运营模板，包含策划和复盘模板"},
+    "emergency_response": {"type": "object", "description": "应急响应流程，包含分级标准和SLA"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

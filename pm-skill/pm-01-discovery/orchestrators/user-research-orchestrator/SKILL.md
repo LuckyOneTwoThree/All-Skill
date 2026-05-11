@@ -44,6 +44,21 @@ metadata:
 - ⏸ 等待 user-research-report.md 生成
 - ✅ 完整用户研究报告已产出
 
+### 数据流转
+
+```
+[用户反馈数据 + 行为数据]
+       ↓
+user-research-voice-analysis ∥ user-research-behavior-analysis
+       ↓ sentiment_distribution / top_themes / top_pain_points / funnel_health / aha_moment_candidates / feature_usage
+user-research-user-modeling
+       ↓ personas / empathy_map / journey_map / confidence
+user-research-interview-assist
+       ↓ interview-script / interview-insights (validated_hypotheses / new_discoveries / cross_interview_patterns)
+user-research-report
+       ↓ executive_summary / personas / journey / insights / recommendations
+```
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

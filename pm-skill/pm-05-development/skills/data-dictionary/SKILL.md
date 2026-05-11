@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - design-prd
     - requirements-srs
@@ -107,6 +108,23 @@ metadata:
 |------|------|------|
 | 数据字典 | `output/pm-development/data-dictionary/data-dictionary.md` | 人类可读的完整字典 |
 | 结构化数据 | `output/pm-development/data-dictionary/data-dictionary.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "entities"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告生成日期"},
+    "entities": {"type": "array", "description": "数据实体列表，包含字段定义和业务规则"},
+    "relationships": {"type": "array", "description": "数据关系列表，包含实体间关联和级联规则"},
+    "enums": {"type": "array", "description": "枚举值定义列表，包含取值和状态转换"},
+    "lifecycle_rules": {"type": "array", "description": "数据生命周期规则列表"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

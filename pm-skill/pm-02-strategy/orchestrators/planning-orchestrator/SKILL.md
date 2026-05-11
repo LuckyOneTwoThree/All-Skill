@@ -37,6 +37,27 @@ product-proposal → planning-swot → planning-porter-five-forces → planning-
 | 5 | planning-roadmap | 🤖→👤 AI建议，人类审批 |
 | 6 | planning-ansoff | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[产品信息 + 市场数据 + 竞品数据]
+       ↓
+product-proposal
+       ↓ opportunity_statement / product_definition / business_model / execution_plan / risk_assessment
+planning-swot
+       ↓ swot (strengths / weaknesses / opportunities / threats) / strategic_directions (SO / ST / WO / WT)
+planning-porter-five-forces
+       ↓ five_forces_scores / industry_attractiveness / strategic_implications
+planning-okr
+       ↓ objectives / key_results / achievement_probability / alignment_score
+planning-north-star
+       ↓ north_star_metric / input_metrics / output_metrics / measurement_framework
+planning-roadmap
+       ↓ milestones / feature_priorities / resource_allocation / timeline
+planning-ansoff
+       ↓ growth_matrix / growth_path / risk_assessment / resource_requirements
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

@@ -6,6 +6,7 @@ metadata:
   sub-module: "发布上线"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 版本发布说明自动生成
@@ -215,6 +216,26 @@ metadata:
 | release-notes-v{版本号}-enterprise.md | Markdown | 企业客户版 |
 | release-notes-v{版本号}-developer.md | Markdown | 开发者版 |
 | release-notes-v{版本号}.json | JSON | 结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["version", "release_date", "release_type", "changes"],
+  "properties": {
+    "version": {"type": "string", "description": "版本号"},
+    "release_date": {"type": "string", "description": "发布日期"},
+    "release_type": {"type": "string", "description": "发布类型：major/minor/patch/hotfix"},
+    "target_audience": {"type": "string", "description": "目标受众"},
+    "high_impact_changes": {"type": "array", "description": "高影响变更列表"},
+    "changes": {"type": "array", "description": "变更列表，按类别分类"},
+    "known_issues": {"type": "array", "description": "已知问题列表"},
+    "breaking_changes": {"type": "array", "description": "破坏性变更列表"},
+    "upgrade_guide": {"type": "object", "description": "升级指引"}
+  }
+}
+```
 
 **release-notes.json 结构**：
 

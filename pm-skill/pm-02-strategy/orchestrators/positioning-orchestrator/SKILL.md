@@ -34,6 +34,21 @@ positioning-statement → positioning-value-curve → positioning-differentiatio
 | 3 | positioning-differentiation | 🤖→👤 AI建议，人类审批 |
 | 4 | positioning-exclusion | 👤 人类执行，AI辅助 |
 
+### 数据流转
+
+```
+[产品信息 + 竞品数据 + 用户洞察]
+       ↓
+positioning-statement
+       ↓ positioning_statements / target_audience / category_frame / differentiation_point / quality_check
+positioning-value-curve
+       ↓ value_curve / differentiation_strength / blue_ocean_actions / competitive_positioning
+positioning-differentiation
+       ↓ differentiation_assessment (5维度: product / service / channel / image / people) / sustainability_score / competitive_advantage
+positioning-exclusion
+       ↓ exclusion_statements / non_target_segments / trade_off_rationale / focus_validation
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

@@ -6,6 +6,7 @@ metadata:
   sub-module: "敏捷执行"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 4: Sprint Planning自动化
@@ -183,6 +184,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/agile-sprint-planning/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["sprint_plan", "metadata"],
+  "properties": {
+    "sprint_plan": {"type": "object", "description": "Sprint计划，包含目标、Story列表、容量验证和风险"},
+    "metadata": {"type": "object", "description": "元数据，包含Sprint ID、置信度和审批状态"}
+  }
+}
+```
 
 ```json
 {

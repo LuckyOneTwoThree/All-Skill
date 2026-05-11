@@ -6,6 +6,7 @@ metadata:
   sub-module: "机会识别"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Opportunity Problem Statement — Problem Statement 生成
@@ -53,6 +54,22 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/opportunity-problem-statement/problem-statement.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["problem_statement", "data_support", "template_elements", "quality_check"],
+  "properties": {
+    "problem_statement": {"type": "string", "description": "完整的Problem Statement文本"},
+    "data_support": {"type": "object", "description": "数据支撑，含痛点频率、行为证据和置信度"},
+    "template_elements": {"type": "object", "description": "模板各要素拆解"},
+    "quality_check": {"type": "object", "description": "5项质量检查结果"},
+    "metadata": {"type": "object", "description": "元数据，含来源文件引用"}
+  }
+}
+```
 
 ```json
 {

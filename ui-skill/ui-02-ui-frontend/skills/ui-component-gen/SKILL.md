@@ -6,6 +6,7 @@ metadata:
   sub-module: "UI前端生成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 4: UI组件自动生成
@@ -93,6 +94,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/ui-component-gen/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["component_name", "framework", "files", "props", "token_coverage", "reused_components", "accessibility"],
+  "properties": {
+    "component_name": {"type": "string", "description": "组件名称"},
+    "framework": {"type": "string", "description": "目标前端框架"},
+    "files": {"type": "array", "description": "生成的组件文件列表，包含路径、类型和行数"},
+    "props": {"type": "object", "description": "组件Props接口定义，包含类型、必填性和默认值"},
+    "token_coverage": {"type": "string", "description": "Design Token引用覆盖率"},
+    "reused_components": {"type": "array", "description": "复用的组件库组件名称列表"},
+    "accessibility": {"type": "object", "description": "可访问性规格，包含ARIA角色、标签和键盘交互"}
+  }
+}
+```
 
 ```json
 {

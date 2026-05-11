@@ -6,6 +6,7 @@ metadata:
   sub-module: "留存"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 7: 用户分层自动化运营
@@ -163,6 +164,21 @@ trigger_rules:
 ## 输出
 
 **存储路径**：`output/pm-growth/retention-engagement/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["segments", "strategies"],
+  "properties": {
+    "segments": {"type": "array", "description": "用户分层数据，包含层级名称、人数、特征和健康度"},
+    "segment_overview": {"type": "object", "description": "各层级概览，包含人数和平均健康度"},
+    "strategies": {"type": "array", "description": "分层运营策略列表，包含目标、行动和成功指标"},
+    "personalized_content": {"type": "array", "description": "个性化触达内容列表，包含内容类型、主题和渠道"}
+  }
+}
+```
 
 `user_stratification`
 ```json

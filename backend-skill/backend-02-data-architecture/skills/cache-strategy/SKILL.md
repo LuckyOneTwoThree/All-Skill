@@ -1,4 +1,4 @@
----
+﻿---
 name: cache-strategy
 description: 当需要设计缓存策略时使用。缓存策略自动设计，为系统设计多级缓存架构、缓存一致性策略和穿透防护方案，确保高并发场景下的数据访问性能和一致性。关键词：缓存策略、Redis、多级缓存、缓存一致性、缓存穿透、缓存雪崩。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据架构"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 17: 缓存策略自动设计

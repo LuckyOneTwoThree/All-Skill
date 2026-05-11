@@ -6,6 +6,7 @@ metadata:
   sub-module: "监控预警"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - user-research-voice-analysis
     - monitoring-anomaly
@@ -101,6 +102,25 @@ metadata:
 |------|------|------|
 | 反馈闭环报告 | `output/pm-monitoring/user-feedback-loop-report/feedback-loop-report.md` | 人类可读的完整报告 |
 | 结构化数据 | `output/pm-monitoring/user-feedback-loop-report/feedback-loop-report.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_period", "summary", "closure_metrics"],
+  "properties": {
+    "report_period": {"type": "object", "description": "报告周期，包含起止日期"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "summary": {"type": "object", "description": "执行摘要，包含总反馈数、闭环率和P0未解决数"},
+    "source_analysis": {"type": "object", "description": "反馈来源分析，包含渠道/情感/主题分布"},
+    "processing_status": {"type": "object", "description": "处理进度，包含状态分布和瓶颈"},
+    "closure_metrics": {"type": "object", "description": "闭环率统计，包含整体和分渠道/分严重度闭环率"},
+    "unresolved": {"type": "object", "description": "未解决问题，包含P0/P1清单和根因分析"},
+    "improvement_suggestions": {"type": "array", "description": "改进建议列表"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

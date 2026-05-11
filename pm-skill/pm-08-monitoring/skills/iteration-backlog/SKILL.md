@@ -6,6 +6,7 @@ metadata:
   sub-module: "迭代优化"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 5: 产品 Backlog 自动优化 🤖
@@ -172,8 +173,23 @@ reorganization_suggestions:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["prioritized_items", "backlog_size"],
+  "properties": {
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "backlog_size": {"type": "object", "description": "Backlog规模，包含总条目数和总故事点"},
+    "prioritized_items": {"type": "array", "description": "排序后的需求列表，包含评分、影响和关联"},
+    "technical_debt_priority": {"type": "array", "description": "技术债务优先级列表，包含利息和优先级"},
+    "reorganization_summary": {"type": "object", "description": "重组建议汇总，包含提升/合并/推迟/拆分数量"}
+  }
+}
 ```
-output/pm-monitoring/iteration-backlog/
+
+```
 ├── {iteration_id}/
 │   ├── prioritized_items.yaml
 │   ├── linked_issues.yaml

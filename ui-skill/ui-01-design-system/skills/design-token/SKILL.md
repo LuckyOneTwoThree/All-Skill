@@ -6,6 +6,7 @@ metadata:
   sub-module: "设计系统"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 1: 设计令牌自动生成
@@ -88,6 +89,49 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-design-system/design-token/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["token_metadata", "color", "typography", "spacing", "border_radius", "shadow", "breakpoint", "contrast_check"],
+  "properties": {
+    "token_metadata": {"type": "object", "description": "令牌元信息，包含版本号、品牌名称和目标平台"},
+    "color": {"type": "object", "description": "色彩体系令牌，包含品牌色、语义色、功能色和中性色"},
+    "typography": {"type": "object", "description": "字体排版令牌，包含字体家族、字号、行高和字重"},
+    "spacing": {"type": "object", "description": "间距令牌，基于4px基准的间距梯度"},
+    "border_radius": {"type": "object", "description": "圆角令牌，定义不同级别的圆角规范"},
+    "shadow": {"type": "object", "description": "阴影令牌，定义不同层级的阴影规范"},
+    "breakpoint": {"type": "object", "description": "响应式断点令牌"},
+    "contrast_check": {"type": "object", "description": "对比度校验结果，包含文本与背景的对比度比值和WCAG等级"}
+  }
+}
+```
+
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| metadata | object | 是 | 令牌元信息 |
+| metadata.version | string | 是 | 令牌版本 |
+| metadata.platform | enum(web,ios,android) | 是 | 目标平台 |
+| metadata.generated_at | string | 是 | 生成时间(ISO8601) |
+| color | object | 是 | 色彩令牌 |
+| color.primary | object | 是 | 主色 |
+| color.primary.value | string | 是 | 色值(HEX) |
+| color.primary.name | string | 是 | 令牌名称 |
+| color.secondary | object | 否 | 辅助色 |
+| color.semantic | object | 是 | 语义色(success/warning/error/info) |
+| typography | object | 是 | 字体令牌 |
+| typography.font_family | object | 是 | 字体族 |
+| typography.font_size | object | 是 | 字号体系 |
+| spacing | object | 是 | 间距令牌 |
+| spacing.scale | array | 是 | 间距梯度 |
+| border_radius | object | 否 | 圆角令牌 |
+| shadow | object | 否 | 阴影令牌 |
+| wcag_compliance | object | 是 | WCAG合规性 |
+| wcag_compliance.contrast_ratios | array | 是 | 对比度检测结果 |
 
 ```json
 {
@@ -175,3 +219,22 @@ metadata:
   1. 直接提供品牌色彩、字体和风格指南
   2. 上传positioning-statements.json文件
   3. 描述产品名称、行业和目标用户
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 定位陈述变更 | 品牌色、品牌字体 | 标注受影响的令牌类别，建议人类确认是否更新令牌 |
+| 目标平台新增 | 新增平台适配令牌 | 标注需新增的平台令牌，建议人类确认 |
+
+当设计令牌自身变更时，对下游的通知机制：
+
+| 令牌变更类型 | 影响范围 | 通知方式 |
+|-------------|----------|----------|
+| 色彩令牌变更 | component-library、page-assembly | 标记受影响的组件和页面，触发视觉更新 |
+| 间距令牌变更 | component-library、page-assembly | 标记受影响的布局，触发布局重排 |
+| 字体令牌变更 | component-library、page-assembly | 标记受影响的文本样式，触发样式更新 |
+| 新增令牌类别 | component-library | 标记新增令牌，建议组件库适配 |
+| 删除令牌 | component-library、page-assembly | 必须人类确认，提供替代方案 |

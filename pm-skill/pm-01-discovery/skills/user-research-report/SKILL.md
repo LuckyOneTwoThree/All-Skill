@@ -6,6 +6,7 @@ metadata:
   sub-module: "用户研究"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 用户研究报告自动生成
@@ -181,6 +182,23 @@ metadata:
 | user-research-report.json | JSON | 结构化数据（供下游Skill引用） |
 
 **user-research-report.json 结构**：
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_metadata", "executive_summary", "personas", "insights", "recommendations"],
+  "properties": {
+    "report_metadata": {"type": "object", "description": "报告元数据，含产品名、研究目标和置信度"},
+    "executive_summary": {"type": "object", "description": "执行摘要，含概述、核心发现和Top建议"},
+    "personas": {"type": "array", "description": "用户画像列表"},
+    "journey": {"type": "object", "description": "用户旅程，含阶段、情绪曲线和关键时刻"},
+    "insights": {"type": "array", "description": "核心洞察列表"},
+    "recommendations": {"type": "array", "description": "行动建议列表"}
+  }
+}
+```
 
 ```json
 {

@@ -6,6 +6,7 @@ metadata:
   sub-module: "变现"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 8: 付费漏斗自动分析
@@ -142,6 +143,21 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/revenue-funnel/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["funnel", "bottlenecks"],
+  "properties": {
+    "funnel": {"type": "object", "description": "付费漏斗数据，包含各阶段用户数和转化率"},
+    "bottlenecks": {"type": "array", "description": "瓶颈分析列表，包含流失率、影响评分和原因"},
+    "optimization_suggestions": {"type": "array", "description": "优化建议列表，包含问题、方案和预期提升"},
+    "paywall_timing": {"type": "object", "description": "付费墙时机建议，包含最佳时机、类型和试用周期"}
+  }
+}
+```
 
 `revenue_funnel`
 ```json

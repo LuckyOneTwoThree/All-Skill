@@ -6,6 +6,7 @@ metadata:
   sub-module: "UI前端生成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 8: 前端测试自动生成与执行
@@ -100,6 +101,20 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/frontend-test/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["test_summary", "coverage", "files"],
+  "properties": {
+    "test_summary": {"type": "object", "description": "测试汇总统计，包含单元测试、Stories、视觉回归、E2E和无障碍测试的数量"},
+    "coverage": {"type": "object", "description": "测试覆盖率统计，包含组件覆盖率、交互覆盖率和无障碍覆盖率"},
+    "files": {"type": "array", "description": "生成的测试文件列表，包含文件路径、类型和用例数"}
+  }
+}
+```
 
 ```json
 {

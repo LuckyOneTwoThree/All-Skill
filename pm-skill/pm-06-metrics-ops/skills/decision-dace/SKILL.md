@@ -1,4 +1,4 @@
----
+﻿---
 name: decision-dace
 description: 当需要执行数据驱动决策闭环时使用。DACE循环自动化，Define/Analyze由AI自动执行，Conclude由AI辅助人类决策，Execute由AI追踪执行效果。实现数据驱动决策的持续迭代闭环。关键词：DACE循环、数据决策、决策闭环、数据驱动、决策框架、决策循环、数据分析闭环。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "决策闭环"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 11：DACE循环自动化
@@ -384,18 +385,27 @@ okr_tracking:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["dace_status", "okr_tracking"],
+  "properties": {
+    "dace_status": {"type": "object", "description": "DACE循环状态，包含当前阶段和进度"},
+    "okr_tracking": {"type": "object", "description": "OKR追踪数据，包含目标、关键结果和达成率"},
+    "action_log": {"type": "array", "description": "行动日志，包含已执行决策和待执行项"},
+    "cycle_report": {"type": "object", "description": "周期报告，包含分析结论和执行建议"}
+  }
+}
+```
+
 ```
 output/pm-metrics-ops/decision-dace/
-├── decisions/
-│   ├── dace_status/
-│   │   └── {cycle_id}_status.yaml
-│   ├── okr_tracking/
-│   │   └── {quarter}_okr.yaml
-│   └── action_log/
-│       └── {date}_actions.yaml
-└── reports/
-    └── dace/
-        └── {cycle_id}_cycle_report.md
+├── dace_status.json
+├── okr_tracking.json
+├── action_log.json
+└── dace_cycle_report.md
 ```
 
 ## 执行频率

@@ -6,6 +6,7 @@ metadata:
   sub-module: "质量保障"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 验收测试报告自动生成
@@ -198,6 +199,26 @@ Must需求通过率：{X}%
 |------|------|------|
 | acceptance-report-v{版本号}.md | Markdown | 完整验收测试报告 |
 | acceptance-report-v{版本号}.json | JSON | 结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["version", "acceptance_date", "summary", "conclusion"],
+  "properties": {
+    "version": {"type": "string", "description": "验收版本号"},
+    "acceptance_date": {"type": "string", "description": "验收日期"},
+    "acceptance_scope": {"type": "string", "description": "验收功能范围"},
+    "acceptance_party": {"type": "string", "description": "验收方"},
+    "summary": {"type": "object", "description": "验收统计摘要，包含通过率和Must需求通过率"},
+    "criteria_results": {"type": "array", "description": "验收标准逐项结果"},
+    "defects": {"type": "array", "description": "缺陷清单"},
+    "open_issues": {"type": "array", "description": "遗留问题清单"},
+    "conclusion": {"type": "object", "description": "验收结论，包含结果和签收确认"}
+  }
+}
+```
 
 **acceptance-report.json 结构**：
 

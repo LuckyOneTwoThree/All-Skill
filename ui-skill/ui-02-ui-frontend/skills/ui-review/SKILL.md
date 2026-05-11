@@ -6,6 +6,7 @@ metadata:
   sub-module: "UI前端生成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 7: UI审查自动执行
@@ -98,6 +99,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/ui-review/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["review_summary", "issues"],
+  "properties": {
+    "review_summary": {"type": "object", "description": "审查汇总统计，包含检查总数、通过数、失败数、通过率和各级别问题数"},
+    "issues": {"type": "array", "description": "问题清单，包含问题ID、严重级别、类别、文件位置、描述和修复建议"}
+  }
+}
+```
 
 ```json
 {

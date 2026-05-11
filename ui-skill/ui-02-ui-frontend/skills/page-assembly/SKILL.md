@@ -6,6 +6,7 @@ metadata:
   sub-module: "UI前端生成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 5: 页面自动组装
@@ -97,6 +98,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/page-assembly/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["page_name", "route", "layout", "component_tree", "state_management", "data_flow", "files"],
+  "properties": {
+    "page_name": {"type": "string", "description": "页面名称"},
+    "route": {"type": "string", "description": "页面路由路径"},
+    "layout": {"type": "string", "description": "页面布局类型"},
+    "component_tree": {"type": "object", "description": "页面组件树，按布局区块组织组件列表"},
+    "state_management": {"type": "object", "description": "状态管理方案，按UI状态/共享状态/服务端状态分类"},
+    "data_flow": {"type": "object", "description": "数据流设计，定义各触发时机下的数据获取操作"},
+    "files": {"type": "array", "description": "生成的页面文件列表，包含路径和类型"}
+  }
+}
+```
 
 ```json
 {

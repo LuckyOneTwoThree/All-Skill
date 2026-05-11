@@ -6,6 +6,7 @@ metadata:
   sub-module: "激活"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 4: Aha Moment自动工程化
@@ -103,6 +104,21 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 ## 输出
 
 **存储路径**：`output/pm-growth/activation-aha/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["candidates", "primary_aha"],
+  "properties": {
+    "candidates": {"type": "array", "description": "Aha Moment候选列表，包含行为、相关性、到达率和留存提升"},
+    "primary_aha": {"type": "object", "description": "主Aha Moment，包含行为、到达率、留存提升和置信度"},
+    "secondary_ahas": {"type": "array", "description": "次要Aha Moment列表"},
+    "onboarding_optimization": {"type": "object", "description": "Onboarding优化建议，包含目标行为和优化漏斗"}
+  }
+}
+```
 
 `aha_moment`
 ```json

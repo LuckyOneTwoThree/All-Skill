@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - development-task-breakdown
     - development-auto-review
@@ -120,6 +121,26 @@ metadata:
 |------|------|------|
 | ADR文档 | `output/pm-development/architecture-decision-record/ADR-{NNNN}-{slug}.md` | 人类可读的完整ADR |
 | 结构化数据 | `output/pm-development/architecture-decision-record/adr-index.json` | 所有ADR的索引文件 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["adr_id", "title", "status", "date", "context", "decision"],
+  "properties": {
+    "adr_id": {"type": "string", "description": "架构决策唯一标识"},
+    "title": {"type": "string", "description": "决策标题"},
+    "status": {"type": "string", "description": "决策状态：proposed/accepted/deprecated/superseded"},
+    "date": {"type": "string", "description": "决策日期"},
+    "context": {"type": "object", "description": "决策背景，包含问题、驱动因素和约束条件"},
+    "alternatives": {"type": "array", "description": "备选方案列表，包含描述、评分和优劣势"},
+    "decision": {"type": "object", "description": "决策结果，包含选择方案、理由和权衡"},
+    "impact": {"type": "object", "description": "影响分析，包含系统/团队/运维/成本影响"},
+    "review": {"type": "object", "description": "回顾机制，包含触发条件、周期和指标"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

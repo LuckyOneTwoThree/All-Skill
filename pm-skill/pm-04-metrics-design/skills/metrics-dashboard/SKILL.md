@@ -1,4 +1,4 @@
----
+﻿---
 name: metrics-dashboard
 description: 当需要配置产品度量Dashboard时使用。Dashboard自动配置，基于指标层级设计Dashboard结构，自动分配指标到各Dashboard，配置告警规则和阈值。关键词：Dashboard配置、数据看板、指标可视化、告警配置、监控面板。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "度量设计"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 3: Dashboard自动配置
@@ -25,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| metric_system | JSON | 是 | metrics-system → metric_system | 指标体系（含北极星、L1/L2/行动指标） |
+| metric_system | JSON | 是 | metrics-system → metric_system.json | 指标体系（含北极星、L1/L2/行动指标） |
 | tracking_plan | JSON数组 | 是 | tracking-plan → tracking_plan | 埋点方案 |
 | user_roles | string[] | ○ | 用户提供 | Dashboard使用角色 |
 | dashboard_platform | string | ○ | 用户提供 | 可视化平台（amplitude/grafana/datadog） |
@@ -116,6 +117,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-metrics-design/metrics-dashboard/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["dashboards", "configuration_files"],
+  "properties": {
+    "dashboards": {"type": "array", "description": "Dashboard配置列表，包含战略/战术/运营看板"},
+    "configuration_files": {"type": "object", "description": "平台配置文件，包含平台类型和Dashboard JSON配置"}
+  }
+}
+```
 
 ```json
 {

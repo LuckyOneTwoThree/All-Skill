@@ -6,6 +6,7 @@ metadata:
   sub-module: "UI前端生成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 6: 交互设计自动生成
@@ -110,6 +111,18 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-frontend/interaction-design/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["interaction_spec"],
+  "properties": {
+    "interaction_spec": {"type": "object", "description": "交互规格定义，包含组件名、状态机、动画规范、手势和反馈机制"}
+  }
+}
+```
 
 ```json
 {

@@ -6,6 +6,7 @@ metadata:
   sub-module: "问题诊断"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 4: 竞品动态追踪与应对 🤖
@@ -190,8 +191,24 @@ effect_tracking:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_id", "feature_changes", "advantage_changes", "response_strategy"],
+  "properties": {
+    "report_id": {"type": "string", "description": "报告唯一标识"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "period": {"type": "object", "description": "分析周期，包含起止时间"},
+    "feature_changes": {"type": "object", "description": "功能变更汇总，包含总数和P0/P1计数"},
+    "advantage_changes": {"type": "object", "description": "优势变化，包含增长/保持/失去的维度"},
+    "response_strategy": {"type": "array", "description": "应对策略列表，包含竞品、功能和优先级"}
+  }
+}
 ```
-output/pm-monitoring/diagnosis-competition/
+
+```
 ├── {date}/
 │   ├── feature_changes.yaml
 │   ├── advantage_changes.yaml

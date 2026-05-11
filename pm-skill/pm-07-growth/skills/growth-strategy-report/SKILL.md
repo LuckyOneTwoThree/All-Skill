@@ -6,6 +6,7 @@ metadata:
   sub-module: "增长模式"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - growth-model
     - acquisition-channel
@@ -96,6 +97,24 @@ metadata:
 |------|------|------|
 | 增长策略报告 | `output/pm-growth/growth-strategy-report/growth-strategy-report.md` | 人类可读的完整报告 |
 | 结构化数据 | `output/pm-growth/growth-strategy-report/growth-strategy-report.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "growth_model", "leverage_strategies", "roadmap"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "growth_model": {"type": "object", "description": "增长模式评估，包含类型、飞轮模型和瓶颈"},
+    "aarrr_funnel": {"type": "object", "description": "AARRR漏斗诊断，包含获客/激活/留存/变现"},
+    "leverage_strategies": {"type": "object", "description": "杠杆策略，包含高/中/防御策略"},
+    "roadmap": {"type": "object", "description": "执行路线图，包含Quick Wins/核心优化/长期投资"},
+    "risks_and_assumptions": {"type": "array", "description": "风险与假设列表"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

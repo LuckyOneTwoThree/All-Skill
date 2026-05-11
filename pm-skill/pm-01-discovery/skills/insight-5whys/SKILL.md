@@ -1,4 +1,4 @@
----
+﻿---
 name: insight-5whys
 description: 当需要对关键痛点或问题现象进行根因深挖时使用。5Whys结构化根因分析，通过逐层追问定位可行动的根因和改进点。关键词：5Whys、根因分析、因果链、痛点深挖、原因追溯。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "需求洞察"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 5 Whys结构化根因分析
@@ -15,7 +16,7 @@ metadata:
 1. **数据优先人工补充**——AI处理大规模数据，人类补充定性洞察
 2. **显式规则拒绝模糊**——所有分类/判断规则必须可编码
 3. **批量并行规模优势**——能并行的步骤不串行
-4. **标注置信度分级交付**——所有推断标注置信度，<0.5升级人类
+4. **标注置信度分级交付**——所有推断标注置信度，<0.3终止追问，0.3-0.7升级人类验证，≥0.7自动通过
 
 ## 交互模式
 
@@ -103,6 +104,23 @@ metadata:
 
 输出文件：`output/pm-discovery/insight-5whys/5whys.json`
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["phenomenon", "chain", "root_cause", "actionable_fix"],
+  "properties": {
+    "phenomenon": {"type": "object", "description": "待分析的问题现象描述及指标"},
+    "chain": {"type": "array", "description": "逐层追问的因果链"},
+    "root_cause": {"type": "string", "description": "定位到的根本原因"},
+    "actionable_fix": {"type": "object", "description": "可行动的改进建议"},
+    "needs_human_validation": {"type": "boolean", "description": "是否需要人工验证"},
+    "validation_notes": {"type": "string", "description": "验证说明备注"}
+  }
+}
+```
+
 ### Output JSON 格式
 
 ```json
@@ -162,6 +180,8 @@ metadata:
 | 规则 | 条件 | 动作 |
 |---|---|---|
 | 连续低置信度终止 | 连续2层置信度 < 0.3 | 终止追问，标记needs_human_validation=true，升级人类验证 |
+| 单层低置信度升级 | 某层置信度 0.3-0.7 | 标记该层需人类验证，继续追问但标注"推断链可信度降低" |
+| 置信度正常 | 某层置信度 ≥ 0.7 | 自动通过，继续追问 |
 | 长推断链升级 | 推断链超过3步 | 升级验证中间环节，建议人类确认因果链的合理性 |
 | 无数据支撑降级 | 某层原因无任何数据支撑 | 该层置信度上限设为0.5，标注"缺乏数据支撑" |
 | 多根因情况 | Top1和Top2原因置信度差距 < 0.1 | 分叉为两条因果链并行分析 |

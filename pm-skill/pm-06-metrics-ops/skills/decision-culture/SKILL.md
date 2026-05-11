@@ -6,6 +6,7 @@ metadata:
   sub-module: "决策闭环"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 13：数据文化自动化
@@ -501,6 +502,23 @@ data_culture_metrics:
 - **团队关注点**（可选）：当前团队最关注的业务问题
 
 ## 输出
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_type", "report_date", "key_metrics"],
+  "properties": {
+    "report_type": {"type": "string", "description": "报告类型：daily/weekly/monthly/quarterly"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "key_metrics": {"type": "array", "description": "关键指标列表，包含名称、当前值和变化趋势"},
+    "anomalies": {"type": "array", "description": "异常指标列表"},
+    "action_items": {"type": "array", "description": "行动项列表"},
+    "engagement_stats": {"type": "object", "description": "报告参与度统计"}
+  }
+}
+```
 
 ```
 output/pm-metrics-ops/decision-culture/

@@ -6,6 +6,7 @@ metadata:
   sub-module: "市场竞品"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 竞品分析报告自动生成
@@ -245,6 +246,25 @@ quadrantChart
 | competitor-report.json | JSON | 结构化数据（供下游Skill引用） |
 
 **competitor-report.json 结构**：
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_metadata", "executive_summary", "competitor_profiles", "differentiation_strategies"],
+  "properties": {
+    "report_metadata": {"type": "object", "description": "报告元数据，含品类、时间戳和置信度"},
+    "executive_summary": {"type": "object", "description": "执行摘要，含竞争格局总结和核心发现"},
+    "market_overview": {"type": "object", "description": "市场概览，含TAM/SAM/SOM和增长趋势"},
+    "competitive_landscape": {"type": "object", "description": "竞争格局，含四象限摘要和市场份额估算"},
+    "competitor_profiles": {"type": "array", "description": "竞品深度画像列表，含SWOT和护城河评估"},
+    "feature_matrix_summary": {"type": "object", "description": "功能矩阵对比摘要"},
+    "perceptual_map": {"type": "object", "description": "竞争定位图数据"},
+    "differentiation_strategies": {"type": "array", "description": "差异化策略建议列表"}
+  }
+}
+```
 
 ```json
 {

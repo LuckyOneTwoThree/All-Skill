@@ -34,6 +34,21 @@ business-model-canvas → business-value-fit → business-pricing → business-s
 | 3 | business-pricing | 🤖→👤 AI建议，人类审批 |
 | 4 | business-strategy-report | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[产品信息 + 市场数据 + 竞品数据]
+       ↓
+business-model-canvas
+       ↓ bmc (9宫格: value_proposition / customer_segments / revenue_streams / key_resources / key_activities / key_partners / cost_structure / channels / customer_relationships)
+business-value-fit
+       ↓ value_fit_score / mismatch_items / alignment_recommendations
+business-pricing
+       ↓ pricing_strategy / pricing_tiers / unit_economics / sensitivity_analysis
+business-strategy-report
+       ↓ executive_summary / strategic_assessment / strategic_directions / execution_path / risks_and_contingencies
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

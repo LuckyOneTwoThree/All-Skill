@@ -6,6 +6,7 @@ metadata:
   sub-module: "留存"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 6: 流失预警与干预自动化
@@ -125,6 +126,22 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/retention-churn/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["risk_model", "high_risk_users", "interventions"],
+  "properties": {
+    "risk_model": {"type": "object", "description": "流失预警模型，包含模型类型、特征和准确率"},
+    "risk_thresholds": {"type": "object", "description": "风险阈值定义，包含高/中/低风险评分阈值"},
+    "high_risk_users": {"type": "array", "description": "高风险用户列表，包含风险评分和推荐干预"},
+    "interventions": {"type": "array", "description": "干预策略列表，包含触发条件、类型和渠道"},
+    "tracking": {"type": "object", "description": "干预效果追踪，包含覆盖率、响应率和ROI"}
+  }
+}
+```
 
 `churn_prevention`
 ```json

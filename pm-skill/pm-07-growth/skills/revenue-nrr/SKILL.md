@@ -6,6 +6,7 @@ metadata:
   sub-module: "变现"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 9: NRR自动追踪与预警
@@ -163,6 +164,23 @@ expansion_score = (
 ## 输出
 
 **存储路径**：`output/pm-growth/revenue-nrr/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["current_nrr", "nrr_breakdown"],
+  "properties": {
+    "current_nrr": {"type": "number", "description": "当前净收入留存率"},
+    "nrr_breakdown": {"type": "object", "description": "NRR分解，包含扩张/收缩/流失收入占比"},
+    "trend": {"type": "array", "description": "NRR趋势数据，包含月度NRR和各部分占比"},
+    "churn_warnings": {"type": "array", "description": "流失预警列表，包含风险信号和推荐行动"},
+    "expansion_opportunities": {"type": "array", "description": "扩张机会列表，包含升级信号和预期收入增长"},
+    "summary": {"type": "object", "description": "收入汇总，包含活跃收入、扩张、流失和净新增"}
+  }
+}
+```
 
 `nrr_tracking`
 ```json

@@ -6,6 +6,7 @@ metadata:
   sub-module: "市场竞品"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 竞品四象限自动填充
@@ -125,6 +126,20 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["category_keywords", "quadrants", "summary"],
+  "properties": {
+    "category_keywords": {"type": "string", "description": "品类关键词"},
+    "quadrants": {"type": "object", "description": "四象限竞品分类，含直接/间接/替代/潜在竞品"},
+    "summary": {"type": "object", "description": "分类统计摘要"}
+  }
+}
+```
 
 ```json
 {

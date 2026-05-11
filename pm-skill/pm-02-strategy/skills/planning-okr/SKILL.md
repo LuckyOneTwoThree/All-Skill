@@ -1,4 +1,4 @@
----
+﻿---
 name: planning-okr
 description: 当需要制定季度/年度OKR、目标分解、绩效考核标准时使用。OKR自动生成。从战略方向生成目标与关键结果，包括Objective生成、Key Results设计、可行性评估和OKR对齐检查。关键词：OKR、目标管理、关键结果、目标分解、OKR对齐。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "战略规划与路线图"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 9: OKR自动生成

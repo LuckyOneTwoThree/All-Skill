@@ -6,7 +6,7 @@ metadata:
   sub-module: "用户研究"
   type: "pipeline"
   version: "1.0"
-  execution_mode: "👤→🤖 人类执行AI辅助"
+  interaction_mode: "human_execute_ai_assist"
 ---
 
 # 访谈辅助
@@ -157,6 +157,24 @@ metadata:
 
 输出文件：`output/pm-discovery/user-research-interview-assist/interview-script.json`
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["script_id", "research_objectives", "core_modules"],
+  "properties": {
+    "script_id": {"type": "string", "description": "访谈脚本唯一标识"},
+    "research_objectives": {"type": "array", "description": "研究目标列表"},
+    "target_personas": {"type": "array", "description": "目标Persona类型列表"},
+    "opening": {"type": "object", "description": "开场模块，含破冰问题和背景设定"},
+    "core_modules": {"type": "array", "description": "核心问题模块列表"},
+    "closing": {"type": "object", "description": "收尾模块"},
+    "recommended_participants": {"type": "array", "description": "推荐访谈对象列表"}
+  }
+}
+```
+
 ```json
 {
   "script_id": "string",
@@ -201,6 +219,25 @@ metadata:
 ### interview-insights.json
 
 输出文件：`output/pm-discovery/user-research-interview-assist/interview-insights.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["interviews_conducted", "validated_hypotheses", "new_discoveries", "metadata"],
+  "properties": {
+    "interviews_conducted": {"type": "number", "description": "已执行访谈数量"},
+    "validated_hypotheses": {"type": "array", "description": "已验证的假设列表"},
+    "refuted_hypotheses": {"type": "array", "description": "被推翻的假设列表"},
+    "new_discoveries": {"type": "array", "description": "新发现列表"},
+    "cross_interview_patterns": {"type": "array", "description": "跨访谈共同模式列表"},
+    "persona_updates": {"type": "array", "description": "Persona更新列表"},
+    "data_cross_validation": {"type": "object", "description": "与已有数据的交叉验证结果"},
+    "metadata": {"type": "object", "description": "分析元数据，含时间戳和整体置信度"}
+  }
+}
+```
 
 ```json
 {

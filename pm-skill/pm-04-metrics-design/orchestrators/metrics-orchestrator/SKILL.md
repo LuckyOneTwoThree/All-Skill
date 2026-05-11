@@ -33,6 +33,19 @@ metrics-system → tracking-plan → metrics-dashboard
 | 2 | tracking-plan | 🤖→👤 AI建议，人类审批 |
 | 3 | metrics-dashboard | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[产品信息 + OKR + 商业模式 + 已有指标]
+       ↓
+metrics-system
+       ↓ metric_system (north_star / l1_metrics / l2_metrics / actionable_metrics / vanity_alerts)
+tracking-plan
+       ↓ tracking_plan (events / properties / metrics_to_track / prd_consistency)
+metrics-dashboard
+       ↓ dashboards (strategic / tactical / operational) / alerts / configuration_files
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

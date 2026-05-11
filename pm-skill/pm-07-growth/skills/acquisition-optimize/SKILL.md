@@ -6,6 +6,7 @@ metadata:
   sub-module: "获客"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 3: 获客漏斗自动优化
@@ -111,6 +112,20 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/acquisition-optimize/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["funnel_analysis", "optimization_suggestions"],
+  "properties": {
+    "funnel_analysis": {"type": "object", "description": "漏斗分析，包含各阶段数据和关键流失节点"},
+    "optimization_suggestions": {"type": "array", "description": "优化建议列表，包含优先级、问题、方案和预期提升"},
+    "ab_test_designs": {"type": "array", "description": "A/B测试设计方案列表"}
+  }
+}
+```
 
 `acquisition_optimization`
 ```json

@@ -6,6 +6,7 @@ metadata:
   sub-module: "风险管理"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 9: 风险升级与问题升级自动化
@@ -183,6 +184,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/risk-escalation/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["escalation", "metadata"],
+  "properties": {
+    "escalation": {"type": "object", "description": "升级数据，包含问题列表和升级路径模板"},
+    "metadata": {"type": "object", "description": "元数据，包含处理数、待处理数和解决率"}
+  }
+}
+```
 
 ```json
 {

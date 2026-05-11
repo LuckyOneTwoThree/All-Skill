@@ -1,4 +1,4 @@
----
+﻿---
 name: market-competitor-intel
 description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "市场竞品"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # 竞品情报自动化Pipeline
@@ -106,12 +107,27 @@ metadata:
 | 输出类型 | 频率 | 说明 |
 |---------|------|------|
 | 竞品情报周报 | 每周 | 本周竞品动态汇总、Feature Matrix变更、口碑变化 |
-| 重大变化实时告警 | 实时 | 影响程度≥4的竞品变更即时推送 |
+| 重大变化分级告警 | 实时 | 影响程度≥4的竞品变更即时通知人类PM，影响程度≥5同时标记需紧急响应 |
 | 季度深度分析 | 每季度 | 竞品战略方向总结、竞争格局演变、差异化机会梳理 |
 
 ## 输出
 
 输出文件：`output/pm-discovery/market-competitor-intel/competitor-intel.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["scan_timestamp", "competitors"],
+  "properties": {
+    "scan_timestamp": {"type": "string", "description": "扫描时间戳"},
+    "competitors": {"type": "array", "description": "竞品情报列表，含Feature Matrix、口碑、定价和战略信号"},
+    "reputation_comparison": {"type": "object", "description": "竞品口碑横向对比"},
+    "alerts": {"type": "array", "description": "竞品变更告警列表"}
+  }
+}
+```
 
 ```json
 {
@@ -179,10 +195,11 @@ metadata:
 
 | 规则 | 触发条件 | 动作 |
 |------|---------|------|
-| 实时告警 | 功能变更影响程度 ≥ 4 | 实时告警给人类PM |
+| P0级告警（自动通知+紧急标记） | 功能变更影响程度 ≥ 5 | 即时通知人类PM，标记需紧急响应，不等待周报周期 |
+| P1级告警（自动通知） | 功能变更影响程度 4 | 即时通知人类PM，纳入下次周报详细分析 |
 | 战略推断升级 | 竞品战略推断置信度 < 0.5 | 升级人类判断，标注需验证 |
-| 定价变化告警 | 竞品定价发生变更 | 推送定价变化详情与影响分析 |
-| 口碑异常告警 | 竞品口碑出现重大波动（情感分布变化>15%） | 推送口碑变化分析 |
+| 定价变化告警 | 竞品定价发生变更 | 通知人类PM定价变化详情与影响分析 |
+| 口碑异常告警 | 竞品口碑出现重大波动（情感分布变化>15%） | 通知人类PM口碑变化分析 |
 
 ## 质量检查
 

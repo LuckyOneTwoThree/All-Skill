@@ -6,6 +6,7 @@ metadata:
   sub-module: "监控预警"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 2: 告警自动分析与归因 🤖 (7×24)
@@ -183,8 +184,25 @@ remediation:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["alert_id", "classification", "root_cause", "impact_scope"],
+  "properties": {
+    "alert_id": {"type": "string", "description": "告警ID"},
+    "timestamp": {"type": "string", "description": "告警时间"},
+    "classification": {"type": "object", "description": "告警分类，包含层级、类别和置信度"},
+    "root_cause": {"type": "object", "description": "根因分析，包含5Why链和摘要"},
+    "impact_scope": {"type": "object", "description": "影响范围，包含级别、受影响用户和功能"},
+    "remediation": {"type": "object", "description": "修复建议，包含即时行动列表"},
+    "needs_human_escalation": {"type": "boolean", "description": "是否需要人工升级"}
+  }
+}
 ```
-output/pm-monitoring/monitoring-anomaly/
+
+```
 ├── {alert_id}/
 │   ├── classification.md
 │   ├── correlation.md

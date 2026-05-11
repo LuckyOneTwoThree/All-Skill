@@ -6,6 +6,7 @@ metadata:
   sub-module: "实验验证"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 8：A/B测试自动设计
@@ -302,6 +303,24 @@ ab_test_design:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/experiment-design/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["hypothesis", "primary_metric", "sample_size", "traffic_allocation"],
+  "properties": {
+    "hypothesis": {"type": "object", "description": "结构化假设，包含If-Then-Because-For"},
+    "primary_metric": {"type": "object", "description": "主指标定义，包含名称和计算方式"},
+    "guardrail_metrics": {"type": "array", "description": "护栏指标列表，覆盖留存/收入/技术维度"},
+    "sample_size": {"type": "object", "description": "样本量估算，包含计算参数和结果"},
+    "traffic_allocation": {"type": "object", "description": "分流方案，包含比例和分层策略"},
+    "termination_conditions": {"type": "object", "description": "终止条件，包含提前终止和最大周期"},
+    "risk_assessment": {"type": "object", "description": "风险评估和缓解措施"}
+  }
+}
+```
 
 ### 必填输出
 

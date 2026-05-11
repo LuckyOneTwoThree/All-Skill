@@ -6,6 +6,7 @@ metadata:
   sub-module: "迭代优化"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 6: 迭代优先级自动调整 🤖
@@ -205,8 +206,25 @@ communication_draft:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["trigger_id", "impact_assessment", "options"],
+  "properties": {
+    "trigger_id": {"type": "string", "description": "触发事件ID"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "trigger_type": {"type": "string", "description": "触发类型：monitoring_alert/feedback/strategy_change"},
+    "impact_assessment": {"type": "object", "description": "影响评估，包含范围/进度/质量影响"},
+    "recommended_option": {"type": "string", "description": "推荐方案ID"},
+    "options": {"type": "array", "description": "可选方案列表，包含类型、评分和权衡"},
+    "needs_human_decision": {"type": "boolean", "description": "是否需要人工决策"}
+  }
+}
 ```
-output/pm-monitoring/iteration-prioritization/
+
+```
 ├── {trigger_id}/
 │   ├── impact_assessment.yaml
 │   ├── adjustment_options.yaml

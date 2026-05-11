@@ -33,6 +33,29 @@ api-contract → api-security → auth-design
 | 2 | api-security | 🤖→👤 AI建议，人类审批 |
 | 3 | auth-design | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[PRD + 数据模型 + 业务流程]
+       ↓
+api-contract
+       ↓ openapi.yaml (resources / endpoints / schemas / error_codes / versioning)
+api-security
+       ↓ security_policy (interface_levels / rate_limiting / encryption / input_validation / cors / security_headers)
+auth-design
+       ↓ auth_scheme (authentication: JWT / OAuth2 / SSO / authorization: RBAC / ABAC / multi_tenant / session_management)
+```
+
+### 调度逻辑
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| PRD+数据模型就绪 | → api-contract（API契约设计） |
+| API契约人类确认完成 | → api-security（API安全设计） |
+| API安全人类确认完成 | → auth-design（认证鉴权设计） |
+| API契约需调整 | → api-contract（增量更新契约） |
+| 安全等级变更 | → api-security（重新评估安全策略） |
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -56,3 +79,14 @@ api-contract → api-security → auth-design
 | 安全等级确认 | 标准vs高安全，影响限流/加密/审计策略 |
 | 权限模型选择 | RBAC vs ABAC，影响权限管理复杂度 |
 | 多租户策略 | 隔离级别影响成本和安全，人类确认 |
+| API版本策略确认 | 语义化版本vsURL版本，影响兼容性和客户端升级策略 |
+
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| PRD功能点不明确 | 标注"功能点待确认"，生成TODO接口，人类补充 |
+| 数据模型缺失 | 基于PRD推断数据实体，标注"数据模型待确认" |
+| API风格争议 | 提供RESTful和GraphQL双方案对比，人类决策 |
+| 安全策略冲突 | 标注冲突项，人类决策取舍 |
+| 认证方案不兼容 | 提供兼容方案，人类确认 |

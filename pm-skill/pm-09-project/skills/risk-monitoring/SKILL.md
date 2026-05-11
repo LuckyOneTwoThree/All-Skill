@@ -1,4 +1,4 @@
----
+﻿---
 name: risk-monitoring
 description: 当需要持续监控项目风险时使用。风险监控与预警自动化，持续追踪风险指标、更新风险状态、识别新风险、触发风险预警、追踪应对效果，输出完整的风险监控报告。关键词：风险监控、风险预警、风险追踪、风险状态、风险指标。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "风险管理"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 8: 风险监控与预警自动化

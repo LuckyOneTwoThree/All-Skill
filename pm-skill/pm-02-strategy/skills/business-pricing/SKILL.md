@@ -1,4 +1,4 @@
----
+﻿---
 name: business-pricing
 description: 当需要制定或优化产品定价策略时使用。定价策略自动分析，AI建议人类审批，分析竞品定价、推断用户支付意愿、生成3个差异化定价方案。关键词：定价策略、竞品分析、支付意愿、套餐设计、单位经济。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "商业模式设计"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 3：定价策略自动分析

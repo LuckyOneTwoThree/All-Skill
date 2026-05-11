@@ -34,6 +34,21 @@ ideation-hmw → ideation-scamper → ideation-inversion → ideation-convergenc
 | 3 | ideation-inversion | 🤖 AI自动执行 |
 | 4 | ideation-convergence | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[Problem Statement + 用户研究数据 + 现有方案]
+       ↓
+ideation-hmw
+       ↓ hmw_statements / dimension / divergence_potential / quality_check
+ideation-scamper
+       ↓ solutions (SCAMPER 7维度: substitute / combine / adapt / modify / put_to_other_use / eliminate / reverse) / feasibility / innovation / impact / risk
+ideation-inversion
+       ↓ inversion_analysis / design_constraints / failure_paths / anti_patterns
+ideation-convergence
+       ↓ converged_solutions / top_candidates / comparison_matrix / mvp_scope / success_metrics
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

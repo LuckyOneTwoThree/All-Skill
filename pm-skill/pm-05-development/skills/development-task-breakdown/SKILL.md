@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 1: PRD任务分解消费与开发深化
@@ -290,6 +291,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/development-task-breakdown/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "source_prd_version", "epic_story_task"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "source_prd_version": {"type": "string", "description": "来源PRD版本号"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "epic_story_task": {"type": "object", "description": "深化后的完整任务结构，包含Epics/Stories/Tasks"},
+    "sprint_assignment": {"type": "object", "description": "Sprint分配结果，包含Sprint列表和任务分配"},
+    "dependency_graph": {"type": "object", "description": "依赖关系图，包含节点和边"},
+    "tech_clarifications": {"type": "object", "description": "技术细节澄清，包含前端/后端/测试深化内容"}
+  }
+}
+```
 
 ### 最终输出结构
 

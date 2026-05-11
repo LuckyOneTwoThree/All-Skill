@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 3: PRD双向同步自动化
@@ -435,6 +436,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/development-prd-sync/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "sync_type", "sync_status"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "sync_type": {"type": "string", "description": "同步类型：bidirectional"},
+    "sync_status": {"type": "object", "description": "各方向同步状态，包含PRD→设计/代码/测试和代码→PRD"},
+    "conflict_list": {"type": "array", "description": "检测到的冲突清单"},
+    "update_proposals": {"type": "array", "description": "建议的更新提案列表"},
+    "summary": {"type": "object", "description": "同步摘要，包含整体状态和待处理项"}
+  }
+}
+```
 
 ### 最终输出结构
 

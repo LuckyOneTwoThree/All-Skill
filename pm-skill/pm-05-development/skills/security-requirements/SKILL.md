@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - design-prd
     - requirements-srs
@@ -120,6 +121,25 @@ metadata:
 |------|------|------|
 | 安全需求清单 | `output/pm-development/security-requirements/security-requirements.md` | 人类可读的完整清单 |
 | 结构化数据 | `output/pm-development/security-requirements/security-requirements.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "threat_model", "security_requirements"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "threat_model": {"type": "object", "description": "威胁建模，包含STRIDE威胁、攻击面和信任边界"},
+    "security_requirements": {"type": "object", "description": "安全功能需求，包含认证/数据保护/输入验证/审计"},
+    "data_protection": {"type": "object", "description": "数据保护需求，包含分类、生命周期和备份策略"},
+    "compliance_mapping": {"type": "object", "description": "合规映射，包含OWASP/PIPL/GDPR/SOC2"},
+    "acceptance_criteria": {"type": "array", "description": "安全验收标准列表"},
+    "traceability_matrix": {"type": "array", "description": "安全需求追踪矩阵"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

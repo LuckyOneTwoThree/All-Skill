@@ -6,6 +6,7 @@ metadata:
   sub-module: "需求洞察"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 需求三层模型自动拆解
@@ -108,6 +109,20 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/insight-requirement-layers/requirement-layers.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["analysis_metadata", "requirement_layers", "summary"],
+  "properties": {
+    "analysis_metadata": {"type": "object", "description": "分析元数据，包含来源、需求数量和时间戳"},
+    "requirement_layers": {"type": "array", "description": "需求三层拆解结果列表"},
+    "summary": {"type": "object", "description": "拆解统计摘要"}
+  }
+}
+```
 
 ### Output JSON 格式
 

@@ -6,6 +6,7 @@ metadata:
   sub-module: "实验验证"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 9：A/B测试自动执行与分析
@@ -283,6 +284,25 @@ decision_recommendation:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/experiment-execution/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["experiment_id", "conclusion", "primary_metric"],
+  "properties": {
+    "experiment_id": {"type": "string", "description": "实验ID"},
+    "analyzed_at": {"type": "string", "description": "分析时间"},
+    "experiment_info": {"type": "object", "description": "实验信息，包含名称、周期和样本量"},
+    "conclusion": {"type": "string", "description": "实验结论：positive/negative/neutral"},
+    "primary_metric": {"type": "object", "description": "主指标结果，包含对照组/实验组数据和统计检验"},
+    "guardrail_metrics": {"type": "object", "description": "护栏指标结果，包含各指标变化和安全性判断"},
+    "heterogeneous_effects": {"type": "object", "description": "异质性效应，按平台/用户类型分群分析"},
+    "novelty_check": {"type": "object", "description": "新奇效应检测"}
+  }
+}
+```
 
 ```yaml
 ab_test_result:

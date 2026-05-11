@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据分析"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 4：自动化数据分析引擎
@@ -91,6 +92,25 @@ metadata:
 - **P3（提示）**：仅记录
 
 ## 输出
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["metric_name", "current_value", "severity", "attribution"],
+  "properties": {
+    "metric_name": {"type": "string", "description": "异常指标名称"},
+    "current_value": {"type": "number", "description": "当前值"},
+    "expected_range": {"type": "array", "description": "预期范围"},
+    "deviation": {"type": "string", "description": "偏离程度"},
+    "severity": {"type": "string", "description": "严重程度：P0/P1/P2/P3"},
+    "attribution": {"type": "object", "description": "归因信息，包含真实性判断、相关事件和推荐行动"},
+    "trend_chart_url": {"type": "string", "description": "趋势图URL"},
+    "raw_data_url": {"type": "string", "description": "原始数据URL"}
+  }
+}
+```
 
 ```yaml
 anomaly_report:

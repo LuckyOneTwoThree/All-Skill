@@ -1,4 +1,4 @@
----
+﻿---
 name: validation-experiment
 description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "方案验证"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 14: 验证实验自动设计

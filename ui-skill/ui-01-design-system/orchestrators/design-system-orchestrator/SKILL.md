@@ -33,6 +33,29 @@ design-token → component-library → design-system-doc
 | 2 | component-library | 🤖→👤 AI建议，人类审批 |
 | 3 | design-system-doc | 🤖 AI自动执行 |
 
+### 数据流转
+
+```
+[品牌规范 + 产品定位 + 目标平台]
+       ↓
+design-token
+       ↓ tokens (color / typography / spacing / shadow / breakpoints / motion)
+component-library
+       ↓ library (atoms / molecules / organisms / dependency_graph / variants)
+design-system-doc
+       ↓ doc (usage_guide / code_examples / do_dont / accessibility_notes)
+```
+
+### 调度逻辑
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 品牌规范已确定 | → design-token（设计令牌生成） |
+| 设计令牌人类确认完成 | → component-library（组件库生成） |
+| 组件库人类确认完成 | → design-system-doc（文档自动生成） |
+| 设计令牌需调整 | → design-token（重新生成调整后的令牌） |
+| 组件需新增/修改 | → component-library（增量更新组件） |
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -55,3 +78,15 @@ design-token → component-library → design-system-doc
 | 品牌色确认 | AI生成色彩体系，人类确认品牌主色和辅助色 |
 | 组件层级划分 | AI建议原子/分子/组织分类，人类确认边界 |
 | 令牌命名规范 | AI建议语义命名，人类确认命名体系 |
+| WCAG对比度调整确认 | AI自动调整不达标色阶后，人类确认调整结果 |
+| 组件库发布确认 | 组件库生成完成，人类确认是否发布到组件仓库 |
+
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| 品牌规范不完整 | 使用行业默认值填充，标注"推断值"，人类确认 |
+| WCAG对比度不达标 | 自动调整色阶，人类确认调整结果 |
+| 组件循环依赖 | 自动检测并告警，必须修复后才能进入文档阶段 |
+| 设计令牌冲突 | 标注冲突项，人类决策取舍 |
+| 文档生成失败 | 降级为组件清单列表，标注"文档待补充" |

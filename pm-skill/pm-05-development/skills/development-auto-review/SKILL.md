@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 2: 需求变更影响分析自动化
@@ -344,6 +345,26 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/development-auto-review/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "change_id", "classification", "impact_analysis", "review_needed"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "change_id": {"type": "string", "description": "变更请求ID"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "classification": {"type": "object", "description": "变更分类，包含级别和原因"},
+    "impact_analysis": {"type": "object", "description": "影响分析，包含功能/技术/测试/运营四维度"},
+    "review_needed": {"type": "boolean", "description": "是否需要重评审"},
+    "review_decision": {"type": "object", "description": "评审决策，包含评审范围和内容"},
+    "version_updates": {"type": "object", "description": "版本联动更新建议"},
+    "summary": {"type": "object", "description": "变更影响摘要，包含影响范围和风险等级"}
+  }
+}
+```
 
 ### 最终输出结构
 

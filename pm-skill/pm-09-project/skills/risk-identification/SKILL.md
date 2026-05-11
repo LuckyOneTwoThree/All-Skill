@@ -6,6 +6,7 @@ metadata:
   sub-module: "风险管理"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 7: 风险自动识别与评估
@@ -199,6 +200,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/risk-identification/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["risk_register", "metadata"],
+  "properties": {
+    "risk_register": {"type": "object", "description": "风险登记册，包含风险列表和汇总统计"},
+    "metadata": {"type": "object", "description": "元数据，包含扫描时间、数据源和置信度"}
+  }
+}
+```
 
 ```json
 {

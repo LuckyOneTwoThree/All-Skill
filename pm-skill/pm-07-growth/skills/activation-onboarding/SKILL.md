@@ -6,6 +6,7 @@ metadata:
   sub-module: "激活"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 5: Onboarding自动优化
@@ -139,6 +140,21 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/activation-onboarding/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["current_effectiveness", "segment_strategies"],
+  "properties": {
+    "current_effectiveness": {"type": "object", "description": "当前Onboarding效果评估，包含完成率、流失点和平均完成时间"},
+    "segment_strategies": {"type": "array", "description": "分群Onboarding策略列表，包含分群特征和预期提升"},
+    "personalized_content": {"type": "array", "description": "个性化引导内容列表，包含内容类型和触发条件"},
+    "ab_tests": {"type": "array", "description": "A/B测试设计方案列表"}
+  }
+}
+```
 
 `onboarding_optimization`
 ```json

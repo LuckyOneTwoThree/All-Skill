@@ -6,6 +6,7 @@ metadata:
   sub-module: "增长模式"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 1: 增长模式自动诊断
@@ -86,6 +87,22 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/growth-model/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["model", "flywheel", "bottleneck"],
+  "properties": {
+    "model": {"type": "string", "description": "增长模式：PLG/SLG/MLG/Hybrid"},
+    "flywheel": {"type": "object", "description": "增长飞轮模型，包含节点和边"},
+    "key_constraints": {"type": "array", "description": "关键约束条件列表"},
+    "bottleneck": {"type": "string", "description": "当前最大瓶颈描述"},
+    "confidence": {"type": "number", "description": "诊断置信度"}
+  }
+}
+```
 
 `growth_diagnosis`
 ```json

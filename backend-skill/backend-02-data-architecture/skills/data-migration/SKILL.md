@@ -1,4 +1,4 @@
----
+﻿---
 name: data-migration
 description: 当需要设计数据迁移方案时使用。数据迁移方案自动设计，设计数据库版本管理、Schema迁移、数据迁移和回滚方案，确保数据库变更安全可控。关键词：数据迁移、Schema迁移、版本管理、回滚、Flyway、Liquibase。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据架构"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 16: 数据迁移方案自动设计

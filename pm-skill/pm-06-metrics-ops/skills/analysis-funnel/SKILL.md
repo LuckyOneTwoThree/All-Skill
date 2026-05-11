@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据分析"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 5：漏斗自动分析
@@ -83,6 +84,23 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/analysis-funnel/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["funnel_name", "steps", "overall_conversion"],
+  "properties": {
+    "funnel_name": {"type": "string", "description": "漏斗名称"},
+    "date_range": {"type": "object", "description": "分析时间范围，包含起止日期"},
+    "steps": {"type": "array", "description": "漏斗步骤数据，包含事件名、计数和转化率"},
+    "overall_conversion": {"type": "number", "description": "整体转化率"},
+    "vs_last_period": {"type": "object", "description": "与上期对比，包含变化趋势和关键步骤"},
+    "critical_drop": {"type": "object", "description": "关键流失分析，包含维度拆解和潜在原因"}
+  }
+}
+```
 
 ```yaml
 funnel_analysis:

@@ -6,6 +6,7 @@ metadata:
   sub-module: "机会识别"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Opportunity Scoring — 机会评分
@@ -91,6 +92,19 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/opportunity-scoring/opportunity-scoring.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["opportunities", "metadata"],
+  "properties": {
+    "opportunities": {"type": "array", "description": "机会评分列表，含各维度得分和加权总分"},
+    "metadata": {"type": "object", "description": "评分元数据，含版本和待人类输入状态"}
+  }
+}
+```
 
 ```json
 {

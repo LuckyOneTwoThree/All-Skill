@@ -6,6 +6,7 @@ metadata:
   sub-module: "发布上线"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 7: 上线Checklist自动生成与追踪
@@ -565,6 +566,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/release-auto-checklist/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "release_id", "checklist", "completion_status"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "release_id": {"type": "string", "description": "发布ID"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "checklist": {"type": "object", "description": "各阶段完整Checklist，包含T-7/T-1/T-0/T+24h/T+72h"},
+    "completion_status": {"type": "object", "description": "完成状态汇总，包含当前阶段和完成率"},
+    "pending_alerts": {"type": "array", "description": "待处理告警列表"},
+    "risk_assessment": {"type": "object", "description": "风险评估，包含风险等级和阻断项"}
+  }
+}
+```
 
 ### 最终输出结构
 

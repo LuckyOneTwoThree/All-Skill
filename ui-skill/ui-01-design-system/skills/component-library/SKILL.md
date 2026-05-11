@@ -6,6 +6,7 @@ metadata:
   sub-module: "设计系统"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 2: 组件库自动规划与生成
@@ -101,6 +102,20 @@ metadata:
 ## 输出
 
 **存储路径**：`output/ui-design-system/component-library/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["library_metadata", "components", "dependency_graph"],
+  "properties": {
+    "library_metadata": {"type": "object", "description": "组件库元信息，包含版本号和各级组件数量统计"},
+    "components": {"type": "array", "description": "组件定义列表，包含每个组件的Props、变体、状态和可访问性规格"},
+    "dependency_graph": {"type": "object", "description": "组件依赖关系图，键为组件名，值为依赖的子组件列表"}
+  }
+}
+```
 
 ```json
 {

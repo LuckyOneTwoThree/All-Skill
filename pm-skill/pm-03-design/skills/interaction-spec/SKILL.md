@@ -1,4 +1,4 @@
----
+﻿---
 name: interaction-spec
 description: 当需要将用户流程和原型设计转化为完整的交互设计规范时使用。交互设计规范文档自动生成，包含交互状态机、动画规范、手势操作、反馈机制、无障碍交互和异常状态处理。关键词：交互设计规范、交互规范、状态机、动画规范、手势操作、交互反馈、无障碍交互。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "产品设计与原型"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - design-userflow
     - design-prototype

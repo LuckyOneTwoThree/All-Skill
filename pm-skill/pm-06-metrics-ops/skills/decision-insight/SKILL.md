@@ -6,6 +6,7 @@ metadata:
   sub-module: "决策闭环"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 12：数据洞察自动转化
@@ -171,6 +172,24 @@ decision_boundary:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/decision-insight/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["insight_id", "source", "narrative", "action_options"],
+  "properties": {
+    "insight_id": {"type": "string", "description": "洞察唯一标识"},
+    "created_at": {"type": "string", "description": "创建时间"},
+    "source": {"type": "object", "description": "洞察来源，包含类型和置信度"},
+    "narrative": {"type": "string", "description": "故事化叙述，包含背景、发现、影响和建议"},
+    "action_options": {"type": "array", "description": "决策选项列表，包含预期效果、风险和置信度"},
+    "decision_maker": {"type": "string", "description": "决策人角色"},
+    "deadline": {"type": "string", "description": "决策截止时间"}
+  }
+}
+```
 
 ```yaml
 data_insight:

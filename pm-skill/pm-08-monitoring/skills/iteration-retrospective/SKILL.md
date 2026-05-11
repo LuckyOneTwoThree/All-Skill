@@ -6,6 +6,7 @@ metadata:
   sub-module: "迭代优化"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 7: 迭代复盘自动化 🤖
@@ -245,8 +246,24 @@ improvement_suggestions:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["iteration_id", "summary", "metrics_analysis"],
+  "properties": {
+    "iteration_id": {"type": "string", "description": "迭代ID"},
+    "period": {"type": "object", "description": "迭代周期，包含起止时间"},
+    "summary": {"type": "object", "description": "迭代总结，包含完成率、质量状态和评分"},
+    "metrics_analysis": {"type": "object", "description": "指标分析，包含交付/质量/协作/效率四维度"},
+    "problem_identification": {"type": "object", "description": "问题识别，包含总数和P1/P2计数"},
+    "improvement_suggestions": {"type": "object", "description": "改进建议，包含总数和高优先级计数"}
+  }
+}
 ```
-output/pm-monitoring/iteration-retrospective/
+
+```
 ├── {iteration_id}/
 │   ├── summary.md
 │   ├── metrics_analysis.yaml

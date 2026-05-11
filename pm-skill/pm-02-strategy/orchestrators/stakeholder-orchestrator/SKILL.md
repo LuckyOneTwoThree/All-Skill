@@ -33,6 +33,19 @@ stakeholder-map → stakeholder-strategy-doc → stakeholder-brief
 | 2 | stakeholder-strategy-doc | 🤖→👤 AI建议，人类审批 |
 | 3 | stakeholder-brief | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[产品信息 + 组织架构 + 战略方向]
+       ↓
+stakeholder-map
+       ↓ stakeholder_map (name / role / category / influence / interest / quadrant / communication_strategy / key_concerns)
+stakeholder-strategy-doc
+       ↓ strategy_doc (strategic_narrative / key_messages / evidence_chain / action_items / communication_plan)
+stakeholder-brief
+       ↓ stakeholder_brief (one_line_direction / why_now / how_to_win / okr_summary / key_risks / resource_needs)
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

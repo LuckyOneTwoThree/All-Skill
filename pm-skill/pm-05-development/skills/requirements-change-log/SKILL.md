@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 需求变更记录自动生成
@@ -216,6 +217,20 @@ CHG-{YYYYMMDD}-{序号}
 |------|------|------|
 | requirements-change-log.md | Markdown | 变更记录+变更日志 |
 | requirements-change-log.json | JSON | 结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["log_metadata", "changes"],
+  "properties": {
+    "log_metadata": {"type": "object", "description": "日志元数据，包含产品名、当前迭代和生成时间"},
+    "statistics": {"type": "object", "description": "变更统计，包含变更总数、变更率和分类分布"},
+    "changes": {"type": "array", "description": "变更记录列表，包含变更内容、影响评估和审批状态"}
+  }
+}
+```
 
 **requirements-change-log.json 结构**：
 

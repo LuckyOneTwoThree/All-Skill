@@ -6,6 +6,7 @@ metadata:
   sub-module: "敏捷执行"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 6: Sprint Review与Retro自动化
@@ -242,6 +243,18 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/agile-review/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["sprint_review"],
+  "properties": {
+    "sprint_review": {"type": "object", "description": "Sprint评审数据，包含交付物、Demo清单和反馈收集"}
+  }
+}
+```
 
 ```json
 {

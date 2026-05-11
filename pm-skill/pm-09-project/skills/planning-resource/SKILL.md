@@ -6,6 +6,7 @@ metadata:
   sub-module: "项目规划"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 2: 资源需求自动规划
@@ -212,6 +213,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/planning-resource/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["resource_plan", "metadata"],
+  "properties": {
+    "resource_plan": {"type": "object", "description": "资源计划，包含工作量估算、需求、匹配和分配"},
+    "metadata": {"type": "object", "description": "元数据，包含生成时间、置信度和审核标记"}
+  }
+}
+```
 
 ```json
 {

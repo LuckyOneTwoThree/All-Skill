@@ -6,6 +6,7 @@ metadata:
   sub-module: "获客"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 2: 获客渠道自动评估
@@ -118,6 +119,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-growth/acquisition-channel/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["channels", "primary_channels", "test_channels", "observation_channels"],
+  "properties": {
+    "channels": {"type": "array", "description": "渠道评估详情列表，包含规模、转化率、ROI和质量评分"},
+    "primary_channels": {"type": "array", "description": "主力渠道名称列表"},
+    "test_channels": {"type": "array", "description": "测试渠道名称列表"},
+    "observation_channels": {"type": "array", "description": "观察渠道名称列表"},
+    "total_new_users": {"type": "number", "description": "总新增用户数"},
+    "blended_cac": {"type": "number", "description": "混合获客成本"},
+    "blended_roi": {"type": "number", "description": "混合ROI"}
+  }
+}
+```
 
 `channel_assessment`
 ```json

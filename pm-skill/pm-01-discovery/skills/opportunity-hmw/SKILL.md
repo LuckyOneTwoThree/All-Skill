@@ -6,6 +6,7 @@ metadata:
   sub-module: "机会识别"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Opportunity HMW — HMW 陈述生成
@@ -89,6 +90,20 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/opportunity-hmw/hmw.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["hmw_statements", "dimension_coverage", "metadata"],
+  "properties": {
+    "hmw_statements": {"type": "array", "description": "HMW陈述列表，含维度、创新空间和置信度"},
+    "dimension_coverage": {"type": "object", "description": "各维度HMW数量统计"},
+    "metadata": {"type": "object", "description": "元数据，含总数和来源引用"}
+  }
+}
+```
 
 ```json
 {

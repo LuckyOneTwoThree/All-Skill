@@ -6,6 +6,7 @@ metadata:
   sub-module: "复盘改进"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 8: 上线复盘自动化
@@ -519,6 +520,26 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/retrospective-auto/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "release_id", "effectiveness", "action_items"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "release_id": {"type": "string", "description": "发布ID"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "retrospective_period": {"type": "object", "description": "复盘周期，包含起止日期"},
+    "effectiveness": {"type": "object", "description": "效果复盘，包含目标达成和归因分析"},
+    "quality": {"type": "object", "description": "质量复盘，包含Bug统计和技术债务分析"},
+    "process": {"type": "object", "description": "过程复盘，包含问题发现时机和协作效率"},
+    "action_items": {"type": "array", "description": "改进行动项列表，包含优先级和负责人"},
+    "overall_assessment": {"type": "object", "description": "整体评估，包含评级和摘要"}
+  }
+}
+```
 
 ### 最终输出结构
 

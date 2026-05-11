@@ -6,6 +6,7 @@ metadata:
   sub-module: "问题诊断"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 3: 产品健康度自动诊断 🤖
@@ -209,8 +210,27 @@ bottlenecks:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_id", "overall_score", "scores_by_dimension"],
+  "properties": {
+    "report_id": {"type": "string", "description": "报告唯一标识"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "period": {"type": "object", "description": "评估周期，包含起止时间"},
+    "overall_score": {"type": "number", "description": "整体健康度评分"},
+    "score_trend": {"type": "string", "description": "评分趋势：improving/stable/declining"},
+    "scores_by_dimension": {"type": "object", "description": "各维度评分，包含性能/可用性/满意度/业务"},
+    "trend_analysis": {"type": "object", "description": "趋势预测，包含7天和30天预测变化"},
+    "bottlenecks": {"type": "array", "description": "瓶颈列表，包含严重度和维度"},
+    "recommendations": {"type": "array", "description": "改进建议列表，包含优先级和预期影响"}
+  }
+}
 ```
-output/pm-monitoring/diagnosis-health/
+
+```
 ├── {date}/
 │   ├── overall_score.md
 │   ├── dimension_scores.yaml

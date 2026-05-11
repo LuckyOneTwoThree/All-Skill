@@ -6,7 +6,7 @@ metadata:
   sub-module: "用户研究"
   type: "pipeline"
   version: "1.0"
-  execution_mode: "🤖→👤 AI建议人类审批"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 用户建模自动生成
@@ -133,6 +133,19 @@ metadata:
 
 输出文件：`output/pm-discovery/user-research-user-modeling/persona.json`
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["personas", "metadata"],
+  "properties": {
+    "personas": {"type": "array", "description": "Persona列表，含目标、行为、痛点和JTBD"},
+    "metadata": {"type": "object", "description": "元数据，含时间戳、来源和聚类质量评分"}
+  }
+}
+```
+
 ```json
 {
   "personas": [
@@ -201,6 +214,18 @@ metadata:
 
 输出文件：`output/pm-discovery/user-research-user-modeling/empathy-map.json`
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["empathy_maps"],
+  "properties": {
+    "empathy_maps": {"type": "array", "description": "同理心地图列表，含Says/Thinks/Does/Feels四象限"}
+  }
+}
+```
+
 ```json
 {
   "empathy_maps": [
@@ -244,6 +269,18 @@ metadata:
 ### journey-map.json
 
 输出文件：`output/pm-discovery/user-research-user-modeling/journey-map.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["journey_maps"],
+  "properties": {
+    "journey_maps": {"type": "array", "description": "用户旅程地图列表，含阶段、情绪曲线和机会点"}
+  }
+}
+```
 
 ```json
 {

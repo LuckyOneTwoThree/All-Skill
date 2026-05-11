@@ -6,6 +6,7 @@ metadata:
   sub-module: "问题诊断"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - diagnosis-competition
     - market-competitor-intel
@@ -96,6 +97,25 @@ metadata:
 |------|------|------|
 | 竞品监控报告 | `output/pm-monitoring/competitor-monitoring-report/competitor-monitoring-report.md` | 人类可读的完整报告 |
 | 结构化数据 | `output/pm-monitoring/competitor-monitoring-report/competitor-monitoring-report.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["monitoring_period", "summary", "dynamics", "threat_assessment"],
+  "properties": {
+    "monitoring_period": {"type": "object", "description": "监控周期，包含起止日期"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "summary": {"type": "object", "description": "执行摘要，包含监控竞品数、重大动态和威胁等级"},
+    "dynamics": {"type": "object", "description": "竞品动态汇总，包含重大/产品/市场/舆论动态"},
+    "feature_changes": {"type": "object", "description": "功能变更追踪，包含新增/优化/下线和对比矩阵"},
+    "market_strategy_changes": {"type": "array", "description": "市场策略变化列表"},
+    "threat_assessment": {"type": "object", "description": "威胁评估，包含直接/间接威胁和机会窗口"},
+    "response_recommendations": {"type": "object", "description": "应对建议，包含即时/短期/长期和监控加强"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

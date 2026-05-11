@@ -6,6 +6,7 @@ metadata:
   sub-module: "API设计"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 12: API契约自动设计
@@ -133,6 +134,24 @@ metadata:
 
 **存储路径**：`output/backend-api-design/api-contract/`
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| openapi | string | 是 | OpenAPI版本号 |
+| info | object | 是 | API基本信息 |
+| info.title | string | 是 | API名称 |
+| info.version | string | 是 | API版本 |
+| paths | object | 是 | API端点定义 |
+| paths.{endpoint} | object | 是 | 端点路径 |
+| paths.{endpoint}.{method} | object | 是 | HTTP方法定义 |
+| paths.{endpoint}.{method}.summary | string | 是 | 方法摘要 |
+| paths.{endpoint}.{method}.responses | object | 是 | 响应定义 |
+| paths.{endpoint}.{method}.responses."200" | object | 是 | 成功响应 |
+| components | object | 否 | 公共组件定义 |
+| components.schemas | object | 否 | 数据模型定义 |
+| security | array | 否 | 全局安全策略 |
+
 ```json
 {
   "api_metadata": {
@@ -201,3 +220,23 @@ metadata:
   1. 上传prd.md和er_model.json文件
   2. 描述核心业务实体和功能需求
   3. 提供现有API文档（用于增量设计）
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能点增删 | API端点增删 | 标注受影响的API端点，生成变更清单 |
+| 数据模型变更 | API请求/响应结构 | 标注受影响的字段，评估向后兼容性 |
+| 安全等级变更 | API安全策略 | 标注受影响的安全规则，建议人类确认 |
+
+当API契约自身变更时，对下游的通知机制：
+
+| API变更类型 | 兼容性 | 通知范围 | 通知方式 |
+|-------------|--------|----------|----------|
+| 新增端点 | 向后兼容 | api-contract-consume | 标记新增端点，前端可增量对接 |
+| 新增可选字段 | 向后兼容 | api-contract-consume | 标记新增字段，前端可选择性使用 |
+| 删除端点 | 破坏性变更 | api-contract-consume、frontend-test | 必须人类确认，提供迁移方案和过渡期 |
+| 修改字段类型 | 破坏性变更 | api-contract-consume、frontend-test | 必须人类确认，提供兼容方案或版本升级 |
+| 修改必填/可选 | 可能破坏 | api-contract-consume | 标注变更，建议前端验证 |

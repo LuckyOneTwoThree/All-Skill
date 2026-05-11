@@ -58,6 +58,126 @@ metadata:
 ### 场景6：项目管理和协作
 推荐入口：模块9 project-planning-orchestrator
 
+## 场景模板
+
+场景模板提供完整的编排器调用序列，可直接按顺序执行，无需自行判断每个阶段该用哪个编排器。
+
+### 模板1：从0到1做SaaS/B端产品
+
+> 🚀 **一键启动**：使用跨领域编排器 `product-launch-orchestrator` 自动协调全流程
+
+```
+product-launch-orchestrator
+  阶段1：探索与定位
+    insight-orchestrator → market-orchestrator → business-orchestrator → positioning-orchestrator
+  阶段2：设计与度量
+    design-orchestrator → metrics-orchestrator
+  阶段3：并行构建（PRD确认后同时启动）
+    ├── api-design-orchestrator → data-architecture-orchestrator → backend-architecture-orchestrator
+    └── design-system-orchestrator → ui-frontend-orchestrator
+  阶段4：集成验证
+    frontend-integration-orchestrator
+  阶段5：交付上线
+    quality-orchestrator → release-orchestrator → retrospective-orchestrator
+```
+
+关键数据契约：
+- design-orchestrator 输出 PRD → api-design-orchestrator 和 development-orchestrator 消费
+- positioning-orchestrator 输出定位陈述 → design-system-orchestrator 消费（品牌基因）
+- metrics-orchestrator 输出指标体系 → quality-orchestrator 消费（验收标准）
+
+### 模板2：从0到1做C端/移动端产品
+
+> 🚀 **一键启动**：使用跨领域编排器 `product-launch-orchestrator` 自动协调全流程（前端优先模式）
+
+```
+product-launch-orchestrator
+  阶段1：用户研究与洞察
+    user-research-orchestrator → insight-orchestrator → opportunity-orchestrator
+  阶段2：战略与设计
+    positioning-orchestrator → design-orchestrator → metrics-orchestrator
+  阶段3：并行构建
+    ├── design-system-orchestrator（设计系统建立）
+    └── api-design-orchestrator（后端API设计）
+  阶段4：前端优先开发
+    ui-frontend-orchestrator → frontend-integration-orchestrator
+  阶段5：质量与发布
+    quality-orchestrator → release-orchestrator → retrospective-orchestrator
+```
+
+关键数据契约：
+- design-orchestrator 输出 IA/原型 → ui-frontend-orchestrator 消费
+- api-design-orchestrator 输出 OpenAPI契约 → frontend-integration-orchestrator 消费
+- design-system-orchestrator 输出设计令牌 → ui-frontend-orchestrator 消费
+
+### 模板3：已有产品数据驱动优化
+
+```
+阶段1：数据诊断
+  analysis-orchestrator → decision-orchestrator
+
+阶段2：迭代设计
+  design-orchestrator（仅更新变更部分）→ metrics-orchestrator（补充新指标）
+
+阶段3：开发与验证
+  development-orchestrator → quality-orchestrator → release-orchestrator
+
+阶段4：效果验证
+  experiment-orchestrator → analysis-orchestrator（对比前后数据）
+```
+
+关键数据契约：
+- analysis-orchestrator 输出分析报告 → decision-orchestrator 消费（决策依据）
+- experiment-orchestrator 输出实验结果 → analysis-orchestrator 消费（效果对比）
+
+### 模板4：增长突破
+
+```
+阶段1：增长诊断
+  growth-orchestrator → [瓶颈子编排器：acquisition / activation / retention / revenue]
+
+阶段2：实验验证
+  experiment-orchestrator
+
+阶段3：规模化
+  release-orchestrator（全量发布增长方案）
+```
+
+关键数据契约：
+- growth-orchestrator 输出增长诊断 → 瓶颈子编排器消费
+- experiment-orchestrator 输出实验结果 → 增长方案是否全量发布的决策依据
+
+### 模板5：功能迭代
+
+> 🚀 **一键启动**：使用跨领域编排器 `product-iteration-orchestrator` 自动协调迭代全流程
+
+```
+product-iteration-orchestrator
+  阶段1：需求分析
+    requirements-orchestrator
+  阶段2：方案设计
+    design-orchestrator（仅变更模块）
+  阶段3：影响分析与条件分支执行
+    ├── API需变更 → api-design-orchestrator → data-architecture-orchestrator → backend-architecture-orchestrator
+    ├── UI需变更 → design-system-orchestrator → ui-frontend-orchestrator
+    └── 无变更 → 跳过
+  阶段4：集成与交付
+    frontend-integration-orchestrator（仅API变更时）
+    → quality-orchestrator → release-orchestrator
+```
+
+关键数据契约：
+- requirements-orchestrator 输出需求文档 → design-orchestrator 消费
+- design-orchestrator 输出更新后的PRD → development-orchestrator 消费
+
+### 模板使用说明
+
+1. **按需裁剪**：模板是完整路径，实际使用中可根据产品阶段跳过已完成的阶段
+2. **并行启动**：标记为"并行"的阶段可同时启动，缩短整体周期
+3. **数据依赖**：每个模板标注了关键数据契约，确保跨编排器的数据传递正确
+4. **项目管理**：所有模板均可叠加 project-planning-orchestrator 进行项目管理
+5. **降级执行**：如果某个编排器的上游数据不存在，该编排器仍可独立执行（按各Skill的降级策略）
+
 ## Skill目录结构
 
 ### 存放路径
@@ -256,6 +376,29 @@ output/pm-{源模块}/{源skill-name}/{文件名}
 - Markdown文档：`{描述性名称}.md`
 - 图表文件：`charts/{图表名称}.png`
 - 数据文件：`data/{数据名称}.csv` 或 `data/{数据名称}.json`
+
+### 输出校验规则
+
+每个 Pipeline Skill 的输出部分包含 **输出校验规则** 表格，定义输出 JSON 的必填字段和类型约束。AI 生成输出后，必须对照校验规则验证：
+
+| 校验项 | 规则 | 不达标处理 |
+|--------|------|-----------|
+| 必填字段完整性 | 所有标记为"必填"的字段必须存在 | 自动补填缺失字段，标注 `auto_filled: true`，置信度降为0.3 |
+| 字段类型正确性 | 字段值类型必须匹配声明类型 | 尝试类型转换，转换失败则标注 `type_error: true` |
+| 枚举值合法性 | enum 类型字段值必须在允许范围内 | 标注 `invalid_value: true`，建议人类修正 |
+| 置信度标注 | 所有推断性字段必须标注置信度(0-1.0) | 缺失置信度的字段补填默认值0.3并标记 |
+| 数组非空 | 标记为必填的 array 字段不能为空数组 | 标注 `empty_array: true`，建议人类补充数据 |
+
+校验规则表格格式：
+
+```
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| 顶层字段 | object/array/string/number/boolean | 是/否 | 字段描述 |
+| 嵌套字段 | ... | ... | ... |
+```
+
+> 注：校验规则为渐进式添加。核心 Skill（design-prd、api-contract、design-token、metrics-system 等）已包含完整校验规则，其余 Skill 按需补充。
 
 ## AI能力边界
 

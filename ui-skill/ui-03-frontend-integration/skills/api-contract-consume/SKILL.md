@@ -1,4 +1,4 @@
----
+﻿---
 name: api-contract-consume
 description: 当需要基于API契约生成前端请求层代码时使用。API契约消费自动生成，基于OpenAPI/Swagger文档，自动生成前端请求层代码、TypeScript类型定义、Mock数据和接口调用Hook，实现前后端契约驱动开发。关键词：API契约、OpenAPI、请求层、类型定义、Mock数据、前后端联调。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "前端集成"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 9: API契约消费自动生成

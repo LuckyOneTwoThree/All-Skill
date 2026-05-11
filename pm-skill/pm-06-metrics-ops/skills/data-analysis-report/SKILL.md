@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据分析"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 数据洞察报告自动生成
@@ -188,6 +189,24 @@ metadata:
 |------|------|------|
 | data-analysis-report.md | Markdown | 完整数据分析报告 |
 | data-analysis-report.json | JSON | 结构化数据（供下游Skill引用） |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_metadata", "executive_summary", "insights", "recommendations"],
+  "properties": {
+    "report_metadata": {"type": "object", "description": "报告元数据，包含产品名、时间范围和数据来源"},
+    "executive_summary": {"type": "object", "description": "执行摘要，包含关键指标、发现和首要建议"},
+    "funnel_analysis": {"type": "object", "description": "漏斗分析，包含完整漏斗、最大流失和机会点"},
+    "retention_analysis": {"type": "object", "description": "留存分析，包含关键节点和生命周期阶段"},
+    "anomaly_analysis": {"type": "object", "description": "异常分析，包含事件和归因"},
+    "insights": {"type": "array", "description": "洞察列表，包含数据事实、业务含义和行动方向"},
+    "recommendations": {"type": "array", "description": "建议列表，包含优先级、预期提升和验证方式"}
+  }
+}
+```
 
 **data-analysis-report.json 结构**：
 

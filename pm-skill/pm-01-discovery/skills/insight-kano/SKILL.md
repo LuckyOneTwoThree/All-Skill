@@ -6,6 +6,7 @@ metadata:
   sub-module: "需求洞察"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # KANO自动分类
@@ -103,6 +104,21 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/insight-kano/kano.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["analysis_metadata", "kano_classification", "summary"],
+  "properties": {
+    "analysis_metadata": {"type": "object", "description": "分析元数据，包含来源文件、功能总数和时间戳"},
+    "kano_classification": {"type": "array", "description": "KANO分类结果列表"},
+    "boundary_cases": {"type": "array", "description": "边界情况列表"},
+    "summary": {"type": "object", "description": "各类型功能数量统计"}
+  }
+}
+```
 
 ### Output JSON 格式
 

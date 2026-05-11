@@ -1,4 +1,4 @@
----
+﻿---
 name: monitoring-dashboard
 description: 当需要配置监控Dashboard时使用。监控 Dashboard 自动配置，根据不同角色需求，自动生成监控指标分组和可视化组件配置。关键词：监控Dashboard、数据看板、实时监控、可视化、监控面板。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "监控预警"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 8: 监控 Dashboard 自动配置 🤖
@@ -25,7 +26,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 指标体系 | JSON | 是 | metrics-system → metric_system | 监控指标定义和分类 |
+| 指标体系 | JSON | 是 | metrics-system → metric_system.json | 监控指标定义和分类 |
 | 监控体系 | JSON | 是 | monitoring-system → 告警规则 | 已有的告警规则和阈值 |
 | 用户角色 | string[] | 是 | 用户提供 | 需要访问 Dashboard 的角色 |
 | 现有 Dashboard | JSON | ○ | monitoring-dashboard → 现有配置 | 已有配置（如有） |
@@ -182,8 +183,19 @@ dashboard_template:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["dashboards"],
+  "properties": {
+    "dashboards": {"type": "array", "description": "Dashboard配置列表，包含角色、标题和组件"}
+  }
+}
 ```
-output/pm-monitoring/monitoring-dashboard/
+
+```
 ├── {role}/
 │   └── {dashboard_name}.yaml
 ├── shared/

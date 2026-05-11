@@ -6,6 +6,7 @@ metadata:
   sub-module: "数据分析"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 6：留存自动分析
@@ -86,6 +87,22 @@ Cohort划分
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/analysis-retention/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["overall"],
+  "properties": {
+    "overall": {"type": "object", "description": "整体留存数据，包含关键节点、曲线形态和历史对比"},
+    "cohort_trend": {"type": "object", "description": "Cohort趋势分析，包含月度队列和洞察"},
+    "aha_moment_candidates": {"type": "array", "description": "Aha Moment候选列表，包含行为、留存提升和统计显著性"},
+    "churn_prediction": {"type": "object", "description": "流失预测，包含高风险用户列表和预警模型"},
+    "lifecycle_stages": {"type": "array", "description": "生命周期阶段划分"}
+  }
+}
+```
 
 ```yaml
 retention_analysis:

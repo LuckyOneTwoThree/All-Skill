@@ -35,6 +35,35 @@ ui-component-gen → page-assembly → interaction-design → ui-review → fron
 | 4 | ui-review | 🤖 AI自动执行 |
 | 5 | frontend-test | 🤖 AI自动执行 |
 
+### 数据流转
+
+```
+[设计令牌 + 组件库 + 页面需求 + 原型规格]
+       ↓
+ui-component-gen
+       ↓ components (code / props_types / story / test_skeleton / design_token_compliance)
+page-assembly
+       ↓ pages (page_code / route_config / state_management / component_tree / data_flow)
+interaction-design
+       ↓ interaction (state_machine / animations / gestures / feedback_patterns / loading_states)
+ui-review
+       ↓ review_report (compliance / accessibility / interaction / responsive / issues / severity)
+frontend-test
+       ↓ test_results (unit_tests / visual_regression / e2e_tests / accessibility_tests / coverage)
+```
+
+### 调度逻辑
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 设计令牌+组件库就绪 | → ui-component-gen（组件代码生成） |
+| 组件代码人类确认完成 | → page-assembly（页面组装） |
+| 页面布局人类确认完成 | → interaction-design（交互设计） |
+| 交互方案人类确认完成 | → ui-review（UI自动审查） |
+| UI审查P0问题=0 | → frontend-test（前端测试） |
+| UI审查P0问题>0 | → 回退到对应阶段修复 |
+| 前端测试核心流程不通过 | → 回退到组件生成阶段修复 |
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -60,3 +89,14 @@ ui-component-gen → page-assembly → interaction-design → ui-review → fron
 | 页面布局确认 | AI生成页面布局方案，人类确认布局选择 |
 | 交互方案确认 | AI生成交互状态机，人类确认交互行为 |
 | UI审查P1问题处理 | P1问题修复还是接受为技术债务 |
+| 测试策略确认 | AI生成测试方案后，人类确认测试范围和优先级 |
+
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| 设计令牌缺失 | 降级使用默认设计令牌，标注"缺乏品牌定制" |
+| 组件库不完整 | 基于已有组件组装，缺失组件标注"待补充" |
+| UI审查P0问题 | 必须修复后才能进入测试阶段 |
+| E2E测试环境不可用 | 跳过E2E测试，标注"E2E待执行"，不阻塞发布 |
+| 组件树层级过深 | 标注"需重构"，人类确认是否立即重构或标记为技术债务 |

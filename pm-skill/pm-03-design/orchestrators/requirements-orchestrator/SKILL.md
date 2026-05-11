@@ -33,6 +33,19 @@ requirements-collection → requirements-understanding → requirements-prioriti
 | 2 | requirements-understanding | 🤖→👤 AI建议，人类审批 |
 | 3 | requirements-prioritization | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[需求来源: 用户反馈 + 业务方需求 + 数据异常]
+       ↓
+requirements-collection
+       ↓ requirements (category / source / confidence / raw_content)
+requirements-understanding
+       ↓ requirement_analysis (surface / behavioral / essential / relationships / confidence)
+requirements-prioritization
+       ↓ prioritized_requirements (rice_score / moscow_classification / priority_rank / effort_estimate)
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

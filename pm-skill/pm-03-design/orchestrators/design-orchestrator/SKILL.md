@@ -37,6 +37,27 @@ design-prd → requirements-srs → design-ia → design-userflow → design-pro
 | 6 | interaction-spec | 🤖→👤 AI建议，人类审批 |
 | 7 | design-handoff-spec | 🤖→👤 AI建议，人类审批 |
 
+### 数据流转
+
+```
+[需求分析输出 + 创意方案输出 + 战略输出]
+       ↓
+design-prd
+       ↓ prd (background / objectives / solution_design / functional_spec / metrics / quality_report)
+requirements-srs
+       ↓ srs (functional_requirements / non_functional_requirements / constraints / data_models)
+design-ia
+       ↓ ia_proposals (navigation_pattern / content_structure / card_sorting_result / hierarchy)
+design-userflow
+       ↓ userflow (flow_steps / decision_points / error_flows / dead_ends)
+design-prototype
+       ↓ prototype (pages / components / interactions / states / design_system_compliance / heuristic_evaluation)
+interaction-spec
+       ↓ interaction_spec (state_machine / animations / gestures / feedback_patterns / accessibility)
+design-handoff-spec
+       ↓ handoff_spec (design_tokens / component_specs / spacing / assets / implementation_notes)
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

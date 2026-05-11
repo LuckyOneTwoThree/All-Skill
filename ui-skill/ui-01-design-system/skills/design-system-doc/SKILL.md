@@ -6,6 +6,7 @@ metadata:
   sub-module: "设计系统"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 3: 设计系统文档自动生成
@@ -102,6 +103,20 @@ design-system/
 ## 输出
 
 **存储路径**：`output/ui-design-system/design-system-doc/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["doc_metadata", "structure", "component_doc_example"],
+  "properties": {
+    "doc_metadata": {"type": "object", "description": "文档元信息，包含版本号、生成时间和文档页数统计"},
+    "structure": {"type": "object", "description": "文档目录结构，按getting_started/foundations/components/patterns/changelog分类"},
+    "component_doc_example": {"type": "object", "description": "组件文档示例，展示单个组件文档的覆盖情况"}
+  }
+}
+```
 
 ```json
 {

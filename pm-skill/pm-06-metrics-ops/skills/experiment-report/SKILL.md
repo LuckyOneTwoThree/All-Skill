@@ -6,6 +6,7 @@ metadata:
   sub-module: "实验验证"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - experiment-design
     - experiment-execution
@@ -88,6 +89,24 @@ A/B测试报告的核心价值在于将统计结论转化为可执行的行动�
 |------|------|------|
 | A/B测试报告 | `output/pm-metrics-ops/experiment-report/experiment-report.md` | 人类可读的完整报告 |
 | 结构化数据 | `output/pm-metrics-ops/experiment-report/experiment-report.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["experiment_id", "summary", "action_recommendation"],
+  "properties": {
+    "experiment_id": {"type": "string", "description": "实验ID"},
+    "experiment_name": {"type": "string", "description": "实验名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "summary": {"type": "object", "description": "统计结论摘要，包含结论、推荐和主指标结果"},
+    "heterogeneous_effects": {"type": "array", "description": "异质性效应分析"},
+    "novelty_effect": {"type": "object", "description": "新奇效应评估"},
+    "action_recommendation": {"type": "object", "description": "行动建议，包含决策、理由、风险和后续实验"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

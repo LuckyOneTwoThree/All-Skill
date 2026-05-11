@@ -33,6 +33,29 @@ architecture-pattern → service-design → backend-review
 | 2 | service-design | 🤖→👤 AI建议，人类审批 |
 | 3 | backend-review | 🤖 AI自动执行 |
 
+### 数据流转
+
+```
+[业务需求 + API契约 + 数据模型]
+       ↓
+architecture-pattern
+       ↓ architecture_decision (pattern: monolithic / microservices / serverless / evolution_roadmap / tech_stack)
+service-design
+       ↓ service_architecture (bounded_contexts / service_boundaries / communication: sync / async / dependency_graph / api_composition)
+backend-review
+       ↓ review_report (performance / security / maintainability / scalability / issues: P0 / P1 / P2 / fix_suggestions)
+```
+
+### 调度逻辑
+
+| 触发事件 | 调度动作 |
+|----------|----------|
+| 业务需求+API契约+数据模型就绪 | → architecture-pattern（架构模式选择） |
+| 架构模式人类确认完成 | → service-design（服务设计） |
+| 服务设计人类确认完成 | → backend-review（后端审查） |
+| 审查P0问题>0 | → 回退到对应阶段修复 |
+| 审查P0问题=0 | → 标注"架构就绪，可进入开发" |
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill
@@ -56,3 +79,14 @@ architecture-pattern → service-design → backend-review
 | 服务拆分粒度 | 拆分过细增加复杂度，拆分过粗失去灵活性 |
 | 演进节奏 | 何时从单体演进到微服务，人类决定 |
 | P1问题处理 | 修复还是接受为技术债务 |
+| 架构就绪确认 | 后端审查通过后，人类确认架构方案可进入开发 |
+
+## 异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| 业务需求不完整 | 基于PRD推断业务领域，标注"推断值" |
+| API契约缺失 | 基于PRD推断接口需求，标注"API契约待确认" |
+| 架构模式争议 | 提供单体+微服务双方案对比，人类决策 |
+| 服务循环依赖 | 自动检测并告警，必须消除后才能进入审查 |
+| 审查P0问题 | 必须修复后才能进入开发阶段 |

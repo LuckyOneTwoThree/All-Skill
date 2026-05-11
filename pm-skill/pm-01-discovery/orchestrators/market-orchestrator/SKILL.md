@@ -45,6 +45,21 @@ metadata:
 - ⏸ 等待 competitor-report.md 生成
 - ✅ 完整竞品分析报告已产出
 
+### 数据流转
+
+```
+[品类关键词 + 目标市场]
+       ↓
+market-tam-som ∥ market-pest
+       ↓ tam / sam / som / confidence / political / economic / social / technological
+market-competitor-intel
+       ↓ feature_matrix / reputation / pricing / strategic_signals / alerts
+market-competitor-quadrant
+       ↓ quadrants (direct / indirect / substitutes / potential) / summary
+market-competitor-report
+       ↓ executive_summary / competitor_profiles / swot / differentiation_strategies
+```
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

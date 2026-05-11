@@ -6,6 +6,7 @@ metadata:
   sub-module: "监控预警"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 9: 告警升级与 On-Call 自动化 🤖
@@ -237,8 +238,23 @@ oncall_report:
 
 ## 输出
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_id", "alerts", "oncall_schedule"],
+  "properties": {
+    "report_id": {"type": "string", "description": "报告唯一标识"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "alerts": {"type": "array", "description": "告警列表，包含严重度、升级级别和已执行动作"},
+    "oncall_schedule": {"type": "object", "description": "值班安排，包含当前和下一轮值班信息"},
+    "oncall_reports": {"type": "array", "description": "值班报告，包含告警数、SLA合规率和平均解决时间"}
+  }
+}
 ```
-output/pm-monitoring/monitoring-escalation/
+
+```
 ├── alerts/
 │   └── {date}/
 │       ├── {alert_id}/

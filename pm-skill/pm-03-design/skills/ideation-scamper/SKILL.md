@@ -1,4 +1,4 @@
----
+﻿---
 name: ideation-scamper
 description: 当需要系统化生成产品改进方案时使用。SCAMPER结构化方案生成工具，基于HMW陈述，从替代、合并、改编、修改、转换用途、消除、逆向7个维度系统化生成产品方案。关键词：SCAMPER、方案生成、产品创新、结构化思考。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "创意发散与方案构思"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 5：SCAMPER结构化方案生成

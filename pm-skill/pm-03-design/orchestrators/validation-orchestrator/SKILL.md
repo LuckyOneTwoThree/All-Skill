@@ -34,6 +34,21 @@ validation-assumption-map → validation-mvp → validation-experiment → valid
 | 3 | validation-experiment | 🤖→👤 AI建议，人类审批 |
 | 4 | validation-usability | 👤→🤖 人类执行，AI辅助 |
 
+### 数据流转
+
+```
+[PRD + 方案设计 + 原型]
+       ↓
+validation-assumption-map
+       ↓ assumption_map (assumptions: value / feasibility / usability / growth / risk_score / validation_method)
+validation-mvp
+       ↓ mvp_scope (core_mvp / extended_mvp / excluded / scope_ratio / key_assumptions)
+validation-experiment
+       ↓ experiment_design (hypothesis / test_method / success_criteria / sample_size / duration / confidence_level)
+validation-usability
+       ↓ usability_report (problems / severity / insights / assumption_validation / improvement_suggestions)
+```
+
 ## 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

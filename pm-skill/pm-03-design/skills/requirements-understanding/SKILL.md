@@ -1,4 +1,4 @@
----
+﻿---
 name: requirements-understanding
 description: 当需要深入理解需求背后的真实问题时使用。需求自动理解与拆解，将分类后的需求还原为真实问题，分析需求间的关联关系。执行角色：🤖→👤 AI建议，人类审批。关键词：需求理解、需求拆解、问题还原、需求关联、需求分析。
 metadata:
@@ -7,6 +7,7 @@ metadata:
   type: "pipeline"
   pipeline: "2"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 2：需求自动理解与拆解

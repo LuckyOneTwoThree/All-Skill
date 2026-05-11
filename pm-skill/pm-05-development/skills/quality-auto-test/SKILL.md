@@ -6,6 +6,7 @@ metadata:
   sub-module: "质量保障"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 4: 测试用例自动生成与追踪
@@ -355,6 +356,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/quality-auto-test/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "test_cases", "coverage_report"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "generated_at": {"type": "string", "description": "生成时间"},
+    "source_prd_version": {"type": "string", "description": "来源PRD版本号"},
+    "test_cases": {"type": "array", "description": "所有生成的测试用例，包含Happy Path/边界/异常用例"},
+    "coverage_report": {"type": "object", "description": "覆盖率统计报告，包含各类型覆盖率"},
+    "code_case_mapping": {"type": "array", "description": "用例与代码的映射关系"},
+    "unmapped_cases": {"type": "array", "description": "未关联到代码的用例"}
+  }
+}
+```
 
 ### 最终输出结构
 

@@ -6,6 +6,7 @@ metadata:
   sub-module: "机会识别"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Opportunity Brief — 机会简报生成
@@ -86,6 +87,26 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/opportunity-brief/opportunity-brief.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["title", "problem_statement", "evidence_summary", "opportunity_score", "key_assumptions", "recommended_next_step"],
+  "properties": {
+    "title": {"type": "string", "description": "机会简报标题"},
+    "problem_statement": {"type": "string", "description": "结构化问题陈述"},
+    "evidence_summary": {"type": "object", "description": "证据摘要，含用户研究、市场分析和竞争格局"},
+    "opportunity_score": {"type": "object", "description": "机会评分，含加权总分和各维度得分"},
+    "hmw_statements": {"type": "array", "description": "HMW陈述列表"},
+    "key_assumptions": {"type": "array", "description": "关键假设列表"},
+    "recommended_next_step": {"type": "string", "description": "推荐的下一步行动"},
+    "human_decisions_needed": {"type": "array", "description": "需人类决策的事项列表"},
+    "metadata": {"type": "object", "description": "元数据，含版本、时间戳和来源文件"}
+  }
+}
+```
 
 ```json
 {

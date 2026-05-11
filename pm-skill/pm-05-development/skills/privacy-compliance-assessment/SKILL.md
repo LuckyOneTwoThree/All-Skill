@@ -6,6 +6,7 @@ metadata:
   sub-module: "开发交付"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 隐私合规评估文档自动生成
@@ -182,6 +183,24 @@ metadata:
 |------|------|------|
 | privacy-compliance-assessment.md | Markdown | 完整隐私合规评估报告 |
 | privacy-compliance-assessment.json | JSON | 结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_metadata", "applicable_regulations", "compliance_gaps", "compliance_rate"],
+  "properties": {
+    "report_metadata": {"type": "object", "description": "报告元数据，包含产品名、目标市场和风险等级"},
+    "applicable_regulations": {"type": "array", "description": "适用法规列表，包含法规名称和合规等级"},
+    "data_inventory": {"type": "object", "description": "个人信息盘点，包含数据分类和映射"},
+    "compliance_gaps": {"type": "array", "description": "合规差距列表，包含检查项和整改建议"},
+    "third_party_assessment": {"type": "array", "description": "第三方合规评估结果"},
+    "remediation_plan": {"type": "array", "description": "整改计划，包含优先级和工作量估算"},
+    "compliance_rate": {"type": "number", "description": "合规率"}
+  }
+}
+```
 
 **privacy-compliance-assessment.json 结构**：
 

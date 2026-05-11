@@ -1,4 +1,4 @@
----
+﻿---
 name: market-pest
 description: 当需要扫描目标市场的政策法规、经济指标、社会趋势、技术动态时使用。PEST自动扫描，输出四维度趋势摘要与影响评估，重大变化实时告警。关键词：PEST分析、政策法规、经济指标、社会趋势、技术动态、环境扫描。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "市场竞品"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # PEST自动扫描
@@ -82,6 +83,25 @@ metadata:
 
 输出文件：`output/pm-discovery/market-pest/pest.json`
 
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["category_keywords", "target_market", "scan_timestamp", "political", "economic", "social", "technological"],
+  "properties": {
+    "category_keywords": {"type": "string", "description": "品类关键词"},
+    "target_market": {"type": "string", "description": "目标市场"},
+    "scan_timestamp": {"type": "string", "description": "扫描时间戳"},
+    "political": {"type": "object", "description": "政策法规维度趋势与信号"},
+    "economic": {"type": "object", "description": "经济指标维度趋势与信号"},
+    "social": {"type": "object", "description": "社会趋势维度趋势与信号"},
+    "technological": {"type": "object", "description": "技术动态维度趋势与信号"},
+    "alerts": {"type": "array", "description": "重大变化告警列表"}
+  }
+}
+```
+
 ```json
 {
   "category_keywords": "在线教育",
@@ -144,6 +164,8 @@ metadata:
 |------|---------|------|
 | 实时告警 | 影响程度 ≥ 4 | 实时告警给人类PM，推送信号描述+影响评估+应对建议 |
 | 信号升级 | 信号来源不可验证或矛盾 | 标注需人类确认，降低置信度 |
+| 数据来源可信度 < 0.5 | 标注"数据来源不可靠"，建议人类验证或更换数据源 |
+| PEST维度数据缺失 | 标注"维度数据不完整"，使用行业基准值填充并标注"推断值" |
 
 ## 质量检查
 
@@ -155,6 +177,7 @@ metadata:
 - [ ] 关键变化信号已识别
 - [ ] 影响评估已完成（方向+程度+时间窗口）
 - [ ] 重大变化（影响程度≥4）已告警
+- [ ] 数据来源标注 | 每个PEST维度标注数据来源和可信度 | 未标注来源的维度标记"来源不明"
 
 ---
 

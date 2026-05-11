@@ -6,6 +6,7 @@ metadata:
   sub-module: "变现"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 10: 升级转化自动化
@@ -201,6 +202,21 @@ success_criteria:
 ## 输出
 
 **存储路径**：`output/pm-growth/revenue-upsell/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["upgrade_signals", "personalized_offers"],
+  "properties": {
+    "upgrade_signals": {"type": "array", "description": "升级信号用户列表，包含信号类型、评分和推荐套餐"},
+    "personalized_offers": {"type": "array", "description": "个性化升级方案列表，包含价值主张和激励"},
+    "ab_tests": {"type": "array", "description": "A/B测试设计方案列表"},
+    "tracking": {"type": "object", "description": "升级效果追踪，包含转化率、收入影响和ROI"}
+  }
+}
+```
 
 `upsell_automation`
 ```json

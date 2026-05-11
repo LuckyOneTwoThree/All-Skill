@@ -43,6 +43,21 @@ metadata:
 - → 加载 `opportunity-brief` 执行
 - ⏸ 等待 opportunity-brief.json 生成且人类做最终决策
 
+### 数据流转
+
+```
+[用户研究数据 + 市场分析数据 + 竞品分析数据]
+       ↓
+opportunity-scoring
+       ↓ scores (problem_validity / market_size / feasibility / strategic_fit / competitive_moat) / weighted_total
+opportunity-hmw
+       ↓ hmw_statements / dimension_coverage / innovation_space
+opportunity-problem-statement
+       ↓ problem_statement / template_elements / data_support / quality_check
+opportunity-brief
+       ↓ title / evidence_summary / opportunity_score / hmw_statements / key_assumptions / recommended_next_step
+```
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

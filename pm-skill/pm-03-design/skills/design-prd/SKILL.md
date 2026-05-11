@@ -6,6 +6,7 @@ metadata:
   sub-module: "产品设计与原型"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 8: PRD生成器
@@ -883,6 +884,27 @@ L2处理：
 **格式**：JSON
 **文件命名**：`{PRD-ID}_quality_report_{时间戳}.json`
 
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| prd_id | string | 是 | PRD唯一标识 |
+| level | enum(L,S,X) | 是 | PRD分级 |
+| metadata | object | 是 | 元信息 |
+| metadata.product_name | string | 是 | 产品名称 |
+| metadata.version | string | 是 | 版本号 |
+| metadata.created_at | string | 是 | 创建时间(ISO8601) |
+| sections | array | 是 | PRD章节列表 |
+| sections[].section_id | string | 是 | 章节标识 |
+| sections[].title | string | 是 | 章节标题 |
+| sections[].content | string | 是 | 章节内容 |
+| sections[].confidence | number | 是 | 章节置信度(0-1.0) |
+| functional_requirements | array | 是 | 功能需求列表 |
+| functional_requirements[].req_id | string | 是 | 需求标识 |
+| functional_requirements[].title | string | 是 | 需求标题 |
+| functional_requirements[].priority | enum(P0,P1,P2) | 是 | 优先级 |
+| quality_gates | array | 是 | 质量门禁 |
+
 **报告结构**：
 ```json
 {
@@ -1079,3 +1101,22 @@ PRD版本：v{版本}
 - **产品需求描述**：核心需求是什么，解决什么问题
 - **目标用户**：产品的目标用户群体是谁
 - **核心功能列表**：需要实现的主要功能点
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 用户洞察新增/变更 | PRD中的用户需求章节 | 标注受影响的需求条目，建议人类确认是否更新PRD |
+| 商业模式变更 | PRD中的商业模式章节 | 标注受影响的商业逻辑，建议人类确认是否更新PRD |
+| OKR调整 | PRD中的目标与指标章节 | 标注受影响的指标定义，建议人类确认是否更新PRD |
+
+当PRD自身变更时，对下游的通知机制：
+
+| PRD变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 功能点增删 | api-contract、design-ia、development-task-breakdown、quality-auto-test | 标记变更影响范围，触发受影响Skill重新执行 |
+| 优先级调整 | development-task-breakdown、release-auto-checklist | 标记优先级变更，触发重新排序 |
+| 目标指标变更 | metrics-system、tracking-plan | 标记指标变更，触发度量体系更新 |
+| 商业逻辑变更 | business-model-canvas、business-strategy-report | 标记商业逻辑变更，触发战略文档更新 |

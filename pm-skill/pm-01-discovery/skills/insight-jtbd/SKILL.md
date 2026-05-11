@@ -6,6 +6,7 @@ metadata:
   sub-module: "需求洞察"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # JTBD结构化分析
@@ -99,6 +100,41 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/insight-jtbd/jtbd.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["analysis_metadata", "jobs"],
+  "properties": {
+    "analysis_metadata": {"type": "object", "description": "分析元数据，包含来源文件、条目数和时间戳"},
+    "jobs": {"type": "array", "description": "JTBD列表，包含功能性、情感性、社会性三层Job"},
+    "needs_human_validation": {"type": "array", "description": "需人工验证的Job列表"}
+  }
+}
+```
+
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| analysis_metadata | object | 是 | 分析元信息 |
+| analysis_metadata.source_files | array | 是 | 数据来源文件列表 |
+| analysis_metadata.total_voice_entries | number | 是 | 语音反馈条目数 |
+| analysis_metadata.total_behavior_entries | number | 是 | 行为数据条目数 |
+| analysis_metadata.analysis_timestamp | string | 是 | 分析时间戳(ISO8601) |
+| jobs | array | 是 | 任务列表 |
+| jobs[].type | enum(functional,emotional,social) | 是 | 任务类型 |
+| jobs[].job | string | 是 | 任务描述 |
+| jobs[].frequency | number | 是 | 出现频次 |
+| jobs[].evidence | string | 是 | 推断依据 |
+| jobs[].confidence | number | 是 | 置信度(0-1.0) |
+| jobs[].current_solution | string | 否 | 当前解决方案 |
+| jobs[].pain_level | enum(high,medium,low) | 否 | 痛点程度 |
+| summary | object | 是 | 分析摘要 |
+| summary.total_jobs | number | 是 | 任务总数 |
+| summary.by_type | object | 是 | 按类型统计 |
 
 ### Output JSON 格式
 

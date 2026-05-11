@@ -1,4 +1,4 @@
----
+﻿---
 name: sprint-retrospective-report
 description: 当需要将Sprint执行数据汇总为完整可交付的复盘报告时使用。Sprint复盘报告自动生成，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议。关键词：Sprint复盘、迭代复盘、Sprint报告、团队回顾、改进行动项。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "敏捷执行"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - agile-sprint-planning
     - agile-daily-sync
@@ -185,7 +186,7 @@ Sprint复盘报告的核心价值在于从每个迭代中提取可复用的学�
 
 ## 质量检查
 
-| 检查项 | 标准 | 不通过处理 |
+| 检查项 | 标准 | 不达标处理 |
 |--------|------|------------|
 | 目标达成与数据一致 | 达成度判定与Story完成率吻合 | 重新评估达成度 |
 | 溢出根因已分类 | 每个溢出Story有根因标签 | 补充根因分析 |

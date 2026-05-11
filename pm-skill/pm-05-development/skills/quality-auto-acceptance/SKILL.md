@@ -6,6 +6,7 @@ metadata:
   sub-module: "质量保障"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 5: 自动化验收执行
@@ -445,6 +446,24 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-development/quality-auto-acceptance/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["output_id", "story_id", "acceptance_report", "gate_decision"],
+  "properties": {
+    "output_id": {"type": "string", "description": "输出唯一标识"},
+    "story_id": {"type": "string", "description": "Story ID"},
+    "build_ref": {"type": "string", "description": "构建版本引用"},
+    "executed_at": {"type": "string", "description": "执行时间"},
+    "acceptance_report": {"type": "object", "description": "验收报告主体，包含汇总和逐项结果"},
+    "failed_cases_analysis": {"type": "array", "description": "失败用例分析，包含根因和修复建议"},
+    "gate_decision": {"type": "object", "description": "质量门禁判定结果，包含是否通过和阻断项"}
+  }
+}
+```
 
 ### 最终输出结构
 

@@ -1,4 +1,4 @@
----
+﻿---
 name: backend-review
 description: 当需要对后端架构进行审查时使用。后端架构审查自动执行，对后端架构和代码进行性能、安全、可维护性和可扩展性的自动化审查，输出问题清单和修复建议。关键词：后端审查、架构审查、性能审查、安全审查、可维护性、可扩展性。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "后端架构"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_auto"
 ---
 
 # Pipeline 20: 后端架构审查自动执行

@@ -1,4 +1,4 @@
----
+﻿---
 name: market-tam-som
 description: 当需要评估目标市场的TAM/SAM/SOM规模时使用。市场规模自动测算，支持自上而下与自下而上双路径测算，输出区间估计与置信度评估。关键词：市场规模、TAM、SAM、SOM、市场容量、区间估计。
 metadata:
@@ -6,6 +6,7 @@ metadata:
   sub-module: "市场竞品"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 市场规模自动测算
@@ -76,7 +77,9 @@ metadata:
 | 自身资源约束 | 团队规模 / 资金 / 技术储备 / 渠道资源 |
 | 获客能力预估 | 预期获客渠道效率 + 转化率 + 留存率 |
 
-**计算逻辑：** SOM = SAM × 可获取份额（综合竞争+资源+获客）
+**计算逻辑：** SOM = SAM × (1 - 竞争约束%) × (1 - 资源约束%) × (1 - 获客约束%)
+
+> SOM以SAM为基数，逐层扣除竞争、资源、获客三方面约束后得到可获取市场份额。
 
 **输出要求：**
 - SOM区间估计（乐观/中性/保守）
@@ -100,6 +103,24 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/market-tam-som/tam-som.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["category_keywords", "geographic_scope", "time_range", "tam", "sam", "som", "confidence"],
+  "properties": {
+    "category_keywords": {"type": "string", "description": "品类关键词"},
+    "geographic_scope": {"type": "string", "description": "目标市场地理范围"},
+    "time_range": {"type": "string", "description": "测算时间范围"},
+    "tam": {"type": "object", "description": "TAM总可达市场规模测算，含自上而下和自下而上双路径"},
+    "sam": {"type": "object", "description": "SAM可服务市场规模测算"},
+    "som": {"type": "object", "description": "SOM可获取市场规模测算"},
+    "confidence": {"type": "object", "description": "置信度评估，含数据源可靠性和敏感度分析"}
+  }
+}
+```
 
 ```json
 {
@@ -140,9 +161,11 @@ metadata:
     "data_sources": []
   },
   "som": {
-    "competition_factor": "0.25",
-    "resource_factor": "0.40",
-    "acquisition_factor": "0.30",
+    "base": "SAM",
+    "competition_constraint": "0.60",
+    "resource_constraint": "0.65",
+    "acquisition_constraint": "0.50",
+    "calculation": "SAM × (1 - 0.60) × (1 - 0.65) × (1 - 0.50) = SAM × 0.07",
     "estimates": {
       "optimistic": "9亿",
       "neutral": "6亿",

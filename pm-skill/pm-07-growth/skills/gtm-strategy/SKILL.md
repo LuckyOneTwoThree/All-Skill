@@ -6,6 +6,7 @@ metadata:
   sub-module: "增长模式"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
   upstream:
     - positioning-statement
     - positioning-differentiation
@@ -108,6 +109,25 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 |------|------|------|
 | GTM策略文档 | `output/pm-growth/gtm-strategy/gtm-strategy.md` | 人类可读的完整策略文档 |
 | 结构化数据 | `output/pm-growth/gtm-strategy/gtm-strategy.json` | 机器可消费的结构化数据 |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["product_name", "target_market", "launch_path", "success_metrics"],
+  "properties": {
+    "product_name": {"type": "string", "description": "产品名称"},
+    "report_date": {"type": "string", "description": "报告日期"},
+    "target_market": {"type": "object", "description": "目标市场定义，包含ICP、切入顺序和市场规模"},
+    "launch_path": {"type": "object", "description": "上市路径，包含模式、理由和阶段"},
+    "pricing_packaging": {"type": "object", "description": "定价与包装策略，包含层级、模型和促销"},
+    "channels": {"type": "object", "description": "渠道与推广计划，包含自有/付费/生态渠道"},
+    "success_metrics": {"type": "object", "description": "成功指标与里程碑，包含首周/首月/首季指标"},
+    "risks": {"type": "array", "description": "风险清单"}
+  }
+}
+```
 
 ### Markdown 报告结构
 

@@ -6,6 +6,7 @@ metadata:
   sub-module: "项目规划"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Pipeline 1: 项目宪章自动生成
@@ -204,6 +205,19 @@ metadata:
 ## 输出
 
 **存储路径**：`output/pm-project/planning-project-charter/`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["project_charter", "metadata"],
+  "properties": {
+    "project_charter": {"type": "object", "description": "项目宪章，包含背景、目标、成功标准、干系人和风险评估"},
+    "metadata": {"type": "object", "description": "元数据，包含置信度、生成时间和审批状态"}
+  }
+}
+```
 
 ```json
 {

@@ -44,6 +44,21 @@ metadata:
 - → 加载 `insight-priority-scoring` 执行
 - ⏸ 等待 priority-scoring.json 生成
 
+### 数据流转
+
+```
+[用户反馈数据 + 行为数据]
+       ↓
+insight-jtbd ∥ insight-requirement-layers
+       ↓ jobs (functional / emotional / social) / requirement_layers (surface / behavioral / essential)
+insight-5whys
+       ↓ chain / root_cause / actionable_fix
+insight-kano
+       ↓ kano_classification / boundary_cases / summary
+insight-priority-scoring
+       ↓ priority_list / total_score / score_confidence
+```
+
 ### 调度规则
 
 - 每次只加载当前阶段需要的子Skill，完成后再加载下一阶段，不要一次性加载所有子Skill

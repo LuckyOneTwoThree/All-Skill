@@ -6,7 +6,7 @@ metadata:
   sub-module: "用户研究"
   type: "pipeline"
   version: "1.0"
-  execution_mode: "🤖 AI自动执行"
+  interaction_mode: "ai_auto"
 ---
 
 # 行为数据自动分析
@@ -112,6 +112,23 @@ metadata:
 ## 输出
 
 输出文件：`output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json`
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["funnel_health", "aha_moment_candidates", "feature_usage", "metadata"],
+  "properties": {
+    "funnel_health": {"type": "object", "description": "漏斗健康度诊断，含各步骤转化率和健康度评分"},
+    "aha_moment_candidates": {"type": "array", "description": "Aha Moment候选列表"},
+    "feature_usage": {"type": "array", "description": "功能使用深度分析列表"},
+    "behavior_paths": {"type": "object", "description": "行为路径分析，含高频路径、绕路和迷失模式"},
+    "anomalies": {"type": "array", "description": "异常事件检测列表"},
+    "metadata": {"type": "object", "description": "分析元数据，含时间戳和置信度"}
+  }
+}
+```
 
 ```json
 {
