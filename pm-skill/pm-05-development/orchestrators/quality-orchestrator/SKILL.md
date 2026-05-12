@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 质量保障指挥官
@@ -22,63 +22,94 @@ metadata:
 2. **P0/P1一票否决**：任何P0/P1失败立即阻断，不因其他维度通过而放行
 3. **风险可见化传递**：每个阶段的风险和未覆盖项必须显式传递到下游，而非隐式忽略
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-development/quality-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-development/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-development/quality-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: quality-auto-test
+    gate: 测试覆盖率≥80%
+  - stage: quality-auto-acceptance
+    depends_on: [quality-auto-test]
+    gate: 自动化验收P0/P1全部通过
+  - stage: quality-acceptance-report
+    depends_on: [quality-auto-test, quality-auto-acceptance]
+    gate: 验收报告已生成
+```
 
 ## 阶段执行计划
 
-#### 阶段1：测试用例自动生成与追踪
+#### 调用 quality-auto-test
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | quality-auto-test |
-| 读取定义路径 | `.trae/skills/quality-auto-test/SKILL.md` |
-| 输入 | PRD（PRD管理系统，含验收标准）、技术方案（技术方案库，含接口和数据模型）、设计稿（设计系统）、代码库（代码仓库） |
-| 输出 | `output/pm-development/quality-auto-test/`（test_cases、coverage_report、code_case_mapping、unmapped_cases） |
-| 验证 | Happy Path 100%覆盖，每Story边界用例≥3，所有声明异常都有用例，代码关联率≥90% |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | 测试覆盖率≥80%：自动化测试覆盖率达到阈值，未通过则升级人工审查 |
+```
+Skill: quality-auto-test
+输入:
+  prd: PRD管理系统（含验收标准）
+  tech_plan: 技术方案库（含接口和数据模型）
+  design: 设计系统
+  code_repo: 代码仓库
+输出: output/pm-development/quality-auto-test/
+验证: Happy Path 100%覆盖，每Story边界用例≥3，所有声明异常都有用例，代码关联率≥90%
+模式: 🤖
+```
 
-#### 阶段2：自动化验收执行
+#### 调用 quality-auto-acceptance
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | quality-auto-acceptance |
-| 读取定义路径 | `.trae/skills/quality-auto-acceptance/SKILL.md` |
-| 输入 | Story验收标准（PRD，Given-When-Then格式）、测试用例（quality-auto-test输出）、测试环境配置（测试系统）、构建产物（CI/CD） |
-| 输出 | `output/pm-development/quality-auto-acceptance/`（acceptance_report、failed_cases_analysis、gate_decision） |
-| 验证 | P0用例通过率100%，自动化执行率≥90%，测试环境就绪，失败分析完整性 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | 自动化验收P0/P1全部通过：P0/P1用例全部通过，未通过则立即阻断，阻止上线 |
+```
+Skill: quality-auto-acceptance
+输入:
+  story_acceptance_criteria: PRD（Given-When-Then格式）
+  test_cases: quality-auto-test输出
+  test_env_config: 测试系统
+  build_artifact: CI/CD
+输出: output/pm-development/quality-auto-acceptance/
+验证: P0用例通过率100%，自动化执行率≥90%，测试环境就绪，失败分析完整性
+模式: 🤖
+```
 
-#### 阶段3：验收测试报告生成
+#### 调用 quality-acceptance-report
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | quality-acceptance-report |
-| 读取定义路径 | `.trae/skills/quality-acceptance-report/SKILL.md` |
-| 输入 | 测试结果（output/pm-development/quality-auto-test/test-results.json）、验收标准（output/pm-development/quality-auto-acceptance/acceptance-criteria.json）、SRS文档（output/pm-design/requirements-srs/SRS-{产品名}.md）、版本号、验收范围 |
-| 输出 | `output/pm-development/quality-acceptance-report/`（acceptance-report-v{版本号}.md、acceptance-report-v{版本号}.json） |
-| 验证 | 验收标准逐项有结果，Must需求通过率已计算，缺陷按严重程度分类，验收结论明确，签收确认表已包含 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 验收报告已生成：报告结论明确，签收表完整，未通过则补充验收标准或测试数据 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件（`对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）`）
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-development/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: quality-acceptance-report
+输入:
+  test_results: output/pm-development/quality-auto-test/test-results.json
+  acceptance_criteria: output/pm-development/quality-auto-acceptance/acceptance-criteria.json
+  srs_doc: output/pm-design/requirements-srs/SRS-{产品名}.md
+  version: 版本号
+  acceptance_scope: 验收范围
+输出: output/pm-development/quality-acceptance-report/
+验证: 验收标准逐项有结果，Must需求通过率已计算，缺陷按严重程度分类，验收结论明确，签收确认表已包含
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -114,3 +145,4 @@ metadata:
 - v2.0: 新增 quality-acceptance-report（验收报告）
 - v3.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范，调度规则从"加载"改为"执行"
 - v4.0: 执行步骤原则替换为编排理念
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

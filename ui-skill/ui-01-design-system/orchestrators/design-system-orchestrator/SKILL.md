@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 设计系统建立指挥官
@@ -21,63 +21,96 @@ metadata:
 3. **文档同步**：组件创建即生成文档，避免文档债务
 4. **品牌驱动**：所有设计决策回溯到品牌基因
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/ui/design-system-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/ui/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/ui/design-system-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: design-token
+    gate: WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级
+  - stage: component-library
+    depends_on: [design-token]
+    gate: 原子组件≥15个 + 依赖图无循环 + 100%视觉属性引用Design Token
+  - stage: design-system-doc
+    depends_on: [design-token, component-library]
+    gate: 100%组件有文档 + 每个组件≥1个可运行代码示例
+```
 
 ## 阶段执行计划
 
-### 阶段1：design-token（设计令牌生成）
+### 阶段1：design-token
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-token |
-| 读取定义路径 | `.trae/skills/design-token/SKILL.md` |
-| 输入 | 品牌规范（用户提供）；产品定位：`output/pm-strategy/positioning-statement/positioning-statements.json`；目标平台（用户提供） |
-| 输出 | `output/ui-design-system/design-token/`（色彩体系、字体排版、间距节奏、阴影层级、圆角规范、断点、对比度校验、多平台Token文件） |
-| 验证 | WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 设计令牌人类确认通过后才可进入阶段2；不达标的色阶自动调整，人类确认调整结果 |
+#### 调用 design-token
 
-### 阶段2：component-library（组件库规划与生成）
+```
+Skill: design-token
+输入:
+  品牌规范: 用户提供
+  产品定位: output/pm-strategy/positioning-statement/positioning-statements.json
+  目标平台: 用户提供
+输出: output/ui-design-system/design-token/
+验证: WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级
+模式: 🤖→👤
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | component-library |
-| 读取定义路径 | `.trae/skills/component-library/SKILL.md` |
-| 输入 | 设计令牌：`output/ui-design-system/design-token/tokens.json`；PRD：`output/pm-design/design-prd/prd.md`；现有组件库（用户提供，可选） |
-| 输出 | `output/ui-design-system/component-library/`（原子/分子/组织三级组件定义、Props接口、依赖图、代码骨架） |
-| 验证 | 原子组件≥15个 + 依赖图无循环 + 100%视觉属性引用Design Token |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 组件库人类确认通过后才可进入阶段3；循环依赖必须修复 |
+### 阶段2：component-library
 
-### 阶段3：design-system-doc（设计系统文档生成）
+#### 调用 component-library
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-system-doc |
-| 读取定义路径 | `.trae/skills/design-system-doc/SKILL.md` |
-| 输入 | 设计令牌：`output/ui-design-system/design-token/tokens.json`；组件库：`output/ui-design-system/component-library/library.json`；品牌规范（用户提供，可选） |
-| 输出 | `output/ui-design-system/design-system-doc/`（使用指南、组件示例代码、Do/Don't规范、可访问性说明、变更日志模板） |
-| 验证 | 100%组件有文档 + 每个组件≥1个可运行代码示例 |
-| 执行模式 | 🤖 AI自动执行 |
-| ⏸ 阶段卡口 | 文档覆盖100%组件；缺失文档的组件标注"待补充"，不阻塞发布 |
+```
+Skill: component-library
+输入:
+  设计令牌: output/ui-design-system/design-token/tokens.json
+  PRD: output/pm-design/design-prd/prd.md
+  现有组件库: 用户提供（可选）
+输出: output/ui-design-system/component-library/
+验证: 原子组件≥15个 + 依赖图无循环 + 100%视觉属性引用Design Token
+模式: 🤖→👤
+```
 
-## 调度规则
+### 阶段3：design-system-doc
 
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每个阶段完成后，将中间结果写入 `output/ui-design-system/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+#### 调用 design-system-doc
+
+```
+Skill: design-system-doc
+输入:
+  设计令牌: output/ui-design-system/design-token/tokens.json
+  组件库: output/ui-design-system/component-library/library.json
+  品牌规范: 用户提供（可选）
+输出: output/ui-design-system/design-system-doc/
+验证: 100%组件有文档 + 每个组件≥1个可运行代码示例
+模式: 🤖
+```
 
 ## 阶段卡口
 
@@ -109,5 +142,6 @@ metadata:
 
 ## 变更记录
 
+- v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加命令式调度指令
 - v1.0: 初始版本

@@ -5,7 +5,7 @@ metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "orchestrator"
-  version: "5.0"
+  version: "6.0"
 ---
 
 # 商业模式设计指挥官
@@ -18,75 +18,125 @@ metadata:
 2. **财务闭环驱动**——单位经济模型先于规模扩张假设，确保单点盈利逻辑成立再推演增长
 3. **多方案并行比较**——定价与收入模式生成多个可比较方案，避免单一方案锁定思维
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-strategy/business-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/pm-strategy/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-strategy/business-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+```yaml
+pipeline: business-orchestrator
+version: 6.0
+
+stages:
+  - id: phase-1
+    name: "商业画布"
+    skills: [business-model-canvas]
+    gate:
+      condition: "BMC 9格全部填充、假设已标注"
+      fail_action: "补充缺失要素，无法填充的标注为待验证假设"
+
+  - id: phase-2
+    name: "价值匹配"
+    depends_on: [phase-1]
+    skills: [business-value-fit]
+    gate:
+      condition: "价值主张匹配度≥3.0"
+      fail_action: "匹配度<3.0触发人类决策者介入评估"
+
+  - id: phase-3
+    name: "定价策略"
+    depends_on: [phase-1]
+    skills: [business-pricing]
+    gate:
+      condition: "3个定价方案已生成"
+      fail_action: "补充缺失方案，确保差异化定位"
+
+  - id: phase-4
+    name: "商业战略报告"
+    depends_on: [phase-1, phase-2, phase-3]
+    skills: [business-strategy-report]
+    gate:
+      condition: "报告执行摘要完整，至少2个战略方向"
+      fail_action: "补充战略方向或标注建议补充战略分析"
+```
 
 ## 阶段执行计划
 
-### 阶段1：business-model-canvas
+#### 调用 business-model-canvas
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | business-model-canvas |
-| 读取定义路径 | `.trae/skills/business-model-canvas/SKILL.md` |
-| 输入 | product_context（来自 user-research-user-modeling / opportunity-brief）；market_data（来自 market-competitor-intel） |
-| 输出 | `output/pm-strategy/business-model-canvas/`（bmc.json + 假设清单） |
-| 验证 | BMC 9格全部填充、假设已标注 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | BMC 9格全部填充、假设已标注 → 未通过：补充缺失要素，无法填充的标注为待验证假设 |
+```
+Skill: business-model-canvas
+输入:
+  product_context: 来自 user-research-user-modeling / opportunity-brief
+  market_data: 来自 market-competitor-intel
+输出: output/pm-strategy/business-model-canvas/
+验证: BMC 9格全部填充、假设已标注
+模式: 🤖→👤
+```
 
-### 阶段2：business-value-fit
+#### 调用 business-value-fit
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | business-value-fit |
-| 读取定义路径 | `.trae/skills/business-value-fit/SKILL.md` |
-| 输入 | BMC价值主张（来自阶段1 `output/pm-strategy/business-model-canvas/bmc.json`）；用户研究数据（来自 user-research-user-modeling / user-research-voice-analysis） |
-| 输出 | `output/pm-strategy/business-value-fit/`（evaluation_report.json） |
-| 验证 | 价值主张匹配度≥3.0 |
-| 执行模式 | 🤖 AI自动执行 |
-| ⏸ 阶段卡口 | 价值主张匹配度≥3.0 → 未通过：匹配度<3.0触发人类决策者介入评估 |
+```
+Skill: business-value-fit
+输入:
+  bmc_value_proposition: 来自阶段1 output/pm-strategy/business-model-canvas/bmc.json
+  user_research_data: 来自 user-research-user-modeling / user-research-voice-analysis
+输出: output/pm-strategy/business-value-fit/
+验证: 价值主张匹配度≥3.0
+模式: 🤖
+```
 
-### 阶段3：business-pricing
+#### 调用 business-pricing
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | business-pricing |
-| 读取定义路径 | `.trae/skills/business-pricing/SKILL.md` |
-| 输入 | BMC数据（来自阶段1 `output/pm-strategy/business-model-canvas/bmc.json`）；竞品定价数据（来自 market-competitor-intel → competitor-intel.json）；支付意愿推断数据（用户提供） |
-| 输出 | `output/pm-strategy/business-pricing/`（pricing_analysis.json） |
-| 验证 | 3个定价方案已生成 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 3个定价方案已生成 → 未通过：补充缺失方案，确保差异化定位 |
+```
+Skill: business-pricing
+输入:
+  bmc_data: 来自阶段1 output/pm-strategy/business-model-canvas/bmc.json
+  competitor_pricing_data: 来自 market-competitor-intel → competitor-intel.json
+  willingness_to_pay: 用户提供
+输出: output/pm-strategy/business-pricing/
+验证: 3个定价方案已生成
+模式: 🤖→👤
+```
 
-### 阶段4：business-strategy-report
+#### 调用 business-strategy-report
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | business-strategy-report |
-| 读取定义路径 | `.trae/skills/business-strategy-report/SKILL.md` |
-| 输入 | 商业画布（来自阶段1 `output/pm-strategy/business-model-canvas/bmc.json`）；定价策略（来自阶段3 `output/pm-strategy/business-pricing/pricing_analysis.json`）；产品/业务信息（用户提供）；其他可选输入：SWOT、OKR、路线图、定位、价值曲线、差异化评估、利益相关者、北极星指标 |
-| 输出 | `output/pm-strategy/business-strategy-report/`（business-strategy-report.md + business-strategy-report.json） |
-| 验证 | 报告执行摘要完整，至少2个战略方向 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 报告执行摘要完整，至少2个战略方向 → 未通过：补充战略方向或标注"建议补充战略分析" |
-
-## 调度规则
-
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每个阶段完成后，将中间结果写入 `output/pm-strategy/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: business-strategy-report
+输入:
+  bmc: 来自阶段1 output/pm-strategy/business-model-canvas/bmc.json
+  pricing_strategy: 来自阶段3 output/pm-strategy/business-pricing/pricing_analysis.json
+  product_business_info: 用户提供
+  optional_inputs: SWOT、OKR、路线图、定位、价值曲线、差异化评估、利益相关者、北极星指标
+输出: output/pm-strategy/business-strategy-report/
+验证: 报告执行摘要完整，至少2个战略方向
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -121,3 +171,4 @@ metadata:
 - v3.0: 新增 business-strategy-report（商业战略规划报告）
 - v4.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范
 - v5.0: 核心原则替换为编排理念原则，新增异常处理表
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

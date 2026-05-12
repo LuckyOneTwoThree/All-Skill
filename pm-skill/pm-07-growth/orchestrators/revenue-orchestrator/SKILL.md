@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "变现"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 商业化指挥官
@@ -21,63 +21,90 @@ metadata:
 1. **漏斗诊断定方向，NRR追踪看健康，升级转化抓机会**：三阶段从诊断到监控到行动，形成完整的商业化闭环
 2. **数据在漏斗→NRR→升级间递进流转**：前序阶段的输出直接驱动后序阶段的策略制定
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-growth/revenue-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-growth/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-growth/revenue-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: revenue-funnel
+    gate: 注册到付费全链路转化分析完成，瓶颈已识别
+  - stage: revenue-nrr
+    depends_on: [revenue-funnel]
+    gate: NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别
+  - stage: revenue-upsell
+    depends_on: [revenue-nrr]
+    gate: 升级转化策略和个性化方案已生成
+```
 
 ## 阶段执行计划
 
-### 阶段1：付费漏斗分析
+#### 调用 revenue-funnel
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | revenue-funnel |
-| 读取定义路径 | `.trae/skills/revenue-funnel/SKILL.md` |
-| 输入 | 注册到付费全链路数据（用户提供）、付费转化数据（revenue-nrr → nrr_report.yaml，可选）、用户特征数据（用户提供，可选） |
-| 输出 | `output/pm-growth/revenue-funnel/` |
-| 验证 | 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 注册到付费全链路转化分析完成，瓶颈已识别；若未通过则补充漏斗步骤定义或数据 |
+```
+Skill: revenue-funnel
+输入:
+  payment_funnel_data: 用户提供（注册到付费全链路数据）
+  conversion_data: revenue-nrr → nrr_report.yaml（可选）
+  user_profile_data: 用户提供（可选）
+输出: output/pm-growth/revenue-funnel/
+验证: 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据
+模式: 🤖→👤
+```
 
-### 阶段2：NRR追踪预警
+#### 调用 revenue-nrr
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | revenue-nrr |
-| 读取定义路径 | `.trae/skills/revenue-nrr/SKILL.md` |
-| 输入 | 收入数据（用户提供）、用户账户数据（用户提供）、用户行为数据（用户提供，可选） |
-| 输出 | `output/pm-growth/revenue-nrr/` |
-| 验证 | NRR计算包含扩张、收缩、流失三部分；流失预警覆盖活跃度、功能、财务、组织4类信号；扩张机会识别有评分和推荐策略；分维度NRR计算覆盖用户分群和产品线 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别；若未通过则完善收入数据采集 |
+```
+Skill: revenue-nrr
+输入:
+  revenue_data: 用户提供（收入数据）
+  user_account_data: 用户提供
+  user_behavior_data: 用户提供（可选）
+输出: output/pm-growth/revenue-nrr/
+验证: NRR计算包含扩张、收缩、流失三部分；流失预警覆盖活跃度、功能、财务、组织4类信号；扩张机会识别有评分和推荐策略；分维度NRR计算覆盖用户分群和产品线
+模式: 🤖→👤
+```
 
-### 阶段3：升级转化
+#### 调用 revenue-upsell
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | revenue-upsell |
-| 读取定义路径 | `.trae/skills/revenue-upsell/SKILL.md` |
-| 输入 | 用户行为数据（用户提供）、付费历史数据（revenue-nrr → `output/pm-growth/revenue-nrr/nrr_report.yaml`）、产品使用数据（用户提供，可选） |
-| 输出 | `output/pm-growth/revenue-upsell/` |
-| 验证 | 升级信号识别覆盖4类信号（用量/功能/行为/意向）；个性化内容包含用户名、用量、收益3个要素；A/B测试设计包含护栏指标；升级ROI计算包含触达成本 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 升级转化策略和个性化方案已生成；若未通过则优化升级信号识别或补充用户行为数据 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-growth/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: revenue-upsell
+输入:
+  user_behavior_data: 用户提供
+  payment_history: output/pm-growth/revenue-nrr/nrr_report.yaml
+  product_usage_data: 用户提供（可选）
+输出: output/pm-growth/revenue-upsell/
+验证: 升级信号识别覆盖4类信号（用量/功能/行为/意向）；个性化内容包含用户名、用量、收益3个要素；A/B测试设计包含护栏指标；升级ROI计算包含触达成本
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -109,3 +136,4 @@ metadata:
 - v2.0: description触发词优化
 - v3.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格
 - v4.0: 执行步骤替换为编排理念，新增异常处理表
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

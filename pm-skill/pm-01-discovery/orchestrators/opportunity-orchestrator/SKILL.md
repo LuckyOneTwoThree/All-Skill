@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "orchestrator"
-  version: "5.0"
+  version: "6.0"
 ---
 
 # 机会识别指挥官
@@ -17,75 +17,148 @@ metadata:
 3. **Problem Statement是锚点**——所有HMW和Brief都锚定在Problem Statement上，Problem Statement质量不通过则后续输出不可信
 4. **人类判定三个关键节点**——战略契合度评分人类判定、Problem Statement质量3次不通过人类仲裁、Brief最终决策人类审批
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-discovery/opportunity-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/pm-discovery/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-discovery/opportunity-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline 定义
+
+```yaml
+pipeline: opportunity-orchestrator
+version: 6.0
+
+stages:
+  - id: phase-1
+    name: "机会评分"
+    skills: [opportunity-scoring]
+    gate:
+      condition: "5个维度均已评分，战略契合度由人类判定"
+      fail_action: "等待人类判定战略契合度"
+
+  - id: phase-2
+    name: "问题定义"
+    depends_on: [phase-1]
+    skills: [opportunity-problem-statement]
+    gate:
+      condition: "5项质量检查全部通过"
+      fail_action: "针对未通过项定向修复重试，3次仍不通过升级人类"
+
+  - id: phase-3
+    name: "HMW发散"
+    depends_on: [phase-2]
+    skills: [opportunity-hmw]
+    gate:
+      condition: "4维度均已覆盖，总计8-12个HMW陈述"
+      fail_action: "补充Problem Statement或用户研究数据"
+
+  - id: phase-4
+    name: "机会简报"
+    depends_on: [phase-1, phase-2, phase-3]
+    skills: [opportunity-brief]
+    gate:
+      condition: "证据摘要完整，关键假设可验证，人类决策项非空"
+      fail_action: "补充上游数据或等待人类决策"
+```
 
 ## 阶段执行计划
 
-### 阶段1：opportunity-scoring
+### 阶段1：机会评分
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | opportunity-scoring |
-| 读取定义路径 | `.trae/skills/opportunity-scoring/SKILL.md` |
-| 输入 | `output/pm-discovery/user-research-voice-analysis/voice-analysis.json`（用户痛点数据）+ `output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json`（行为数据）+ `output/pm-discovery/market-tam-som/tam-som.json`（SOM估算值）+ `output/pm-discovery/market-competitor-intel/competitor-intel.json`（竞品能力与壁垒）+ 技术团队评估（可选，用户提供） |
-| 输出 | `output/pm-discovery/opportunity-scoring/opportunity-scoring.json` |
-| 验证 | 5个维度均已评分，战略契合度标记为needs_human=true，评分依据完整 |
-| 执行模式 | 🤖 AI自动执行（战略契合度维度👤由人类判定） |
-| ⏸ 阶段卡口 | 5个维度均已评分，战略契合度由人类判定 → 未通过：等待人类判定战略契合度 |
+#### 调用 opportunity-scoring
 
-### 阶段2：opportunity-hmw
+```
+Skill: opportunity-scoring
+输入:
+  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
+  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
+  tam_som: output/pm-discovery/market-tam-som/tam-som.json
+  competitor_intel: output/pm-discovery/market-competitor-intel/competitor-intel.json
+  tech_assessment: 用户提供（可选，技术团队评估）
+输出: output/pm-discovery/opportunity-scoring/opportunity-scoring.json
+验证: 5个维度均已评分，战略契合度标记为needs_human=true，评分依据完整
+模式: 🤖（战略契合度维度👤由人类判定）
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | opportunity-hmw |
-| 读取定义路径 | `.trae/skills/opportunity-hmw/SKILL.md` |
-| 输入 | `output/pm-discovery/opportunity-problem-statement/problem-statement.json`（Problem Statement）+ `output/pm-discovery/user-research-voice-analysis/voice-analysis.json`（用户痛点）+ `output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json`（行为数据） |
-| 输出 | `output/pm-discovery/opportunity-hmw/hmw.json` |
-| 验证 | 4个维度（eliminate_barriers/enhance_experience/create_value/redefine）均已覆盖，总计8-12个HMW陈述 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | 4维度均已覆盖，总计8-12个HMW陈述 → 未通过：补充Problem Statement或用户研究数据 |
+### 阶段2：问题定义
 
-### 阶段3：opportunity-problem-statement
+#### 调用 opportunity-problem-statement
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | opportunity-problem-statement |
-| 读取定义路径 | `.trae/skills/opportunity-problem-statement/SKILL.md` |
-| 输入 | `output/pm-discovery/user-research-voice-analysis/voice-analysis.json`（用户痛点）+ `output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json`（行为数据）+ `output/pm-discovery/user-research-user-modeling/persona.json`（用户画像）+ `output/pm-discovery/insight-jtbd/jtbd.json`（待办任务）+ `output/pm-discovery/insight-kano/kano.json`（需求分类）+ `output/pm-discovery/opportunity-scoring/opportunity-scoring.json`（可选，已评分的机会信息） |
-| 输出 | `output/pm-discovery/opportunity-problem-statement/problem-statement.json` |
-| 验证 | 5项质量检查全部通过（quality_check.all_passed=true），数据支撑完整 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | 5项质量检查全部通过 → 未通过：针对未通过项定向修复重试，3次仍不通过升级人类 |
+```
+Skill: opportunity-problem-statement
+输入:
+  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
+  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
+  persona: output/pm-discovery/user-research-user-modeling/persona.json
+  jtbd: output/pm-discovery/insight-jtbd/jtbd.json
+  kano: output/pm-discovery/insight-kano/kano.json
+  opportunity_scoring: output/pm-discovery/opportunity-scoring/opportunity-scoring.json（可选）
+输出: output/pm-discovery/opportunity-problem-statement/problem-statement.json
+验证: 5项质量检查全部通过（quality_check.all_passed=true），数据支撑完整
+模式: 🤖→👤
+```
 
-### 阶段4：opportunity-brief
+### 阶段3：HMW发散
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | opportunity-brief |
-| 读取定义路径 | `.trae/skills/opportunity-brief/SKILL.md` |
-| 输入 | `output/pm-discovery/user-research-voice-analysis/voice-analysis.json` + `output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json` + `output/pm-discovery/user-research-user-modeling/persona.json` + `output/pm-discovery/insight-jtbd/jtbd.json` + `output/pm-discovery/insight-kano/kano.json` + `output/pm-discovery/market-tam-som/tam-som.json` + `output/pm-discovery/market-competitor-intel/competitor-intel.json` + `output/pm-discovery/opportunity-scoring/opportunity-scoring.json` + `output/pm-discovery/opportunity-hmw/hmw.json` + `output/pm-discovery/opportunity-problem-statement/problem-statement.json` |
-| 输出 | `output/pm-discovery/opportunity-brief/opportunity-brief.json` |
-| 验证 | 证据摘要3个子字段均有内容，关键假设已列出可验证性，人类决策项非空，机会评分完整 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | 证据摘要完整，关键假设可验证，人类决策项非空 → 未通过：补充上游数据或等待人类决策 |
+#### 调用 opportunity-hmw
 
-## 调度规则
+```
+Skill: opportunity-hmw
+输入:
+  problem_statement: output/pm-discovery/opportunity-problem-statement/problem-statement.json
+  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
+  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
+输出: output/pm-discovery/opportunity-hmw/hmw.json
+验证: 4个维度（eliminate_barriers/enhance_experience/create_value/redefine）均已覆盖，总计8-12个HMW陈述
+模式: 🤖→👤
+```
 
-- 每次只执行当前阶段的子Skill，完成后再执行下一阶段，不要一次性加载所有子Skill
-- 执行子Skill前必须先读取其SKILL.md定义文件，按其指令执行，不要自行推断执行逻辑
-- 每个阶段完成后，将中间结果写入 `output/pm-discovery/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+### 阶段4：机会简报
+
+#### 调用 opportunity-brief
+
+```
+Skill: opportunity-brief
+输入:
+  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
+  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
+  persona: output/pm-discovery/user-research-user-modeling/persona.json
+  jtbd: output/pm-discovery/insight-jtbd/jtbd.json
+  kano: output/pm-discovery/insight-kano/kano.json
+  tam_som: output/pm-discovery/market-tam-som/tam-som.json
+  competitor_intel: output/pm-discovery/market-competitor-intel/competitor-intel.json
+  opportunity_scoring: output/pm-discovery/opportunity-scoring/opportunity-scoring.json
+  hmw: output/pm-discovery/opportunity-hmw/hmw.json
+  problem_statement: output/pm-discovery/opportunity-problem-statement/problem-statement.json
+输出: output/pm-discovery/opportunity-brief/opportunity-brief.json
+验证: 证据摘要3个子字段均有内容，关键假设已列出可验证性，人类决策项非空，机会评分完整
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -124,3 +197,4 @@ metadata:
 - v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格和人类决策点表格
 - v4.0: 统一阶段执行计划为表格格式，移除数据流转图
 - v5.0: 核心原则重写为4条编排理念（好机会是定义出来的/评分先于发散/Problem Statement是锚点/人类判定三节点）；移除通用4条执行步骤原则；新增异常处理表（5种异常场景）
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

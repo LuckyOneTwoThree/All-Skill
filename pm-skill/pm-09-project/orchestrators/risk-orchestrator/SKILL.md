@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 风险管理指挥官
@@ -20,63 +20,94 @@ metadata:
 2. **监控持续闭环**——风险监控不是一次性活动，而是持续循环。编排器应确保风险状态在每个周期更新，预警触发条件始终有效。
 3. **升级不可延迟**——当风险达到升级阈值时，延迟即失职。编排器应确保升级流程在SLA内自动触发，不依赖人工判断是否升级。
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-project/risk-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-project/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-project/risk-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: risk-identification
+    gate: 风险登记册已建立
+  - stage: risk-monitoring
+    depends_on: [risk-identification]
+    gate: 高优先级风险已监控
+  - stage: risk-escalation
+    depends_on: [risk-monitoring]
+    gate: 高优先级风险已升级
+```
 
 ## 阶段执行计划
 
-### 阶段1：风险识别与评估
+#### 调用 risk-identification
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | risk-identification |
-| 读取定义路径 | `.trae/skills/risk-identification/SKILL.md` |
-| 输入 | 项目数据（agile-sprint-planning → sprint_plan.json）、外部数据（用户提供，可选）、历史风险库（用户提供，可选）、当前风险登记册（risk-identification → risk_register.json，可选） |
-| 输出 | `output/pm-project/risk-identification/`（risk_register、metadata） |
-| 验证 | 风险覆盖技术、资源、进度、外部4个维度；每个风险有影响和概率评估；风险优先级排序合理；高优先级风险有应对策略 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | 风险登记册已建立（风险识别完成，风险登记册已生成且持续更新），否则补充风险扫描或延长识别周期 |
+```
+Skill: risk-identification
+输入:
+  project_data: agile-sprint-planning → sprint_plan.json
+  external_data: 用户提供（可选）
+  historical_risk_library: 用户提供（可选）
+  current_risk_register: risk-identification → risk_register.json（可选）
+输出: output/pm-project/risk-identification/
+验证: 风险覆盖技术、资源、进度、外部4个维度；每个风险有影响和概率评估；风险优先级排序合理；高优先级风险有应对策略
+模式: 🤖
+```
 
-### 阶段2：风险监控与预警
+#### 调用 risk-monitoring
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | risk-monitoring |
-| 读取定义路径 | `.trae/skills/risk-monitoring/SKILL.md` |
-| 输入 | 风险登记册（risk-identification → risk_register.json）、项目数据（项目管理系统）、触发条件（用户提供）、应对措施（risk-monitoring → 应对追踪，可选） |
-| 输出 | `output/pm-project/risk-monitoring/`（risk_monitoring、metadata） |
-| 验证 | 风险状态更新及时；预警触发条件明确；风险趋势分析覆盖至少3个周期；高风险项有跟进记录 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | 高优先级风险已监控（风险指标持续追踪，预警条件已配置），否则补充监控指标或调整预警阈值 |
+```
+Skill: risk-monitoring
+输入:
+  risk_register: risk-identification → risk_register.json
+  project_data: 项目管理系统
+  trigger_conditions: 用户提供
+  mitigation_tracking: risk-monitoring → 应对追踪（可选）
+输出: output/pm-project/risk-monitoring/
+验证: 风险状态更新及时；预警触发条件明确；风险趋势分析覆盖至少3个周期；高风险项有跟进记录
+模式: 🤖
+```
 
-### 阶段3：风险升级与问题升级
+#### 调用 risk-escalation
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | risk-escalation |
-| 读取定义路径 | `.trae/skills/risk-escalation/SKILL.md` |
-| 输入 | 风险数据（risk-monitoring → risk_monitoring）、问题数据（用户提供）、升级规则（用户提供）、组织结构（用户提供）、待处理升级（risk-escalation → 升级记录，可选） |
-| 输出 | `output/pm-project/risk-escalation/`（escalation、metadata） |
-| 验证 | 升级路径与风险等级匹配；升级通知在SLA内发送；升级原因包含≥3个要素；升级超时有自动跟进机制 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 高优先级风险已升级（Critical/High风险已触发升级流程），否则立即执行升级，通知相关方 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-project/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: risk-escalation
+输入:
+  risk_data: risk-monitoring → risk_monitoring
+  issue_data: 用户提供
+  escalation_rules: 用户提供
+  org_structure: 用户提供
+  pending_escalations: risk-escalation → 升级记录（可选）
+输出: output/pm-project/risk-escalation/
+验证: 升级路径与风险等级匹配；升级通知在SLA内发送；升级原因包含≥3个要素；升级超时有自动跟进机制
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -108,3 +139,4 @@ metadata:
 - v2.0: description触发词优化
 - v3.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
 - v4.0: 核心原则替换为编排理念原则，新增异常处理表
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "orchestrator"
-  version: "6.0"
+  version: "7.0"
 ---
 
 # 市场竞品指挥官
@@ -17,89 +17,163 @@ metadata:
 3. **并行采集串行整合**——TAM与PEST可并行采集，competitor-intel依赖宏观输入，quadrant依赖intel数据，report依赖全部上游，有依赖的步骤必须串行
 4. **人类验证三个关键节点**——TAM双路径差异>20%时人类判断、竞品战略推断低置信度时人类验证、差异化策略优先级人类确认
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-discovery/market-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/pm-discovery/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-discovery/market-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline 定义
+
+```yaml
+pipeline: market-orchestrator
+version: 7.0
+
+stages:
+  - id: phase-1
+    name: "并行采集"
+    parallel: true
+    skills:
+      - market-tam-som
+      - market-pest
+    gate:
+      condition: "tam-som.json + pest.json 均已生成且验证通过"
+      fail_action: "补充品类关键词和目标市场信息或检查子Skill执行结果"
+
+  - id: phase-2
+    name: "竞品情报"
+    depends_on: [phase-1]
+    skills: [market-competitor-intel]
+    gate:
+      condition: "competitors数组非空，Feature Matrix已更新"
+      fail_action: "检查竞品列表是否充分"
+
+  - id: phase-3
+    name: "四象限定位"
+    depends_on: [phase-2]
+    skills: [market-competitor-quadrant]
+    gate:
+      condition: "四象限均已填充，每项标注了数据来源和置信度"
+      fail_action: "补充已知竞品名称或检查输入数据"
+
+  - id: phase-4
+    name: "竞品报告"
+    depends_on: [phase-1, phase-2, phase-3]
+    skills: [market-competitor-report]
+    gate:
+      condition: "执行摘要包含3条核心发现+Top1策略"
+      fail_action: "检查上游数据是否完整"
+```
 
 ## 阶段执行计划
 
-### 阶段1（并行执行）
+### 阶段1：并行采集
 
-**子Skill A**：
+#### 调用 market-tam-som
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | market-tam-som |
-| 读取定义路径 | `.trae/skills/market-tam-som/SKILL.md` |
-| 输入 | 品类关键词 + 目标市场地理范围 + 测算时间范围（用户提供） |
-| 输出 | `output/pm-discovery/market-tam-som/tam-som.json` |
-| 验证 | tam/sam/som三层测算完整，每层含区间估计（乐观/中性/保守），关键假设已标注 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
+```
+Skill: market-tam-som
+输入:
+  category_keywords: 用户提供（品类关键词）
+  target_market: 用户提供（目标市场地理范围）
+  time_range: 用户提供（测算时间范围）
+输出: output/pm-discovery/market-tam-som/tam-som.json
+验证: tam/sam/som三层测算完整，每层含区间估计（乐观/中性/保守），关键假设已标注
+模式: 🤖→👤
+```
 
-**子Skill B**：
+#### 调用 market-pest
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | market-pest |
-| 读取定义路径 | `.trae/skills/market-pest/SKILL.md` |
-| 输入 | 品类关键词 + 目标市场（用户提供） |
-| 输出 | `output/pm-discovery/market-pest/pest.json` |
-| 验证 | political/economic/social/technological四维度均已扫描，每维度至少3条趋势摘要 |
-| 执行模式 | 🤖 AI自动执行 |
+```
+Skill: market-pest
+输入:
+  category_keywords: 用户提供（品类关键词）
+  target_market: 用户提供（目标市场）
+输出: output/pm-discovery/market-pest/pest.json
+验证: political/economic/social/technological四维度均已扫描，每维度至少3条趋势摘要
+模式: 🤖
+```
 
 ⏸ **阶段卡口**：tam-som.json + pest.json 均已生成且验证通过 → 未通过：补充品类关键词和目标市场信息或检查子Skill执行结果
 
-### 阶段2：market-competitor-intel
+### 阶段2：竞品情报
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | market-competitor-intel |
-| 读取定义路径 | `.trae/skills/market-competitor-intel/SKILL.md` |
-| 输入 | 竞品列表 + 监控配置（用户提供），可选参考 `output/pm-discovery/market-tam-som/tam-som.json` 和 `output/pm-discovery/market-pest/pest.json` |
-| 输出 | `output/pm-discovery/market-competitor-intel/competitor-intel.json` |
-| 验证 | competitors数组非空，Feature Matrix已更新，竞品口碑对比已完成，战略方向推断已完成 |
-| 执行模式 | 🤖 AI自动执行 |
-| ⏸ 阶段卡口 | competitors数组非空，Feature Matrix已更新 → 未通过：检查竞品列表是否充分 |
+#### 调用 market-competitor-intel
 
-### 阶段3：market-competitor-quadrant
+```
+Skill: market-competitor-intel
+输入:
+  competitor_list: 用户提供（竞品列表）
+  monitor_config: 用户提供（监控配置）
+  tam_som_ref: output/pm-discovery/market-tam-som/tam-som.json（可选）
+  pest_ref: output/pm-discovery/market-pest/pest.json（可选）
+输出: output/pm-discovery/market-competitor-intel/competitor-intel.json
+验证: competitors数组非空，Feature Matrix已更新，竞品口碑对比已完成，战略方向推断已完成
+模式: 🤖
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | market-competitor-quadrant |
-| 读取定义路径 | `.trae/skills/market-competitor-quadrant/SKILL.md` |
-| 输入 | 品类关键词 + 已知竞品列表（用户提供），可选参考 `output/pm-discovery/market-competitor-intel/competitor-intel.json` |
-| 输出 | `output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json` |
-| 验证 | 四象限（direct/indirect/substitutes/potential）均已填充，每项标注了数据来源和置信度 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | 四象限均已填充，每项标注了数据来源和置信度 → 未通过：补充已知竞品名称或检查输入数据 |
+⏸ **阶段卡口**：competitors数组非空，Feature Matrix已更新 → 未通过：检查竞品列表是否充分
 
-### 阶段4：market-competitor-report
+### 阶段3：四象限定位
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | market-competitor-report |
-| 读取定义路径 | `.trae/skills/market-competitor-report/SKILL.md` |
-| 输入 | `output/pm-discovery/market-competitor-intel/competitor-intel.json` + `output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json` + `output/pm-discovery/market-tam-som/tam-som.json` + `output/pm-discovery/market-pest/pest.json` + 品类关键词（用户提供）+ 自身产品信息（可选） |
-| 输出 | `output/pm-discovery/market-competitor-report/competitor-report.md` + `output/pm-discovery/market-competitor-report/competitor-report.json` |
-| 验证 | 执行摘要包含3条核心发现+Top1策略，每个核心竞品有完整SWOT分析，差异化策略至少3条 |
-| 执行模式 | 🤖→👤 AI建议人类审批 |
-| ⏸ 阶段卡口 | 执行摘要包含3条核心发现+Top1策略 → 未通过：检查上游数据是否完整 |
+#### 调用 market-competitor-quadrant
 
-## 调度规则
+```
+Skill: market-competitor-quadrant
+输入:
+  category_keywords: 用户提供（品类关键词）
+  known_competitors: 用户提供（已知竞品列表）
+  intel_ref: output/pm-discovery/market-competitor-intel/competitor-intel.json（可选）
+输出: output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json
+验证: 四象限（direct/indirect/substitutes/potential）均已填充，每项标注了数据来源和置信度
+模式: 🤖→👤
+```
 
-- 每次只执行当前阶段的子Skill，完成后再执行下一阶段，不要一次性加载所有子Skill
-- 执行子Skill前必须先读取其SKILL.md定义文件，按其指令执行，不要自行推断执行逻辑
-- 每个阶段完成后，将中间结果写入 `output/pm-discovery/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+⏸ **阶段卡口**：四象限均已填充，每项标注了数据来源和置信度 → 未通过：补充已知竞品名称或检查输入数据
+
+### 阶段4：竞品报告
+
+#### 调用 market-competitor-report
+
+```
+Skill: market-competitor-report
+输入:
+  category_keywords: 用户提供（品类关键词）
+  product_info: 用户提供（自身产品信息，可选）
+  intel_ref: output/pm-discovery/market-competitor-intel/competitor-intel.json
+  quadrant_ref: output/pm-discovery/market-competitor-quadrant/competitor-quadrant.json
+  tam_som_ref: output/pm-discovery/market-tam-som/tam-som.json
+  pest_ref: output/pm-discovery/market-pest/pest.json
+输出: output/pm-discovery/market-competitor-report/competitor-report.md + output/pm-discovery/market-competitor-report/competitor-report.json
+验证: 执行摘要包含3条核心发现+Top1策略，每个核心竞品有完整SWOT分析，差异化策略至少3条
+模式: 🤖→👤
+```
+
+⏸ **阶段卡口**：执行摘要包含3条核心发现+Top1策略 → 未通过：检查上游数据是否完整
 
 ## 阶段卡口
 
@@ -142,3 +216,4 @@ metadata:
 - v4.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格和人类决策点表格
 - v5.0: 统一阶段执行计划为表格格式，移除数据流转图
 - v6.0: 核心原则重写为编排理念（动态生态系统/宏观微观交叉/并行采集串行整合/人类验证三节点）；新增异常处理表（6种异常场景）；移除通用4条执行步骤原则
+- v7.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

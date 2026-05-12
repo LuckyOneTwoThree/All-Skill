@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "获客"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 用户获取指挥官
@@ -21,51 +21,74 @@ metadata:
 1. **渠道评估先行，漏斗优化跟进**：先明确渠道质量和分级，再基于渠道数据优化漏斗，避免在低质量渠道上浪费优化资源
 2. **数据在渠道间流转**：渠道评估的输出直接驱动漏斗优化的输入，确保优化方案有渠道级数据支撑
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-growth/acquisition-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-growth/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-growth/acquisition-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: acquisition-channel
+    gate: 19种渠道数据已收集，分级报告已生成
+  - stage: acquisition-optimize
+    depends_on: [acquisition-channel]
+    gate: 获客漏斗各层转化分析完成，优化建议已输出
+```
 
 ## 阶段执行计划
 
-### 阶段1：渠道评估
+#### 调用 acquisition-channel
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | acquisition-channel |
-| 读取定义路径 | `.trae/skills/acquisition-channel/SKILL.md` |
-| 输入 | 19种获客渠道数据（用户提供）、历史渠道表现（用户提供）、渠道配置和成本（用户提供） |
-| 输出 | `output/pm-growth/acquisition-channel/` |
-| 验证 | 渠道评估覆盖规模、转化率、ROI、质量4个维度；渠道分级标准明确（主力/测试/观察）；ROI计算考虑用户LTV而非单次收入；评估覆盖19种获客渠道类型 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 19种渠道数据已收集，分级报告已生成；若未通过则补充缺失渠道数据 |
+```
+Skill: acquisition-channel
+输入:
+  channel_data: 用户提供（19种获客渠道数据）
+  historical_performance: 用户提供（历史渠道表现）
+  channel_config_cost: 用户提供（渠道配置和成本）
+输出: output/pm-growth/acquisition-channel/
+验证: 渠道评估覆盖规模、转化率、ROI、质量4个维度；渠道分级标准明确（主力/测试/观察）；ROI计算考虑用户LTV而非单次收入；评估覆盖19种获客渠道类型
+模式: 🤖→👤
+```
 
-### 阶段2：漏斗优化
+#### 调用 acquisition-optimize
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | acquisition-optimize |
-| 读取定义路径 | `.trae/skills/acquisition-optimize/SKILL.md` |
-| 输入 | 获客漏斗数据（acquisition-channel → `output/pm-growth/acquisition-channel/channel_report.json`）、渠道表现数据（acquisition-channel → `output/pm-growth/acquisition-channel/channel_report.json`）、历史优化数据（用户提供，可选） |
-| 输出 | `output/pm-growth/acquisition-optimize/` |
-| 验证 | 漏斗阶段定义完整（曝光→激活/付费）；流失原因区分认知/信任/行动/价值4类障碍；优化方案附带预期提升和实施难度评估；A/B测试设计包含决策规则和终止条件 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 获客漏斗各层转化分析完成，优化建议已输出；若未通过则延长分析周期或扩大数据范围 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-growth/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: acquisition-optimize
+输入:
+  funnel_data: output/pm-growth/acquisition-channel/channel_report.json
+  channel_performance: output/pm-growth/acquisition-channel/channel_report.json
+  historical_optimization: 用户提供（可选）
+输出: output/pm-growth/acquisition-optimize/
+验证: 漏斗阶段定义完整（曝光→激活/付费）；流失原因区分认知/信任/行动/价值4类障碍；优化方案附带预期提升和实施难度评估；A/B测试设计包含决策规则和终止条件
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -95,3 +118,4 @@ metadata:
 - v2.0: description触发词优化
 - v3.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格
 - v4.0: 执行步骤替换为编排理念，新增异常处理表
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "orchestrator"
-  version: "5.0"
+  version: "6.0"
 ---
 
 # 敏捷执行指挥官
@@ -20,75 +20,110 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 2. **障碍即时暴露**——敏捷执行的编排重心是让问题在Daily Sync中浮出水面，而非在Review时才被发现。编排器应优先保障障碍信息的流动速度。
 3. **复盘闭环改进**——每个Sprint的复盘结论必须转化为下一Sprint的具体行动项，编排器应确保改进建议不被遗忘，而是成为下一轮规划的输入。
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-project/agile-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-project/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-project/agile-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: agile-sprint-planning
+    gate: Sprint计划已确认
+  - stage: agile-daily-sync
+    depends_on: [agile-sprint-planning]
+    gate: Daily Sync障碍已暴露
+  - stage: agile-review
+    depends_on: [agile-sprint-planning]
+    gate: Sprint评审完成
+  - stage: sprint-retrospective-report
+    depends_on: [agile-sprint-planning, agile-review]
+    gate: 复盘报告已审核
+```
 
 ## 阶段执行计划
 
-### 阶段1：Sprint规划
+#### 调用 agile-sprint-planning
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | agile-sprint-planning |
-| 读取定义路径 | `.trae/skills/agile-sprint-planning/SKILL.md` |
-| 输入 | Product Backlog（iteration-backlog → prioritized_items）、Sprint目标（用户提供，可选）、团队容量（planning-resource → resource_plan）、Sprint天数（用户提供） |
-| 输出 | `output/pm-project/agile-sprint-planning/`（sprint_plan、metadata） |
-| 验证 | Sprint Goal明确且包含≥1个可量化验收标准；选取的Stories总点数≤团队可用容量×1.1；100%的跨团队依赖已识别 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | Sprint计划已确认（Sprint Goal已定义，Story已分配，容量已确认），否则暂停Sprint启动，补充规划 |
+```
+Skill: agile-sprint-planning
+输入:
+  product_backlog: iteration-backlog → prioritized_items
+  sprint_goal: 用户提供（可选）
+  team_capacity: planning-resource → resource_plan
+  sprint_days: 用户提供
+输出: output/pm-project/agile-sprint-planning/
+验证: Sprint Goal明确且包含≥1个可量化验收标准；选取的Stories总点数≤团队可用容量×1.1；100%的跨团队依赖已识别
+模式: 🤖→👤
+```
 
-### 阶段2：每日同步
+#### 调用 agile-daily-sync
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | agile-daily-sync |
-| 读取定义路径 | `.trae/skills/agile-daily-sync/SKILL.md` |
-| 输入 | Sprint Backlog（agile-sprint-planning → sprint_plan）、团队任务分配（agile-sprint-planning → sprint_plan）、上次Daily Sync状态（agile-daily-sync → daily_sync）、障碍日志（agile-daily-sync → blocker_log，可选） |
-| 输出 | `output/pm-project/agile-daily-sync/`（daily_sync、metadata） |
-| 验证 | 进展汇总覆盖所有进行中Story；障碍项有明确状态和跟进人；风险标记及时且准确 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | Daily Sync障碍已暴露（每日障碍已识别并标记，重大障碍已升级），否则加强障碍追踪和升级机制 |
+```
+Skill: agile-daily-sync
+输入:
+  sprint_backlog: agile-sprint-planning → sprint_plan
+  task_assignment: agile-sprint-planning → sprint_plan
+  last_daily_sync: agile-daily-sync → daily_sync
+  blocker_log: agile-daily-sync → blocker_log（可选）
+输出: output/pm-project/agile-daily-sync/
+验证: 进展汇总覆盖所有进行中Story；障碍项有明确状态和跟进人；风险标记及时且准确
+模式: 🤖
+```
 
-### 阶段3：Sprint评审
+#### 调用 agile-review
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | agile-review |
-| 读取定义路径 | `.trae/skills/agile-review/SKILL.md` |
-| 输入 | Sprint Backlog（agile-sprint-planning → sprint_plan.json）、已完成Stories（用户提供）、团队数据（用户提供，可选）、利益相关方反馈（用户提供，可选） |
-| 输出 | `output/pm-project/agile-review/`（sprint_review、sprint_retro、metadata） |
-| 验证 | 评审覆盖所有已完成Story；演示内容与验收标准对应；反馈已分类；改进建议有明确负责人 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | Sprint评审完成（交付物已整理、反馈已收集、改进建议已生成），否则补充评审内容 |
+```
+Skill: agile-review
+输入:
+  sprint_backlog: agile-sprint-planning → sprint_plan.json
+  completed_stories: 用户提供
+  team_data: 用户提供（可选）
+  stakeholder_feedback: 用户提供（可选）
+输出: output/pm-project/agile-review/
+验证: 评审覆盖所有已完成Story；演示内容与验收标准对应；反馈已分类；改进建议有明确负责人
+模式: 🤖
+```
 
-### 阶段4：复盘报告生成
+#### 调用 sprint-retrospective-report
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | sprint-retrospective-report |
-| 读取定义路径 | `.trae/skills/sprint-retrospective-report/SKILL.md` |
-| 输入 | Sprint计划（agile-sprint-planning）、每日同步记录（agile-daily-sync，可选）、Sprint评审结果（agile-review）、历史Sprint数据（用户提供，可选） |
-| 输出 | `output/pm-project/sprint-retrospective-report/sprint-retro-S{NN}.md`、`output/pm-project/sprint-retrospective-report/sprint-retro-S{NN}.json` |
-| 验证 | 目标达成与数据一致；溢出根因已分类；行动项可执行（每项有负责人和截止日期）；速率趋势有依据 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 复盘报告已审核（Sprint复盘报告经人类审核确认），否则补充分析或修改行动项 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-project/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: sprint-retrospective-report
+输入:
+  sprint_plan: agile-sprint-planning
+  daily_sync_records: agile-daily-sync（可选）
+  sprint_review_result: agile-review
+  historical_sprint_data: 用户提供（可选）
+输出: output/pm-project/sprint-retrospective-report/
+验证: 目标达成与数据一致；溢出根因已分类；行动项可执行（每项有负责人和截止日期）；速率趋势有依据
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -122,3 +157,4 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 - v3.0: 新增 sprint-retrospective-report（Sprint复盘报告）
 - v4.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
 - v5.0: 核心原则替换为编排理念原则，新增异常处理表
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

@@ -5,7 +5,7 @@ metadata:
   module: "跨领域协调"
   sub-module: "产品迭代"
   type: "orchestrator"
-  version: "2.0"
+  version: "3.0"
 ---
 
 # 产品迭代总指挥
@@ -24,148 +24,250 @@ metadata:
 4. **条件分支执行**：仅执行受影响的领域编排器
 5. **集成交付**：联调验证→质量验证→发布
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/cross-domain/product-iteration-orchestrator.md`
 
-## 子编排器调度协议
+### 上下文管理
 
-当本编排器需要调度子编排器时：
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/cross-domain/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
 
-1. 读取子编排器定义：`对应子编排器的定义文件（阶段执行计划中"读取定义"列指定的路径）`
-2. 按子编排器的"子Skill执行协议"执行其完整流程
-3. 子编排器的所有阶段完成后，收集其最终输出
-4. 将子编排器的输出作为本编排器下一阶段的输入
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/cross-domain/product-iteration-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: requirements
+    skills: [requirements-orchestrator]
+    depends_on: []
+    gate: 需求文档人类确认通过
+
+  - stage: design
+    skills: [design-orchestrator]
+    depends_on: [requirements]
+    gate: PRD变更人类确认通过
+
+  - stage: impact-analysis
+    skills: []
+    depends_on: [design]
+    gate: 影响范围人类确认通过
+
+  - stage: api-update
+    skills: [api-design-orchestrator]
+    depends_on: [design]
+    parallel: true
+    conditional: 影响范围含API变更
+    gate: API变更人类确认通过
+
+  - stage: design-system-update
+    skills: [design-system-orchestrator]
+    depends_on: [design]
+    parallel: true
+    conditional: 影响范围含设计令牌变更
+    gate: 设计令牌变更人类确认通过
+
+  - stage: data-update
+    skills: [data-architecture-orchestrator]
+    depends_on: [api-update]
+    parallel: true
+    conditional: 影响范围含数据模型变更
+    gate: 数据架构变更审查通过
+
+  - stage: ui-update
+    skills: [ui-frontend-orchestrator]
+    depends_on: [design-system-update]
+    parallel: true
+    conditional: 影响范围含UI变更
+    gate: 前端代码审查通过
+
+  - stage: backend-update
+    skills: [backend-architecture-orchestrator]
+    depends_on: [api-update, data-update]
+    conditional: 影响范围含后端逻辑变更
+    gate: 后端审查通过（P0=0）
+
+  - stage: integration
+    skills: [frontend-integration-orchestrator]
+    depends_on: [api-update, ui-update]
+    conditional: API发生变更
+    gate: 前后端联调通过
+
+  - stage: delivery
+    skills: [quality-orchestrator, release-orchestrator]
+    depends_on: [backend-update, ui-update, integration]
+    gate: P0问题=0，回归测试通过
+```
 
 ## 阶段执行计划
 
-### 阶段1：requirements-orchestrator（需求分析）
+### 阶段1：需求分析
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | requirements-orchestrator |
-| 读取定义路径 | `.trae/skills/requirements-orchestrator/SKILL.md` |
-| 输入 | 用户反馈 + 业务需求 + 数据异常 |
-| 输出 | 需求文档 |
-| 验证 | 需求文档人类确认通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 需求文档人类确认通过后才可进入阶段2 |
+#### 调用 requirements-orchestrator
 
-### 阶段2：design-orchestrator（增量更新PRD）
+```
+Skill: requirements-orchestrator
+输入:
+  用户反馈: 迭代用户反馈数据
+  业务需求: 业务需求变更
+  数据异常: 数据异常指标
+输出: output/cross-domain/requirements-orchestrator/
+验证: 需求文档人类确认通过
+模式: 🤖→👤
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | design-orchestrator |
-| 读取定义路径 | `.trae/skills/design-orchestrator/SKILL.md` |
-| 输入 | 需求文档（阶段1输出） |
-| 输出 | PRD变更（变更部分标注） |
-| 验证 | PRD变更部分人类确认通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | PRD变更人类确认通过后才可进入阶段3 |
+### 阶段2：增量更新PRD
+
+#### 调用 design-orchestrator
+
+```
+Skill: design-orchestrator
+输入:
+  需求文档: output/cross-domain/requirements-orchestrator/
+输出: output/cross-domain/design-orchestrator/
+验证: PRD变更部分人类确认通过
+模式: 🤖→👤
+```
 
 ### 阶段3：影响分析（自动执行）
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | 无（本编排器自动执行） |
-| 读取定义路径 | 无 |
-| 输入 | PRD变更（阶段2输出） |
-| 输出 | 影响范围报告（API变更？UI变更？后端逻辑变更？） |
-| 验证 | 所有受影响领域已识别 |
-| 执行模式 | 🤖 AI自动执行 |
-| ⏸ 阶段卡口 | 影响范围人类确认通过后才可进入条件分支执行 |
+```
+Skill: 无（本编排器自动执行）
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+输出: output/cross-domain/product-iteration-orchestrator/impact-report.md
+验证: 所有受影响领域已识别
+模式: 🤖
+```
 
-### 阶段4a：api-design-orchestrator（API增量更新，条件执行）
+### 阶段4a：API增量更新（条件执行）
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | api-design-orchestrator |
-| 读取定义路径 | `.trae/skills/api-design-orchestrator/SKILL.md` |
-| 输入 | PRD变更（阶段2输出） |
-| 输出 | API变更输出 |
-| 验证 | API变更人类确认通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 仅当影响范围含API变更时执行；API变更确认通过后才可进入下游 |
+#### 调用 api-design-orchestrator
 
-### 阶段4b：data-architecture-orchestrator（数据架构增量更新，条件执行）
+```
+Skill: api-design-orchestrator
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+输出: output/cross-domain/api-design-orchestrator/
+验证: API变更人类确认通过
+模式: 🤖→👤
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | data-architecture-orchestrator |
-| 读取定义路径 | `.trae/skills/data-architecture-orchestrator/SKILL.md` |
-| 输入 | PRD变更（阶段2输出）+ API变更输出（阶段4a，如有） |
-| 输出 | 数据架构变更输出 |
-| 验证 | 数据架构变更审查通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 仅当影响范围含数据模型变更时执行 |
+### 阶段4b：数据架构增量更新（条件执行）
 
-### 阶段4c：backend-architecture-orchestrator（后端增量更新，条件执行）
+#### 调用 data-architecture-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | backend-architecture-orchestrator |
-| 读取定义路径 | `.trae/skills/backend-architecture-orchestrator/SKILL.md` |
-| 输入 | PRD变更（阶段2输出）+ API变更输出（阶段4a）+ 数据架构变更输出（阶段4b，如有） |
-| 输出 | 后端架构变更输出 |
-| 验证 | 后端审查通过（P0=0） |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 仅当影响范围含后端逻辑变更时执行 |
+```
+Skill: data-architecture-orchestrator
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+  API变更输出: output/cross-domain/api-design-orchestrator/
+输出: output/cross-domain/data-architecture-orchestrator/
+验证: 数据架构变更审查通过
+模式: 🤖→👤
+```
 
-### 阶段4d：design-system-orchestrator（设计系统增量更新，条件执行）
+### 阶段4c：后端增量更新（条件执行）
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | design-system-orchestrator |
-| 读取定义路径 | `.trae/skills/design-system-orchestrator/SKILL.md` |
-| 输入 | PRD变更（阶段2输出） |
-| 输出 | 设计令牌/组件库变更输出 |
-| 验证 | 设计令牌变更人类确认通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 仅当影响范围含设计令牌变更时执行 |
+#### 调用 backend-architecture-orchestrator
 
-### 阶段4e：ui-frontend-orchestrator（前端增量更新，条件执行）
+```
+Skill: backend-architecture-orchestrator
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+  API变更输出: output/cross-domain/api-design-orchestrator/
+  数据架构变更输出: output/cross-domain/data-architecture-orchestrator/
+输出: output/cross-domain/backend-architecture-orchestrator/
+验证: 后端审查通过（P0=0）
+模式: 🤖→👤
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | ui-frontend-orchestrator |
-| 读取定义路径 | `.trae/skills/ui-frontend-orchestrator/SKILL.md` |
-| 输入 | PRD变更（阶段2输出）+ 设计令牌变更输出（阶段4d，如有） |
-| 输出 | 前端代码变更输出 |
-| 验证 | 前端代码审查通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 仅当影响范围含UI变更时执行 |
+### 阶段4d：设计系统增量更新（条件执行）
 
-### 阶段5：frontend-integration-orchestrator（前端联调更新，条件执行）
+#### 调用 design-system-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | frontend-integration-orchestrator |
-| 读取定义路径 | `.trae/skills/frontend-integration-orchestrator/SKILL.md` |
-| 输入 | API变更输出（阶段4a）+ 前端代码变更输出（阶段4e） |
-| 输出 | 前端集成输出 |
-| 验证 | 前后端联调通过 |
-| 执行模式 | 🤖 AI自动执行 |
-| ⏸ 阶段卡口 | 仅当API发生变更时执行；纯UI变更跳过此阶段 |
+```
+Skill: design-system-orchestrator
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+输出: output/cross-domain/design-system-orchestrator/
+验证: 设计令牌变更人类确认通过
+模式: 🤖→👤
+```
 
-### 阶段6：quality-orchestrator → release-orchestrator（质量验证与发布）
+### 阶段4e：前端增量更新（条件执行）
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | quality-orchestrator → release-orchestrator |
-| 读取定义路径 | `.trae/skills/quality-orchestrator/SKILL.md` → `.trae/skills/release-orchestrator/SKILL.md` |
-| 输入 | 所有变更部分的输出（阶段4a-4e + 阶段5） |
-| 输出 | 质量报告 → 发布产物 |
-| 验证 | P0问题=0，回归测试通过 |
-| 执行模式 | 🤖→👤 AI建议，人类审批 |
-| ⏸ 阶段卡口 | 质量门禁通过后才可发布；人类确认发布决策 |
+#### 调用 ui-frontend-orchestrator
+
+```
+Skill: ui-frontend-orchestrator
+输入:
+  PRD变更: output/cross-domain/design-orchestrator/
+  设计令牌变更输出: output/cross-domain/design-system-orchestrator/
+输出: output/cross-domain/ui-frontend-orchestrator/
+验证: 前端代码审查通过
+模式: 🤖→👤
+```
+
+### 阶段5：前端联调更新（条件执行）
+
+#### 调用 frontend-integration-orchestrator
+
+```
+Skill: frontend-integration-orchestrator
+输入:
+  API变更输出: output/cross-domain/api-design-orchestrator/
+  前端代码变更输出: output/cross-domain/ui-frontend-orchestrator/
+输出: output/cross-domain/frontend-integration-orchestrator/
+验证: 前后端联调通过
+模式: 🤖
+```
+
+### 阶段6：质量验证与发布
+
+#### 调用 quality-orchestrator
+
+```
+Skill: quality-orchestrator
+输入:
+  变更部分输出: output/cross-domain/
+  集成输出: output/cross-domain/frontend-integration-orchestrator/
+输出: output/cross-domain/quality-orchestrator/
+验证: P0问题=0，回归测试通过
+模式: 🤖→👤
+```
+
+#### 调用 release-orchestrator
+
+```
+Skill: release-orchestrator
+输入:
+  质量报告: output/cross-domain/quality-orchestrator/
+  变更部分输出: output/cross-domain/
+输出: output/cross-domain/release-orchestrator/
+验证: 发布决策人类确认
+模式: 🤖→👤
+```
 
 ### 附加调度（按需触发）
 
@@ -175,16 +277,6 @@ metadata:
 | 需要A/B验证 | → experiment-orchestrator（在release-orchestrator之前执行） |
 | 需要项目管理支撑 | → agile-orchestrator（贯穿全程） |
 | 迭代效果评估 | → analysis-orchestrator（在release-orchestrator之后执行） |
-
-## 调度规则
-
-- 每次只执行当前阶段需要的领域编排器，完成后再执行下一阶段
-- 执行子编排器前必须先读取其SKILL.md定义文件
-- 影响分析是核心环节，必须扫描所有领域编排器的输入依赖，不能遗漏受影响的领域
-- 条件分支执行：未受影响的领域直接跳过，不执行该领域的编排器
-- 增量更新：领域编排器执行时，仅更新变更部分，保留未变更部分
-- 跨领域数据契约变更必须经过人类确认后才能传递到下游领域
-- 若上下文接近上限，优先保留影响分析结果和变更部分内容
 
 ## 阶段卡口
 
@@ -220,5 +312,6 @@ metadata:
 
 ## 变更记录
 
+- v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加子编排器调度协议和命令式调度指令
 - v1.0: 初始版本

@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 发布策略指挥官
@@ -22,63 +22,96 @@ metadata:
 2. **指标恶化即回滚，无需人工确认**：P0指标恶化自动回滚，将人工决策留给不确定场景而非确定风险
 3. **发布说明必须覆盖所有变更**：任何未在发布说明中体现的变更视为遗漏，遗漏即风险
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-development/release-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-development/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-development/release-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: release-gradual
+    gate: 灰度各阶段指标无恶化
+  - stage: release-auto-checklist
+    parallel: true
+    gate: Checklist P0项全部完成
+  - stage: release-notes
+    depends_on: [release-gradual, release-auto-checklist]
+    gate: 版本发布说明已生成
+```
 
 ## 阶段执行计划
 
-#### 阶段1：灰度发布自动执行
+#### 调用 release-gradual
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | release-gradual |
-| 读取定义路径 | `.trae/skills/release-gradual/SKILL.md` |
-| 输入 | 发布内容（发布管理系统）、Feature Flag配置（Feature Flag系统）、监控指标定义（监控系统）、灰度策略配置（发布策略库） |
-| 输出 | `output/pm-development/release-gradual/`（release_status、phase_transitions、rollback_history、monitoring_metrics、canary_plan） |
-| 验证 | 发布前验证全部通过，P0指标稳定无恶化趋势，回滚机制就绪，告警配置正确 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | 灰度各阶段指标无恶化：P0指标稳定，无新增异常，未通过则暂停灰度或自动回滚 |
+```
+Skill: release-gradual
+输入:
+  release_content: 发布管理系统
+  feature_flag_config: Feature Flag系统
+  monitoring_metrics: 监控系统
+  gradual_strategy: 发布策略库
+输出: output/pm-development/release-gradual/
+验证: 发布前验证全部通过，P0指标稳定无恶化趋势，回滚机制就绪，告警配置正确
+模式: 🤖
+```
 
-#### 阶段2：上线Checklist自动生成与追踪
+#### 调用 release-auto-checklist
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | release-auto-checklist |
-| 读取定义路径 | `.trae/skills/release-auto-checklist/SKILL.md` |
-| 输入 | 发布内容（发布管理系统）、Checklist模板（发布策略库）、发布计划（项目管理）、发布历史（发布历史库） |
-| 输出 | `output/pm-development/release-auto-checklist/`（checklist、completion_status、pending_alerts、risk_assessment） |
-| 验证 | P0项完成率100%，告警处理率100%，人工确认完整性 |
-| 执行模式 | 🤖 |
-| ⏸ 阶段卡口 | Checklist P0项全部完成：所有P0检查项已通过，未通过则阻止进入下一发布阶段 |
+```
+Skill: release-auto-checklist
+输入:
+  release_content: 发布管理系统
+  checklist_template: 发布策略库
+  release_plan: 项目管理
+  release_history: 发布历史库
+输出: output/pm-development/release-auto-checklist/
+验证: P0项完成率100%，告警处理率100%，人工确认完整性
+模式: 🤖
+```
 
-#### 阶段3：版本发布说明自动生成
+#### 调用 release-notes
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | release-notes |
-| 读取定义路径 | `.trae/skills/release-notes/SKILL.md` |
-| 输入 | 需求变更记录（output/pm-development/requirements-change-log/requirements-change-log.md）、PRD文档（output/pm-design/design-prd/PRD-{产品名}.md）、SRS文档（output/pm-design/requirements-srs/SRS-{产品名}.md）、版本号、发布日期、发布类型、目标受众 |
-| 输出 | `output/pm-development/release-notes/`（release-notes-v{版本号}.md、release-notes-v{版本号}-enterprise.md、release-notes-v{版本号}-developer.md、release-notes-v{版本号}.json） |
-| 验证 | 版本号和日期正确，变更按类别分类，破坏性变更已突出显示，用户行动项已明确，多格式已生成 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 版本发布说明已生成：发布说明覆盖所有变更类型，未通过则补充遗漏变更 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件（`对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）`）
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-development/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: release-notes
+输入:
+  change_log: output/pm-development/requirements-change-log/requirements-change-log.md
+  prd_doc: output/pm-design/design-prd/PRD-{产品名}.md
+  srs_doc: output/pm-design/requirements-srs/SRS-{产品名}.md
+  version: 版本号
+  release_date: 发布日期
+  release_type: 发布类型
+  target_audience: 目标受众
+输出: output/pm-development/release-notes/
+验证: 版本号和日期正确，变更按类别分类，破坏性变更已突出显示，用户行动项已明确，多格式已生成
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -113,3 +146,4 @@ metadata:
 - v2.0: 新增 release-notes（版本发布说明）
 - v3.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范，调度规则从"加载"改为"执行"
 - v4.0: 执行步骤原则替换为编排理念
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

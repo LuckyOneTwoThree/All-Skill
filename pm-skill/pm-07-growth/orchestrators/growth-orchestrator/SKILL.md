@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
   type: "orchestrator"
-  version: "5.0"
+  version: "6.0"
 ---
 
 # 增长策略总指挥官
@@ -23,126 +23,194 @@ metadata:
 3. **数据驱动归因**：从增长模式到各环节全链路归因，量化每个动作的贡献
 4. **闭环迭代**：增长策略通过数据持续验证和迭代
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-growth/growth-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-growth/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-growth/growth-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: growth-model
+    gate: 增长模式已确定，飞轮模型已构建
+  - stage: acquisition-orchestrator
+    depends_on: [growth-model]
+    trigger: 获客为瓶颈
+    gate: 渠道评估完成且漏斗优化方案已生成
+  - stage: activation-orchestrator
+    depends_on: [growth-model]
+    trigger: 激活为瓶颈
+    gate: Aha Moment候选已识别且Onboarding策略已生成
+  - stage: retention-orchestrator
+    depends_on: [growth-model]
+    trigger: 留存为瓶颈
+    gate: 流失预警模型已构建且用户分层已完成
+  - stage: revenue-orchestrator
+    depends_on: [growth-model]
+    trigger: 变现为瓶颈
+    gate: 付费漏斗分析完成且NRR追踪已建立
+  - stage: growth-strategy-report
+    depends_on: [growth-model]
+    gate: 增长策略报告经人类确认
+  - stage: gtm-strategy
+    trigger: 新产品上市 / 市场拓展
+    gate: GTM策略经人类确认
+  - stage: product-operations-manual
+    trigger: 运营手册制定需求
+    gate: 运营手册经人类确认
+```
 
 ## 阶段执行计划
 
 ### 阶段1：增长模式诊断
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | growth-model |
-| 读取定义路径 | `.trae/skills/growth-model/SKILL.md` |
-| 输入 | 产品特征（用户提供）、用户数据（analysis-retention → retention_analysis.yaml）、商业模式（用户提供） |
-| 输出 | `output/pm-growth/growth-model/` |
-| 验证 | 北极星指标与≥1个OKR Objective直接关联；增长模型包含≥3个可量化变量；增长飞轮包含≥4个节点且形成闭环；瓶颈约束识别≤5个，每个有量化影响评估 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 增长模式已确定，飞轮模型已构建；若未通过则补充产品特征和用户数据 |
+#### 调用 growth-model
+
+```
+Skill: growth-model
+输入:
+  product_features: 用户提供（产品特征）
+  user_data: analysis-retention → retention_analysis.yaml
+  business_model: 用户提供（商业模式）
+输出: output/pm-growth/growth-model/
+验证: 北极星指标与≥1个OKR Objective直接关联；增长模型包含≥3个可量化变量；增长飞轮包含≥4个节点且形成闭环；瓶颈约束识别≤5个，每个有量化影响评估
+模式: 🤖→👤
+```
 
 ### 阶段2：瓶颈环节优化（条件分支）
 
-根据阶段1诊断的瓶颈环节，调度对应的子编排器。子编排器自身也是编排器，需读取其SKILL.md后按其阶段执行计划执行。
+根据阶段1诊断的瓶颈环节，调度对应的子编排器。
 
-#### 分支2A：获客为瓶颈 → acquisition-orchestrator
+#### 调用 acquisition-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | acquisition-orchestrator |
-| 读取定义路径 | `.trae/skills/acquisition-orchestrator/SKILL.md` |
-| 输入 | 增长模式诊断（growth-model → `output/pm-growth/growth-model/`）、渠道数据（用户提供）、漏斗数据（用户提供） |
-| 输出 | `output/pm-growth/acquisition-channel/`、`output/pm-growth/acquisition-optimize/` |
-| 验证 | 渠道评估覆盖19种渠道；获客漏斗各层转化分析完成，优化建议已输出 |
-| 执行模式 | 🤖→👤 |
+```
+Skill: acquisition-orchestrator
+输入:
+  growth_model: output/pm-growth/growth-model/
+  channel_data: 用户提供
+  funnel_data: 用户提供
+输出: output/pm-growth/acquisition-channel/、output/pm-growth/acquisition-optimize/
+验证: 渠道评估覆盖19种渠道；获客漏斗各层转化分析完成，优化建议已输出
+模式: 🤖→👤
+```
 
-#### 分支2B：激活为瓶颈 → activation-orchestrator
+#### 调用 activation-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | activation-orchestrator |
-| 读取定义路径 | `.trae/skills/activation-orchestrator/SKILL.md` |
-| 输入 | 增长模式诊断（growth-model → `output/pm-growth/growth-model/`）、用户行为数据（用户提供）、留存数据（analysis-retention → retention_analysis.yaml） |
-| 输出 | `output/pm-growth/activation-aha/`、`output/pm-growth/activation-onboarding/` |
-| 验证 | Aha Moment候选已识别；Onboarding策略已生成 |
-| 执行模式 | 🤖→👤 |
+```
+Skill: activation-orchestrator
+输入:
+  growth_model: output/pm-growth/growth-model/
+  user_behavior_data: 用户提供
+  retention_data: analysis-retention → retention_analysis.yaml
+输出: output/pm-growth/activation-aha/、output/pm-growth/activation-onboarding/
+验证: Aha Moment候选已识别；Onboarding策略已生成
+模式: 🤖→👤
+```
 
-#### 分支2C：留存为瓶颈 → retention-orchestrator
+#### 调用 retention-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | retention-orchestrator |
-| 读取定义路径 | `.trae/skills/retention-orchestrator/SKILL.md` |
-| 输入 | 增长模式诊断（growth-model → `output/pm-growth/growth-model/`）、用户行为数据（用户提供）、流失历史数据（用户提供） |
-| 输出 | `output/pm-growth/retention-churn/`、`output/pm-growth/retention-engagement/` |
-| 验证 | 流失预警模型已构建；用户分层已完成 |
-| 执行模式 | 🤖→👤 |
+```
+Skill: retention-orchestrator
+输入:
+  growth_model: output/pm-growth/growth-model/
+  user_behavior_data: 用户提供
+  churn_history: 用户提供（流失历史数据）
+输出: output/pm-growth/retention-churn/、output/pm-growth/retention-engagement/
+验证: 流失预警模型已构建；用户分层已完成
+模式: 🤖→👤
+```
 
-#### 分支2D：变现为瓶颈 → revenue-orchestrator
+#### 调用 revenue-orchestrator
 
-| 项目 | 内容 |
-|------|------|
-| 子编排器名称 | revenue-orchestrator |
-| 读取定义路径 | `.trae/skills/revenue-orchestrator/SKILL.md` |
-| 输入 | 增长模式诊断（growth-model → `output/pm-growth/growth-model/`）、付费漏斗数据（用户提供）、收入数据（用户提供） |
-| 输出 | `output/pm-growth/revenue-funnel/`、`output/pm-growth/revenue-nrr/`、`output/pm-growth/revenue-upsell/` |
-| 验证 | 付费漏斗分析完成；NRR追踪已建立 |
-| 执行模式 | 🤖→👤 |
+```
+Skill: revenue-orchestrator
+输入:
+  growth_model: output/pm-growth/growth-model/
+  payment_funnel_data: 用户提供（付费漏斗数据）
+  revenue_data: 用户提供（收入数据）
+输出: output/pm-growth/revenue-funnel/、output/pm-growth/revenue-nrr/、output/pm-growth/revenue-upsell/
+验证: 付费漏斗分析完成；NRR追踪已建立
+模式: 🤖→👤
+```
 
 > **多瓶颈场景**：若多个环节均为瓶颈，按飞轮顺序依次调度子编排器（获客→激活→留存→变现）。
 
 ### 阶段3：增长策略报告
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | growth-strategy-report |
-| 读取定义路径 | `.trae/skills/growth-strategy-report/SKILL.md` |
-| 输入 | 增长模式诊断（growth-model → `output/pm-growth/growth-model/`）、获客方案（acquisition-channel/acquisition-optimize → `output/pm-growth/acquisition-channel/`、`output/pm-growth/acquisition-optimize/`，可选）、激活方案（activation-aha/activation-onboarding → `output/pm-growth/activation-aha/`、`output/pm-growth/activation-onboarding/`，可选）、留存方案（retention-churn/retention-engagement → `output/pm-growth/retention-churn/`、`output/pm-growth/retention-engagement/`，可选）、变现方案（revenue-funnel/revenue-nrr/revenue-upsell → `output/pm-growth/revenue-funnel/`、`output/pm-growth/revenue-nrr/`、`output/pm-growth/revenue-upsell/`，可选）、业务目标（用户提供，可选） |
-| 输出 | `output/pm-growth/growth-strategy-report/growth-strategy-report.md`、`output/pm-growth/growth-strategy-report/growth-strategy-report.json` |
-| 验证 | 飞轮模型完整性（至少3个节点+2条因果关系）；策略与瓶颈一致；路线图可执行；漏斗数据完整（AARRR至少3个环节有数据） |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 增长策略报告经人类确认；若未通过则调整策略方向和执行路线图 |
+#### 调用 growth-strategy-report
 
-### 附加阶段A：GTM策略（按需触发）
+```
+Skill: growth-strategy-report
+输入:
+  growth_model: output/pm-growth/growth-model/
+  acquisition_plan: output/pm-growth/acquisition-channel/（可选）
+  activation_plan: output/pm-growth/activation-aha/（可选）
+  retention_plan: output/pm-growth/retention-churn/（可选）
+  revenue_plan: output/pm-growth/revenue-funnel/（可选）
+  business_goal: 用户提供（可选）
+输出: output/pm-growth/growth-strategy-report/
+验证: 飞轮模型完整性（至少3个节点+2条因果关系）；策略与瓶颈一致；路线图可执行；漏斗数据完整（AARRR至少3个环节有数据）
+模式: 🤖→👤
+```
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | gtm-strategy |
-| 读取定义路径 | `.trae/skills/gtm-strategy/SKILL.md` |
-| 输入 | 产品定位（positioning-statement，可选）、差异化策略（positioning-differentiation，可选）、商业模式（business-model-canvas，可选）、定价方案（business-pricing，可选）、增长模式（growth-model → `output/pm-growth/growth-model/`）、产品信息（用户提供） |
-| 输出 | `output/pm-growth/gtm-strategy/gtm-strategy.md`、`output/pm-growth/gtm-strategy/gtm-strategy.json` |
-| 验证 | ICP画像具体（至少包含行业、规模、角色3个维度）；上市路径有依据；渠道预算可执行；成功指标可量化 |
-| 执行模式 | 🤖→👤 |
-| 触发条件 | 新产品上市 / 市场拓展 |
+### 附加阶段（按需触发）
 
-### 附加阶段B：产品运营手册（按需触发）
+#### 调用 gtm-strategy
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | product-operations-manual |
-| 读取定义路径 | `.trae/skills/product-operations-manual/SKILL.md` |
-| 输入 | 增长模式（growth-model → `output/pm-growth/growth-model/`，可选）、激活策略（activation-onboarding → `output/pm-growth/activation-onboarding/`，可选）、留存策略（retention-engagement → `output/pm-growth/retention-engagement/`，可选）、变现策略（revenue-funnel → `output/pm-growth/revenue-funnel/`，可选）、产品信息（用户提供） |
-| 输出 | `output/pm-growth/product-operations-manual/product-operations-manual.md`、`output/pm-growth/product-operations-manual/product-operations-manual.json` |
-| 验证 | SOP可执行；分层策略完整（至少覆盖新/活跃/沉默/流失4类用户）；应急流程可操作（P0-P3均有响应SLA和升级路径）；模板可直接使用 |
-| 执行模式 | 🤖→👤 |
-| 触发条件 | 运营手册制定需求 |
+```
+Skill: gtm-strategy
+输入:
+  positioning: positioning-statement（可选）
+  differentiation: positioning-differentiation（可选）
+  business_model: business-model-canvas（可选）
+  pricing: business-pricing（可选）
+  growth_model: output/pm-growth/growth-model/
+  product_info: 用户提供
+输出: output/pm-growth/gtm-strategy/
+验证: ICP画像具体（至少包含行业、规模、角色3个维度）；上市路径有依据；渠道预算可执行；成功指标可量化
+模式: 🤖→👤
+```
 
-## 调度规则
+#### 调用 product-operations-manual
 
-- 执行子Skill前必须先读取其SKILL.md定义文件
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-growth/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
-- 子编排器（acquisition/activation/retention/revenue-orchestrator）按瓶颈条件分支调度，多瓶颈按飞轮顺序依次执行
+```
+Skill: product-operations-manual
+输入:
+  growth_model: output/pm-growth/growth-model/（可选）
+  activation_strategy: output/pm-growth/activation-onboarding/（可选）
+  retention_strategy: output/pm-growth/retention-engagement/（可选）
+  revenue_strategy: output/pm-growth/revenue-funnel/（可选）
+  product_info: 用户提供
+输出: output/pm-growth/product-operations-manual/
+验证: SOP可执行；分层策略完整（至少覆盖新/活跃/沉默/流失4类用户）；应急流程可操作（P0-P3均有响应SLA和升级路径）；模板可直接使用
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -180,3 +248,4 @@ metadata:
 - v3.0: 新增 growth-strategy-report（增长策略报告）、gtm-strategy（Go-to-Market策略）、product-operations-manual（产品运营手册）
 - v4.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格，条件分支子编排器说明
 - v5.0: 执行步骤替换为编排理念，新增异常处理表
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

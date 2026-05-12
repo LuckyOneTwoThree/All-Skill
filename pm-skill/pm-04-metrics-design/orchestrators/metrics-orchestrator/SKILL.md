@@ -5,7 +5,7 @@ metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
   type: "orchestrator"
-  version: "4.0"
+  version: "5.0"
 ---
 
 # 产品度量设计指挥官
@@ -20,63 +20,90 @@ metadata:
 2. **层层卡口，逐级确认**：每个阶段的输出必须通过人类确认后才传递给下游，避免错误沿链路放大
 3. **数据闭环，双向校验**：指标→埋点→看板形成闭环，上游变更必须沿链路传递，下游反馈必须回溯到源头
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-metrics-design/metrics-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入对应模块的 `output/pm-metrics-design/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-metrics-design/metrics-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  - stage: metrics-system
+    gate: 北极星指标人类已选择
+  - stage: tracking-plan
+    depends_on: [metrics-system]
+    gate: 埋点方案人类已审核
+  - stage: metrics-dashboard
+    depends_on: [metrics-system, tracking-plan]
+    gate: Dashboard布局人类已确认
+```
 
 ## 阶段执行计划
 
-#### 阶段1：指标体系自动构建
+#### 调用 metrics-system
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | metrics-system |
-| 读取定义路径 | `.trae/skills/metrics-system/SKILL.md` |
-| 输入 | product_context（用户提供：产品类型、北极星指标、OKR、商业模式）、existing_metrics（用户提供：已有指标清单） |
-| 输出 | `output/pm-metrics-design/metrics-system/metric_system.json`（north_star、l1_metrics、l2_metrics、actionable_metrics、vanity_alerts） |
-| 验证 | 北极星虚荣指标检测通过，L1-L2拆解完整（每L1有3-5个L2），行动指标可追踪 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 指标体系完成：北极星指标人类已选择，未通过则北极星指标必须人类决策，AI只提供候选和分析 |
+```
+Skill: metrics-system
+输入:
+  product_context: 用户提供（产品类型、北极星指标、OKR、商业模式）
+  existing_metrics: 用户提供（已有指标清单）
+输出: output/pm-metrics-design/metrics-system/metric_system.json
+验证: 北极星虚荣指标检测通过，L1-L2拆解完整（每L1有3-5个L2），行动指标可追踪
+模式: 🤖→👤
+```
 
-#### 阶段2：埋点方案自动生成
+#### 调用 tracking-plan
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | tracking-plan |
-| 读取定义路径 | `.trae/skills/tracking-plan/SKILL.md` |
-| 输入 | PRD（用户提供：产品功能描述、用户流程、核心路径、业务规则）、指标体系（output/pm-metrics-design/metrics-system/metric_system.json）、现有埋点清单（用户提供） |
-| 输出 | `output/pm-metrics-design/tracking-plan/`（tracking_plan、quality_check） |
-| 验证 | 命名规范通过，核心路径覆盖≥90%，PRD一致性≥90% |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 埋点方案完成：埋点方案人类已审核，未通过则业务逻辑正确性和隐私合规性必须人类确认 |
+```
+Skill: tracking-plan
+输入:
+  PRD: 用户提供（产品功能描述、用户流程、核心路径、业务规则）
+  metric_system: output/pm-metrics-design/metrics-system/metric_system.json
+  existing_tracking: 用户提供（现有埋点清单）
+输出: output/pm-metrics-design/tracking-plan/
+验证: 命名规范通过，核心路径覆盖≥90%，PRD一致性≥90%
+模式: 🤖→👤
+```
 
-#### 阶段3：Dashboard自动配置
+#### 调用 metrics-dashboard
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | metrics-dashboard |
-| 读取定义路径 | `.trae/skills/metrics-dashboard/SKILL.md` |
-| 输入 | metric_system（output/pm-metrics-design/metrics-system/metric_system.json）、tracking_plan（output/pm-metrics-design/tracking-plan/tracking_plan）、user_roles（用户提供）、dashboard_platform（用户提供） |
-| 输出 | `output/pm-metrics-design/metrics-dashboard/`（dashboards、configuration_files） |
-| 验证 | 所有指标已分配到Dashboard，每个Dashboard至少有1个Widget，北极星指标出现在战略Dashboard，告警规则配置完整 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | Dashboard完成：Dashboard布局人类已确认，未通过则布局合理性和告警阈值需人类审核 |
-
-## 调度规则
-
-- 执行子Skill前必须先读取其SKILL.md定义文件（`对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）`）
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 每个阶段完成后，将中间结果写入 `output/pm-metrics-design/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: metrics-dashboard
+输入:
+  metric_system: output/pm-metrics-design/metrics-system/metric_system.json
+  tracking_plan: output/pm-metrics-design/tracking-plan/tracking_plan
+  user_roles: 用户提供
+  dashboard_platform: 用户提供
+输出: output/pm-metrics-design/metrics-dashboard/
+验证: 所有指标已分配到Dashboard，每个Dashboard至少有1个Widget，北极星指标出现在战略Dashboard，告警规则配置完整
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -110,3 +137,4 @@ metadata:
 - v2.0: description触发词优化
 - v3.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范，调度规则从"加载"改为"执行"
 - v4.0: 执行步骤原则替换为编排理念，新增异常处理表
+- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议

@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "orchestrator"
-  version: "6.0"
+  version: "7.0"
 ---
 
 # 产品设计与原型指挥官
@@ -26,111 +26,169 @@ metadata:
 | 人类决策超时未响应 | 暂停编排流程，保留当前状态，等待人类决策后继续 |
 | 上游输入数据格式异常 | 尝试兼容解析，解析失败则降级为用户提供描述，标注"数据格式异常" |
 
-## 子Skill执行协议
+## 编排协议
 
-你是编排器，你的职责是按阶段调度子Skill执行。执行每个子Skill时，你必须严格遵循以下步骤：
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
 
-1. **读取子Skill定义**：读取 `对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）` 获取该子Skill的完整执行指令
-2. **按子Skill指令执行**：严格遵循子Skill SKILL.md中的执行步骤、输入规范、输出规范和质量检查
-3. **输出到指定路径**：将结果写入子Skill规定的输出路径
-4. **验证输出完成**：确认输出文件已生成且符合校验规则后，再进入下一阶段
-5. **传递数据给下游**：将当前子Skill的输出文件路径作为下一阶段子Skill的输入来源
+### 调用规则
 
-**重要**：不要跳过任何子Skill，不要用自身逻辑替代子Skill的执行指令。每个子Skill必须通过读取其SKILL.md来执行。
+1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
+2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-design/design-orchestrator.md`
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/pm-design/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段总结
+
+所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-design/design-orchestrator.md`，包含以下结构：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+
+## Pipeline
+
+```yaml
+pipeline:
+  stages:
+    - id: design-prd
+      name: 产品需求文档
+      depends_on: []
+    - id: requirements-srs
+      name: 需求规格说明书
+      depends_on: [design-prd]
+    - id: design-ia
+      name: 信息架构设计
+      depends_on: [design-prd]
+      parallel_with: [design-userflow]
+    - id: design-userflow
+      name: 用户流程设计
+      depends_on: [design-prd]
+      parallel_with: [design-ia]
+    - id: design-prototype
+      name: 原型设计
+      depends_on: [design-ia, design-userflow]
+    - id: interaction-spec
+      name: 交互设计规范
+      depends_on: [design-userflow, design-prototype]
+      parallel_with: [design-handoff-spec]
+    - id: design-handoff-spec
+      name: 设计交接规范
+      depends_on: [design-prototype, design-ia, design-userflow, design-prd]
+      parallel_with: [interaction-spec]
+```
 
 ## 阶段执行计划
 
-### 阶段1：design-prd
+#### 调用 design-prd
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-prd |
-| 读取定义路径 | `.trae/skills/design-prd/SKILL.md` |
-| 输入 | 需求分析输出（`output/pm-design/requirements-understanding/requirement_analysis.json`）、创意方案输出（`output/pm-design/ideation-convergence/converged_solutions.json`）、战略输出（用户提供）、需求上下文（用户提供，product_name必填） |
-| 输出 | `output/pm-design/design-prd/PRD-{产品名}.md`、质量门禁检查报告JSON |
-| 验证 | PRD 4道质量门禁全部通过 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 门禁1或2失败阻塞流程，输出缺失项清单 |
+```
+Skill: design-prd
+输入:
+  requirement_analysis: output/pm-design/requirements-understanding/requirement_analysis.json
+  converged_solutions: output/pm-design/ideation-convergence/converged_solutions.json
+  strategic_output: 用户提供
+  requirement_context: 用户提供（product_name必填）
+输出: output/pm-design/design-prd/
+验证: PRD 4道质量门禁全部通过
+模式: 🤖→👤
+```
 
-### 阶段2：requirements-srs
+#### 调用 requirements-srs
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | requirements-srs |
-| 读取定义路径 | `.trae/skills/requirements-srs/SKILL.md` |
-| 输入 | PRD文档（`output/pm-design/design-prd/PRD-{产品名}.md`）、API契约（可选）、数据模型（可选）、IA信息架构（可选）、用户流程（可选）、技术约束（可选） |
-| 输出 | `output/pm-design/requirements-srs/SRS-{产品名}.md`、`output/pm-design/requirements-srs/requirements-srs.json` |
-| 验证 | 功能需求有唯一编号，非功能需求覆盖5维度 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 补充缺失需求或标注"待确认" |
+```
+Skill: requirements-srs
+输入:
+  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  api_contract: 可选
+  data_model: 可选
+  ia: 可选
+  userflow: 可选
+  tech_constraints: 可选
+输出: output/pm-design/requirements-srs/
+验证: 功能需求有唯一编号，非功能需求覆盖5维度
+模式: 🤖→👤
+```
 
-### 阶段3：design-ia
+#### 调用 design-ia
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-ia |
-| 读取定义路径 | `.trae/skills/design-ia/SKILL.md` |
-| 输入 | PRD（`output/pm-design/design-prd/PRD-{产品名}.md`）、现有产品IA（可选）、用户研究数据（可选） |
-| 输出 | `output/pm-design/design-ia/ia_proposals.json` |
-| 验证 | IA方案人类已确认 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 生成2-3个候选方案供人类选择 |
+```
+Skill: design-ia
+输入:
+  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  existing_ia: 可选
+  user_research: 可选
+输出: output/pm-design/design-ia/ia_proposals.json
+验证: IA方案人类已确认
+模式: 🤖→👤
+```
 
-### 阶段4：design-userflow
+#### 调用 design-userflow
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-userflow |
-| 读取定义路径 | `.trae/skills/design-userflow/SKILL.md` |
-| 输入 | PRD（`output/pm-design/design-prd/PRD-{产品名}.md`）、IA方案（`output/pm-design/design-ia/ia_proposals.json`）、用户研究数据（可选） |
-| 输出 | `output/pm-design/design-userflow/userflow.json` |
-| 验证 | 用户流程死胡同=0 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 死胡同必须修复后才能进入原型阶段 |
+```
+Skill: design-userflow
+输入:
+  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  ia_proposals: output/pm-design/design-ia/ia_proposals.json
+  user_research: 可选
+输出: output/pm-design/design-userflow/userflow.json
+验证: 用户流程死胡同=0
+模式: 🤖→👤
+```
 
-### 阶段5：design-prototype
+#### 调用 design-prototype
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-prototype |
-| 读取定义路径 | `.trae/skills/design-prototype/SKILL.md` |
-| 输入 | IA方案（`output/pm-design/design-ia/ia_proposals.json`）、User Flow（`output/pm-design/design-userflow/userflow.json`）、设计系统规范（可选）、设计令牌（可选） |
-| 输出 | `output/pm-design/design-prototype/prototype_spec.json` |
-| 验证 | 原型设计规范一致性≥85% |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 一致性<85%需人类确认violations |
+```
+Skill: design-prototype
+输入:
+  ia_proposals: output/pm-design/design-ia/ia_proposals.json
+  userflow: output/pm-design/design-userflow/userflow.json
+  design_system: 可选
+  design_tokens: 可选
+输出: output/pm-design/design-prototype/prototype_spec.json
+验证: 原型设计规范一致性≥85%
+模式: 🤖→👤
+```
 
-### 阶段6：interaction-spec
+#### 调用 interaction-spec
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | interaction-spec |
-| 读取定义路径 | `.trae/skills/interaction-spec/SKILL.md` |
-| 输入 | 用户流程（`output/pm-design/design-userflow/userflow.json`）、原型规格（`output/pm-design/design-prototype/prototype_spec.json`）、设计交接文档（可选）、品牌规范（可选） |
-| 输出 | `output/pm-design/interaction-spec/interaction-spec.md`、`output/pm-design/interaction-spec/interaction-spec.json` |
-| 验证 | 交互状态机8种基础状态全覆盖 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 补充缺失状态定义 |
+```
+Skill: interaction-spec
+输入:
+  userflow: output/pm-design/design-userflow/userflow.json
+  prototype_spec: output/pm-design/design-prototype/prototype_spec.json
+  handoff_doc: 可选
+  brand_guidelines: 可选
+输出: output/pm-design/interaction-spec/
+验证: 交互状态机8种基础状态全覆盖
+模式: 🤖→👤
+```
 
-### 阶段7：design-handoff-spec
+#### 调用 design-handoff-spec
 
-| 项目 | 内容 |
-|------|------|
-| 子Skill名称 | design-handoff-spec |
-| 读取定义路径 | `.trae/skills/design-handoff-spec/SKILL.md` |
-| 输入 | 原型规格（`output/pm-design/design-prototype/prototype_spec.json`）、设计令牌（可选）、IA信息架构（`output/pm-design/design-ia/ia_proposals.json`）、用户流程（`output/pm-design/design-userflow/userflow.json`）、PRD文档（`output/pm-design/design-prd/PRD-{产品名}.md`）、组件库（可选） |
-| 输出 | `output/pm-design/design-handoff-spec/design-handoff-spec.md`、`output/pm-design/design-handoff-spec/design-handoff-spec.json` |
-| 验证 | 交接文档待确认项=0 |
-| 执行模式 | 🤖→👤 |
-| ⏸ 阶段卡口 | 待确认项需逐项确认或标注接受风险 |
-
-## 调度规则
-
-- 每次只执行当前阶段需要的子Skill，完成后再执行下一阶段，不要一次性执行所有子Skill
-- 执行子Skill前必须先读取其SKILL.md定义文件（`对应子Skill的定义文件（阶段执行计划中"读取定义"列指定的路径）`）
-- 每个阶段完成后，将中间结果写入 `output/pm-design/{当前阶段子Skill名称}/` 文件，释放上下文空间
-- 若上下文接近上限，优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论
-- 单个子Skill的输出应控制在2000字以内，超出部分写入文件
+```
+Skill: design-handoff-spec
+输入:
+  prototype_spec: output/pm-design/design-prototype/prototype_spec.json
+  design_tokens: 可选
+  ia_proposals: output/pm-design/design-ia/ia_proposals.json
+  userflow: output/pm-design/design-userflow/userflow.json
+  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  component_library: 可选
+输出: output/pm-design/design-handoff-spec/
+验证: 交接文档待确认项=0
+模式: 🤖→👤
+```
 
 ## 阶段卡口
 
@@ -161,3 +219,4 @@ metadata:
 - v3.0: 新增 requirements-srs（需求规格说明书）、design-handoff-spec（设计交接文档）
 - v4.0: 新增 interaction-spec（交互设计规范）
 - v5.0: 编排器优化——新增子Skill执行协议、任务调度改为阶段执行计划、调度规则改为执行模式、阶段卡口和人类决策点改为表格、增加子Skill输入输出路径
+- v7.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
