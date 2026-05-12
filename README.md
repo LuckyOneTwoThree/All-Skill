@@ -4,7 +4,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Skill Count](https://img.shields.io/badge/Skills-179-orange.svg)](#四大领域总览)
 
-> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验可视化浏览 —— 星空背景、四大领域星系、完整产品全流程时间线，179个AI Agent Skills一目了然！
+> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现179个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
 
 > ## ⚠ 声明：AI 是杠杆，不是替代
 >
