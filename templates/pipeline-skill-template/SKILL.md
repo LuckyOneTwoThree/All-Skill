@@ -105,6 +105,19 @@ metadata:
   2. {方式2}
   3. {方式3}
 
+## Reference（可选）
+
+当 SKILL.md 超过 500 行时，建议将以下内容拆分到 `Reference/` 文件夹：
+
+- **模板文件**：完整的文档结构模板、表格模板 → `Reference/{template-name}.md`
+- **JSON Schema**：输入/输出数据结构定义 → `Reference/input-schema.md`、`Reference/output-schema.md`
+- **示例数据**：完整的示例 JSON、示例文档 → `Reference/examples.md`
+
+拆分后，在 SKILL.md 对应章节保留概览表格，并通过链接引用：
+```
+**完整{内容}**：详见 [Reference/{file-name}.md](Reference/{file-name}.md)
+```
+
 ## 上游变更响应
 
 当上游输入发生变更时，本Skill的响应策略：
