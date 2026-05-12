@@ -1,11 +1,16 @@
 ---
 name: design-system-doc
-description: 当需要生成设计系统文档时使用。设计系统文档自动生成，基于设计令牌和组件库，生成完整的设计系统文档，包含使用指南、组件示例代码、设计规范说明、最佳实践和变更日志模板。关键词：设计系统文档、组件文档、使用指南、设计规范、Storybook。
+description: 当需要生成设计系统文档时使用。设计系统文档自动生成，基于设计令牌和组件库，生成完整的设计系统文档，包含使用指南、组件示例代码、设计规范说明、最佳实践和变更日志模板。关键词：设计系统文档、组件文档、使用指南、设计规范、Storybook、写文档、出规范。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "帮我写设计系统文档"
+    - "生成组件使用说明"
+    - "出一份设计规范文档"
   interaction_mode: "ai_auto"
 ---
 

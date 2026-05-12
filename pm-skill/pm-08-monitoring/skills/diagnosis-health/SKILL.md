@@ -1,11 +1,16 @@
 ---
 name: diagnosis-health
-description: 当需要诊断产品健康度时使用。产品健康度自动诊断，采集多维度数据并进行综合评分、趋势预测和瓶颈识别，输出健康度报告。关键词：健康度评分、产品诊断、多维度评分、健康检查、产品健康、健康评分。
+description: 当需要诊断产品健康度时使用。产品健康度自动诊断，采集多维度数据并进行综合评分、趋势预测和瓶颈识别，输出健康度报告。关键词：健康度评分、产品诊断、多维度评分、健康检查、产品健康、健康评分、产品体检、状态好不好。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "产品现在健不健康"
+    - "帮我做个体检"
+    - "产品状态怎么样"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -209,6 +214,8 @@ bottlenecks:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/diagnosis-health/`
 **输出Schema**：
 
 ```json

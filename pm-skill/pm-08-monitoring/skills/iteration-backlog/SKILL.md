@@ -1,11 +1,16 @@
 ---
 name: iteration-backlog
-description: 当需要优化产品Backlog优先级时使用。产品 Backlog 自动优化，根据问题优先级、技术债务影响和关联关系，自动重组 Backlog 优先级。关键词：Backlog优化、需求池管理、需求关联、Backlog梳理、需求重组。
+description: 当需要优化产品Backlog优先级时使用。产品 Backlog 自动优化，根据问题优先级、技术债务影响和关联关系，自动重组 Backlog 优先级。关键词：Backlog优化、需求池管理、需求关联、Backlog梳理、需求重组、需求池乱、先做哪个。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "需求池太乱了怎么整理"
+    - "backlog优先级怎么排"
+    - "需求太多了先做哪个"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -172,6 +177,8 @@ reorganization_suggestions:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/iteration-backlog/`
 **输出Schema**：
 
 ```json

@@ -1,11 +1,15 @@
 ---
 name: planning-ansoff
-description: 当需要进行市场扩张、产品扩张、多元化战略决策时使用。Ansoff矩阵自动定位。分析当前产品/市场定位，推荐增长路径。关键词：Ansoff矩阵、增长路径、市场扩张、多元化战略、产品扩张。
+description: 当需要进行市场扩张、产品扩张、多元化战略决策时使用。Ansoff矩阵自动定位。分析当前产品/市场定位，推荐增长路径。关键词：Ansoff矩阵、增长路径、市场扩张、多元化战略、产品扩张、怎么增长、往哪扩张。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "我们该怎么扩张市场"
+    - "下一步增长方向在哪"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

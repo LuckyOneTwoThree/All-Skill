@@ -1,11 +1,15 @@
 ---
 name: stakeholder-brief
-description: 当需要向不同受众快速传达战略核心信息时使用。战略简报自动生成，根据受众类型（高管/团队/外部）自动适配内容深度和表达方式，输出一页纸战略简报。关键词：战略简报、一页纸、高管简报、团队对齐、外部沟通。
+description: 当需要向不同受众快速传达战略核心信息时使用。战略简报自动生成，根据受众类型（高管/团队/外部）自动适配内容深度和表达方式，输出一页纸战略简报。关键词：战略简报、一页纸、高管简报、团队对齐、外部沟通、向上汇报、一页纸汇报。
 metadata:
   module: "产品商业与战略"
   sub-module: "利益相关者管理"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我写一份给老板的战略简报"
+    - "一页纸汇报战略"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

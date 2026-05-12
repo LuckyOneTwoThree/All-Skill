@@ -1,11 +1,16 @@
 ---
 name: design-prd
-description: 当需要生成标准化PRD文档时使用。PRD自动生成与管理，基于需求和创意方案生成标准化PRD文档，为后续IA、流程和原型设计提供输入。涵盖PRD-L/S/X三级分层、9节完整结构、4道质量门禁。关键词：PRD生成、产品需求文档、需求文档自动生成、PRD管理。
+description: 当需要生成标准化PRD文档时使用。PRD自动生成与管理，基于需求和创意方案生成标准化PRD文档，为后续IA、流程和原型设计提供输入。涵盖PRD-L/S/X三级分层、9节完整结构、4道质量门禁。关键词：PRD生成、产品需求文档、需求文档自动生成、PRD管理、写需求文档、产品文档。
 metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "帮我写PRD文档"
+    - "生成产品需求文档"
+    - "需求文档怎么写"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -344,6 +349,13 @@ L2处理：
 | 需人类确认清单 | Markdown | `output/pm-design/design-prd/{PRD-ID}_human_review_required.md` |
 
 **完整输出数据结构与模板**：详见 [Reference/output-schema.md](Reference/output-schema.md)
+
+### 输出校验规则
+
+- [ ] 9节结构完整：PRD-S完整9节结构全部存在
+- [ ] 追溯链贯通：从OKR到验收标准的追溯链完整
+- [ ] 门禁通过：4道质量门禁全部通过
+- [ ] 无歧义残留：无模糊量词和悬空引用
 
 ## 决策规则（详细）
 

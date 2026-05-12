@@ -1,11 +1,17 @@
 ---
 name: agile-orchestrator
-description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，调度 agile-sprint-planning、agile-daily-sync、agile-review、sprint-retrospective-report 子Skill执行。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理、Sprint复盘、迭代复盘。
+description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，调度 agile-sprint-planning、agile-daily-sync、agile-review、sprint-retrospective-report 子Skill执行。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理、Sprint复盘、迭代复盘、敏捷开发。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "规划一下Sprint"
+    - "开一下每日站会"
+    - "做Sprint评审"
+    - "管理敏捷迭代"
 ---
 
 # 敏捷执行指挥官

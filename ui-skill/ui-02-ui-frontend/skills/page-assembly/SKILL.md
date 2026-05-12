@@ -1,11 +1,16 @@
 ---
 name: page-assembly
-description: 当需要将组件组装为完整页面时使用。页面自动组装，基于组件库和页面需求，将UI组件组装为完整页面，包含路由配置、状态管理、数据流设计和布局实现。关键词：页面组装、页面生成、路由配置、状态管理、布局设计。
+description: 当需要将组件组装为完整页面时使用。页面自动组装，基于组件库和页面需求，将UI组件组装为完整页面，包含路由配置、状态管理、数据流设计和布局实现。关键词：页面组装、页面生成、路由配置、状态管理、布局设计、拼页面、搭页面。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "把组件拼成页面"
+    - "组装一个完整页面"
+    - "搭个新页面"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

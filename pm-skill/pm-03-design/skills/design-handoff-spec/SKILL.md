@@ -1,11 +1,16 @@
 ---
 name: design-handoff-spec
-description: 当设计阶段完成需要交付给开发团队时使用。设计交接文档自动生成，整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单文档。关键词：设计交接、设计交付、Handoff、设计标注、切图清单、设计开发交接。
+description: 当设计阶段完成需要交付给开发团队时使用。设计交接文档自动生成，整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单文档。关键词：设计交接、设计交付、Handoff、设计标注、切图清单、设计开发交接、交付文档、开发对接。
 metadata:
   module: "产品构思与设计"
   sub-module: "设计交付"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "设计稿做好了怎么交给开发"
+    - "帮我生成设计交付文档"
+    - "设计标注和切图清单怎么出"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -294,6 +299,8 @@ metadata:
   "open_questions": []
 }
 ```
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 输出校验规则
 

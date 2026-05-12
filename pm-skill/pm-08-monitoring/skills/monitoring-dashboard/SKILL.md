@@ -1,11 +1,16 @@
 ---
 name: monitoring-dashboard
-description: 当需要配置监控Dashboard时使用。监控 Dashboard 自动配置，根据不同角色需求，自动生成监控指标分组和可视化组件配置。关键词：监控Dashboard、数据看板、实时监控、可视化、监控面板。
+description: 当需要配置监控Dashboard时使用。监控 Dashboard 自动配置，根据不同角色需求，自动生成监控指标分组和可视化组件配置。关键词：监控Dashboard、数据看板、实时监控、可视化、监控面板、数据看板、搭看板。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我搭一个监控看板"
+    - "数据看板怎么配置"
+    - "需要看哪些指标"
   interaction_mode: "ai_auto"
 ---
 
@@ -182,6 +187,8 @@ dashboard_template:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/monitoring-dashboard/`
 **输出Schema**：
 
 ```json

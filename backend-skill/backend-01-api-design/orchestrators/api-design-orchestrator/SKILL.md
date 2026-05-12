@@ -1,11 +1,17 @@
 ---
 name: api-design-orchestrator
-description: API设计指挥官。协调api-contract、api-security、auth-design三个子Skill的完整流程，确保API设计安全合规。关键词：API设计、接口契约、API安全、认证鉴权、api-contract、api-security、auth-design。
+description: 当需要设计API接口、制定接口规范或设计认证鉴权方案时使用。API设计指挥官，协调api-contract、api-security、auth-design三个子Skill的完整流程，确保API设计安全合规。关键词：API设计、接口契约、API安全、认证鉴权、api-contract、api-security、auth-design、接口设计、API规范、接口文档。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["电商", "SaaS", "金融", "通用"]
+  trigger_examples:
+    - "设计API接口"
+    - "制定API规范"
+    - "设计认证鉴权方案"
+    - "生成接口文档"
 ---
 
 # API设计指挥官

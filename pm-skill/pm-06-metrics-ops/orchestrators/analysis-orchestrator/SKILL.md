@@ -1,11 +1,18 @@
 ---
 name: analysis-orchestrator
-description: 当需要进行数据异常检测、漏斗分析或留存分析时使用。数据分析指挥官，调度analysis-anomaly/funnel/retention/data-analysis-report。关键词：数据分析、异常检测、漏斗分析、留存分析、Aha Moment。
+description: 当需要进行数据异常检测、漏斗分析或留存分析时使用。数据分析指挥官，调度analysis-anomaly/funnel/retention/data-analysis-report。关键词：数据分析、异常检测、漏斗分析、留存分析、Aha Moment、看数据、数据不好、数据洞察。
 metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我分析一下数据"
+    - "数据有异常，排查一下"
+    - "做一下漏斗分析"
+    - "分析一下用户留存"
+    - "数据不好，找找原因"
 ---
 
 # 数据分析指挥官

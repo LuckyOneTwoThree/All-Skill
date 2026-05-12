@@ -1,11 +1,17 @@
 ---
 name: design-system-orchestrator
-description: 设计系统建立指挥官。协调design-token、component-library、design-system-doc三个子Skill的完整流程，确保设计系统一致性、可复用、文档完善。关键词：设计系统、Design System、设计令牌、组件库、设计规范、design-token、component-library、design-system-doc。
+description: 当需要建立设计系统、制定设计规范或设计组件库时使用。设计系统建立指挥官，协调design-token、component-library、design-system-doc三个子Skill的完整流程，确保设计系统一致性、可复用、文档完善。关键词：设计系统、Design System、设计令牌、组件库、设计规范、design-token、component-library、design-system-doc、UI规范、视觉规范。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "建立设计系统"
+    - "制定设计规范"
+    - "设计组件库"
+    - "定义设计令牌"
 ---
 
 # 设计系统建立指挥官

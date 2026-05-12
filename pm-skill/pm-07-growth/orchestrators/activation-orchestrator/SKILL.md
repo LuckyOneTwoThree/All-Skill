@@ -1,11 +1,17 @@
 ---
 name: activation-orchestrator
-description: 当需要识别Aha Moment或设计Onboarding流程时使用。用户激活指挥官，调度activation-aha/onboarding。关键词：用户激活、Aha Moment、Onboarding、新用户引导。
+description: 当需要识别Aha Moment或设计Onboarding流程时使用。用户激活指挥官，调度activation-aha/onboarding。关键词：用户激活、Aha Moment、Onboarding、新用户引导、新手引导、激活率。
 metadata:
   module: "产品增长与运营"
   sub-module: "激活"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["电商", "社交", "工具", "通用"]
+  trigger_examples:
+    - "找到Aha Moment"
+    - "设计新手引导流程"
+    - "提升用户激活率"
+    - "优化Onboarding"
 ---
 
 # 用户激活指挥官

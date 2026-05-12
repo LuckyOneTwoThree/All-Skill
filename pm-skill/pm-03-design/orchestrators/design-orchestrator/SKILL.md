@@ -1,11 +1,18 @@
 ---
 name: design-orchestrator
-description: 当需要生成PRD、需求规格、信息架构、用户流程、原型或交互规范时使用。产品设计指挥官，调度design-prd/requirements-srs/design-ia/design-userflow/design-prototype/interaction-spec/design-handoff-spec。关键词：产品设计、PRD、SRS、信息架构、原型、交互规范、设计交接。
+description: 当需要生成PRD、需求规格、信息架构、用户流程、原型或交互规范时使用。产品设计指挥官，调度design-prd/requirements-srs/design-ia/design-userflow/design-prototype/interaction-spec/design-handoff-spec。关键词：产品设计、PRD、SRS、信息架构、原型、交互规范、设计交接、写PRD、产品文档、需求规格、设计输出。
 metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "orchestrator"
-  version: "7.0"
+  version: "7.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我写PRD"
+    - "生成产品需求文档"
+    - "设计一下信息架构"
+    - "画一下用户流程"
+    - "输出交互设计规范"
 ---
 
 # 产品设计与原型指挥官

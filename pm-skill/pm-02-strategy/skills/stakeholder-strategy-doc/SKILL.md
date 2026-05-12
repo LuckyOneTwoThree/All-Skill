@@ -1,11 +1,15 @@
 ---
 name: stakeholder-strategy-doc
-description: 当需要制定利益相关者战略文档时使用。利益相关者战略文档自动生成，整合利益相关者地图、沟通策略和战略报告，输出完整的利益相关者管理文档。关键词：利益相关者战略、沟通策略、利益相关者管理、战略文档。
+description: 当需要制定利益相关者战略文档时使用。利益相关者战略文档自动生成，整合利益相关者地图、沟通策略和战略报告，输出完整的利益相关者管理文档。关键词：利益相关者战略、沟通策略、利益相关者管理、战略文档、怎么搞定各方、干系人管理。
 metadata:
   module: "产品商业与战略"
   sub-module: "利益相关者管理"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我制定利益相关者管理策略"
+    - "怎么和各方沟通"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

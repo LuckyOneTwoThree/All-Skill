@@ -1,11 +1,16 @@
 ---
 name: diagnosis-competition
-description: 当需要追踪竞品动态并制定应对策略时使用。竞品动态追踪与应对，监控竞品功能变更，评估自身优势动态变化，生成应对策略并追踪效果。关键词：竞品追踪、竞品分析、竞品监控、功能变更、竞争分析、竞品变化、竞品动态。
+description: 当需要追踪竞品动态并制定应对策略时使用。竞品动态追踪与应对，监控竞品功能变更，评估自身优势动态变化，生成应对策略并追踪效果。关键词：竞品追踪、竞品分析、竞品监控、功能变更、竞争分析、竞品变化、竞品动态、竞品变了、对手出招。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "竞品又更新了怎么办"
+    - "对手加了新功能怎么应对"
+    - "竞品动态怎么追踪"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -190,6 +195,8 @@ effect_tracking:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/diagnosis-competition/`
 **输出Schema**：
 
 ```json

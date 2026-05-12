@@ -1,11 +1,16 @@
 ---
 name: component-library
-description: 当需要规划和生成组件库时使用。组件库自动规划与生成，基于设计令牌和PRD，规划原子/分子/组织三级组件层级，生成组件规格定义和基础代码骨架，确保UI一致性和复用性。关键词：组件库、组件规划、原子设计、UI组件、设计系统组件。
+description: 当需要规划和生成组件库时使用。组件库自动规划与生成，基于设计令牌和PRD，规划原子/分子/组织三级组件层级，生成组件规格定义和基础代码骨架，确保UI一致性和复用性。关键词：组件库、组件规划、原子设计、UI组件、设计系统组件、做组件、搭UI库。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "帮我建一套组件库"
+    - "规划一下组件层级"
+    - "搭个UI组件库"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

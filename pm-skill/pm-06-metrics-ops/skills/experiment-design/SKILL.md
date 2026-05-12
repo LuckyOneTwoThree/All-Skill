@@ -1,11 +1,16 @@
 ---
 name: experiment-design
-description: 当需要设计新的A/B测试实验时使用。A/B测试自动设计，AI自动执行假设结构化、指标选择、样本量计算、分流方案设计和实验配置生成。关键词：A/B测试设计、实验设计、样本量计算、分流方案、假设检验。
+description: 当需要设计新的A/B测试实验时使用。A/B测试自动设计，AI自动执行假设结构化、指标选择、样本量计算、分流方案设计和实验配置生成。关键词：A/B测试设计、实验设计、样本量计算、分流方案、假设检验、做个AB测试、想验证一下这个改动、怎么设计实验。
 metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "我想验证新首页是否提升转化，帮我设计AB测试"
+    - "这个功能改动需要多少样本量"
+    - "帮我设计一个分流实验方案"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

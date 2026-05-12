@@ -1,11 +1,16 @@
 ---
 name: market-competitor-intel
-description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构，关键发现多源交叉验证。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断、多源交叉验证。
+description: 当需要持续监控竞品动态、更新Feature Matrix、对比竞品口碑与定价策略时使用。竞品情报自动化Pipeline，覆盖采集-分析-输出三层架构，关键发现多源交叉验证。关键词：竞品监控、Feature Matrix、竞品口碑、定价策略、竞品情报、战略推断、多源交叉验证、对手动态、竞品新功能、竞品跟踪。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "消费", "通用"]
+  trigger_examples:
+    - "竞品最近有什么新动作"
+    - "帮我追踪竞品动态"
+    - "对手加了什么新功能"
   interaction_mode: "ai_auto"
 ---
 

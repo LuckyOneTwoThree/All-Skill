@@ -1,11 +1,16 @@
 ---
 name: user-research-voice-analysis
-description: 当需要从用户评论、客服工单、社媒提及、社区帖子中提取情感、主题和痛点时使用。大规模用户声音分析Pipeline。关键词：用户声音分析、VOC、情感分析、痛点提取、用户反馈分析。
+description: 当需要从用户评论、客服工单、社媒提及、社区帖子中提取情感、主题和痛点时使用。大规模用户声音分析Pipeline。关键词：用户声音分析、VOC、情感分析、痛点提取、用户反馈分析、用户吐槽、用户评价、用户反馈。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "消费", "通用"]
+  trigger_examples:
+    - "用户都在吐槽什么"
+    - "帮我分析用户反馈"
+    - "用户评价怎么样"
   interaction_mode: "ai_auto"
 ---
 

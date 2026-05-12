@@ -1,11 +1,15 @@
 ---
 name: planning-north-star
-description: 当需要确定产品核心指标、OKR北极星指标、指标体系设计时使用。北极星指标选择。AI辅助选择最能衡量产品成功和用户价值的指标。这是人类决策点，AI提供数据支撑，人类最终选择。关键词：北极星指标、核心指标、指标选择、产品成功指标、NSM。
+description: 当需要确定产品核心指标、OKR北极星指标、指标体系设计时使用。北极星指标选择。AI辅助选择最能衡量产品成功和用户价值的指标。这是人类决策点，AI提供数据支撑，人类最终选择。关键词：北极星指标、核心指标、指标选择、产品成功指标、NSM、关键指标、看什么数据。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "我们的核心指标该选什么"
+    - "怎么衡量产品成功"
   interaction_mode: "human_ai_collaborate"
 ---
 

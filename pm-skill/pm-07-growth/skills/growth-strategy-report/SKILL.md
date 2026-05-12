@@ -1,11 +1,16 @@
 ---
 name: growth-strategy-report
-description: 当需要将增长模式诊断和各环节优化方案汇总为完整可交付的增长策略报告时使用。增长策略报告自动生成，包含增长模式评估、AARRR漏斗诊断、杠杆策略、飞轮模型和执行路线图。关键词：增长策略报告、增长报告、AARRR报告、增长飞轮、增长路线图。
+description: 当需要将增长模式诊断和各环节优化方案汇总为完整可交付的增长策略报告时使用。增长策略报告自动生成，包含增长模式评估、AARRR漏斗诊断、杠杆策略、飞轮模型和执行路线图。关键词：增长策略报告、增长报告、AARRR报告、增长飞轮、增长路线图、增长瓶颈、怎么涨上去、增长计划。
 metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我出一份增长策略报告"
+    - "增长遇到瓶颈怎么办"
+    - "怎么制定增长计划"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -23,14 +28,14 @@ metadata:
 
 ## 输入
 
-| 输入项 | 来源 | 必需 | 说明 |
-|--------|------|------|------|
-| 增长模式诊断 | growth-model | ✅ | 增长模式、飞轮模型、瓶颈环节 |
-| 获客方案 | acquisition-channel / acquisition-optimize | ⬜ | 渠道评估、漏斗优化 |
-| 激活方案 | activation-aha / activation-onboarding | ⬜ | Aha Moment、Onboarding优化 |
-| 留存方案 | retention-churn / retention-engagement | ⬜ | 流失预警、分层运营 |
-| 变现方案 | revenue-funnel / revenue-nrr / revenue-upsell | ⬜ | 付费漏斗、NRR、增购 |
-| 业务目标 | 用户提供 | ⬜ | 北极星指标、增长目标、预算约束 |
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| 增长模式诊断 | markdown | 是 | growth-model | 增长模式、飞轮模型、瓶颈环节 |
+| 获客方案 | markdown | 否 | acquisition-channel | 渠道评估、漏斗优化 |
+| 激活方案 | markdown | 否 | activation-onboarding | Aha Moment、Onboarding优化 |
+| 留存方案 | markdown | 否 | retention-engagement | 流失预警、分层运营 |
+| 变现方案 | markdown | 否 | revenue-funnel | 付费漏斗、NRR、增购 |
+| 业务目标 | text | 否 | 用户输入 | 北极星指标、增长目标、预算约束 |
 
 ## 执行步骤
 
@@ -197,6 +202,13 @@ metadata:
 | 策略与瓶颈一致 | 高杠杆策略直接针对核心瓶颈 | 调整策略或补充瓶颈分析 |
 | 路线图可执行 | 每项行动有负责人、时间、验收指标 | 补充执行细节 |
 | 漏斗数据完整 | AARRR至少3个环节有数据 | 标注缺失环节为"待补充" |
+
+## 决策规则
+
+- 当增长瓶颈为获客环节时，优先分配资源到获客策略
+- 当飞轮模型尚未验证时，策略建议标注"待飞轮验证"，避免过度投入
+- 当Quick Wins与长期投资冲突时，优先Quick Wins但保留长期投资路径
+- 需要人类确认的决策点：增长模式判定、核心瓶颈确认、资源分配比例、路线图优先级
 
 ## 降级策略
 

@@ -1,11 +1,16 @@
 ---
 name: metrics-system
-description: 当需要构建产品指标体系时使用。指标体系自动构建，包含北极星指标校验与推荐、L1/L2指标拆解、行动指标识别、虚荣指标检测。关键词：指标体系、AARRR模型、北极星指标、L1/L2指标、OSM模型、度量体系。
+description: 当需要构建产品指标体系时使用。指标体系自动构建，包含北极星指标校验与推荐、L1/L2指标拆解、行动指标识别、虚荣指标检测。关键词：指标体系、AARRR模型、北极星指标、L1/L2指标、OSM模型、度量体系、定指标、核心数据。
 metadata:
   module: "产品度量设计"
   sub-module: "指标体系"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我梳理一下产品的核心指标"
+    - "我们要定北极星指标"
+    - "搭建一套指标体系"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: insight-priority-scoring
-description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数，采用加权求和避免极端值。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分。
+description: 当需要对需求列表进行加权优先级评分排序时使用。需求优先级自动评分，基于痛点强度、频率、可解决性和KANO系数计算综合分数，采用加权求和避免极端值。关键词：优先级评分、需求排序、KANO系数、痛点强度、可解决性、加权评分、先做哪个、最值得做、排优先级。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "需求太多先做哪个"
+    - "帮我给需求排个优先级"
+    - "哪些需求最值得做"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

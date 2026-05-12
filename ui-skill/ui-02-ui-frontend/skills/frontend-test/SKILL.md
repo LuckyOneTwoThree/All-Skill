@@ -1,11 +1,16 @@
 ---
 name: frontend-test
-description: 当需要为前端组件生成测试用例时使用。前端测试自动生成与执行，为UI组件和页面自动生成组件测试、视觉回归测试、E2E测试和无障碍测试，确保前端代码质量可自动化验证。关键词：前端测试、组件测试、视觉回归、E2E测试、无障碍测试、Storybook。
+description: 当需要为前端组件生成测试用例时使用。前端测试自动生成与执行，为UI组件和页面自动生成组件测试、视觉回归测试、E2E测试和无障碍测试，确保前端代码质量可自动化验证。关键词：前端测试、组件测试、视觉回归、E2E测试、无障碍测试、Storybook、写测试、跑单测。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "帮我写前端测试"
+    - "给组件加测试用例"
+    - "跑一下单测"
   interaction_mode: "ai_auto"
 ---
 

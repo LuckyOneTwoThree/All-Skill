@@ -1,11 +1,16 @@
 ---
 name: insight-kano
-description: 当需要对功能需求进行KANO模型分类（必备型/期望型/兴奋型/无差异型）时使用。KANO自动分类，支持行业阈值适配。关键词：KANO模型、需求分类、必备型、期望型、兴奋型、无差异型、功能优先级、行业适配。
+description: 当需要对功能需求进行KANO模型分类（必备型/期望型/兴奋型/无差异型）时使用。KANO自动分类，支持行业阈值适配。关键词：KANO模型、需求分类、必备型、期望型、兴奋型、无差异型、功能优先级、行业适配、刚需、锦上添花、必须有。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "哪些功能是必须有的"
+    - "帮我区分刚需和锦上添花"
+    - "功能优先级怎么排"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: agile-daily-sync
-description: 当需要自动化每日站会流程时使用。Daily Sync自动化，包含会前AI准备（进展汇总、障碍识别、每日工作项建议）、会中人类同步、会后AI处理（记录、行动项、风险标记），输出每日同步报告。关键词：每日站会、Daily Sync、进展同步、障碍追踪、敏捷日报。
+description: 当需要自动化每日站会流程时使用。Daily Sync自动化，包含会前AI准备（进展汇总、障碍识别、每日工作项建议）、会中人类同步、会后AI处理（记录、行动项、风险标记），输出每日同步报告。关键词：每日站会、Daily Sync、进展同步、障碍追踪、敏捷日报、站会、今天干啥。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "每天站会太费时间了"
+    - "站会怎么高效开"
+    - "帮我准备今天的站会内容"
   interaction_mode: "ai_auto"
 ---
 

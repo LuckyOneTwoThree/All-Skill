@@ -1,11 +1,16 @@
 ---
 name: iteration-retrospective
-description: 当需要进行迭代复盘时使用。迭代复盘自动化，自动收集迭代数据，进行多维度分析，识别问题并生成改进建议。关键词：迭代复盘、Sprint复盘、持续改进、行动项追踪、迭代回顾。
+description: 当需要进行迭代复盘时使用。迭代复盘自动化，自动收集迭代数据，进行多维度分析，识别问题并生成改进建议。关键词：迭代复盘、Sprint复盘、持续改进、行动项追踪、迭代回顾、迭代总结、这期做得怎样。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "这期迭代要复盘"
+    - "sprint结束了怎么总结"
+    - "迭代效果怎么样"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -245,6 +250,8 @@ improvement_suggestions:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/iteration-retrospective/`
 **输出Schema**：
 
 ```json

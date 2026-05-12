@@ -1,11 +1,16 @@
 ---
 name: activation-aha
-description: 当需要识别和工程化Aha Moment时使用。Aha Moment自动工程化Pipeline，分析留存数据和行为数据，自动识别Aha Moment候选，测量到达率，识别最短路径，输出Onboarding优化建议。关键词：Aha Moment、激活时刻、用户激活、到达率、Onboarding优化。
+description: 当需要识别和工程化Aha Moment时使用。Aha Moment自动工程化Pipeline，分析留存数据和行为数据，自动识别Aha Moment候选，测量到达率，识别最短路径，输出Onboarding优化建议。关键词：Aha Moment、激活时刻、用户激活、到达率、Onboarding优化、什么时候觉得好用、体验核心价值、爽点在哪。
 metadata:
   module: "产品增长与运营"
   sub-module: "激活"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "用户什么时候觉得产品好用"
+    - "怎么找到aha moment"
+    - "新用户多久能体验到核心价值"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

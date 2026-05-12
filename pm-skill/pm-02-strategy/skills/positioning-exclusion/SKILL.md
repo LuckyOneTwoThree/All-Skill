@@ -1,11 +1,15 @@
 ---
 name: positioning-exclusion
-description: 当需要明确产品不为哪些用户服务时使用。目标用户排他决策，输入定位陈述+竞品分析，输出排他陈述和战略意图说明。关键词：目标用户、排他、市场定位、边界。
+description: 当需要明确产品不为哪些用户服务时使用。目标用户排他决策，输入定位陈述+竞品分析，输出排他陈述和战略意图说明。关键词：目标用户、排他、市场定位、边界、不做谁、目标边界。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "哪些用户不是我们的目标"
+    - "产品边界在哪"
   interaction_mode: "human_ai_collaborate"
 ---
 

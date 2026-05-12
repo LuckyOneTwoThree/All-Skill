@@ -1,11 +1,16 @@
 ---
 name: analysis-funnel
-description: 当需要分析用户转化路径时使用。漏斗自动分析，AI自动执行全量漏斗计算、多维下钻、流失节点识别和趋势分析。关键词：漏斗分析、转化分析、流失节点、转化率、用户路径。
+description: 当需要分析用户转化路径时使用。漏斗自动分析，AI自动执行全量漏斗计算、多维下钻、流失节点识别和趋势分析。关键词：漏斗分析、转化分析、流失节点、转化率、用户路径、用户在哪儿流失了、转化太低了、用户走不完流程。
 metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["电商", "互联网", "通用"]
+  trigger_examples:
+    - "注册流程转化率太低了，帮我分析一下"
+    - "用户在哪个步骤流失最多"
+    - "支付转化漏斗帮我看看"
   interaction_mode: "ai_auto"
 ---
 

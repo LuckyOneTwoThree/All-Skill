@@ -1,12 +1,17 @@
 ---
 name: requirements-collection
-description: 当需要收集和分类分散的需求来源时使用。需求自动收集与分类，将分散的需求来源整合为结构化需求列表，包含采集、分类、可信度标注和去噪四个步骤。执行角色：🤖 AI自动执行。关键词：需求收集、需求分类、需求采集、可信度标注、需求去噪。
+description: 当需要收集和分类分散的需求来源时使用。需求自动收集与分类，将分散的需求来源整合为结构化需求列表，包含采集、分类、可信度标注和去噪四个步骤。执行角色：🤖 AI自动执行。关键词：需求收集、需求分类、需求采集、可信度标注、需求去噪、需求整理、需求汇总。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "1"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "需求太分散怎么整理"
+    - "帮我收集和分类需求"
+    - "各处需求怎么汇总"
   interaction_mode: "ai_auto"
 ---
 
@@ -138,6 +143,8 @@ sources:
 
 ## 输出
 
+
+**输出校验规则**：详见下方章节
 **存储路径**：`output/pm-design/requirements-collection/`
 **输出文件**：requirements.json
 
@@ -180,6 +187,8 @@ sources:
 | invalid_reason | string | 无效原因（可选） |
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

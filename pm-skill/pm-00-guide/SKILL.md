@@ -1,11 +1,11 @@
 ---
 name: pm-00-guide
-description: 产品方法论全流程导航。当用户提到"做产品""产品规划""从0到1""产品方法论""产品流程"时使用，根据用户当前阶段推荐对应的模块和Skill。关键词：产品方法论、产品流程、产品规划、从0到1、产品全流程。
+description: 产品方法论全流程导航。当用户提到"做产品""产品规划""从0到1""产品方法论""产品流程""做系统""做平台""做App""做商城""做SaaS""新项目"时使用，根据用户当前阶段和业务意图推荐对应的模块和Skill。关键词：产品方法论、产品流程、产品规划、从0到1、产品全流程、做系统、做平台、做App、做商城、做SaaS、做电商、做社交、做社区、做管理系统、新项目启动、做小程序、做网站、加功能、改需求、优化产品、增长、数据分析。
 metadata:
   module: "产品方法论"
   sub-module: "导航入口"
   type: "guide"
-  version: "1.0"
+  version: "2.0"
 ---
 
 # 产品方法论全流程导航
@@ -37,6 +37,53 @@ metadata:
 | 7 | 产品增长与运营 | acquisition-orchestrator / activation-orchestrator / retention-orchestrator / revenue-orchestrator | 需要获取用户、提升留存、商业化 |
 | 8 | 产品监控与迭代 | monitoring-orchestrator / diagnosis-orchestrator / iteration-orchestrator | 需要监控预警、问题诊断、迭代优化 |
 | 9 | 项目管理与执行 | project-planning-orchestrator / agile-orchestrator / risk-orchestrator | 贯穿全程的项目管理 |
+
+## 意图路由
+
+根据用户的自然语言输入，快速路由到对应的编排器或模板。
+
+| 用户意图模式 | 路由目标 | 置信度 |
+|---|---|---|
+| 做\*系统 / 做\*平台 / 做\*App / 做\*商城 / 从0到1 / 新项目 / 做\*小程序 | product-launch-orchestrator | 高 |
+| 加功能 / 改需求 / 优化 / 迭代 / 升级 / 新增模块 | product-iteration-orchestrator | 高 |
+| 分析数据 / 看数据 / 漏斗 / 留存 / 异常 / 数据不好 | analysis-orchestrator | 高 |
+| 增长 / 获客 / 变现 / AARRR / 用户量 / 收入 | growth-orchestrator | 高 |
+| 写PRD / 需求文档 / 产品文档 / PRD | design-orchestrator | 高 |
+| 竞品 / 市场 / 行业 / 市场规模 | market-orchestrator | 中 |
+| 用户研究 / 调研 / 访谈 / Persona / 用户画像 | user-research-orchestrator | 高 |
+| 商业模式 / 定价 / 画布 / 怎么赚钱 | business-orchestrator | 高 |
+| 监控 / 告警 / 异常预警 / 线上问题 | monitoring-orchestrator | 高 |
+| 项目管理 / Sprint / 敏捷 / 站会 | agile-orchestrator | 高 |
+| 定位 / 差异化 / 竞争优势 | positioning-orchestrator | 中 |
+| 需求分析 / 需求洞察 / KANO / JTBD | insight-orchestrator | 高 |
+| 实验 / A/B测试 / 效果验证 | experiment-orchestrator | 高 |
+| 质量保障 / 测试 / 验收 | quality-orchestrator | 高 |
+| 发布 / 上线 / 灰度 | release-orchestrator | 高 |
+
+## 业务场景映射
+
+将用户的业务语言翻译为方法论流程。当用户提到具体业务领域时，先识别业务类型，再推荐对应的场景模板和重点编排器。
+
+| 用户可能的说法 | 业务类型 | 推荐模板 | 重点编排器 | 特别关注 |
+|---|---|---|---|---|
+| 做交易商城 / 电商 / 购物平台 / 电商小程序 | C端交易型 | 模板2 | product-launch-orchestrator | 支付安全(api-security)、交易数据(data-architecture)、增长全链路(acquisition→revenue) |
+| 做SaaS / CRM / ERP / 管理系统 / OA / HR系统 | B端效率型 | 模板1 | product-launch-orchestrator | 权限设计(auth-design)、多租户(data-architecture)、Stakeholder对齐 |
+| 做社交 / 社区 / 内容平台 / 论坛 / 短视频 | C端内容型 | 模板2 | product-launch-orchestrator | 网络效应增长(growth-orchestrator)、内容审核安全 |
+| 做金融 / 支付 / 借贷 / 保险 / 理财 | 金融合规型 | 模板1 | product-launch-orchestrator | 合规评估(privacy-compliance-assessment)、风控、交易流水(data-architecture) |
+| 做教育 / 课程 / 知识付费 / 培训 | 内容交易型 | 模板2 | product-launch-orchestrator | 付费模式(business-pricing)、学习路径设计 |
+| 做工具 / 效率 / 笔记 / 日历 / 待办 | 工具型 | 模板2 | product-launch-orchestrator | 激活(activation-aha)、留存策略(retention-orchestrator) |
+| 做医疗 / 健康 / 健身 / 问诊 | 医疗健康型 | 模板1 | product-launch-orchestrator | 隐私合规(privacy-compliance-assessment)、数据安全 |
+| 做物流 / 供应链 / 仓储 / 配送 | 供应链型 | 模板1 | product-launch-orchestrator | 数据架构(data-architecture)、系统集成 |
+| 做游戏 / 娱乐 / 直播 | 娱乐型 | 模板2 | product-launch-orchestrator | 用户体验设计、留存与付费(revenue-orchestrator) |
+| 做AI产品 / 智能助手 / ChatBot | AI产品型 | 模板2 | product-launch-orchestrator | 用户研究(user-research-orchestrator)、验证(validation-orchestrator) |
+
+### 业务场景映射使用方法
+
+1. **识别业务类型**：根据用户输入匹配上表的"用户可能的说法"列
+2. **推荐模板**：使用对应行的"推荐模板"启动流程
+3. **关注重点**：在流程执行中特别关注"特别关注"列标注的编排器和Skill
+4. **一键启动**：直接调用"重点编排器"列的跨域编排器，它会自动协调全流程
+5. **灵活调整**：业务场景映射是推荐起点，用户可根据实际情况调整流程
 
 ## 根据用户场景推荐
 

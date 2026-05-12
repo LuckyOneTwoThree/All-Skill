@@ -1,11 +1,16 @@
 ---
 name: data-model
-description: 当需要设计数据模型和表结构时使用。数据模型自动设计，基于PRD和API契约，自动设计ER模型、表结构、索引策略和分库分表方案，输出数据库DDL和数据字典。关键词：数据模型、ER图、表结构、索引、分库分表、DDL。
+description: 当需要设计数据模型和表结构时使用。数据模型自动设计，基于PRD和API契约，自动设计ER模型、表结构、索引策略和分库分表方案，输出数据库DDL和数据字典。关键词：数据模型、ER图、表结构、索引、分库分表、DDL、建表、数据库设计。
 metadata:
   module: "后端架构与开发"
   sub-module: "数据架构"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["电商", "金融", "通用"]
+  trigger_examples:
+    - "设计数据库表"
+    - "建表和索引"
+    - "分库分表方案"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -182,6 +187,13 @@ erDiagram
   ]
 }
 ```
+
+### 输出校验规则
+
+- [ ] 表结构规范性：每个表有主键+created_at+updated_at+deleted_at
+- [ ] 索引合理性：每个外键关系有索引支撑，单表索引数≤8
+- [ ] 金额字段精度：金额字段100%使用DECIMAL类型
+- [ ] 数据字典完整性：覆盖100%的表和字段说明
 
 ## 决策规则
 

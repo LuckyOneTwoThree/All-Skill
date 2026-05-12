@@ -1,11 +1,16 @@
 ---
 name: api-security
-description: 当需要设计API安全策略时使用。API安全自动设计，为API接口设计安全策略，包含限流规则、数据加密、输入校验、CORS策略和安全头配置，确保API安全合规。关键词：API安全、限流、加密、CORS、输入校验、安全头。
+description: 当需要设计API安全策略时使用。API安全自动设计，为API接口设计安全策略，包含限流规则、数据加密、输入校验、CORS策略和安全头配置，确保API安全合规。关键词：API安全、限流、加密、CORS、输入校验、安全头、防刷、接口安全。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["金融", "电商", "通用"]
+  trigger_examples:
+    - "接口安全防护"
+    - "防止接口被刷"
+    - "API安全加固"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -133,6 +138,13 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+- [ ] 接口分级完整性：所有接口均有安全级别标注（L1-L4）
+- [ ] 限流规则覆盖度：全部接口级别有限流策略
+- [ ] 敏感字段保护：敏感字段100%有脱敏或加密策略
+- [ ] 安全响应头完整：5项标准安全头全覆盖
 
 ## 决策规则
 

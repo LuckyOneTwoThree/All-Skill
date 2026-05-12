@@ -1,11 +1,16 @@
 ---
 name: acquisition-channel
-description: 当需要评估和选择获客渠道时使用。获客渠道自动评估Pipeline，分析19种获客渠道数据，计算渠道规模、转化率、ROI，输出渠道分级报告（主力/测试/观察渠道）。关键词：获客渠道、渠道评估、ROI分析、渠道分级、获客策略。
+description: 当需要评估和选择获客渠道时使用。获客渠道自动评估Pipeline，分析19种获客渠道数据，计算渠道规模、转化率、ROI，输出渠道分级报告（主力/测试/观察渠道）。关键词：获客渠道、渠道评估、ROI分析、渠道分级、获客策略、哪个渠道好、拉新效果、投哪个渠道。
 metadata:
   module: "产品增长与运营"
   sub-module: "获客"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "哪个渠道拉新效果最好"
+    - "帮我看看各个渠道的ROI"
+    - "渠道太多了不知道选哪个"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

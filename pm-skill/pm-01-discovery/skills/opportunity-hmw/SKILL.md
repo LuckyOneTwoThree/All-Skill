@@ -1,11 +1,16 @@
 ---
 name: opportunity-hmw
-description: 当需要基于Problem Statement和用户研究数据生成How Might We陈述时使用。HMW陈述自动生成，从消除障碍、提升体验、创造新价值、重新定义四个维度发散。关键词：HMW、How Might We、问题重构、创新空间、机会发散。
+description: 当需要基于Problem Statement和用户研究数据生成How Might We陈述时使用。HMW陈述自动生成，从消除障碍、提升体验、创造新价值、重新定义四个维度发散。关键词：HMW、How Might We、问题重构、创新空间、机会发散、换个角度、还有什么办法、怎样才可能。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "我们怎样才能解决这个问题"
+    - "帮我换个角度思考问题"
+    - "有没有其他解决思路"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

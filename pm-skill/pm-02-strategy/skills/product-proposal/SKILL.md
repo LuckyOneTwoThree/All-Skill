@@ -1,11 +1,15 @@
 ---
 name: product-proposal
-description: 当需要撰写产品立项提案时使用。产品立项提案自动生成，整合所有前序分析结果，生成结构化的产品立项文档。关键词：产品立项、产品提案、立项文档、商业计划书、产品规划文档。
+description: 当需要撰写产品立项提案时使用。产品立项提案自动生成，整合所有前序分析结果，生成结构化的产品立项文档。关键词：产品立项、产品提案、立项文档、商业计划书、产品规划文档、立项申请、项目提案。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品立项"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "帮我写产品立项文档"
+    - "产品提案怎么写"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

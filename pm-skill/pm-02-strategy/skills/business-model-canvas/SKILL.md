@@ -1,11 +1,15 @@
 ---
 name: business-model-canvas
-description: 当需要设计或评估产品商业模式时触发。商业模式画布自动生成，将产品探索阶段洞察转化为9格商业画布。关键词：商业模式画布、BMC、价值主张、收入模式、成本结构。
+description: 当需要设计或评估产品商业模式时触发。商业模式画布自动生成，将产品探索阶段洞察转化为9格商业画布。关键词：商业模式画布、BMC、价值主张、收入模式、成本结构、怎么赚钱、商业模式梳理。
 metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "电商", "通用"]
+  trigger_examples:
+    - "帮我把商业模式理清楚"
+    - "我们的商业模式怎么赚钱"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

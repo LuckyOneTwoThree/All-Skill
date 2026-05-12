@@ -1,11 +1,16 @@
 ---
 name: retention-engagement
-description: 当需要设计用户分层运营策略时使用。用户分层自动化运营Pipeline，基于用户生命周期阶段进行分层，分析各层特征，自动生成运营策略，设计个性化触达内容。关键词：用户分层、分层运营、生命周期运营、个性化触达、参与度提升。
+description: 当需要设计用户分层运营策略时使用。用户分层自动化运营Pipeline，基于用户生命周期阶段进行分层，分析各层特征，自动生成运营策略，设计个性化触达内容。关键词：用户分层、分层运营、生命周期运营、个性化触达、参与度提升、用户活跃、怎么区别对待、运营分群。
 metadata:
   module: "产品增长与运营"
   sub-module: "留存"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "不同用户怎么区别运营"
+    - "怎么提高用户活跃度"
+    - "用户分层怎么做"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,17 @@
 ---
 name: backend-architecture-orchestrator
-description: 后端架构指挥官。协调architecture-pattern、service-design、backend-review三个子Skill的完整流程，确保后端架构合理、可扩展、高质量。关键词：后端架构、架构模式、服务设计、架构审查、architecture-pattern、service-design、backend-review。
+description: 当需要设计后端架构、选择架构模式或进行架构审查时使用。后端架构指挥官，协调architecture-pattern、service-design、backend-review三个子Skill的完整流程，确保后端架构合理、可扩展、高质量。关键词：后端架构、架构模式、服务设计、架构审查、architecture-pattern、service-design、backend-review、技术架构、微服务、系统架构。
 metadata:
   module: "后端架构与开发"
   sub-module: "后端架构"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["电商", "SaaS", "金融", "通用"]
+  trigger_examples:
+    - "设计后端架构"
+    - "选择架构模式"
+    - "设计微服务"
+    - "做一下架构审查"
 ---
 
 # 后端架构指挥官

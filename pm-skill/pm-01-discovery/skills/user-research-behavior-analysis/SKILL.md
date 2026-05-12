@@ -1,11 +1,16 @@
 ---
 name: user-research-behavior-analysis
-description: 当需要从事件数据、漏斗数据、热力图数据中诊断漏斗健康度、发现Aha Moment、分析功能使用深度时使用。行为数据自动分析Pipeline。关键词：行为分析、漏斗分析、Aha Moment、功能使用分析、异常检测。
+description: 当需要从事件数据、漏斗数据、热力图数据中诊断漏斗健康度、发现Aha Moment、分析功能使用深度时使用。行为数据自动分析Pipeline。关键词：行为分析、漏斗分析、Aha Moment、功能使用分析、异常检测、用户流失、转化率、用户行为异常。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "用户在哪里流失了"
+    - "漏斗转化率怎么这么低"
+    - "用户行为有什么异常"
   interaction_mode: "ai_auto"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: development-task-breakdown
-description: 当需要将PRD分解为开发任务时使用。PRD任务分解消费与开发深化，将PRD Pipeline输出的任务分解结构进行技术深化、Sprint分配和依赖检测，输出可直接进入开发阶段的Epic→Story→Task结构。🤖 AI自动执行。关键词：任务分解、Epic拆分、Story拆分、Sprint任务、开发规划、开发任务拆分。
+description: 当需要将PRD分解为开发任务时使用。PRD任务分解消费与开发深化，将PRD Pipeline输出的任务分解结构进行技术深化、Sprint分配和依赖检测，输出可直接进入开发阶段的Epic→Story→Task结构。🤖 AI自动执行。关键词：任务分解、Epic拆分、Story拆分、Sprint任务、开发规划、开发任务拆分、拆任务、排期。
 metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "把PRD拆成开发任务"
+    - "帮我拆分Story和Task"
+    - "这个需求怎么排期"
   interaction_mode: "ai_auto"
 ---
 

@@ -1,11 +1,17 @@
 ---
 name: data-architecture-orchestrator
-description: 数据架构指挥官。协调data-model、cache-strategy、data-migration三个子Skill的完整流程，确保数据架构合理、可迁移、高性能。关键词：数据架构、数据模型、数据迁移、缓存策略、data-model、cache-strategy、data-migration。
+description: 当需要设计数据模型、规划数据架构或设计缓存迁移方案时使用。数据架构指挥官，协调data-model、cache-strategy、data-migration三个子Skill的完整流程，确保数据架构合理、可迁移、高性能。关键词：数据架构、数据模型、数据迁移、缓存策略、data-model、cache-strategy、data-migration、数据库设计、数据方案。
 metadata:
   module: "后端架构与开发"
   sub-module: "数据架构"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["电商", "SaaS", "金融", "物流", "通用"]
+  trigger_examples:
+    - "设计数据模型"
+    - "规划数据架构"
+    - "设计缓存策略"
+    - "规划数据迁移方案"
 ---
 
 # 数据架构指挥官

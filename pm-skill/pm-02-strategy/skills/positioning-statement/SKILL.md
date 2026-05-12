@@ -1,11 +1,15 @@
 ---
 name: positioning-statement
-description: 当需要定义产品定位陈述时使用。定位陈述自动生成，输入价值主张+竞品分析+用户洞察，输出3-5个差异化定位陈述候选，含质量门检查。关键词：定位陈述、产品定位、差异化定位、价值主张表达。
+description: 当需要定义产品定位陈述时使用。定位陈述自动生成，输入价值主张+竞品分析+用户洞察，输出3-5个差异化定位陈述候选，含质量门检查。关键词：定位陈述、产品定位、差异化定位、价值主张表达、一句话说清产品、定位怎么写。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我写一句产品定位"
+    - "我们产品怎么定位"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

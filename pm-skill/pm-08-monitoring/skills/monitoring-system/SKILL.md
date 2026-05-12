@@ -1,11 +1,16 @@
 ---
 name: monitoring-system
-description: 当需要构建产品监控预警体系时使用。产品监控预警体系自动构建，根据产品架构和业务需求，自动生成监控指标、告警规则和 On-Call 手册。关键词：监控系统、监控配置、健康检查、告警规则、监控体系、监控搭建、告警配置。
+description: 当需要构建产品监控预警体系时使用。产品监控预警体系自动构建，根据产品架构和业务需求，自动生成监控指标、告警规则和 On-Call 手册。关键词：监控系统、监控配置、健康检查、告警规则、监控体系、监控搭建、告警配置、搭监控、配告警。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "监控系统怎么搭"
+    - "需要监控哪些指标"
+    - "告警规则怎么配"
   interaction_mode: "ai_auto"
 ---
 
@@ -104,6 +109,8 @@ alert_rule:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/monitoring-system/`
 **输出Schema**：
 
 ```json

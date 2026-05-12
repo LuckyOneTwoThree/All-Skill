@@ -1,11 +1,17 @@
 ---
 name: requirements-orchestrator
-description: 当需要管理产品需求时使用。需求管理子模块指挥官，调度子Skill：requirements-collection、requirements-understanding、requirements-prioritization。关键词：需求管理、需求收集、需求优先级、需求分析、需求分类、RICE评分、MoSCoW。
+description: 当需要管理产品需求时使用。需求管理子模块指挥官，调度子Skill：requirements-collection、requirements-understanding、requirements-prioritization。关键词：需求管理、需求收集、需求优先级、需求分析、需求分类、RICE评分、MoSCoW、整理需求、需求梳理。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我整理需求"
+    - "收集一下产品需求"
+    - "给需求排个优先级"
+    - "梳理一下需求清单"
 ---
 
 # 需求管理指挥官

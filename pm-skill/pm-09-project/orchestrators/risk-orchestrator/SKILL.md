@@ -1,11 +1,17 @@
 ---
 name: risk-orchestrator
-description: 当需要识别项目风险或处理风险升级时使用。风险管理指挥官，调度 risk-identification、risk-monitoring、risk-escalation 子Skill执行。关键词：风险管理、风险识别、风险监控、风险升级、风险登记册、风险预警、应急升级。
+description: 当需要识别项目风险或处理风险升级时使用。风险管理指挥官，调度 risk-identification、risk-monitoring、risk-escalation 子Skill执行。关键词：风险管理、风险识别、风险监控、风险升级、风险登记册、风险预警、应急升级、项目风险。
 metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "识别一下项目风险"
+    - "监控项目风险"
+    - "处理风险升级"
+    - "建立风险预警机制"
 ---
 
 # 风险管理指挥官

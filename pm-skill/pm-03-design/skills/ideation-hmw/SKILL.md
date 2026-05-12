@@ -1,11 +1,16 @@
 ---
 name: ideation-hmw
-description: 当需要基于问题陈述生成HMW创意时使用。HMW（How Might We）批量生成工具，根据问题陈述和用户研究数据，从6个维度系统化生成HMW陈述，并进行质量检查与评分。关键词：HMW、创意问题陈述、需求挖掘、产品洞察。
+description: 当需要基于问题陈述生成HMW创意时使用。HMW（How Might We）批量生成工具，根据问题陈述和用户研究数据，从6个维度系统化生成HMW陈述，并进行质量检查与评分。关键词：HMW、创意问题陈述、需求挖掘、产品洞察、问题重构、创意方向。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "怎么把问题变成创意"
+    - "帮我发散思考方向"
+    - "如何重新定义问题"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -254,6 +259,8 @@ AI需要从以下6个维度为每个核心问题生成HMW陈述：
 ```
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

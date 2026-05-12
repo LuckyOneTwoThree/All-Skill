@@ -1,11 +1,17 @@
 ---
 name: acquisition-orchestrator
-description: 当需要评估获客渠道或优化获客漏斗时使用。用户获取指挥官，调度 acquisition-channel（渠道评估）、acquisition-optimize（漏斗优化），实现从渠道评估到漏斗优化的闭环。关键词：用户获取、获客渠道、漏斗优化、渠道评估、获客策略、acquisition-channel、acquisition-optimize。
+description: 当需要评估获客渠道或优化获客漏斗时使用。用户获取指挥官，调度 acquisition-channel（渠道评估）、acquisition-optimize（漏斗优化），实现从渠道评估到漏斗优化的闭环。关键词：用户获取、获客渠道、漏斗优化、渠道评估、获客策略、acquisition-channel、acquisition-optimize、拉新、获客。
 metadata:
   module: "产品增长与运营"
   sub-module: "获客"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["电商", "社交", "教育", "通用"]
+  trigger_examples:
+    - "评估一下获客渠道"
+    - "优化一下获客漏斗"
+    - "怎么拉新用户"
+    - "获客成本太高了"
 ---
 
 # 用户获取指挥官

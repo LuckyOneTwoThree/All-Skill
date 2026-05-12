@@ -1,11 +1,17 @@
 ---
 name: opportunity-orchestrator
-description: 当需要执行完整的机会识别与定义流程时使用。机会识别指挥官，调度opportunity-scoring/hmw/problem-statement/brief。关键词：机会识别、机会评分、HMW、Problem Statement、Opportunity Brief。
+description: 当需要执行完整的机会识别与定义流程时使用。机会识别指挥官，调度opportunity-scoring/hmw/problem-statement/brief。关键词：机会识别、机会评分、HMW、Problem Statement、Opportunity Brief、产品机会、机会评估、问题定义。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我评估一下这个产品机会"
+    - "识别一下有哪些产品机会"
+    - "定义一下我们要解决的问题"
+    - "生成机会简报"
 ---
 
 # 机会识别指挥官

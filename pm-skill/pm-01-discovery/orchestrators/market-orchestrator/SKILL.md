@@ -1,11 +1,18 @@
 ---
 name: market-orchestrator
-description: 当需要执行完整的市场与竞品分析流程时使用。市场竞品指挥官，调度market-tam-som/pest/competitor-intel/quadrant/report。关键词：市场分析、竞品分析、TAM/SAM/SOM、PEST、竞品情报、四象限。
+description: 当需要执行完整的市场与竞品分析流程时使用。市场竞品指挥官，调度market-tam-som/pest/competitor-intel/quadrant/report。关键词：市场分析、竞品分析、TAM/SAM/SOM、PEST、竞品情报、四象限、市场规模、行业分析、竞争对手、竞品调研。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "orchestrator"
-  version: "7.0"
+  version: "7.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我分析一下市场"
+    - "看看竞品都在做什么"
+    - "评估一下市场规模"
+    - "做一下竞品调研"
+    - "分析一下行业趋势"
 ---
 
 # 市场竞品指挥官

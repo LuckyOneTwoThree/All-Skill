@@ -1,11 +1,16 @@
 ---
 name: privacy-compliance-assessment
-description: 当需要评估产品的隐私合规状态或生成合规评估报告时使用。隐私合规评估文档自动生成，覆盖个人信息收集、存储、使用、共享全生命周期，对标GDPR/PIPL等法规，输出结构化Markdown评估文档。关键词：隐私合规、GDPR、PIPL、个人信息保护、数据合规、隐私评估、合规评估。
+description: 当需要评估产品的隐私合规状态或生成合规评估报告时使用。隐私合规评估文档自动生成，覆盖个人信息收集、存储、使用、共享全生命周期，对标GDPR/PIPL等法规，输出结构化Markdown评估文档。关键词：隐私合规、GDPR、PIPL、个人信息保护、数据合规、隐私评估、合规评估、隐私审查、合规检查。
 metadata:
   module: "开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "金融", "通用"]
+  trigger_examples:
+    - "检查一下我们的隐私合规"
+    - "做个个人信息保护评估"
+    - "看看数据收集合不合规"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

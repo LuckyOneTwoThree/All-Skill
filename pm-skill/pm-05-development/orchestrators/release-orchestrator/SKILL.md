@@ -1,11 +1,17 @@
 ---
 name: release-orchestrator
-description: 当需要制定灰度发布策略或版本发布说明时使用。发布策略指挥官，调度release-gradual/auto-checklist/release-notes。关键词：灰度发布、发布策略、发布检查清单、Feature Flag、版本发布说明。
+description: 当需要制定灰度发布策略或版本发布说明时使用。发布策略指挥官，调度release-gradual/auto-checklist/release-notes。关键词：灰度发布、发布策略、发布检查清单、Feature Flag、版本发布说明、上线、发版、版本管理。
 metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "准备发布上线"
+    - "制定灰度发布策略"
+    - "生成版本发布说明"
+    - "做一下发布检查"
 ---
 
 # 发布策略指挥官

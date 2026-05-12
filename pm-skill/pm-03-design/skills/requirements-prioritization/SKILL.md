@@ -1,12 +1,17 @@
 ---
 name: requirements-prioritization
-description: 当需要对需求进行优先级排序时使用。需求自动评估与排序，基于RICE评分和MoSCoW框架对需求进行优先级排序。执行角色：🤖→👤 AI建议，人类审批。关键词：需求排序、RICE评分、MoSCoW、优先级评估、需求优先级。
+description: 当需要对需求进行优先级排序时使用。需求自动评估与排序，基于RICE评分和MoSCoW框架对需求进行优先级排序。执行角色：🤖→👤 AI建议，人类审批。关键词：需求排序、RICE评分、MoSCoW、优先级评估、需求优先级、先做什么、需求取舍。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "3"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "需求太多先做哪个"
+    - "帮我排优先级"
+    - "哪些需求最重要"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -225,6 +230,8 @@ ELSE
 | upgrade_reason | string | 升级原因（可选） |
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

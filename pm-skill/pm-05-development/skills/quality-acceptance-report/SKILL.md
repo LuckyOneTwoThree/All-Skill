@@ -1,11 +1,16 @@
 ---
 name: quality-acceptance-report
-description: 当产品版本需要正式验收时使用。验收测试报告自动生成，整合测试结果、验收标准、遗留问题和签收确认，产出可签收的验收报告文档。关键词：验收报告、验收测试、测试报告、签收报告、UAT报告、验收确认。
+description: 当产品版本需要正式验收时使用。验收测试报告自动生成，整合测试结果、验收标准、遗留问题和签收确认，产出可签收的验收报告文档。关键词：验收报告、验收测试、测试报告、签收报告、UAT报告、验收确认、上线验收、交付确认。
 metadata:
   module: "开发与上线"
   sub-module: "质量保障"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "生成验收报告"
+    - "版本要验收了，帮我出报告"
+    - "整理一下验收结果"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

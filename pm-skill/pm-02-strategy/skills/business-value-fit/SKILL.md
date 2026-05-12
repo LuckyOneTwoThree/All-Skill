@@ -1,11 +1,15 @@
 ---
 name: business-value-fit
-description: 当需要评估价值主张与用户需求的匹配度时使用。价值主张匹配度自动评估，AI自动执行，评估商业画布中的价值主张与用户痛点/收益的匹配程度。关键词：价值主张匹配、痛点覆盖、收益验证、匹配度评分。
+description: 当需要评估价值主张与用户需求的匹配度时使用。价值主张匹配度自动评估，AI自动执行，评估商业画布中的价值主张与用户痛点/收益的匹配程度。关键词：价值主张匹配、痛点覆盖、收益验证、匹配度评分、用户需要吗、价值对不对。
 metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "我们的价值主张对不对"
+    - "用户真的需要这个功能吗"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: requirements-srs
-description: 当需要将PRD转化为面向研发团队的技术需求规格时使用。需求规格说明书（SRS）自动生成，补充非功能需求、接口约束、数据约束和边界条件，输出结构化Markdown文档。关键词：需求规格说明书、SRS、技术需求、软件需求规格、非功能需求、需求规格。
+description: 当需要将PRD转化为面向研发团队的技术需求规格时使用。需求规格说明书（SRS）自动生成，补充非功能需求、接口约束、数据约束和边界条件，输出结构化Markdown文档。关键词：需求规格说明书、SRS、技术需求、软件需求规格、非功能需求、需求规格、开发需求、技术文档。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "帮我写技术需求文档"
+    - "PRD怎么转成开发需求"
+    - "需求规格说明书怎么写"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -253,6 +258,8 @@ PRD通常缺少非功能需求，SRS必须补充：
   "constraints": []
 }
 ```
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

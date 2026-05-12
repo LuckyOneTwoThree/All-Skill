@@ -1,11 +1,16 @@
 ---
 name: api-contract-consume
-description: 当需要基于API契约生成前端请求层代码时使用。API契约消费自动生成，基于OpenAPI/Swagger文档，自动生成前端请求层代码、TypeScript类型定义、Mock数据和接口调用Hook，实现前后端契约驱动开发。关键词：API契约、OpenAPI、请求层、类型定义、Mock数据、前后端联调。
+description: 当需要基于API契约生成前端请求层代码时使用。API契约消费自动生成，基于OpenAPI/Swagger文档，自动生成前端请求层代码、TypeScript类型定义、Mock数据和接口调用Hook，实现前后端契约驱动开发。关键词：API契约、OpenAPI、请求层、类型定义、Mock数据、前后端联调、对接接口、联调。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "根据接口文档生成请求代码"
+    - "帮我对接后端API"
+    - "生成接口调用代码"
   interaction_mode: "ai_auto"
 ---
 
@@ -130,6 +135,13 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+- [ ] API契约消费完整性：所有接口端点已映射为前端调用方法
+- [ ] 类型定义完整：请求参数和响应数据100%有TypeScript类型定义
+- [ ] 错误处理覆盖：所有API调用有错误处理策略
+- [ ] 跨域策略明确：CORS配置与后端安全策略一致
 
 ## 决策规则
 

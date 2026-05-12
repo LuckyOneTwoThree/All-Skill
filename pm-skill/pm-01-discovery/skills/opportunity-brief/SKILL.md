@@ -1,11 +1,16 @@
 ---
 name: opportunity-brief
-description: 当需要将前序所有产出组装为完整的机会简报时使用。Opportunity Brief自动生成，包含问题陈述、证据摘要、机会评分、HMW陈述、关键假设和推荐下一步。关键词：Opportunity Brief、机会简报、机会文档、产品机会总结、决策文档。
+description: 当需要将前序所有产出组装为完整的机会简报时使用。Opportunity Brief自动生成，包含问题陈述、证据摘要、机会评分、HMW陈述、关键假设和推荐下一步。关键词：Opportunity Brief、机会简报、机会文档、产品机会总结、决策文档、机会总结、值不值得做、决策依据。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我整理一下这个机会"
+    - "出一份机会简报"
+    - "产品机会怎么总结"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

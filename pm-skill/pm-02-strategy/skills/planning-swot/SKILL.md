@@ -1,11 +1,15 @@
 ---
 name: planning-swot
-description: 当需要进行战略定位、竞争优势分析、战略方向选择时使用。SWOT自动分析。对内部优势/劣势、外部机会/威胁进行系统分析，并生成SO/ST/WO/WT战略方向。关键词：SWOT分析、战略定位、竞争优势、战略方向、机会威胁。
+description: 当需要进行战略定位、竞争优势分析、战略方向选择时使用。SWOT自动分析。对内部优势/劣势、外部机会/威胁进行系统分析，并生成SO/ST/WO/WT战略方向。关键词：SWOT分析、战略定位、竞争优势、战略方向、机会威胁、优劣势分析、机会在哪。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我分析一下优劣势"
+    - "我们的机会和威胁是什么"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

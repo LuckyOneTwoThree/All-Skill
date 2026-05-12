@@ -1,11 +1,18 @@
 ---
 name: user-research-orchestrator
-description: 当需要执行完整的用户研究流程时使用。用户研究指挥官，调度voice-analysis/behavior-analysis/user-modeling/interview-assist/report。关键词：用户研究、VOC分析、行为分析、Persona、访谈辅助。
+description: 当需要执行完整的用户研究流程时使用。用户研究指挥官，调度voice-analysis/behavior-analysis/user-modeling/interview-assist/report。关键词：用户研究、VOC分析、行为分析、Persona、访谈辅助、用户调研、用户画像、用户反馈、用户访谈。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "orchestrator"
-  version: "7.0"
+  version: "7.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我做一下用户研究"
+    - "分析一下用户反馈"
+    - "设计一个用户访谈"
+    - "生成用户画像"
+    - "了解一下用户行为"
 ---
 
 # 用户研究指挥官

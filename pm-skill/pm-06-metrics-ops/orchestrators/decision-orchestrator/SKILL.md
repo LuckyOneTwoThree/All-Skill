@@ -1,11 +1,17 @@
 ---
 name: decision-orchestrator
-description: 当需要将数据分析结果转化为决策行动时使用。数据驱动决策指挥官，调度 decision-dace（DACE决策循环）、decision-insight（洞察转化）、decision-culture（数据文化建设），实现从数据到决策的闭环。关键词：数据决策、DACE循环、数据洞察、决策框架、数据文化、decision-dace、decision-insight、decision-culture。
+description: 当需要将数据分析结果转化为决策行动时使用。数据驱动决策指挥官，调度 decision-dace（DACE决策循环）、decision-insight（洞察转化）、decision-culture（数据文化建设），实现从数据到决策的闭环。关键词：数据决策、DACE循环、数据洞察、决策框架、数据文化、decision-dace、decision-insight、decision-culture、数据驱动、决策支持。
 metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "基于数据做决策"
+    - "建立数据驱动决策机制"
+    - "把分析结果转化为行动"
+    - "推动数据文化建设"
 ---
 
 # 数据驱动决策指挥官

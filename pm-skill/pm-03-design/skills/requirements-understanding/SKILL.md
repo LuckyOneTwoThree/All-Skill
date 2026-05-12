@@ -1,12 +1,17 @@
 ---
 name: requirements-understanding
-description: 当需要深入理解需求背后的真实问题时使用。需求自动理解与拆解，将分类后的需求还原为真实问题，分析需求间的关联关系。执行角色：🤖→👤 AI建议，人类审批。关键词：需求理解、需求拆解、问题还原、需求关联、需求分析。
+description: 当需要深入理解需求背后的真实问题时使用。需求自动理解与拆解，将分类后的需求还原为真实问题，分析需求间的关联关系。执行角色：🤖→👤 AI建议，人类审批。关键词：需求理解、需求拆解、问题还原、需求关联、需求分析、需求本质、真正要什么。
 metadata:
   module: "产品构思与设计"
   sub-module: "需求管理"
   type: "pipeline"
   pipeline: "2"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "需求背后真正想要什么"
+    - "帮我分析需求本质"
+    - "用户到底要什么"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -163,6 +168,8 @@ metadata:
 | human_approval | object | 人类审批结果 |
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

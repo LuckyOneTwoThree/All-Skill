@@ -1,11 +1,16 @@
 ---
 name: data-analysis-report
-description: 当需要产出完整的数据分析报告时使用。数据洞察报告自动生成，整合漏斗分析、留存分析、异常检测和决策洞察数据，补充趋势解读和行动建议，输出结构化Markdown报告。关键词：数据分析报告、数据洞察报告、运营报告、数据报告、分析报告。
+description: 当需要产出完整的数据分析报告时使用。数据洞察报告自动生成，整合漏斗分析、留存分析、异常检测和决策洞察数据，补充趋势解读和行动建议，输出结构化Markdown报告。关键词：数据分析报告、数据洞察报告、运营报告、数据报告、分析报告、出个数据报告、帮我写运营分析、总结下数据情况。
 metadata:
   module: "度量运营与决策"
   sub-module: "数据分析"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我出一份本月的数据分析报告"
+    - "把最近的数据情况汇总一下"
+    - "生成运营周报"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

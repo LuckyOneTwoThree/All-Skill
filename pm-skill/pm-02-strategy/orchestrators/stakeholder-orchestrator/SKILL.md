@@ -1,11 +1,17 @@
 ---
 name: stakeholder-orchestrator
-description: 当需要进行Stakeholder管理或战略文档编写时使用。Stakeholder对齐指挥官，调度stakeholder-map/strategy-doc/brief。关键词：Stakeholder对齐、战略文档、战略沟通。
+description: 当需要进行Stakeholder管理或战略文档编写时使用。Stakeholder对齐指挥官，调度stakeholder-map/strategy-doc/brief。关键词：Stakeholder对齐、战略文档、战略沟通、利益相关者、干系人管理、对齐沟通。
 metadata:
   module: "产品商业与战略"
   sub-module: "Stakeholder对齐"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "帮我管理Stakeholder"
+    - "写一份战略沟通文档"
+    - "做一下利益相关者分析"
+    - "对齐一下各方意见"
 ---
 
 # Stakeholder对齐指挥官

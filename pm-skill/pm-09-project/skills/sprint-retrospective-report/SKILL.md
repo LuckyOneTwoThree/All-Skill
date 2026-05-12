@@ -1,11 +1,16 @@
 ---
 name: sprint-retrospective-report
-description: 当需要将Sprint执行数据汇总为完整可交付的复盘报告时使用。Sprint复盘报告自动生成，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议。关键词：Sprint复盘、迭代复盘、Sprint报告、团队回顾、改进行动项。
+description: 当需要将Sprint执行数据汇总为完整可交付的复盘报告时使用。Sprint复盘报告自动生成，包含Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项和下一Sprint建议。关键词：Sprint复盘、迭代复盘、Sprint报告、团队回顾、改进行动项、迭代总结、复盘报告。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "sprint复盘报告怎么写"
+    - "帮我出一份迭代复盘报告"
+    - "这期迭代总结一下"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -23,12 +28,12 @@ Sprint复盘报告的核心价值在于从每个迭代中提取可复用的学�
 
 ## 输入
 
-| 输入项 | 来源 | 必需 | 说明 |
-|--------|------|------|------|
-| Sprint计划 | output/pm-project/agile-sprint-planning | ✅ | Sprint Goal、Story列表、容量分配 |
-| 每日同步记录 | output/pm-project/agile-daily-sync | ⬜ | 障碍追踪、风险记录、进展更新 |
-| Sprint评审结果 | output/pm-project/agile-review | ✅ | 交付物、反馈、改进建议 |
-| 历史Sprint数据 | 用户提供 | ⬜ | 过往3-5个Sprint的速率和交付数据 |
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| Sprint计划 | markdown | 是 | agile-sprint-planning | Sprint Goal、Story列表、容量分配 |
+| 每日同步记录 | markdown | 否 | agile-daily-sync | 障碍追踪、风险记录、进展更新 |
+| Sprint评审结果 | markdown | 是 | agile-review | 交付物、反馈、改进建议 |
+| 历史Sprint数据 | text | 否 | 用户输入 | 过往3-5个Sprint的速率和交付数据 |
 
 ### 降级策略
 
@@ -243,6 +248,20 @@ Sprint复盘报告的核心价值在于从每个迭代中提取可复用的学�
 | 溢出根因已分类 | 每个溢出Story有根因标签 | 补充根因分析 |
 | 行动项可执行 | 每项有负责人和截止日期 | 补充执行细节 |
 | 速率趋势有依据 | 趋势判断基于至少3个Sprint数据 | 标注"数据不足，趋势待观察" |
+
+## 决策规则
+
+- 当Sprint Goal未达成时，溢出根因分析为必填项
+- 当速率连续3个Sprint下降时，自动标记为风险并建议专项复盘
+- 当返工率>20%时，质量改进行动项优先级提升为最高
+- 需要人类确认的决策点：Sprint Goal达成度判定、改进行动项负责人分配、下一Sprint容量预测
+
+## 降级策略
+
+- 当无Sprint计划时：基于评审结果反推目标，标注"计划信息缺失"
+- 当无每日同步记录时：跳过障碍分析，标注"障碍数据缺失"
+- 当无历史Sprint数据时：跳过速率趋势分析，标注"首次Sprint无趋势数据"
+- 数据不可用时：生成复盘框架，关键指标标注"待数据补充"
 
 ## 上游变更响应
 

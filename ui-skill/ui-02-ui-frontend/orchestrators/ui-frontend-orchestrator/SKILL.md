@@ -1,11 +1,17 @@
 ---
 name: ui-frontend-orchestrator
-description: 当需要生成UI组件与前端代码时使用。UI前端指挥官，调度ui-component-gen/page-assembly/interaction-design/ui-review/frontend-test。关键词：UI前端、组件生成、页面组装、交互设计、UI审查、前端测试。
+description: 当需要生成UI组件与前端代码时使用。UI前端指挥官，调度ui-component-gen/page-assembly/interaction-design/ui-review/frontend-test。关键词：UI前端、组件生成、页面组装、交互设计、UI审查、前端测试、前端开发、页面开发。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "生成前端代码"
+    - "组装页面"
+    - "开发UI组件"
+    - "做一下前端审查"
 ---
 
 # UI前端生成指挥官

@@ -1,11 +1,16 @@
 ---
 name: frontend-build-deploy
-description: 当需要配置前端构建和部署流程时使用。前端构建部署自动配置，生成前端项目的构建配置、环境管理、CDN策略和CI/CD流水线，实现前端自动化构建和部署。关键词：前端构建、部署、CI/CD、CDN、环境管理、Webpack、Vite。
+description: 当需要配置前端构建和部署流程时使用。前端构建部署自动配置，生成前端项目的构建配置、环境管理、CDN策略和CI/CD流水线，实现前端自动化构建和部署。关键词：前端构建、部署、CI/CD、CDN、环境管理、Webpack、Vite、打包上线、配部署。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "配置前端打包部署"
+    - "帮我搭CI/CD流水线"
+    - "打包上线怎么配"
   interaction_mode: "ai_auto"
 ---
 
@@ -142,6 +147,13 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+- [ ] 构建配置完整：开发/测试/生产三套环境配置齐全
+- [ ] 部署流程可重复：CI/CD流水线配置可重复执行
+- [ ] 回滚方案可行：部署失败时有明确的回滚策略
+- [ ] 性能基线达标：构建产物体积和加载性能满足基线要求
 
 ## 决策规则
 

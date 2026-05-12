@@ -1,11 +1,16 @@
 ---
 name: agile-review
-description: 当需要自动化Sprint评审和回顾时使用。Sprint Review与Retro自动化，包含Sprint Review（产出清单整理、Demo准备清单、反馈收集分类）和Sprint Retro（数据收集、问题识别、改进建议生成）。关键词：Sprint Review、Sprint Retro、迭代评审、迭代回顾、敏捷复盘。
+description: 当需要自动化Sprint评审和回顾时使用。Sprint Review与Retro自动化，包含Sprint Review（产出清单整理、Demo准备清单、反馈收集分类）和Sprint Retro（数据收集、问题识别、改进建议生成）。关键词：Sprint Review、Sprint Retro、迭代评审、迭代回顾、敏捷复盘、评审会、做得怎么样。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "sprint结束了要评审"
+    - "迭代回顾怎么做"
+    - "这期做得怎么样"
   interaction_mode: "ai_auto"
 ---
 

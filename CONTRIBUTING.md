@@ -86,6 +86,10 @@ metadata:
   type: "pipeline | orchestrator | guide"
   version: "1.0"
   interaction_mode: "ai_suggest_human_approve | ai_auto | human_ai_collaborate"
+  domain_tags: ["{行业标签1}", "{行业标签2}", "通用"]
+  trigger_examples:
+    - "{用户可能说的自然语言示例1}"
+    - "{用户可能说的自然语言示例2}"
 ---
 ```
 
@@ -104,6 +108,26 @@ metadata:
 | ai_auto | 🤖 | 纯数据处理、格式转换、审查检查 |
 | ai_suggest_human_approve | 🤖→👤 | 方案选择、分类判断、优先级排序 |
 | human_ai_collaborate | 👤→🤖 | 目标设定、品牌规范、价值判断 |
+
+**domain_tags（推荐）**：
+
+标注 Skill 适用的业务行业标签，帮助 AI 根据用户业务领域精准匹配 Skill。
+
+| 规则 | 说明 |
+|------|------|
+| 格式 | 字符串数组，至少包含 `"通用"` |
+| 可选标签 | 电商、SaaS、社交、金融、教育、医疗、物流、游戏、工具、通用 |
+| 用途 | 当用户提到具体行业时，AI 可通过 domain_tags 二次过滤推荐相关 Skill |
+
+**trigger_examples（推荐）**：
+
+提供用户可能说的自然语言示例，帮助 AI 更准确地匹配用户意图。
+
+| 规则 | 说明 |
+|------|------|
+| 格式 | 字符串数组，至少 2 条 |
+| 要求 | 使用用户的日常语言，避免方法论术语 |
+| 用途 | AI 参考示例理解用户意图，提升匹配准确度 |
 
 ### 输出路径规范
 

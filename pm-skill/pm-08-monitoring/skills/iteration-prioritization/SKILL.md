@@ -1,11 +1,16 @@
 ---
 name: iteration-prioritization
-description: 当需要调整迭代优先级时使用。迭代优先级自动调整，评估变更影响并生成调整方案，支持加塞、替换、推迟、拆分等决策。关键词：优先级调整、迭代优先级、RICE评分、需求排序、迭代规划。
+description: 当需要调整迭代优先级时使用。迭代优先级自动调整，评估变更影响并生成调整方案，支持加塞、替换、推迟、拆分等决策。关键词：优先级调整、迭代优先级、RICE评分、需求排序、迭代规划、加塞需求、重新排优先级。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "迭代计划要调整怎么办"
+    - "需求要加塞怎么排"
+    - "优先级怎么重新排"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -205,6 +210,8 @@ communication_draft:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/iteration-prioritization/`
 **输出Schema**：
 
 ```json

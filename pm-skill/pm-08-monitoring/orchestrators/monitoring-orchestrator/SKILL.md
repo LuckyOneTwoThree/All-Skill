@@ -1,11 +1,17 @@
 ---
 name: monitoring-orchestrator
-description: 当需要建立产品监控体系或处理异常告警时使用。监控预警指挥官，调度 monitoring-system、monitoring-anomaly、monitoring-dashboard、monitoring-escalation、user-feedback-loop-report 子Skill执行。关键词：监控预警、异常检测、告警分级、监控系统、健康监控、监控仪表盘、告警升级、反馈闭环。
+description: 当需要建立产品监控体系或处理异常告警时使用。监控预警指挥官，调度 monitoring-system、monitoring-anomaly、monitoring-dashboard、monitoring-escalation、user-feedback-loop-report 子Skill执行。关键词：监控预警、异常检测、告警分级、监控系统、健康监控、监控仪表盘、告警升级、反馈闭环、线上告警、系统监控。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "建立产品监控体系"
+    - "线上有异常告警"
+    - "配置监控仪表盘"
+    - "处理线上问题"
 ---
 
 # 监控预警指挥官

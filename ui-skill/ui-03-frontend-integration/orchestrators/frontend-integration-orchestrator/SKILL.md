@@ -1,11 +1,17 @@
 ---
 name: frontend-integration-orchestrator
-description: 前端集成指挥官。协调api-contract-consume、frontend-build-deploy、frontend-performance三个子Skill的完整流程，确保前端与后端联调集成和上线质量。关键词：前端集成、前后端联调、构建部署、性能优化、api-contract-consume、frontend-build-deploy、frontend-performance。
+description: 当需要前后端联调、配置前端部署或优化前端性能时使用。前端集成指挥官，协调api-contract-consume、frontend-build-deploy、frontend-performance三个子Skill的完整流程，确保前端与后端联调集成和上线质量。关键词：前端集成、前后端联调、构建部署、性能优化、api-contract-consume、frontend-build-deploy、frontend-performance、联调、部署上线。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "前后端联调"
+    - "前端部署上线"
+    - "优化前端性能"
+    - "对接后端API"
 ---
 
 # 前端集成指挥官

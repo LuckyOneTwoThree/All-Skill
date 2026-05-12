@@ -1,11 +1,17 @@
 ---
 name: ideation-orchestrator
-description: 当需要发散创意或构思解决方案时使用。创意发散与方案构思子模块指挥官，调度子Skill：ideation-hmw、ideation-scamper、ideation-inversion、ideation-convergence。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意、思维逆转、方案收敛。
+description: 当需要发散创意或构思解决方案时使用。创意发散与方案构思子模块指挥官，调度子Skill：ideation-hmw、ideation-scamper、ideation-inversion、ideation-convergence。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意、思维逆转、方案收敛、头脑风暴、创新方案。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我发散一下创意"
+    - "构思一下解决方案"
+    - "用SCAMPER方法创新"
+    - "头脑风暴一下"
 ---
 
 # 创意发散与方案构思指挥官

@@ -1,11 +1,16 @@
 ---
 name: validation-assumption-map
-description: 当需要提取和评估产品假设时使用。假设地图自动生成工具，根据方案设计和PRD，自动提取价值假设、可行性假设、可用性假设、增长假设，并进行风险评估和验证方法推荐。关键词：假设提取、风险评估、假设地图、验证方法。
+description: 当需要提取和评估产品假设时使用。假设地图自动生成工具，根据方案设计和PRD，自动提取价值假设、可行性假设、可用性假设、增长假设，并进行风险评估和验证方法推荐。关键词：假设提取、风险评估、假设地图、验证方法、假设梳理、风险假设。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "产品有哪些假设没验证"
+    - "帮我梳理假设和风险"
+    - "哪些假设可能不成立"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -140,6 +145,8 @@ metadata:
 | is_max_risk | boolean | 是否为最大风险假设 |
 | validation_method | string | 推荐验证方法 |
 | validation_metric | string | 验证指标 |
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

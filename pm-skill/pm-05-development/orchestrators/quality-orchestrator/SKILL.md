@@ -1,11 +1,17 @@
 ---
 name: quality-orchestrator
-description: 当需要进行自动化测试、验收检查或生成验收报告时使用。质量保障指挥官，调度子Skill：quality-auto-test（测试用例自动生成与追踪）、quality-auto-acceptance（自动化验收执行）、quality-acceptance-report（验收测试报告生成）。关键词：质量保障、自动化测试、验收检查、测试覆盖率、质量门禁、验收报告。
+description: 当需要进行自动化测试、验收检查或生成验收报告时使用。质量保障指挥官，调度子Skill：quality-auto-test（测试用例自动生成与追踪）、quality-auto-acceptance（自动化验收执行）、quality-acceptance-report（验收测试报告生成）。关键词：质量保障、自动化测试、验收检查、测试覆盖率、质量门禁、验收报告、测试、QA。
 metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "做一下测试"
+    - "生成验收报告"
+    - "检查质量门禁"
+    - "跑一下自动化测试"
 ---
 
 # 质量保障指挥官

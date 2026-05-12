@@ -1,11 +1,17 @@
 ---
 name: retention-orchestrator
-description: 当需要降低流失率或提升用户参与度时使用。用户留存指挥官，调度 retention-churn（流失预警与干预）、retention-engagement（分层运营与参与度提升），实现从流失预防到用户促活的闭环。关键词：用户留存、流失预警、分层运营、参与度、留存策略、retention-churn、retention-engagement。
+description: 当需要降低流失率或提升用户参与度时使用。用户留存指挥官，调度 retention-churn（流失预警与干预）、retention-engagement（分层运营与参与度提升），实现从流失预防到用户促活的闭环。关键词：用户留存、流失预警、分层运营、参与度、留存策略、retention-churn、retention-engagement、防流失、促活。
 metadata:
   module: "产品增长与运营"
   sub-module: "留存"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["电商", "社交", "游戏", "通用"]
+  trigger_examples:
+    - "用户流失严重"
+    - "提升用户留存率"
+    - "做一下流失预警"
+    - "设计分层运营策略"
 ---
 
 # 用户留存指挥官

@@ -1,11 +1,16 @@
 ---
 name: monitoring-escalation
-description: 当需要配置告警升级和On-Call流程时使用。告警升级与 On-Call 自动化，自动进行告警分级、触发升级链、发送通知并生成值班报告。关键词：告警升级、升级流程、On-Call、告警通知、应急响应、值班。
+description: 当需要配置告警升级和On-Call流程时使用。告警升级与 On-Call 自动化，自动进行告警分级、触发升级链、发送通知并生成值班报告。关键词：告警升级、升级流程、On-Call、告警通知、应急响应、值班、值班安排、出了问题找谁。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "告警升级流程怎么定"
+    - "值班怎么安排"
+    - "出了问题找谁"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -237,6 +242,8 @@ oncall_report:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/monitoring-escalation/`
 **输出Schema**：
 
 ```json

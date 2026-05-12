@@ -1,11 +1,16 @@
 ---
 name: release-auto-checklist
-description: 当需要生成发布检查清单时使用。上线Checklist自动生成与追踪，自动生成T-7/T-1/发布中/T+24h/T+72h的发布Checklist，逐项自动检查和人工确认，支持未完成项告警和状态追踪。🤖 AI自动执行。关键词：发布Checklist、上线检查、发布流程、发布追踪、上线准备、发布清单。
+description: 当需要生成发布检查清单时使用。上线Checklist自动生成与追踪，自动生成T-7/T-1/发布中/T+24h/T+72h的发布Checklist，逐项自动检查和人工确认，支持未完成项告警和状态追踪。🤖 AI自动执行。关键词：发布Checklist、上线检查、发布流程、发布追踪、上线准备、发布清单、上线清单、发版检查。
 metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "上线前帮我列个检查清单"
+    - "生成发版Checklist"
+    - "整理一下上线要检查什么"
   interaction_mode: "ai_auto"
 ---
 

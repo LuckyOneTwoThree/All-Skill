@@ -1,11 +1,15 @@
 ---
 name: positioning-differentiation
-description: 当需要评估差异化可持续性时使用。差异化来源自动评估，输入价值曲线+竞品分析+能力评估，从功能/体验/场景/商业/生态5个维度输出差异化强度评分和推荐。关键词：差异化评估、可持续性、竞争壁垒、护城河。
+description: 当需要评估差异化可持续性时使用。差异化来源自动评估，输入价值曲线+竞品分析+能力评估，从功能/体验/场景/商业/生态5个维度输出差异化强度评分和推荐。关键词：差异化评估、可持续性、竞争壁垒、护城河、护城河深不深、别人能抄吗。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "我们的差异化能持续吗"
+    - "竞争壁垒够不够"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

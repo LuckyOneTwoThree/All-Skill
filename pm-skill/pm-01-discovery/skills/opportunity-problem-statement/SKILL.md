@@ -1,11 +1,16 @@
 ---
 name: opportunity-problem-statement
-description: 当需要基于用户研究数据和需求洞察生成结构化问题陈述时使用。Problem Statement自动生成，包含目标用户、场景、痛点、现有方案不足和预期收益。关键词：Problem Statement、问题陈述、痛点定义、用户问题、机会定义。
+description: 当需要基于用户研究数据和需求洞察生成结构化问题陈述时使用。Problem Statement自动生成，包含目标用户、场景、痛点、现有方案不足和预期收益。关键词：Problem Statement、问题陈述、痛点定义、用户问题、机会定义、问题定义、核心问题、说清楚问题。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我定义一下要解决的问题"
+    - "用户的核心问题是什么"
+    - "问题怎么描述清楚"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

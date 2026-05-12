@@ -1,11 +1,16 @@
 ---
 name: insight-jtbd
-description: 当需要从用户反馈和行为数据中提取功能性、情感性、社会性三层Job时使用。JTBD结构化分析，通过模式匹配与语义推断识别用户真正想完成的任务。关键词：JTBD、Jobs-to-be-Done、用户任务、功能诉求、情感诉求、社会诉求。
+description: 当需要从用户反馈和行为数据中提取功能性、情感性、社会性三层Job时使用。JTBD结构化分析，通过模式匹配与语义推断识别用户真正想完成的任务。关键词：JTBD、Jobs-to-be-Done、用户任务、功能诉求、情感诉求、社会诉求、用户真正想要什么、用户目的、雇用产品。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "用户到底想完成什么任务"
+    - "帮我分析用户真正想要什么"
+    - "用户用我们的产品是为了什么"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

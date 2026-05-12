@@ -1,11 +1,16 @@
 ---
 name: ui-review
-description: 当需要对UI进行自动化审查时使用。UI审查自动执行，对生成的UI组件和页面进行视觉还原度、交互完整性、无障碍合规和响应式适配的自动化审查，输出问题清单和修复建议。关键词：UI审查、视觉还原、无障碍、响应式、WCAG、设计规范检查。
+description: 当需要对UI进行自动化审查时使用。UI审查自动执行，对生成的UI组件和页面进行视觉还原度、交互完整性、无障碍合规和响应式适配的自动化审查，输出问题清单和修复建议。关键词：UI审查、视觉还原、无障碍、响应式、WCAG、设计规范检查、查问题、检查UI。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "检查一下UI有没有问题"
+    - "审查页面还原度"
+    - "帮我查查UI问题"
   interaction_mode: "ai_auto"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: user-research-interview-assist
-description: 当需要设计用户访谈脚本、执行访谈后提取洞察、跨访谈聚类分析时使用。访谈辅助Pipeline。关键词：用户访谈、访谈脚本、访谈洞察、半结构化访谈、定性研究辅助。
+description: 当需要设计用户访谈脚本、执行访谈后提取洞察、跨访谈聚类分析时使用。访谈辅助Pipeline。关键词：用户访谈、访谈脚本、访谈洞察、半结构化访谈、定性研究辅助、访谈提纲、访谈整理、跟用户聊什么。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我准备访谈提纲"
+    - "访谈后怎么整理洞察"
+    - "用户访谈怎么做"
   interaction_mode: "human_ai_collaborate"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: insight-5whys
-description: 当需要对关键痛点或问题现象进行根因深挖时使用。5Whys结构化根因分析，通过逐层追问定位可行动的根因和改进点，支持多路径并行分析。关键词：5Whys、根因分析、因果链、痛点深挖、原因追溯。
+description: 当需要对关键痛点或问题现象进行根因深挖时使用。5Whys结构化根因分析，通过逐层追问定位可行动的根因和改进点，支持多路径并行分析。关键词：5Whys、根因分析、因果链、痛点深挖、原因追溯、为什么、追根究底、找根本原因。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "为什么用户总是抱怨这个功能"
+    - "问题反复出现找不到根因"
+    - "帮我追问到底层原因"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

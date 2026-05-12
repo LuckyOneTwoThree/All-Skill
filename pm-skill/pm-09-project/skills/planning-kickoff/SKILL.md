@@ -1,11 +1,16 @@
 ---
 name: planning-kickoff
-description: 当需要准备和执行项目Kickoff会议时使用。Kickoff会议自动化，包含会前AI准备（议程生成、背景材料整理、问题清单预准备）、会中人类主持、会后AI处理（纪要生成、行动项提取、跟进提醒设置）。关键词：Kickoff、项目启动、启动会议、行动项、项目启动会。
+description: 当需要准备和执行项目Kickoff会议时使用。Kickoff会议自动化，包含会前AI准备（议程生成、背景材料整理、问题清单预准备）、会中人类主持、会后AI处理（纪要生成、行动项提取、跟进提醒设置）。关键词：Kickoff、项目启动、启动会议、行动项、项目启动会、启动会、项目开张。
 metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "项目要启动了怎么开会"
+    - "kickoff会议怎么准备"
+    - "项目启动会怎么开"
   interaction_mode: "human_ai_collaborate"
 ---
 

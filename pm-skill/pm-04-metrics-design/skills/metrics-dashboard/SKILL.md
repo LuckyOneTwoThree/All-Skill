@@ -1,11 +1,16 @@
 ---
 name: metrics-dashboard
-description: 当需要配置产品度量Dashboard时使用。Dashboard自动配置，基于指标层级设计Dashboard结构，自动分配指标到各Dashboard，配置告警规则和阈值。关键词：Dashboard配置、数据看板、指标可视化、告警配置、监控面板。
+description: 当需要配置产品度量Dashboard时使用。Dashboard自动配置，基于指标层级设计Dashboard结构，自动分配指标到各Dashboard，配置告警规则和阈值。关键词：Dashboard配置、数据看板、指标可视化、告警配置、监控面板、看板搭建、数据报表。
 metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我搭一个数据看板"
+    - "配置一个监控面板"
+    - "做个Dashboard把关键指标都展示出来"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

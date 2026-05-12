@@ -1,11 +1,16 @@
 ---
 name: opportunity-scoring
-description: 当需要对产品机会进行多维度量化评分时使用。机会评分自动计算，包括问题真实性、市场规模、解决可行性、战略契合度、竞争壁垒五个维度。关键词：机会评分、机会量化、加权评分、战略契合度、机会优先级。
+description: 当需要对产品机会进行多维度量化评分时使用。机会评分自动计算，包括问题真实性、市场规模、解决可行性、战略契合度、竞争壁垒五个维度。关键词：机会评分、机会量化、加权评分、战略契合度、机会优先级、值不值得做、哪个方向好、机会评估。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "这个机会值不值得追"
+    - "帮我评估一下这个方向"
+    - "哪个机会更好"
   interaction_mode: "ai_auto"
 ---
 

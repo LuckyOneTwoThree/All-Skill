@@ -1,11 +1,16 @@
 ---
 name: auth-design
-description: 当需要设计认证鉴权方案时使用。认证鉴权自动设计，为系统设计完整的认证和授权方案，包含用户认证（JWT/OAuth2/SSO）、权限模型（RBAC/ABAC）、多租户隔离和会话管理。关键词：认证、鉴权、JWT、OAuth2、RBAC、ABAC、多租户、SSO。
+description: 当需要设计认证鉴权方案时使用。认证鉴权自动设计，为系统设计完整的认证和授权方案，包含用户认证（JWT/OAuth2/SSO）、权限模型（RBAC/ABAC）、多租户隔离和会话管理。关键词：认证、鉴权、JWT、OAuth2、RBAC、ABAC、多租户、SSO、登录、权限系统。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["SaaS", "金融", "通用"]
+  trigger_examples:
+    - "做登录认证"
+    - "设计权限系统"
+    - "多租户权限隔离"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -157,6 +162,13 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+- [ ] 认证方案完整性：覆盖全部用户场景（Web/移动/第三方/企业）
+- [ ] 权限模型覆盖度：全部角色和权限已映射
+- [ ] 多租户隔离策略：多租户场景下数据隔离策略明确
+- [ ] Token生命周期管理：过期和撤销策略完整
 
 ## 决策规则
 

@@ -1,11 +1,16 @@
 ---
 name: {domain}-{sub-module}-orchestrator
-description: 当需要执行完整的{子模块}流程时使用。{子模块}指挥官，按阶段调度子Skill执行，包括{子Skill列表}。关键词：{关键词1}、{关键词2}、{关键词3}。
+description: 当需要执行完整的{子模块}流程时使用。{子模块}指挥官，按阶段调度子Skill执行，包括{子Skill列表}。关键词：{关键词1}、{关键词2}、{关键词3}、{用户语言关键词1}、{用户语言关键词2}。
 metadata:
   module: "{所属模块中文名}"
   sub-module: "{所属子模块中文名}"
   type: "orchestrator"
   version: "1.0"
+  domain_tags: ["{行业标签1}", "{行业标签2}", "通用"]
+  trigger_examples:
+    - "{用户可能说的自然语言示例1}"
+    - "{用户可能说的自然语言示例2}"
+    - "{用户可能说的自然语言示例3}"
 ---
 
 # {子模块}指挥官

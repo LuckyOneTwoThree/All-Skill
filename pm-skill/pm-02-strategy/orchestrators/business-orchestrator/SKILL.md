@@ -1,11 +1,18 @@
 ---
 name: business-orchestrator
-description: 当需要设计或评估产品商业模式时使用。商业模式指挥官，调度business-model-canvas/value-fit/pricing/strategy-report。关键词：商业模式、商业画布、定价策略、商业战略报告。
+description: 当需要设计或评估产品商业模式时使用。商业模式指挥官，调度business-model-canvas/value-fit/pricing/strategy-report。关键词：商业模式、商业画布、定价策略、商业战略报告、怎么赚钱、盈利模式、收费模式、商业评估。
 metadata:
   module: "产品商业与战略"
   sub-module: "商业模式设计"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["电商", "SaaS", "金融", "教育", "通用"]
+  trigger_examples:
+    - "帮我设计商业模式"
+    - "产品怎么赚钱"
+    - "设计一下定价策略"
+    - "评估一下商业模式是否可行"
+    - "做一下商业画布"
 ---
 
 # 商业模式设计指挥官

@@ -1,11 +1,16 @@
 ---
 name: insight-requirement-layers
-description: 当需要将原始需求拆解为表层需求、行为需求、本质需求三层时使用，通过推断模式库逐层深挖。需求三层模型自动拆解。关键词：需求拆解、三层模型、表层需求、行为需求、本质需求、需求深挖。
+description: 当需要将原始需求拆解为表层需求、行为需求、本质需求三层时使用，通过推断模式库逐层深挖。需求三层模型自动拆解。关键词：需求拆解、三层模型、表层需求、行为需求、本质需求、需求深挖、真实需求、表面需求、深挖需求。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "用户说的不一定是真需求"
+    - "帮我深挖需求背后的本质"
+    - "表面需求和真实需求怎么区分"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: ideation-inversion
-description: 当需要通过逆向思维寻找创新方案时使用。思维逆转法（Inversion）创意工具，通过分析失败路径并逆向思考，将其转化为成功条件和设计约束。关键词：思维逆转、失败分析、风险预防、设计约束、逆向思维。
+description: 当需要通过逆向思维寻找创新方案时使用。思维逆转法（Inversion）创意工具，通过分析失败路径并逆向思考，将其转化为成功条件和设计约束。关键词：思维逆转、失败分析、风险预防、设计约束、逆向思维、失败预防、反向思考。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "产品可能会怎么失败"
+    - "逆向思考一下"
+    - "什么会导致项目失败"
   interaction_mode: "ai_auto"
 ---
 
@@ -401,6 +406,8 @@ metadata:
 | verification_method | string | 验证方法 |
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

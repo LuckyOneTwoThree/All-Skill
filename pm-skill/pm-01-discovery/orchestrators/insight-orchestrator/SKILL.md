@@ -1,11 +1,17 @@
 ---
 name: insight-orchestrator
-description: 当需要执行完整的需求分析流程时使用。需求洞察指挥官，按阶段调度子Skill执行，包括insight-jtbd、insight-requirement-layers、insight-5whys、insight-kano、insight-priority-scoring。关键词：需求分析流程、需求洞察编排、需求优先级全流程、JTBD、5Whys、KANO、优先级评分。
+description: 当需要执行完整的需求分析流程时使用。需求洞察指挥官，按阶段调度子Skill执行，包括insight-jtbd、insight-requirement-layers、insight-5whys、insight-kano、insight-priority-scoring。关键词：需求分析流程、需求洞察编排、需求优先级全流程、JTBD、5Whys、KANO、优先级评分、分析需求、挖掘需求、用户需求、需求排序。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我分析一下用户需求"
+    - "需求太多了，帮我排个优先级"
+    - "用KANO模型分析一下需求"
+    - "挖掘一下用户的深层需求"
 ---
 
 # 需求洞察指挥官

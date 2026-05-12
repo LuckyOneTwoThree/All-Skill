@@ -1,11 +1,16 @@
 ---
 name: competitor-monitoring-report
-description: 当需要将竞品追踪数据汇总为完整可交付的监控报告时使用。竞品动态监控报告自动生成，包含竞品动态汇总、功能变更追踪、市场策略变化、威胁评估和应对建议。关键词：竞品监控报告、竞品动态、功能追踪、威胁评估、竞品应对。
+description: 当需要将竞品追踪数据汇总为完整可交付的监控报告时使用。竞品动态监控报告自动生成，包含竞品动态汇总、功能变更追踪、市场策略变化、威胁评估和应对建议。关键词：竞品监控报告、竞品动态、功能追踪、威胁评估、竞品应对、竞品报告、对手在干嘛。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "竞品最近有什么新动作"
+    - "帮我出一份竞品监控报告"
+    - "对手更新了什么功能"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -23,12 +28,12 @@ metadata:
 
 ## 输入
 
-| 输入项 | 来源 | 必需 | 说明 |
-|--------|------|------|------|
-| 竞品追踪数据 | output/pm-monitoring/diagnosis-competition | ✅ | 功能变更、优劣势变化、应对策略 |
-| 竞品情报 | output/pm-discovery/market-competitor-intel | ⬜ | 竞品动态、口碑、定价 |
-| 竞品分类 | output/pm-discovery/market-competitor-quadrant | ⬜ | 四象限分类、竞品定位 |
-| 监控周期 | 用户提供 | ⬜ | 报告覆盖的时间范围 |
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| 竞品追踪数据 | markdown | 是 | diagnosis-competition | 功能变更、优劣势变化、应对策略 |
+| 竞品情报 | markdown | 否 | market-competitor-intel | 竞品动态、口碑、定价 |
+| 竞品分类 | markdown | 否 | market-competitor-quadrant | 四象限分类、竞品定位 |
+| 监控周期 | text | 否 | 用户输入 | 报告覆盖的时间范围 |
 
 ### 降级策略
 
@@ -215,6 +220,20 @@ metadata:
 | dynamics | object | 是 | 竞品动态，须含major/product/market/sentiment |
 | threat_assessment | object | 是 | 威胁评估，须含direct_threats/indirect_threats/opportunities |
 | response_recommendations | object | 否 | 应对建议，须含immediate/short_term/long_term |
+
+## 决策规则
+
+- 当威胁等级为严重/较高时，必须包含即时应对建议（1-2周内可执行）
+- 当竞品功能直接重叠时，优先评估差异化策略而非功能对齐
+- 当监控数据覆盖≥3个竞品时，生成完整对比矩阵
+- 需要人类确认的决策点：威胁等级判定、应对策略优先级、监控竞品范围调整
+
+## 降级策略
+
+- 当无竞品追踪数据时：基于竞品情报生成报告，标注"追踪数据缺失"
+- 当无竞品分类时：默认监控直接竞品，标注"分类待补充"
+- 当竞品情报不完整时：生成报告框架，缺失维度标注"待情报补充"
+- 数据不可用时：基于用户提供信息生成定性分析报告，标注"需数据验证"
 
 ## 上游变更响应
 

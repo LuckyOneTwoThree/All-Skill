@@ -1,11 +1,17 @@
 ---
 name: project-planning-orchestrator
-description: 当需要启动新项目或进行项目规划时使用。项目规划指挥官，调度 planning-project-charter、planning-resource、planning-kickoff 子Skill执行。关键词：项目规划、项目宪章、资源规划、Kickoff、项目启动、项目章程、资源分配。
+description: 当需要启动新项目或进行项目规划时使用。项目规划指挥官，调度 planning-project-charter、planning-resource、planning-kickoff 子Skill执行。关键词：项目规划、项目宪章、资源规划、Kickoff、项目启动、项目章程、资源分配、立项。
 metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "启动一个新项目"
+    - "做一下项目规划"
+    - "写项目宪章"
+    - "规划一下资源分配"
 ---
 
 # 项目规划指挥官

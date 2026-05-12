@@ -1,11 +1,16 @@
 ---
 name: market-competitor-report
-description: 当需要产出完整的竞品分析报告时使用。竞品分析报告自动生成，整合竞品情报和四象限数据，补充SWOT分析、竞争定位图、护城河评估和差异化策略，输出结构化Markdown报告。关键词：竞品分析报告、竞品报告、竞争分析、SWOT、竞争定位、差异化策略、竞品深度分析。
+description: 当需要产出完整的竞品分析报告时使用。竞品分析报告自动生成，整合竞品情报和四象限数据，补充SWOT分析、竞争定位图、护城河评估和差异化策略，输出结构化Markdown报告。关键词：竞品分析报告、竞品报告、竞争分析、SWOT、竞争定位、差异化策略、竞品深度分析、对手分析报告、竞品调研、出报告。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "消费", "通用"]
+  trigger_examples:
+    - "帮我出一份竞品分析报告"
+    - "竞品深度分析怎么做"
+    - "出个竞品报告"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

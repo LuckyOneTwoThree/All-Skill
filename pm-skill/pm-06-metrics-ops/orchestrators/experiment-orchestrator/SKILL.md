@@ -1,11 +1,17 @@
 ---
 name: experiment-orchestrator
-description: 当需要设计或执行A/B测试实验时使用。实验验证指挥官，调度experiment-design/execution/report。关键词：A/B测试、实验设计、统计显著性、实验执行。
+description: 当需要设计或执行A/B测试实验时使用。实验验证指挥官，调度experiment-design/execution/report。关键词：A/B测试、实验设计、统计显著性、实验执行、效果验证、AB测试、对照实验。
 metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "设计一个A/B测试"
+    - "验证一下方案效果"
+    - "跑一下对照实验"
+    - "分析实验结果"
 ---
 
 # 实验设计指挥官

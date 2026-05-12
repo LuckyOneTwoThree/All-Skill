@@ -1,12 +1,16 @@
 ---
 name: {domain}-{methodology-name}
-description: 当需要{触发场景}时使用。{一句话功能描述}。关键词：{关键词1}、{关键词2}、{关键词3}。
+description: 当需要{触发场景}时使用。{一句话功能描述}。关键词：{关键词1}、{关键词2}、{关键词3}、{用户语言关键词1}、{用户语言关键词2}。
 metadata:
   module: "{所属模块中文名}"
   sub-module: "{所属子模块中文名}"
   type: "pipeline"
   version: "1.0"
   interaction_mode: "ai_suggest_human_approve"
+  domain_tags: ["{行业标签1}", "通用"]
+  trigger_examples:
+    - "{用户可能说的自然语言示例1}"
+    - "{用户可能说的自然语言示例2}"
 ---
 
 # {方法论名称}

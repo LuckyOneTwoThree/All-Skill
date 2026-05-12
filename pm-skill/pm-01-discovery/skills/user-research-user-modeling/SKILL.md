@@ -1,11 +1,16 @@
 ---
 name: user-research-user-modeling
-description: 当需要基于用户声音分析和行为分析结果生成Persona、Empathy Map、Journey Map时使用。用户建模自动生成Pipeline。关键词：用户建模、Persona生成、同理心地图、用户旅程地图、用户画像。
+description: 当需要基于用户声音分析和行为分析结果生成Persona、Empathy Map、Journey Map时使用。用户建模自动生成Pipeline。关键词：用户建模、Persona生成、同理心地图、用户旅程地图、用户画像、典型用户、用户角色、用户长什么样。
 metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我画用户画像"
+    - "用户旅程怎么梳理"
+    - "用户是什么样的人"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

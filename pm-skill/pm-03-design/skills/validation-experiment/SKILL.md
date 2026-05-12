@@ -1,11 +1,16 @@
 ---
 name: validation-experiment
-description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法。
+description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法、验证方案、测试设计。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "怎么验证这个假设"
+    - "帮我设计A/B测试"
+    - "实验方案怎么做"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -176,6 +181,8 @@ metadata:
 
 ## 输出
 
+
+**输出校验规则**：详见下方章节
 **存储路径**：`output/pm-design/validation-experiment/`
 **输出文件**：experiment_plan.json
 
@@ -204,6 +211,8 @@ metadata:
   "ai_recommendation": "AI建议说明"
 }
 ```
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

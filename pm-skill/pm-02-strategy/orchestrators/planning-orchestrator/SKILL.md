@@ -1,11 +1,18 @@
 ---
 name: planning-orchestrator
-description: 当需要进行产品立项、战略规划或路线图制定时使用。战略规划指挥官，调度产品提案、SWOT、五力模型、OKR、北极星、路线图、安索夫等子Skill。关键词：产品立项、战略规划、SWOT、OKR、路线图、战略分析。
+description: 当需要进行产品立项、战略规划或路线图制定时使用。战略规划指挥官，调度产品提案、SWOT、五力模型、OKR、北极星、路线图、安索夫等子Skill。关键词：产品立项、战略规划、SWOT、OKR、路线图、战略分析、制定目标、产品规划、年度规划。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我做产品立项"
+    - "制定一下战略规划"
+    - "设定OKR目标"
+    - "规划一下产品路线图"
+    - "做一下SWOT分析"
 ---
 
 # 战略规划与路线图指挥官

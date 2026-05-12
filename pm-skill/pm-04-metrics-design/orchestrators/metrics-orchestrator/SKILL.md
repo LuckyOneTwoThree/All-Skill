@@ -1,11 +1,17 @@
 ---
 name: metrics-orchestrator
-description: 当需要构建产品度量体系时使用。产品度量设计子模块指挥官，调度子Skill：metrics-system（指标体系自动构建）、tracking-plan（埋点方案自动生成）、metrics-dashboard（Dashboard自动配置）。关键词：度量设计、指标体系、埋点方案、Dashboard配置。
+description: 当需要构建产品度量体系时使用。产品度量设计子模块指挥官，调度子Skill：metrics-system（指标体系自动构建）、tracking-plan（埋点方案自动生成）、metrics-dashboard（Dashboard自动配置）。关键词：度量设计、指标体系、埋点方案、Dashboard配置、数据指标、KPI设计、数据埋点。
 metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我设计指标体系"
+    - "规划一下数据埋点"
+    - "设计产品KPI"
+    - "配置数据Dashboard"
 ---
 
 # 产品度量设计指挥官

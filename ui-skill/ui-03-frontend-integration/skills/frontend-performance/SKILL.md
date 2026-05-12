@@ -1,11 +1,16 @@
 ---
 name: frontend-performance
-description: 当需要分析和优化前端性能时使用。前端性能优化自动执行，对前端应用进行性能分析，识别包体积、加载速度和渲染性能瓶颈，生成优化方案和代码级修复建议。关键词：前端性能、Web Vitals、包体积、加载速度、渲染性能、Lighthouse。
+description: 当需要分析和优化前端性能时使用。前端性能优化自动执行，对前端应用进行性能分析，识别包体积、加载速度和渲染性能瓶颈，生成优化方案和代码级修复建议。关键词：前端性能、Web Vitals、包体积、加载速度、渲染性能、Lighthouse、页面卡顿、加载慢。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "页面加载太慢怎么办"
+    - "帮我优化前端性能"
+    - "分析一下页面卡顿原因"
   interaction_mode: "ai_auto"
 ---
 
@@ -141,6 +146,13 @@ metadata:
   }
 }
 ```
+
+### 输出校验规则
+
+- [ ] 性能指标可量化：LCP/FID/CLS等Core Web Vitals有明确基线
+- [ ] 优化方案可执行：每项优化建议有具体实施步骤
+- [ ] 监控方案完整：性能监控覆盖页面加载+运行时+资源加载
+- [ ] 预算阈值合理：性能预算阈值与业务场景匹配
 
 ## 决策规则
 

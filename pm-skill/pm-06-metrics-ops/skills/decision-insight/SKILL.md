@@ -1,11 +1,16 @@
 ---
 name: decision-insight
-description: 当需要将数据转化为可执行洞察时使用。数据洞察自动转化，AI自动执行从分析结果到故事化洞察的转化，生成决策建议并标注决策边界。关键词：数据洞察、洞察转化、决策建议、故事化分析、数据故事。
+description: 当需要将数据转化为可执行洞察时使用。数据洞察自动转化，AI自动执行从分析结果到故事化洞察的转化，生成决策建议并标注决策边界。关键词：数据洞察、洞察转化、决策建议、故事化分析、数据故事、数据看不懂、把数据变成人话、数据说明了什么。
 metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "这些数据说明了什么，帮我解读一下"
+    - "把分析结果变成能讲的故事"
+    - "数据太干了，帮我转化成可执行的建议"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

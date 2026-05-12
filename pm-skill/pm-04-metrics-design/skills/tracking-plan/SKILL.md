@@ -1,11 +1,16 @@
 ---
 name: tracking-plan
-description: 当需要生成埋点方案时使用。埋点方案自动生成，包含从指标体系反推埋点需求、PRD功能埋点提取、埋点质量检查、PRD一致性校验。关键词：埋点方案、事件设计、属性设计、埋点规范、Tracking Plan、数据采集。
+description: 当需要生成埋点方案时使用。埋点方案自动生成，包含从指标体系反推埋点需求、PRD功能埋点提取、埋点质量检查、PRD一致性校验。关键词：埋点方案、事件设计、属性设计、埋点规范、Tracking Plan、数据采集、加埋点、打点。
 metadata:
   module: "产品度量设计"
   sub-module: "埋点方案"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "电商", "通用"]
+  trigger_examples:
+    - "这个功能需要加埋点"
+    - "帮我出一份打点方案"
+    - "整理一下需要采集哪些数据"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -1,11 +1,16 @@
 ---
 name: api-contract
-description: 当需要设计API接口契约时使用。API契约自动设计，基于PRD和数据模型，自动设计RESTful/GraphQL接口契约，生成OpenAPI 3.0规范文档，包含接口定义、版本策略、错误码规范和变更管理。关键词：API设计、接口契约、OpenAPI、RESTful、GraphQL、版本管理。
+description: 当需要设计API接口契约时使用。API契约自动设计，基于PRD和数据模型，自动设计RESTful/GraphQL接口契约，生成OpenAPI 3.0规范文档，包含接口定义、版本策略、错误码规范和变更管理。关键词：API设计、接口契约、OpenAPI、RESTful、GraphQL、版本管理、写接口、接口文档。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["电商", "SaaS", "通用"]
+  trigger_examples:
+    - "设计API接口"
+    - "写接口文档"
+    - "定义接口规范"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

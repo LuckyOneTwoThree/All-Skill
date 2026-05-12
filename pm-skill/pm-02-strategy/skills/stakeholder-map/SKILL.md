@@ -1,11 +1,15 @@
 ---
 name: stakeholder-map
-description: 当需要识别和管理产品利益相关者时使用。利益相关者地图自动生成，识别产品决策者、资源控制者、受影响方和外部相关方，评估影响力和关注度，生成四象限地图。关键词：利益相关者、Stakeholder地图、影响力、关注度、四象限。
+description: 当需要识别和管理产品利益相关者时使用。利益相关者地图自动生成，识别产品决策者、资源控制者、受影响方和外部相关方，评估影响力和关注度，生成四象限地图。关键词：利益相关者、Stakeholder地图、影响力、关注度、四象限、谁说了算、关键干系人。
 metadata:
   module: "产品商业与战略"
   sub-module: "利益相关者管理"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我梳理一下利益相关方"
+    - "谁会影响这个项目"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

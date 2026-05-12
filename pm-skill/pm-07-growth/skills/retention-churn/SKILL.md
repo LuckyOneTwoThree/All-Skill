@@ -1,11 +1,16 @@
 ---
 name: retention-churn
-description: 当需要构建用户流失预警和干预机制时使用。流失预警与干预自动化Pipeline，构建流失预警模型，识别高风险用户，自动化触发干预动作，追踪干预效果。关键词：流失预警、流失干预、流失模型、用户挽留、流失分析。
+description: 当需要构建用户流失预警和干预机制时使用。流失预警与干预自动化Pipeline，构建流失预警模型，识别高风险用户，自动化触发干预动作，追踪干预效果。关键词：流失预警、流失干预、流失模型、用户挽留、流失分析、用户跑了、流失率高、怎么挽留。
 metadata:
   module: "产品增长与运营"
   sub-module: "留存"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "用户一直在流失怎么办"
+    - "怎么提前发现要走的用户"
+    - "流失率太高了怎么降"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

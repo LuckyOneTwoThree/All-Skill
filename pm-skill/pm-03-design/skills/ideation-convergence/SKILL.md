@@ -1,11 +1,16 @@
 ---
 name: ideation-convergence
-description: 当需要从多个创意方案中筛选和深化时使用。方案收敛与深化Pipeline，从SCAMPER方案列表中筛选高质量候选，通过深化和对比矩阵为人类决策提供支持。关键词：方案收敛、方案深化、对比矩阵、人类决策、产品决策。
+description: 当需要从多个创意方案中筛选和深化时使用。方案收敛与深化Pipeline，从SCAMPER方案列表中筛选高质量候选，通过深化和对比矩阵为人类决策提供支持。关键词：方案收敛、方案深化、对比矩阵、人类决策、产品决策、方案选择、方案对比。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "方案太多选哪个"
+    - "帮我对比几个方案"
+    - "哪个方案更好"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -425,6 +430,8 @@ AI推荐需要明确标注置信度，并在输出中说明推荐理由。
 | recommendations | object | AI推荐结果 |
 
 ---
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 人类决策点
 

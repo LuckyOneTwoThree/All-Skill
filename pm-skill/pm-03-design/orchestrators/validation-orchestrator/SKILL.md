@@ -1,11 +1,17 @@
 ---
 name: validation-orchestrator
-description: 当需要验证产品方案时使用。方案验证子模块指挥官，调度子Skill：validation-assumption-map、validation-mvp、validation-experiment、validation-usability。关键词：方案验证、假设验证、MVP、可用性测试、实验设计、假设地图、风险评估。
+description: 当需要验证产品方案时使用。方案验证子模块指挥官，调度子Skill：validation-assumption-map、validation-mvp、validation-experiment、validation-usability。关键词：方案验证、假设验证、MVP、可用性测试、实验设计、假设地图、风险评估、验证想法、最小可行产品。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "验证一下产品方案"
+    - "设计MVP范围"
+    - "做一下假设验证"
+    - "评估一下方案风险"
 ---
 
 # 方案验证指挥官

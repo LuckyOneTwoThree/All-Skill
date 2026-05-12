@@ -1,11 +1,16 @@
 ---
 name: quality-auto-test
-description: 当需要从PRD自动生成测试用例时使用。测试用例自动生成与追踪，从PRD验收标准、用户故事和异常流程自动生成测试用例，并与代码提交自动关联追踪。包含Happy Path、边界用例和异常用例生成。🤖 AI自动执行。关键词：自动化测试、测试用例生成、测试覆盖率、边界测试、异常测试、自动测试。
+description: 当需要从PRD自动生成测试用例时使用。测试用例自动生成与追踪，从PRD验收标准、用户故事和异常流程自动生成测试用例，并与代码提交自动关联追踪。包含Happy Path、边界用例和异常用例生成。🤖 AI自动执行。关键词：自动化测试、测试用例生成、测试覆盖率、边界测试、异常测试、自动测试、写用例、补测试。
 metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "帮我生成测试用例"
+    - "从PRD自动写用例"
+    - "补一下边界和异常测试"
   interaction_mode: "ai_auto"
 ---
 

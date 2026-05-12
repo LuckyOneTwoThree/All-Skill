@@ -1,11 +1,16 @@
 ---
 name: market-competitor-quadrant
-description: 当需要对竞品进行直接/间接/替代/潜在四象限分类时使用。竞品四象限自动填充，自动识别与填充各象限竞品，标注数据来源与置信度，支持象限间流动追踪。关键词：竞品分类、四象限、直接竞品、间接竞品、替代方案、潜在竞品、象限流动。
+description: 当需要对竞品进行直接/间接/替代/潜在四象限分类时使用。竞品四象限自动填充，自动识别与填充各象限竞品，标注数据来源与置信度，支持象限间流动追踪。关键词：竞品分类、四象限、直接竞品、间接竞品、替代方案、潜在竞品、象限流动、对手分类、竞品格局、谁是竞品。
 metadata:
   module: "产品探索与发现"
   sub-module: "市场竞品"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "消费", "通用"]
+  trigger_examples:
+    - "帮我梳理一下竞品格局"
+    - "哪些是直接对手哪些是间接对手"
+    - "竞品怎么分类"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

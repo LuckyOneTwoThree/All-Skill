@@ -1,11 +1,15 @@
 ---
 name: planning-roadmap
-description: 当需要制定产品路线图、季度规划、版本规划、资源分配时使用。路线图自动规划。基于OKR和战略方向，规划Epic级别的产品路线图，进行Now/Next/Later分层和RICE评分排序。关键词：产品路线图、版本规划、RICE评分、季度规划、Epic规划。
+description: 当需要制定产品路线图、季度规划、版本规划、资源分配时使用。路线图自动规划。基于OKR和战略方向，规划Epic级别的产品路线图，进行Now/Next/Later分层和RICE评分排序。关键词：产品路线图、版本规划、RICE评分、季度规划、Epic规划、做什么功能、排期规划。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "帮我规划产品路线图"
+    - "下个版本做什么"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

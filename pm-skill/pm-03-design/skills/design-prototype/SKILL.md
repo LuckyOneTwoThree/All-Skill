@@ -1,11 +1,16 @@
 ---
 name: design-prototype
-description: 当需要基于IA和用户流程生成原型时使用。原型自动生成，基于IA方案和User Flow自动生成低保真和中保真原型，包含设计规范检查和可用性启发式评估。适用于快速原型验证和设计稿生成。关键词：原型设计、低保真原型、中保真原型、设计规范、原型生成。
+description: 当需要基于IA和用户流程生成原型时使用。原型自动生成，基于IA方案和User Flow自动生成低保真和中保真原型，包含设计规范检查和可用性启发式评估。适用于快速原型验证和设计稿生成。关键词：原型设计、低保真原型、中保真原型、设计规范、原型生成、出设计稿、快速原型。
 metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "帮我生成原型"
+    - "快速出个设计稿"
+    - "低保真原型怎么做"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -127,6 +132,8 @@ metadata:
   }
 }
 ```
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

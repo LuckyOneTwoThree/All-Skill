@@ -1,11 +1,16 @@
 ---
 name: requirements-change-log
-description: 当需求发生变更时使用。需求变更记录自动生成，记录变更内容、影响评估、审批状态和追溯链，确保需求变更可追踪、可审计。关键词：需求变更、变更记录、变更管理、需求变更追踪、变更影响评估。
+description: 当需求发生变更时使用。需求变更记录自动生成，记录变更内容、影响评估、审批状态和追溯链，确保需求变更可追踪、可审计。关键词：需求变更、变更记录、变更管理、需求变更追踪、变更影响评估、改需求记录、变更日志。
 metadata:
   module: "开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "需求改了，帮我记录一下变更"
+    - "生成变更日志"
+    - "把这次需求变更记下来"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

@@ -20,12 +20,13 @@ const OUTPUT_PATH_MAP = {
     "pm-monitoring",
     "pm-project",
   ],
-  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration"],
+  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui"],
   "backend-skill": [
     "backend-api-design",
     "backend-data-architecture",
     "backend-architecture",
   ],
+  "cross-domain": ["cross-domain", "phase-reports"],
 };
 
 const ALL_VALID_OUTPUT_PREFIXES = Object.values(OUTPUT_PATH_MAP).flat();
@@ -36,6 +37,7 @@ function parseFrontmatter(content) {
   const fmText = fmMatch[1];
   const result = {};
   let currentKey = null;
+  let currentSubKey = null;
   let currentIndent = 0;
 
   for (const line of fmText.split("\n")) {
@@ -44,26 +46,43 @@ function parseFrontmatter(content) {
     const kvMatch = line.match(/^(\s*)([\w_-]+):\s*(.*)/);
     if (kvMatch) {
       const key = kvMatch[2].trim();
-      const value = kvMatch[3].trim().replace(/^["']|["']$/g, "");
+      const rawValue = kvMatch[3].trim();
+      let value = rawValue.replace(/^["']|["']$/g, "");
+
+      if (rawValue.startsWith("[") && rawValue.endsWith("]")) {
+        try {
+          value = JSON.parse(rawValue.replace(/'/g, '"'));
+        } catch (e) {
+          value = rawValue;
+        }
+      }
+
       if (indent === 0) {
         result[key] = value;
         currentKey = key;
-      } else if (currentKey && typeof result[currentKey] === "object" && !Array.isArray(result[currentKey])) {
-        result[currentKey][key] = value;
-      } else if (currentKey && typeof result[currentKey] === "string") {
-        result[currentKey] = { _value: result[currentKey], [key]: value };
+        currentSubKey = null;
+      } else if (currentKey && indent > 0) {
+        if (typeof result[currentKey] === "string") {
+          result[currentKey] = { _value: result[currentKey] };
+        }
+        if (typeof result[currentKey] === "object" && !Array.isArray(result[currentKey])) {
+          result[currentKey][key] = value;
+          currentSubKey = key;
+        }
       }
     } else if (line.trim().startsWith("- ") && currentKey) {
-      if (!Array.isArray(result[currentKey])) {
-        result[currentKey] = [];
+      const itemValue = line.trim().slice(2).trim().replace(/^["']|["']$/g, "");
+      if (indent <= 2) {
+        if (!Array.isArray(result[currentKey])) {
+          result[currentKey] = [];
+        }
+        result[currentKey].push(itemValue);
+      } else if (currentSubKey && typeof result[currentKey] === "object" && !Array.isArray(result[currentKey])) {
+        if (!Array.isArray(result[currentKey][currentSubKey])) {
+          result[currentKey][currentSubKey] = [];
+        }
+        result[currentKey][currentSubKey].push(itemValue);
       }
-      result[currentKey].push(
-        line
-          .trim()
-          .slice(2)
-          .trim()
-          .replace(/^["']|["']$/g, "")
-      );
     }
   }
 
@@ -159,6 +178,29 @@ function validateFrontmatter(fm, skillPath) {
         `Invalid interaction_mode '${meta.interaction_mode}', must be one of: ${[...VALID_INTERACTION_MODES].join(", ")}`,
       ]);
     }
+
+    if ("domain_tags" in meta) {
+      if (!Array.isArray(meta.domain_tags)) {
+        warnings.push([
+          "frontmatter.metadata.domain_tags",
+          "domain_tags should be an array of industry tags, e.g. [\"电商\", \"SaaS\", \"通用\"]",
+        ]);
+      }
+    }
+
+    if ("trigger_examples" in meta) {
+      if (!Array.isArray(meta.trigger_examples)) {
+        warnings.push([
+          "frontmatter.metadata.trigger_examples",
+          "trigger_examples should be an array of natural language examples",
+        ]);
+      } else if (meta.trigger_examples.length < 2) {
+        warnings.push([
+          "frontmatter.metadata.trigger_examples",
+          "trigger_examples should have at least 2 examples for better intent matching",
+        ]);
+      }
+    }
   } else {
     errors.push([
       "frontmatter.metadata",
@@ -195,11 +237,10 @@ function validateStructure(content, skillType) {
   } else if (skillType === "orchestrator") {
     requiredSections = [
       "核心原则",
-      "子Skill执行协议",
       "阶段执行计划",
       "阶段卡口",
     ];
-    recommendedSections = ["调度规则", "人类决策点"];
+    recommendedSections = ["编排协议", "人类决策点", "异常处理"];
   }
 
   for (const section of requiredSections) {
@@ -370,6 +411,7 @@ function findAllSkills(rootDir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
+      if (entry.name === "templates" || entry.name === "node_modules") continue;
       if (entry.isDirectory()) {
         walk(fullPath);
       } else if (entry.name === "SKILL.md") {

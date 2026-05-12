@@ -1,11 +1,17 @@
 ---
 name: retrospective-orchestrator
-description: 当产品发布后需要进行复盘时使用。上线复盘指挥官，调度子Skill：retrospective-auto（上线复盘自动化），包括发布效果数据自动收集、复盘报告生成、行动项追踪闭环。关键词：上线复盘、发布复盘、效果评估、行动项追踪、持续改进。
+description: 当产品发布后需要进行复盘时使用。上线复盘指挥官，调度子Skill：retrospective-auto（上线复盘自动化），包括发布效果数据自动收集、复盘报告生成、行动项追踪闭环。关键词：上线复盘、发布复盘、效果评估、行动项追踪、持续改进、复盘总结、项目回顾。
 metadata:
   module: "产品开发与上线"
   sub-module: "复盘改进"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "做一下上线复盘"
+    - "总结一下发布效果"
+    - "复盘一下这个版本"
+    - "追踪一下行动项"
 ---
 
 # 上线复盘指挥官

@@ -1,11 +1,16 @@
 ---
 name: development-prd-sync
-description: 当需要检测PRD与设计稿或代码的不一致时使用。PRD双向同步自动化，实现PRD与设计稿、代码、测试用例的双向同步，自动检测不一致并生成更新提案。包含正向同步（PRD→设计/代码/测试用例）和逆向同步（代码→PRD）。🤖 AI自动执行。关键词：PRD同步、需求同步、双向同步、需求追踪、一致性检查、文档一致性、PRD更新。
+description: 当需要检测PRD与设计稿或代码的不一致时使用。PRD双向同步自动化，实现PRD与设计稿、代码、测试用例的双向同步，自动检测不一致并生成更新提案。包含正向同步（PRD→设计/代码/测试用例）和逆向同步（代码→PRD）。🤖 AI自动执行。关键词：PRD同步、需求同步、双向同步、需求追踪、一致性检查、文档一致性、PRD更新、文档对齐。
 metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "PRD和代码对不上了，帮我检查"
+    - "需求文档需要同步更新"
+    - "看看设计稿和PRD有没有不一致"
   interaction_mode: "ai_auto"
 ---
 

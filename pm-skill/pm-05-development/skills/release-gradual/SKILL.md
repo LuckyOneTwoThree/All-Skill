@@ -1,11 +1,16 @@
 ---
 name: release-gradual
-description: 当需要执行灰度发布时使用。灰度发布自动执行，执行渐进式灰度发布，从1%到10%到50%到100%，各阶段自动监控指标并判断是否进入下一阶段，支持P0指标恶化时自动回滚。🤖 AI自动执行。关键词：灰度发布、渐进式发布、Feature Flag、自动回滚、发布策略、金丝雀发布。
+description: 当需要执行灰度发布时使用。灰度发布自动执行，执行渐进式灰度发布，从1%到10%到50%到100%，各阶段自动监控指标并判断是否进入下一阶段，支持P0指标恶化时自动回滚。🤖 AI自动执行。关键词：灰度发布、渐进式发布、Feature Flag、自动回滚、发布策略、金丝雀发布、小流量、逐步放量。
 metadata:
   module: "产品开发与上线"
   sub-module: "发布上线"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "做灰度发布，先放1%流量"
+    - "帮我做小流量验证"
+    - "逐步放量到全量"
   interaction_mode: "ai_auto"
 ---
 

@@ -1,11 +1,17 @@
 ---
 name: positioning-orchestrator
-description: 当需要确定产品定位或评估差异化策略时使用。产品定位指挥官，调度positioning-statement/value-curve/differentiation/exclusion。关键词：产品定位、差异化、价值曲线、竞争策略。
+description: 当需要确定产品定位或评估差异化策略时使用。产品定位指挥官，调度positioning-statement/value-curve/differentiation/exclusion。关键词：产品定位、差异化、价值曲线、竞争策略、品牌定位、市场定位、竞争优势。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我确定产品定位"
+    - "分析一下差异化优势"
+    - "写一个定位陈述"
+    - "评估一下竞争策略"
 ---
 
 # 产品定位与差异化指挥官

@@ -1,11 +1,15 @@
 ---
 name: positioning-value-curve
-description: 当需要进行竞争定位可视化、蓝海策略制定时使用。价值曲线自动绘制。输入竞品分析+用户研究，绘制竞争价值曲线，识别蓝海机会。关键词：价值曲线、竞争定位、蓝海策略、差异化可视化。
+description: 当需要进行竞争定位可视化、蓝海策略制定时使用。价值曲线自动绘制。输入竞品分析+用户研究，绘制竞争价值曲线，识别蓝海机会。关键词：价值曲线、竞争定位、蓝海策略、差异化可视化、竞品对比图、蓝海在哪。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "帮我画一下竞争对比图"
+    - "我们和竞品差在哪"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

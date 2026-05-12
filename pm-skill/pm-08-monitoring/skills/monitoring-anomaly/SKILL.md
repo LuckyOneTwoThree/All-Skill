@@ -1,11 +1,16 @@
 ---
 name: monitoring-anomaly
-description: 当需要对告警进行归因分析时使用。告警自动分析与归因，对接收到的告警进行分类、关联分析、根因定位和影响评估，输出修复建议并标记需人工升级的告警。关键词：异常检测、异常告警、告警分级、自动归因、指标异常。
+description: 当需要对告警进行归因分析时使用。告警自动分析与归因，对接收到的告警进行分类、关联分析、根因定位和影响评估，输出修复建议并标记需人工升级的告警。关键词：异常检测、异常告警、告警分级、自动归因、指标异常、指标掉了、突然异常。
 metadata:
   module: "产品监控与迭代"
   sub-module: "监控预警"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "告警太多了怎么分析"
+    - "指标突然异常了怎么回事"
+    - "这个告警是什么原因"
   interaction_mode: "ai_auto"
 ---
 
@@ -183,6 +188,8 @@ remediation:
 
 ## 输出
 
+
+**输出文件路径**：`output/pm-monitoring/monitoring-anomaly/`
 **输出Schema**：
 
 ```json

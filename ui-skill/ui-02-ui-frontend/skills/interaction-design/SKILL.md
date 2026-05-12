@@ -1,11 +1,16 @@
 ---
 name: interaction-design
-description: 当需要生成交互设计规范和代码时使用。交互设计自动生成，基于组件和页面需求，生成交互状态机、动画规范、手势支持和反馈机制定义，输出为可执行的状态管理代码和动画代码。关键词：交互设计、状态机、动画、手势、反馈机制、交互规范。
+description: 当需要生成交互设计规范和代码时使用。交互设计自动生成，基于组件和页面需求，生成交互状态机、动画规范、手势支持和反馈机制定义，输出为可执行的状态管理代码和动画代码。关键词：交互设计、状态机、动画、手势、反馈机制、交互规范、做动效、加交互。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "设计一下交互效果"
+    - "加个动画和手势"
+    - "做一下交互规范"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

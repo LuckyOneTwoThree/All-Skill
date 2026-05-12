@@ -1,11 +1,17 @@
 ---
 name: development-orchestrator
-description: 当需要将PRD转化为开发任务、进行代码审查或管理需求变更时使用。开发协作指挥官，调度任务分解、代码审查、PRD同步及合规安全等子Skill。关键词：开发协作、任务分解、代码审查、PRD同步、需求变更、隐私合规、安全需求。
+description: 当需要将PRD转化为开发任务、进行代码审查或管理需求变更时使用。开发协作指挥官，调度任务分解、代码审查、PRD同步及合规安全等子Skill。关键词：开发协作、任务分解、代码审查、PRD同步、需求变更、隐私合规、安全需求、开发排期、技术任务。
 metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "把PRD拆成开发任务"
+    - "做一下代码审查"
+    - "管理需求变更"
+    - "评估安全需求"
 ---
 
 # 开发协作指挥官

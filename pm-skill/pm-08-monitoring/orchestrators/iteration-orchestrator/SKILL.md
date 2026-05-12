@@ -1,11 +1,17 @@
 ---
 name: iteration-orchestrator
-description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-backlog、iteration-prioritization、iteration-retrospective 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分。
+description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-backlog、iteration-prioritization、iteration-retrospective 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分、迭代管理。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "orchestrator"
-  version: "5.0"
+  version: "5.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "规划下一个迭代"
+    - "调整一下优先级"
+    - "优化一下Backlog"
+    - "做一下迭代复盘"
 ---
 
 # 迭代决策指挥官

@@ -1,11 +1,16 @@
 ---
 name: validation-mvp
-description: 当需要界定MVP功能范围时使用。MVP范围自动界定工具，基于假设地图和资源约束，智能识别Must Have、MUST NOT和Nice to Have功能，并评估MVP规模占比。关键词：MVP范围、最小可行产品、功能优先级、资源约束。
+description: 当需要界定MVP功能范围时使用。MVP范围自动界定工具，基于假设地图和资源约束，智能识别Must Have、MUST NOT和Nice to Have功能，并评估MVP规模占比。关键词：MVP范围、最小可行产品、功能优先级、资源约束、最小产品、核心功能。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "MVP应该包含哪些功能"
+    - "最小产品怎么做"
+    - "哪些功能可以先不做"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
@@ -189,6 +194,8 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
   "recommendation": "AI建议说明"
 }
 ```
+
+**输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
 

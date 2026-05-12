@@ -1,11 +1,16 @@
 ---
 name: ui-component-gen
-description: 当需要生成前端UI组件代码时使用。UI组件自动生成，基于设计系统和意图描述，自动生成带样式和交互的前端组件代码，支持React/Vue/Svelte多框架输出。关键词：UI组件生成、组件代码、前端组件、React组件、Vue组件、设计系统组件。
+description: 当需要生成前端UI组件代码时使用。UI组件自动生成，基于设计系统和意图描述，自动生成带样式和交互的前端组件代码，支持React/Vue/Svelte多框架输出。关键词：UI组件生成、组件代码、前端组件、React组件、Vue组件、设计系统组件、写组件、出代码。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.0"
+  version: "1.1"
+  domain_tags: ["互联网", "通用"]
+  trigger_examples:
+    - "帮我写个前端组件"
+    - "生成一个按钮组件"
+    - "出一段组件代码"
   interaction_mode: "ai_suggest_human_approve"
 ---
 

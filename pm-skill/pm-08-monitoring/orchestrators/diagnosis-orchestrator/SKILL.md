@@ -1,11 +1,17 @@
 ---
 name: diagnosis-orchestrator
-description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，调度 diagnosis-health、diagnosis-competition、competitor-monitoring-report、product-sunset-plan 子Skill执行。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR、竞品监控、产品下线。
+description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，调度 diagnosis-health、diagnosis-competition、competitor-monitoring-report、product-sunset-plan 子Skill执行。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR、竞品监控、产品下线、产品诊断、问题排查。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "orchestrator"
-  version: "6.0"
+  version: "6.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "诊断一下产品健康度"
+    - "追踪一下竞品动态"
+    - "排查产品问题"
+    - "评估是否需要下线产品"
 ---
 
 # 智能诊断指挥官

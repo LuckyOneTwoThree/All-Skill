@@ -1,11 +1,15 @@
 ---
 name: planning-porter-five-forces
-description: 当需要进行行业分析、竞争战略制定、市场吸引力评估时使用。波特五力自动评估。分析行业竞争结构的五种力量，评估行业吸引力。关键词：波特五力、行业分析、竞争战略、行业吸引力、竞争结构。
+description: 当需要进行行业分析、竞争战略制定、市场吸引力评估时使用。波特五力自动评估。分析行业竞争结构的五种力量，评估行业吸引力。关键词：波特五力、行业分析、竞争战略、行业吸引力、竞争结构、行业好不好做、竞争激烈吗。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "这个行业值得进入吗"
+    - "分析一下行业竞争格局"
   interaction_mode: "ai_suggest_human_approve"
 ---
 
