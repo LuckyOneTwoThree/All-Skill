@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "质量保障"
   type: "orchestrator"
-  version: "5.1"
+  version: "6.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "做一下测试"
@@ -39,7 +39,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-development/quality-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -62,14 +62,18 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: quality-auto-test
-    gate: 测试覆盖率≥80%
-  - stage: quality-auto-acceptance
-    depends_on: [quality-auto-test]
-    gate: 自动化验收P0/P1全部通过
-  - stage: quality-acceptance-report
-    depends_on: [quality-auto-test, quality-auto-acceptance]
-    gate: 验收报告已生成
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-development/quality-orchestrator.md
+  stages:
+    - stage: quality-auto-test
+      gate: 测试覆盖率≥80%
+    - stage: quality-auto-acceptance
+      depends_on: [quality-auto-test]
+      gate: 自动化验收P0/P1全部通过
+    - stage: quality-acceptance-report
+      depends_on: [quality-auto-test, quality-auto-acceptance]
+      gate: 验收报告已生成
 ```
 
 ## 阶段执行计划
@@ -117,6 +121,22 @@ Skill: quality-acceptance-report
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-development/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-development/quality-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -124,6 +144,7 @@ Skill: quality-acceptance-report
 | 测试覆盖率≥80% | 自动化测试覆盖率达到阈值 | 升级人工审查 |
 | 自动化验收P0/P1全部通过 | P0/P1用例全部通过 | 立即阻断，阻止上线 |
 | 验收报告已生成 | 报告结论明确，签收表完整 | 补充验收标准或测试数据 |
+| 阶段总结已生成 | output/phase-reports/pm-development/quality-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -144,6 +165,7 @@ Skill: quality-acceptance-report
 | 测试执行超时 | 标记为失败，生成超时报告 |
 | 覆盖率不达标 | 升级人工审查 |
 | P0/P1用例失败 | 立即阻断，发送告警 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 

@@ -5,7 +5,7 @@ metadata:
   module: "产品度量设计"
   sub-module: "度量设计"
   type: "orchestrator"
-  version: "5.1"
+  version: "6.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我设计指标体系"
@@ -37,7 +37,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-metrics-design/metrics-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -60,14 +60,18 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: metrics-system
-    gate: 北极星指标人类已选择
-  - stage: tracking-plan
-    depends_on: [metrics-system]
-    gate: 埋点方案人类已审核
-  - stage: metrics-dashboard
-    depends_on: [metrics-system, tracking-plan]
-    gate: Dashboard布局人类已确认
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
+  stages:
+    - stage: metrics-system
+      gate: 北极星指标人类已选择
+    - stage: tracking-plan
+      depends_on: [metrics-system]
+      gate: 埋点方案人类已审核
+    - stage: metrics-dashboard
+      depends_on: [metrics-system, tracking-plan]
+      gate: Dashboard布局人类已确认
 ```
 
 ## 阶段执行计划
@@ -111,6 +115,22 @@ Skill: metrics-dashboard
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-metrics-design/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -118,6 +138,7 @@ Skill: metrics-dashboard
 | 指标体系完成 | 北极星指标人类已选择 | 北极星指标必须人类决策，AI只提供候选和分析 |
 | 埋点方案完成 | 埋点方案人类已审核 | 业务逻辑正确性和隐私合规性必须人类确认 |
 | Dashboard完成 | Dashboard布局人类已确认 | 布局合理性和告警阈值需人类审核 |
+| 阶段总结已生成 | output/phase-reports/pm-metrics-design/metrics-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -136,6 +157,7 @@ Skill: metrics-dashboard
 | 上游输入文件缺失 | 按子Skill降级策略执行，记录降级信息，在最终输出中标注降级影响范围 |
 | 子Skill执行超时 | 标记超时阶段，输出已完成的部分结果，提示人类检查输入数据质量 |
 | 人类决策超时未响应 | 暂停流程，保留当前阶段状态，支持人类恢复后从断点继续 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
@@ -144,3 +166,4 @@ Skill: metrics-dashboard
 - v3.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范，调度规则从"加载"改为"执行"
 - v4.0: 执行步骤原则替换为编排理念，新增异常处理表
 - v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
+- v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

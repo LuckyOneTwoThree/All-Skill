@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "orchestrator"
-  version: "3.1"
+  version: "4.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "建立设计系统"
@@ -38,7 +38,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/ui/design-system-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -60,6 +60,9 @@ metadata:
 ## Pipeline
 
 ```yaml
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/ui/design-system-orchestrator.md
 pipeline:
   - stage: design-token
     gate: WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级
@@ -118,6 +121,22 @@ Skill: design-system-doc
 模式: 🤖
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/ui/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/ui/design-system-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -125,6 +144,7 @@ Skill: design-system-doc
 | 设计令牌完成 | WCAG AA对比度100%达标 | 不达标的色阶自动调整，人类确认调整结果 |
 | 组件库完成 | 原子组件≥15个 + 依赖图无循环 | 循环依赖必须修复后才能进入文档阶段 |
 | 文档完成 | 100%组件有文档 | 缺失文档的组件标注"待补充"，不阻塞发布 |
+| 阶段总结已生成 | output/phase-reports/ui/design-system-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -145,9 +165,11 @@ Skill: design-system-doc
 | 组件循环依赖 | 自动检测并告警，必须修复后才能进入文档阶段 |
 | 设计令牌冲突 | 标注冲突项，人类决策取舍 |
 | 文档生成失败 | 降级为组件清单列表，标注"文档待补充" |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
 - v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析
+- v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加命令式调度指令
 - v1.0: 初始版本

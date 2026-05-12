@@ -34,7 +34,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/{module}/{orchestrator-name}.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -58,6 +58,10 @@ metadata:
 ```yaml
 pipeline: {orchestrator-name}
 version: 1.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/{module}/{orchestrator-name}.md
 
 stages:
   - id: phase-1
@@ -125,11 +129,28 @@ Skill: {skill-name-c}
 
 ⏸ **阶段卡口**：{卡口条件} → 未通过：{处理方式}
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/{领域路径}/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/{module}/{orchestrator-name}.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | {卡口名称} | {条件} | {处理方式} |
+| 阶段总结已生成 | output/phase-reports/{module}/{orchestrator-name}.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -144,6 +165,7 @@ Skill: {skill-name-c}
 | 阶段某子Skill失败 | {处理策略} |
 | 上游数据缺失 | {处理策略} |
 | 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 

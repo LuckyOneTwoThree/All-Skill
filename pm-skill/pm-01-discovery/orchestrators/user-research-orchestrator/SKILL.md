@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "orchestrator"
-  version: "7.1"
+  version: "8.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我做一下用户研究"
@@ -35,7 +35,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-discovery/user-research-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -58,7 +58,11 @@ metadata:
 
 ```yaml
 pipeline: user-research-orchestrator
-version: 7.0
+version: 8.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-discovery/user-research-orchestrator.md
 
 stages:
   - id: phase-1
@@ -181,6 +185,22 @@ Skill: user-research-report
 
 ⏸ **阶段卡口**：执行摘要包含3条核心发现+Top1建议 → 未通过：补充上游数据重新生成报告
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-discovery/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-discovery/user-research-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -193,6 +213,7 @@ Skill: user-research-report
 | 访谈洞察已提取 | interview-insights.json 已生成 | 等待人类完成访谈执行后提取洞察 |
 | 阶段4完成 | user-research-report.md + user-research-report.json 均已生成 | 检查上游数据是否完整 |
 | 用户研究报告执行摘要完整 | executive_summary含3条核心发现+Top1建议 | 补充上游数据重新生成报告 |
+| 阶段总结已生成 | output/phase-reports/pm-discovery/user-research-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -213,6 +234,7 @@ Skill: user-research-report
 | user-modeling所有Persona置信度<0.7 | 标注"建模不充分"，输出最高置信度Persona供人类审批，建议补充数据或执行访谈后再建模 |
 | interview-assist访谈未执行（人类未完成访谈） | interview-insights.json标注"访谈未执行"，report基于VOC+行为数据+建模数据生成，标注"缺少访谈验证" |
 | 上游数据全部缺失 | 降级为轻量版流程：用户口述用户画像 → 基于描述生成假设性Persona → 生成探索性报告 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
@@ -223,3 +245,4 @@ Skill: user-research-report
 - v5.0: 统一阶段执行计划为表格格式，移除数据流转图
 - v6.0: 核心原则重写为编排理念（说的做的不一样/建模是假设/访谈是验证/报告是起点）；移除通用4条执行步骤原则；新增异常处理表（6种异常场景）
 - v7.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议；阶段2-3合并为并行阶段
+- v8.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

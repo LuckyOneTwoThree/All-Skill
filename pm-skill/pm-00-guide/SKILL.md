@@ -402,6 +402,19 @@ output/
     ├── risk-identification/
     ├── risk-monitoring/
     └── risk-escalation/
+└── phase-reports/                 ← 编排器阶段总结
+    ├── pm-discovery/
+    ├── pm-strategy/
+    ├── pm-design/
+    ├── pm-metrics-design/
+    ├── pm-development/
+    ├── pm-metrics-ops/
+    ├── pm-growth/
+    ├── pm-monitoring/
+    ├── pm-project/
+    ├── ui/
+    ├── backend/
+    └── cross-domain/
 ```
 
 ### 跨模块文件引用

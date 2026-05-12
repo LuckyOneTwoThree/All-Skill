@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
   type: "orchestrator"
-  version: "5.1"
+  version: "6.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "识别一下项目风险"
@@ -37,7 +37,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-project/risk-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -59,6 +59,9 @@ metadata:
 ## Pipeline
 
 ```yaml
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-project/risk-orchestrator.md
 pipeline:
   - stage: risk-identification
     gate: 风险登记册已建立
@@ -115,6 +118,22 @@ Skill: risk-escalation
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-project/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-project/risk-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -122,6 +141,7 @@ Skill: risk-escalation
 | 风险登记册已建立 | 风险识别完成，风险登记册已生成且持续更新 | 补充风险扫描或延长识别周期 |
 | 高优先级风险已监控 | 风险指标持续追踪，预警条件已配置 | 补充监控指标或调整预警阈值 |
 | 高优先级风险已升级 | Critical/High风险已触发升级流程 | 立即执行升级，通知相关方 |
+| 阶段总结已生成 | output/phase-reports/pm-project/risk-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -138,6 +158,7 @@ Skill: risk-escalation
 | 上游数据缺失（如项目数据、历史风险库） | 基于有限数据执行风险扫描，标注识别覆盖度不足，提示用户补充后重新扫描 |
 | 关键决策点未获人类确认（如风险应对策略） | 暂停升级流程，采用默认保守策略（规避/减轻），标注待确认，持续等待人类决策 |
 | 所有上游数据全部缺失 | 输出通用风险检查清单模板，标注全部为待验证，要求用户提供项目基础信息后重新执行 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
@@ -146,3 +167,4 @@ Skill: risk-escalation
 - v3.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
 - v4.0: 核心原则替换为编排理念原则，新增异常处理表
 - v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
+- v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

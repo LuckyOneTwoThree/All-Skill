@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "orchestrator"
-  version: "7.1"
+  version: "8.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我写PRD"
@@ -32,6 +32,7 @@ metadata:
 | 上下文接近上限 | 优先保留当前阶段内容，将已完成阶段的输出摘要为关键结论写入文件 |
 | 人类决策超时未响应 | 暂停编排流程，保留当前状态，等待人类决策后继续 |
 | 上游输入数据格式异常 | 尝试兼容解析，解析失败则降级为用户提供描述，标注"数据格式异常" |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 编排协议
 
@@ -44,7 +45,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-design/design-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -67,6 +68,9 @@ metadata:
 
 ```yaml
 pipeline:
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-design/design-orchestrator.md
   stages:
     - id: design-prd
       name: 产品需求文档
@@ -197,6 +201,22 @@ Skill: design-handoff-spec
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-design/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-design/design-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -208,6 +228,7 @@ Skill: design-handoff-spec
 | 原型完成 | 原型设计规范一致性≥85% | 一致性<85%需人类确认violations |
 | 交互规范完成 | 交互状态机8种基础状态全覆盖 | 补充缺失状态定义 |
 | 设计交接完成 | 交接文档待确认项=0 | 待确认项需逐项确认或标注接受风险 |
+| 阶段总结已生成 | output/phase-reports/pm-design/design-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -227,3 +248,4 @@ Skill: design-handoff-spec
 - v4.0: 新增 interaction-spec（交互设计规范）
 - v5.0: 编排器优化——新增子Skill执行协议、任务调度改为阶段执行计划、调度规则改为执行模式、阶段卡口和人类决策点改为表格、增加子Skill输入输出路径
 - v7.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
+- v8.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

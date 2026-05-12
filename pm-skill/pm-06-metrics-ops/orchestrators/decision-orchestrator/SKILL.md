@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "决策闭环"
   type: "orchestrator"
-  version: "5.1"
+  version: "6.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "基于数据做决策"
@@ -39,7 +39,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-metrics-ops/decision-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -62,14 +62,18 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: decision-dace
-    gate: 目标已定义、数据已分析、洞察已生成
-  - stage: decision-insight
-    depends_on: [decision-dace]
-    gate: 每个洞察都有对应的决策选项和行动方案
-  - stage: decision-culture
-    depends_on: [decision-dace, decision-insight]
-    gate: 报告体系正常运行（每日/每周/每月/每季）
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
+  stages:
+    - stage: decision-dace
+      gate: 目标已定义、数据已分析、洞察已生成
+    - stage: decision-insight
+      depends_on: [decision-dace]
+      gate: 每个洞察都有对应的决策选项和行动方案
+    - stage: decision-culture
+      depends_on: [decision-dace, decision-insight]
+      gate: 报告体系正常运行（每日/每周/每月/每季）
 ```
 
 ## 阶段执行计划
@@ -114,6 +118,22 @@ Skill: decision-culture
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-metrics-ops/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -121,6 +141,7 @@ Skill: decision-culture
 | DACE循环Define/Analyze完成 | 目标已定义、数据已分析、洞察已生成 | 补充数据或重新定义目标 |
 | 洞察已转化为行动 | 每个洞察都有对应的决策选项和行动方案 | 标记为待处理，持续追踪 |
 | 数据文化报告体系运行 | 每日/每周/每月/每季报告正常生成 | 检查上游数据源或调整报告模板 |
+| 阶段总结已生成 | output/phase-reports/pm-metrics-ops/decision-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -145,6 +166,7 @@ Skill: decision-culture
 | OKR数据缺失 | 降级为用户提供指标数据执行DACE，标注"OKR数据待补充" |
 | 决策边界标注冲突 | 标记冲突项，暂停自动执行，提交人类裁决 |
 | 文化报告体系数据源中断 | 跳过受影响报告，标注"数据源中断"，其他报告正常生成 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
@@ -153,3 +175,4 @@ Skill: decision-culture
 - v3.0: 编排器优化——任务调度改为阶段执行计划，新增子Skill执行协议，调度规则改为执行模式，阶段卡口和人类决策点改为表格
 - v4.0: 执行步骤原则替换为编排理念，新增异常处理表
 - v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
+- v6.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

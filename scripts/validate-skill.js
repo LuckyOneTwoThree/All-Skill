@@ -19,12 +19,14 @@ const OUTPUT_PATH_MAP = {
     "pm-growth",
     "pm-monitoring",
     "pm-project",
+    "phase-reports",
   ],
-  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui"],
+  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui", "phase-reports"],
   "backend-skill": [
     "backend-api-design",
     "backend-data-architecture",
     "backend-architecture",
+    "phase-reports",
   ],
   "cross-domain": ["cross-domain", "phase-reports"],
 };
@@ -241,6 +243,36 @@ function validateStructure(content, skillType) {
       "阶段卡口",
     ];
     recommendedSections = ["编排协议", "人类决策点", "异常处理"];
+    if (!content.includes("post_pipeline:")) {
+      warnings.push([
+        "structure",
+        "Missing post_pipeline definition in Pipeline YAML. All orchestrators should define post_pipeline with stage-summary action.",
+      ]);
+    }
+    if (!content.includes("阶段总结（强制）")) {
+      warnings.push([
+        "structure",
+        "Missing mandatory stage-summary rule (调用规则第6条). Should be '阶段总结（强制）' with post_pipeline reference.",
+      ]);
+    }
+    if (!content.includes("阶段总结（post_pipeline）")) {
+      warnings.push([
+        "structure",
+        "Missing stage-summary execution block in 阶段执行计划. Should include '### 阶段总结（post_pipeline）' section.",
+      ]);
+    }
+    if (!content.includes("阶段总结已生成")) {
+      warnings.push([
+        "structure",
+        "Missing stage-summary gate in 阶段卡口 table. Should include '阶段总结已生成' row.",
+      ]);
+    }
+    if (!content.includes("阶段总结生成失败")) {
+      warnings.push([
+        "structure",
+        "Missing stage-summary fallback in 异常处理 table. Should include '阶段总结生成失败' row.",
+      ]);
+    }
   }
 
   for (const section of requiredSections) {

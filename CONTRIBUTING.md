@@ -182,8 +182,8 @@ pm-skill/pm-01-discovery/orchestrators/your-new-orchestrator/SKILL.md
 
 | 类型 | Skill | 参考亮点 |
 |------|-------|----------|
-| 领域内编排器 | insight-orchestrator | 编排协议+Pipeline定义、调用指令格式、阶段总结、卡口清晰 |
-| 跨领域编排器 | product-launch-orchestrator | 并行分支Pipeline、异常处理、阶段总结 |
+| 领域内编排器 | insight-orchestrator | 编排协议+Pipeline定义+post_pipeline、调用指令格式、阶段总结（强制）、卡口清晰 |
+| 跨领域编排器 | product-launch-orchestrator | 并行分支Pipeline、异常处理、阶段总结（post_pipeline） |
 
 ---
 

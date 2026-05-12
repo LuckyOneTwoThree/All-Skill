@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "数据分析"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我分析一下数据"
@@ -40,7 +40,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-metrics-ops/analysis-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -63,17 +63,21 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: analysis-anomaly
-    gate: 异常检测Pipeline持续运行，无中断
-  - stage: analysis-funnel
-    parallel: true
-    gate: 核心业务漏斗已定义且数据完整
-  - stage: analysis-retention
-    parallel: true
-    gate: 至少产出1个Aha Moment候选行为
-  - stage: data-analysis-report
-    depends_on: [analysis-anomaly, analysis-funnel, analysis-retention]
-    gate: 报告执行摘要完整，至少3条行动建议
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
+  stages:
+    - stage: analysis-anomaly
+      gate: 异常检测Pipeline持续运行，无中断
+    - stage: analysis-funnel
+      parallel: true
+      gate: 核心业务漏斗已定义且数据完整
+    - stage: analysis-retention
+      parallel: true
+      gate: 至少产出1个Aha Moment候选行为
+    - stage: data-analysis-report
+      depends_on: [analysis-anomaly, analysis-funnel, analysis-retention]
+      gate: 报告执行摘要完整，至少3条行动建议
 ```
 
 ## 阶段执行计划
@@ -137,6 +141,22 @@ Skill: data-analysis-report
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-metrics-ops/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -145,6 +165,7 @@ Skill: data-analysis-report
 | 漏斗核心路径覆盖 | 核心业务漏斗已定义且数据完整 | 补充漏斗定义，确保核心路径覆盖 |
 | 留存Aha Moment候选已识别 | 至少产出1个Aha Moment候选行为 | 扩大行为搜索范围或延长分析周期 |
 | 数据洞察报告已生成 | 报告执行摘要完整，至少3条行动建议 | 补充分析或标注"建议补充数据" |
+| 阶段总结已生成 | output/phase-reports/pm-metrics-ops/analysis-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -170,6 +191,7 @@ Skill: data-analysis-report
 | 上游数据源不可用 | 按子Skill降级策略执行，记录降级信息，在最终输出中标注降级影响范围 |
 | 分析结果无行动建议 | 阻断传递到下游，要求当前子Skill补充行动建议 |
 | 人类决策超时未响应 | 暂停流程，保留当前阶段状态，支持人类恢复后从断点继续 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 

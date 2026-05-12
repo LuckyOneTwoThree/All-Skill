@@ -5,7 +5,7 @@ metadata:
   module: "产品开发与上线"
   sub-module: "开发交付"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "把PRD拆成开发任务"
@@ -39,7 +39,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-development/development-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -62,32 +62,36 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: development-task-breakdown
-    gate: Epic→Story→Task结构完整无遗漏
-  - stage: development-auto-review
-    parallel: true
-    gate: Sprint分配合理
-  - stage: development-prd-sync
-    depends_on: [development-task-breakdown]
-    gate: PRD门禁通过
-  - stage: requirements-change-log
-    trigger: 需求变更请求
-    gate: 需求变更审批
-  - stage: privacy-compliance-assessment
-    trigger: 上线前合规检查
-    gate: 隐私合规通过
-  - stage: security-requirements
-    trigger: 安全需求制定
-    gate: 安全需求已制定
-  - stage: data-dictionary
-    trigger: 数据标准制定
-    gate: 数据字典已建立
-  - stage: tech-debt-register
-    trigger: 技术债务管理
-    gate: 技术债务已登记
-  - stage: architecture-decision-record
-    trigger: 架构决策记录
-    gate: 架构决策确认
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-development/development-orchestrator.md
+  stages:
+    - stage: development-task-breakdown
+      gate: Epic→Story→Task结构完整无遗漏
+    - stage: development-auto-review
+      parallel: true
+      gate: Sprint分配合理
+    - stage: development-prd-sync
+      depends_on: [development-task-breakdown]
+      gate: PRD门禁通过
+    - stage: requirements-change-log
+      trigger: 需求变更请求
+      gate: 需求变更审批
+    - stage: privacy-compliance-assessment
+      trigger: 上线前合规检查
+      gate: 隐私合规通过
+    - stage: security-requirements
+      trigger: 安全需求制定
+      gate: 安全需求已制定
+    - stage: data-dictionary
+      trigger: 数据标准制定
+      gate: 数据字典已建立
+    - stage: tech-debt-register
+      trigger: 技术债务管理
+      gate: 技术债务已登记
+    - stage: architecture-decision-record
+      trigger: 架构决策记录
+      gate: 架构决策确认
 ```
 
 ## 阶段执行计划
@@ -219,6 +223,22 @@ Skill: architecture-decision-record
 模式: 🤖→👤
 ```
 
+### 阶段总结（post_pipeline）
+
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/pm-development/
+  人类决策记录: 本轮执行中的人类决策点及结果
+输出: output/phase-reports/pm-development/development-orchestrator.md
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
@@ -230,6 +250,7 @@ Skill: architecture-decision-record
 | 安全需求已制定 | 安全需求清单经人类审核确认 | 阻止开发，补充安全需求 |
 | 数据字典已建立 | 核心数据实体和字段规格已定义 | 补充数据定义 |
 | 技术债务已登记 | 技术债务登记册经人类审核确认 | 补充债务识别 |
+| 阶段总结已生成 | output/phase-reports/pm-development/development-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -252,6 +273,7 @@ Skill: architecture-decision-record
 | 校验失败 | 返回错误原因 |
 | 执行超时 | 重试3次后升级 |
 | 外部系统不可用 | 降级处理+记录 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
@@ -261,3 +283,4 @@ Skill: architecture-decision-record
 - v4.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范，调度规则从"加载"改为"执行"
 - v5.0: 执行步骤原则替换为编排理念
 - v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
+- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

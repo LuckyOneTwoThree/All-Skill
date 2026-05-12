@@ -5,7 +5,7 @@ metadata:
   module: "产品度量运营"
   sub-module: "实验验证"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "设计一个A/B测试"
@@ -39,7 +39,7 @@ metadata:
 3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
 4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结**：所有子Skill执行完成后，生成阶段总结文档，写入 `output/phase-reports/pm-metrics-ops/experiment-orchestrator.md`
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
 
 ### 上下文管理
 
@@ -62,14 +62,18 @@ metadata:
 
 ```yaml
 pipeline:
-  - stage: experiment-design
-    gate: 实验设计经人类审核确认
-  - stage: experiment-execution
-    depends_on: [experiment-design]
-    gate: 样本量充足且统计检验完成
-  - stage: experiment-report
-    depends_on: [experiment-design, experiment-execution]
-    gate: 实验报告经人类审核确认
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/pm-metrics-ops/experiment-orchestrator.md
+  stages:
+    - stage: experiment-design
+      gate: 实验设计经人类审核确认
+    - stage: experiment-execution
+      depends_on: [experiment-design]
+      gate: 样本量充足且统计检验完成
+    - stage: experiment-report
+      depends_on: [experiment-design, experiment-execution]
+      gate: 实验报告经人类审核确认
 ```
 
 ## 阶段执行计划
@@ -121,6 +125,7 @@ Skill: experiment-report
 | 实验方案人类已审核 | 实验设计经人类审核确认 | 阻止实验上线，修改后重新审核 |
 | 统计显著性已判断 | 样本量充足且统计检验完成 | 延长实验周期或扩大流量 |
 | 实验报告已审核 | 实验报告经人类审核确认 | 补充分析或修改结论 |
+| 阶段总结已生成 | output/phase-reports/pm-metrics-ops/experiment-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
@@ -149,6 +154,7 @@ Skill: experiment-report
 | 实验数据采集异常 | 标记数据异常，暂停统计检验，提示人类检查数据管道 |
 | 实验报告人类审核未通过 | 返回报告阶段补充分析，不传递到下游 |
 | 多实验流量冲突 | 按优先级排队，低优先级实验暂停，标注"流量冲突" |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
