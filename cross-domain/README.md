@@ -29,3 +29,4 @@
 | IA/原型/交互规格 | PM → design-orchestrator | UI → ui-frontend-orchestrator | PM → UI |
 | API契约 | Backend → api-design-orchestrator | UI → frontend-integration-orchestrator（前端联调） | Backend → UI |
 | 设计令牌+组件库 | UI → design-system-orchestrator | UI → ui-frontend-orchestrator | UI内部 |
+| 目标语言 | 用户指定（默认zh-CN） | UI → design-system-orchestrator + ui-frontend-orchestrator + frontend-integration-orchestrator | 全链路传递 |

@@ -1,4 +1,4 @@
----
+﻿---
 name: design-ia
 description: 当需要设计产品信息架构时使用。信息架构自动设计，从PRD自动提取内容、进行语义聚类、推荐导航模式、模拟卡片分类、生成IA候选方案。适用于产品信息架构重构或新功能导航设计。关键词：信息架构、IA设计、导航设计、卡片分类、内容组织、导航梳理、内容分类。
 metadata:
@@ -185,8 +185,7 @@ AI模拟开放式卡片分类测试：
 | 层级深度变更 | design-userflow、design-handoff-spec | 标记层级变更，触发流程和交接文档更新 |
 | 分类节点变更 | design-userflow、design-prototype | 标记分类变更，触发流程和原型更新 |
 
-数据获取说明：
-- 本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：
   1. 直接描述功能列表和用户需求
   2. 上传PRD文档 / persona.json / voice-analysis.json文件
   3. 提供数据文件路径

@@ -1,4 +1,4 @@
----
+﻿---
 name: user-research-interview-assist
 description: 当需要设计用户访谈脚本、执行访谈后提取洞察、跨访谈聚类分析时使用。访谈辅助Pipeline。关键词：用户访谈、访谈脚本、访谈洞察、半结构化访谈、定性研究辅助、访谈提纲、访谈整理、跟用户聊什么。
 metadata:
@@ -404,8 +404,7 @@ metadata:
 | 若用户未提供research_objectives | 提示用户提供研究目标，否则无法设计定向访谈脚本 | 无法生成interview-script.json，流程中断 |
 | 若用户未提供interview_config | 提示用户提供访谈配置，否则使用默认配置（目标人数：5，时长：45分钟，形式：视频，录音可用） | 使用默认配置，访谈安排可能不符合实际条件 |
 
-数据获取说明：
-- 本Skill需要Persona和用户研究数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要Persona和用户研究数据，请通过以下方式之一提供：
   1. 直接描述研究目标、假设和目标用户特征
   2. 上传persona.json / voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径

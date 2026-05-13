@@ -34,6 +34,7 @@ metadata:
 | 项目信息 | JSON | 是 | 用户提供 | 技术栈、框架、包管理器 |
 | 部署目标 | string | 是 | 用户提供 | Vercel / AWS / 阿里云 / 自建 |
 | 环境配置 | JSON | ○ | 用户提供 | 各环境API地址、功能开关等 |
+| 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响构建时环境变量注入和i18n资源打包 |
 
 ## 执行步骤
 
@@ -117,33 +118,18 @@ metadata:
 
 **输出文件**：build-config.json
 
+**输出Schema**：
+
 ```json
 {
-  "build_config": {
-    "tool": "vite",
-    "optimizations": ["code_splitting", "tree_shaking", "asset_compression"],
-    "bundle_size_budget": { "initial_load": "200KB", "lazy_chunks": "100KB" }
-  },
-  "environments": {
-    "development": { "api_base": "http://localhost:3000", "mock_enabled": true },
-    "staging": { "api_base": "https://staging-api.example.com", "mock_enabled": false },
-    "production": { "api_base": "https://api.example.com", "mock_enabled": false }
-  },
-  "cdn": {
-    "provider": "cloudflare",
-    "domain": "cdn.example.com",
-    "cache_rules": 4
-  },
-  "ci_cd": {
-    "platform": "github_actions",
-    "pipelines": 6,
-    "avg_build_time": "8min",
-    "rollback_time": "30s"
-  },
-  "monitoring": {
-    "performance": "web_vitals",
-    "errors": "sentry",
-    "uptime": "uptime_robot"
+  "type": "object",
+  "required": ["build_config", "environments", "cdn", "ci_cd", "monitoring"],
+  "properties": {
+    "build_config": {"type": "object", "description": "构建配置，包含tool/optimizations/bundle_size_budget"},
+    "environments": {"type": "object", "description": "环境配置，包含development/staging/production的api_base和mock_enabled"},
+    "cdn": {"type": "object", "description": "CDN配置，包含provider/domain/cache_rules"},
+    "ci_cd": {"type": "object", "description": "CI/CD配置，包含platform/pipelines/avg_build_time/rollback_time"},
+    "monitoring": {"type": "object", "description": "监控配置，包含performance/errors/uptime"}
   }
 }
 ```
@@ -183,8 +169,28 @@ metadata:
 | 环境配置缺失 | 生成开发+生产2个环境的最小配置 | 缺少staging/pre-production环境 |
 | 项目信息缺失 | 默认React+Vite+pnpm | 技术栈可能与实际不符 |
 
-数据获取说明：
-- 本Skill需要项目信息和部署目标，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要项目信息和部署目标，请通过以下方式之一提供：
   1. 描述技术栈（框架/构建工具/包管理器）和部署平台
   2. 上传package.json文件
   3. 提供现有项目仓库路径
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 项目技术栈变更 | 构建工具配置 | 标注受影响的构建配置，建议重新生成 |
+| 部署目标变更 | CI/CD流水线和CDN配置 | 标注受影响的部署配置，建议重新配置 |
+| 性能预算变更 | 构建优化和拦截规则 | 标注受影响的拦截阈值，建议更新CI配置 |
+| 环境变量变更 | 环境配置文件 | 标注受影响的环境，建议更新.env文件 |
+
+### 下游通知机制表
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| 构建配置变更 | frontend-performance | 更新的构建产物 | 构建优化配置变更 |
+| CI/CD流水线变更 | 无直接下游 | 流水线配置更新 | 流水线阶段变更 |
+| CDN规则变更 | frontend-performance | 缓存策略更新 | CDN缓存规则变更 |

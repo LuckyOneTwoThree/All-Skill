@@ -1,4 +1,4 @@
----
+﻿---
 name: requirements-understanding
 description: 当需要深入理解需求背后的真实问题时使用。需求自动理解与拆解，将分类后的需求还原为真实问题，分析需求间的关联关系。执行角色：🤖→👤 AI建议，人类审批。关键词：需求理解、需求拆解、问题还原、需求关联、需求分析、需求本质、真正要什么。
 metadata:
@@ -263,8 +263,7 @@ metadata:
 | 问题还原结果变更 | requirements-prioritization | 标记还原变更，触发优先级评估更新 |
 | 关联关系变更 | requirements-prioritization | 标记关联变更，触发需求分组更新 |
 
-数据获取说明：
-- 本Skill需要分类后的需求列表，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要分类后的需求列表，请通过以下方式之一提供：
   1. 直接口述需求内容
   2. 上传requirements.json文件
   3. 提供数据文件路径

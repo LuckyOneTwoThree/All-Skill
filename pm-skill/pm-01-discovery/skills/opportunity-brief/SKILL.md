@@ -1,4 +1,4 @@
----
+﻿---
 name: opportunity-brief
 description: 当需要将前序所有产出组装为完整的机会简报时使用。Opportunity Brief自动生成，包含问题陈述、证据摘要、机会评分、HMW陈述、关键假设和推荐下一步。关键词：Opportunity Brief、机会简报、机会文档、产品机会总结、决策文档、机会总结、值不值得做、决策依据。
 metadata:
@@ -279,8 +279,7 @@ metadata:
 | opportunity-scoring.json / hmw.json / problem-statement.json | 用户提供机会描述 → 生成简化版Brief，核心内容基于用户描述填充 | `opportunity_score` 缺乏结构化评分，`hmw_statements` 为空，`problem_statement` 为用户描述，`human_decisions_needed` 大幅增加 |
 | 多个前序文件缺失 | 用户提供机会描述 → 生成简化版Brief，标注各缺失数据源 | 多个字段基于用户描述，`evidence_summary` 大面积缺失，`key_assumptions` 可信度极低，Brief决策价值大幅降低 |
 
-数据获取说明：
-- 本Skill需要多个前序阶段的数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要多个前序阶段的数据，请通过以下方式之一提供：
   1. 直接描述产品机会、目标用户和核心痛点
   2. 上传前序阶段输出的JSON文件
   3. 提供数据文件路径

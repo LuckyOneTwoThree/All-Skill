@@ -1,4 +1,4 @@
----
+﻿---
 name: opportunity-hmw
 description: 当需要基于Problem Statement和用户研究数据生成How Might We陈述时使用。HMW陈述自动生成，从消除障碍、提升体验、创造新价值、重新定义四个维度发散。关键词：HMW、How Might We、问题重构、创新空间、机会发散、换个角度、还有什么办法、怎样才可能。
 metadata:
@@ -214,8 +214,7 @@ metadata:
 | 用户研究数据（voice-analysis / behavior-analysis） | 基于用户描述的问题直接生成HMW，标注"缺乏用户研究数据支撑" | `data_source` 标注"用户口述"而非数据文件引用，`confidence`<0.5 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的问题直接生成HMW | `problem_ref` 和 `data_source` 均为用户描述，`confidence` 极低，`dimension_coverage` 可能不均衡 |
 
-数据获取说明：
-- 本Skill需要Problem Statement和用户研究数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要Problem Statement和用户研究数据，请通过以下方式之一提供：
   1. 直接描述问题和用户痛点
   2. 上传problem-statement.json / voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径

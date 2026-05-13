@@ -1,4 +1,4 @@
----
+﻿---
 name: requirements-prioritization
 description: 当需要对需求进行优先级排序时使用。需求自动评估与排序，基于RICE评分和MoSCoW框架对需求进行优先级排序。执行角色：🤖→👤 AI建议，人类审批。关键词：需求排序、RICE评分、MoSCoW、优先级评估、需求优先级、先做什么、需求取舍。
 metadata:
@@ -340,8 +340,7 @@ ELSE
 | MoSCoW分类变更 | design-prd | 标记分类变更，触发PRD功能优先级更新 |
 | 优先级排名变更 | design-prd | 标记排名变更，触发PRD章节排序更新 |
 
-数据获取说明：
-- 本Skill需要理解后的需求列表，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要理解后的需求列表，请通过以下方式之一提供：
   1. 直接粘贴需求列表和优先级描述
   2. 上传requirement_analysis.json / kano.json文件
   3. 提供数据文件路径

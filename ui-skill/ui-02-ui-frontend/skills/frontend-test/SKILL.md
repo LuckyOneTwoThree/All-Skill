@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.1"
+  version: "2.0"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "帮我写前端测试"
@@ -33,75 +33,60 @@ metadata:
 |--------|------|------|------|------|
 | 组件代码 | code | 是 | output/ui-frontend/ui-component-gen | 待测试的组件代码 |
 | 页面代码 | code | 是 | output/ui-frontend/page-assembly | 待测试的页面代码 |
-| 交互规格 | JSON | ○ | output/ui-frontend/interaction-design | 交互行为定义（用于E2E场景） |
+| 交互规格 | JSON | ○ | output/ui-frontend/ui-component-gen/ | 交互行为定义（用于E2E场景） |
 | UI审查结果 | JSON | ○ | output/ui-frontend/ui-review | 已知问题清单（优先覆盖） |
+| 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响测试断言文案和Mock数据语言 |
 
 ## 执行步骤
 
-### Step 1: 组件单元测试生成
+### Step 1: 测试策略规划与单元测试生成
 
-为每个组件生成单元测试：
+测试策略规划：
 
-| 测试类型 | 覆盖内容 | 工具 |
-|----------|---------|------|
-| 渲染测试 | 组件正常渲染、各变体渲染 | Jest + React Testing Library |
-| Props测试 | 必填Props缺失时警告、默认值正确 | Jest |
-| 交互测试 | 点击/输入/提交回调触发 | fireEvent / userEvent |
-| 状态测试 | 状态转换正确、loading/error状态展示 | Jest + RTL |
-| 边界测试 | 空数据/超长文本/极端值 | Jest |
+| 测试类型 | 覆盖内容 | 工具 | 占比 |
+|----------|---------|------|------|
+| 渲染测试 | 组件正常渲染、各变体渲染 | Jest+RTL | 30% |
+| 交互测试 | 点击/输入/提交回调触发 | fireEvent/userEvent | 25% |
+| 状态测试 | 状态转换、loading/error状态 | Jest+RTL | 15% |
+| 边界测试 | 空数据/超长文本/极端值 | Jest | 10% |
+| Storybook Stories | 每个Variant一个Story | Storybook | 20% |
 
-**测试命名规范**：`should {期望结果} when {条件}`
+测试命名规范：`should {期望结果} when {条件}`
 
-### Step 2: Storybook Stories生成
+### Step 2: E2E场景生成与无障碍测试
 
-为每个组件生成Storybook Stories：
-
-- **基础Story**：每个Variant一个Story
-- **交互Story**：展示交互行为（点击、输入、拖拽）
-- **状态Story**：loading/error/disabled/empty状态
-- **组合Story**：组件在典型场景中的组合使用
-- **文档Story**：自动生成Props表格和使用说明
-
-### Step 3: 视觉回归测试配置
-
-配置视觉回归测试：
-
-| 配置项 | 规范 |
-|--------|------|
-| 截图范围 | 每个Story自动截图 |
-| 对比阈值 | 像素差异≤0.1%视为通过 |
-| 视口尺寸 | 375px / 768px / 1440px |
-| 比对模式 | 像素级diff + 结构相似度(SSIM) |
-| 基线管理 | 首次截图自动设为基线，变更需人工审核 |
-| 工具 | Chromatic / Percy / Loki |
-
-### Step 4: E2E测试场景生成
-
-基于交互规格生成E2E测试场景：
+E2E测试场景（基于交互规格）：
 
 | 场景类别 | 典型场景 | 工具 |
 |----------|---------|------|
-| 核心流程 | 注册→登录→使用核心功能→退出 | Playwright / Cypress |
+| 核心流程 | 注册→登录→使用核心功能→退出 | Playwright/Cypress |
 | 表单流程 | 填写→验证→提交→成功/失败 | Playwright |
-| 导航流程 | 菜单导航→面包屑→浏览器前进后退 | Playwright |
-| 权限流程 | 未登录访问→登录→权限内操作→权限外拦截 | Playwright |
-| 错误恢复 | 网络断开→重连→数据恢复 | Playwright |
+| 权限流程 | 未登录访问→登录→权限内操作 | Playwright |
 
-**E2E场景规则**：
+E2E场景规则：
 - 每个核心用户流程≥1个E2E测试
 - 测试数据使用Mock，不依赖真实后端
-- 每个场景有独立的setup和teardown
 
-### Step 5: 无障碍测试集成
-
-集成自动化无障碍测试：
+无障碍测试集成：
 
 | 检查项 | 工具 | 标准 |
 |--------|------|------|
-| WCAG合规 | axe-core / jest-axe | AA级 |
+| WCAG合规 | axe-core/jest-axe | AA级 |
 | 键盘导航 | Playwright keyboard API | Tab/Enter/Escape可操作 |
-| 屏幕阅读器 | AOM / aria-*检查 | 语义正确 |
-| 色彩对比度 | axe-core | ≥4.5:1正文 / ≥3:1大文本 |
+| 色彩对比度 | axe-core | ≥4.5:1正文/≥3:1大文本 |
+
+**视觉回归测试**（内建能力）：
+- 使用Playwright截图对比+Storybook Chromatic实现视觉回归检测
+- 覆盖3个视口尺寸（375/768/1440）
+- 输出：视觉回归测试报告+基线截图
+
+### Step 3: 测试报告与覆盖率统计
+
+汇总测试结果：
+- 单元测试覆盖率统计
+- E2E测试通过率
+- 无障碍测试合规率
+- 生成测试报告
 
 ## 输出
 
@@ -145,6 +130,33 @@ metadata:
 }
 ```
 
+**输出校验规则**（同质量检查项）：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|---------|------|------|------|
+| test_summary.unit_tests.total | integer | 是 | 单元测试总数 |
+| test_summary.e2e_scenarios.total | integer | 是 | E2E场景总数 |
+| test_summary.a11y_tests.standard | string | 是 | 无障碍标准，值为"WCAG 2.1 AA" |
+| coverage.component_coverage | string | 是 | 组件覆盖率（≥80%） |
+| files | array | 是 | 测试文件列表 |
+
+## 上游变更响应
+
+上游变更影响表：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 组件代码变更 | 单元测试 | 标注受影响的测试用例，建议更新 |
+| 页面代码变更 | E2E测试 | 标注受影响的E2E场景，建议更新 |
+| UI审查结果变更 | 测试优先级 | 调整测试优先级，优先覆盖P0问题 |
+
+下游通知机制表：
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| 测试不通过 | ui-component-gen | 失败的测试用例 | 核心流程E2E测试失败 |
+| 覆盖率下降 | ui-review | 覆盖率报告 | 组件覆盖率<80% |
+
 ## 决策规则
 
 | 条件 | 决策 |
@@ -156,6 +168,7 @@ metadata:
 | 视觉回归diff>0.1% | 标记为视觉变更，需人工审核 |
 | 无障碍测试不通过 | 标记P0，阻塞发布 |
 | 组件覆盖率<80% | 补充缺失测试用例 |
+| 目标语言≠en-US | E2E测试断言使用目标语言文案，Mock数据使用目标语言内容 |
 
 ## 质量检查
 
@@ -174,8 +187,9 @@ metadata:
 | UI审查结果缺失 | 不针对已知问题生成专项测试 | 可能遗漏已知问题的回归测试 |
 | 页面代码缺失 | 仅生成组件级测试 | 缺少E2E和页面集成测试 |
 
-数据获取说明：
-- 本Skill需要组件代码，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要组件代码，请通过以下方式之一提供：
   1. 上传组件代码文件
   2. 提供代码仓库路径
   3. 描述组件功能和交互行为

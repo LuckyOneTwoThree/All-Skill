@@ -95,7 +95,7 @@ ALL/
 |--------|--------|---------------|----------|
 | 商业模式 | business-orchestrator | business-model-canvas / business-value-fit / business-pricing / business-strategy-report | 商业战略规划报告 |
 | 战略规划 | planning-orchestrator | product-proposal / planning-swot / planning-porter-five-forces / planning-okr / planning-north-star / planning-roadmap / planning-ansoff | 产品提案+OKR+路线图 |
-| 产品定位 | positioning-orchestrator | positioning-statement / positioning-value-curve / positioning-differentiation / positioning-exclusion | 定位陈述 → **消费方：ui design-token** |
+| 产品定位 | positioning-orchestrator | positioning-statement / positioning-value-curve / positioning-differentiation / positioning-exclusion | 定位陈述 → **消费方：ui design-system** |
 | Stakeholder | stakeholder-orchestrator | stakeholder-map / stakeholder-strategy-doc / stakeholder-brief | 战略简报 |
 
 ### 模块3：产品构思与设计
@@ -106,7 +106,7 @@ ALL/
 |--------|--------|---------------|----------|
 | 创意发散 | ideation-orchestrator | ideation-hmw / ideation-scamper / ideation-inversion / ideation-convergence | Top5方案 |
 | 需求管理 | requirements-orchestrator | requirements-collection / requirements-understanding / requirements-prioritization | MoSCoW排序 |
-| 产品设计与原型 | design-orchestrator | design-prd / requirements-srs / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec | PRD+SRS+原型+交互规范+设计交接 → **消费方：ui page-assembly / interaction-design / backend api-contract** |
+| 产品设计与原型 | design-orchestrator | design-prd / requirements-srs / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec | PRD+SRS+原型+交互规范+设计交接 → **消费方：ui page-assembly / ui-component-gen / backend api-contract** |
 | 方案验证 | validation-orchestrator | validation-assumption-map / validation-mvp / validation-experiment / validation-usability | MVP范围 |
 
 **关键衔接**：design-prd（PRD生成）是PM与UI/后端的核心契约，PRD同时驱动UI前端生成和后端API设计。

@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "pipeline"
-  version: "1.1"
+  version: "2.1"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "检查一下UI有没有问题"
@@ -33,42 +33,51 @@ metadata:
 |--------|------|------|------|------|
 | 组件代码 | code | 是 | output/ui-frontend/ui-component-gen | 待审查的组件代码 |
 | 页面代码 | code | 是 | output/ui-frontend/page-assembly | 待审查的页面代码 |
-| 设计令牌 | JSON | 是 | output/ui-design-system/design-token/tokens.json | 设计规范基准 |
-| 交互规格 | JSON | ○ | output/ui-frontend/interaction-design | 交互行为定义 |
+| 设计令牌 | JSON | 是 | output/ui-design-system/design-system/tokens.json | 设计规范基准 |
+| 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响文案检查和aria-label语言校验 |
 
 ## 执行步骤
 
-### Step 1: 设计规范一致性检查
+### Step 1: 设计规范与无障碍合规检查
 
-检查代码与Design Token的一致性：
+设计规范一致性检查：
 
 | 检查项 | 通过标准 | 级别 |
 |--------|---------|------|
 | 色值引用 | 100%使用Token变量，无硬编码色值 | P0 |
 | 字号引用 | 100%使用Token变量，无硬编码字号 | P0 |
 | 间距引用 | 100%使用Token变量，无硬编码间距 | P1 |
-| 圆角引用 | 100%使用Token变量 | P1 |
-| 阴影引用 | 100%使用Token变量 | P2 |
-| 组件复用 | 无与组件库重复的自建组件 | P1 |
-
-### Step 2: 无障碍合规检查
-
-基于WCAG 2.1 AA标准检查：
-
-| 检查项 | 通过标准 | 级别 |
-|--------|---------|------|
 | 色彩对比度 | 正文≥4.5:1，大文本≥3:1 | P0 |
 | 图片替代文本 | 所有img有alt属性 | P0 |
 | 表单标签 | 所有表单控件有关联label | P0 |
 | 键盘可操作 | 所有交互可通过键盘完成 | P0 |
 | ARIA属性 | 交互组件有正确的role和aria-* | P0 |
-| 焦点管理 | 弹窗打开/关闭后焦点正确转移 | P1 |
-| 焦点可见 | 焦点环清晰可见 | P1 |
-| 标题层级 | h1-h6层级不跳级 | P2 |
+| 文案语言一致性 | 占位文案/按钮文案/aria-label语言与目标语言一致 | P1 |
+| RTL排版 | 目标语言=ar-SA时，布局组件有dir="rtl" | P0（仅ar-SA） |
 
-### Step 3: 交互完整性检查
+**外部 Skill 调用**（按执行顺序，同Skill子命令合并为单次调用以节省token）：
 
-检查交互规格的实现完整性：
+Step 1 外部调用：
+
+| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
+|------|------|-------------|--------------|-------------------|
+| 1 | `ext-impeccable` `audit critique` | 满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令 | brand/product按子命令分别感知 | 各子命令独立判断不调用条件 |
+
+子命令触发条件明细：
+- `audit`：始终调用（如已部署）（反模式：ext-impeccable未部署时使用内置检查项）
+- `critique`：audit通过率<90% 或 需要设计品味评审（反模式：audit通过率≥95%且无设计争议）
+
+Step 3 外部调用（反馈闭环）：
+
+| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
+|------|------|-------------|--------------|-------------------|
+| 1 | `ext-impeccable` `distill` | P1问题中"复杂/冗余/过度设计"类占比>30% | brand:删减至核心表达；product:渐进式披露 | P1问题主要为a11y/对比度类（非复杂度问题） |
+
+**反馈闭环规则**：若distill执行后修改了代码，需重新执行Step 1的audit验证修改未引入新问题。最多循环2次，第3次直接输出当前结果。
+
+### Step 2: 交互完整性与响应式适配检查
+
+交互完整性检查：
 
 | 检查项 | 通过标准 | 级别 |
 |--------|---------|------|
@@ -79,9 +88,7 @@ metadata:
 | 动画规范 | 时长100-500ms，使用标准缓动 | P2 |
 | reduced-motion | 尊重用户减弱动画偏好 | P1 |
 
-### Step 4: 响应式适配检查
-
-检查多端适配：
+响应式适配检查：
 
 | 检查项 | 通过标准 | 级别 |
 |--------|---------|------|
@@ -89,10 +96,8 @@ metadata:
 | 平板端布局 | 768px宽度下布局合理 | P1 |
 | 桌面端布局 | 1024px+宽度下布局合理 | P1 |
 | 触控目标 | 可点击元素≥44×44px | P0 |
-| 文字缩放 | 200%缩放下内容可读 | P1 |
-| 横竖屏 | 移动端横竖屏切换布局正常 | P2 |
 
-### Step 5: 问题汇总与修复建议
+### Step 3: 问题汇总与修复建议
 
 汇总所有问题并生成修复建议：
 
@@ -120,41 +125,37 @@ metadata:
 }
 ```
 
-```json
-{
-  "review_summary": {
-    "total_checks": 28,
-    "passed": 22,
-    "failed": 6,
-    "pass_rate": "78.6%",
-    "p0_issues": 1,
-    "p1_issues": 3,
-    "p2_issues": 2
-  },
-  "issues": [
-    {
-      "id": "UIR-001",
-      "severity": "P0",
-      "category": "accessibility",
-      "file": "CourseCard.tsx",
-      "line": 45,
-      "description": "按钮缺少aria-label，屏幕阅读器无法识别操作目的",
-      "fix_suggestion": "添加 aria-label=\"报名课程\" 到 Button 组件",
-      "fix_code": "<Button aria-label=\"报名课程\" onClick={onEnroll}>"
-    },
-    {
-      "id": "UIR-002",
-      "severity": "P1",
-      "category": "design_consistency",
-      "file": "CourseCard.module.css",
-      "line": 12,
-      "description": "硬编码色值 #3B82F6，应使用Token变量",
-      "fix_suggestion": "替换为 var(--color-primary-500)",
-      "fix_code": "background: var(--color-primary-500);"
-    }
-  ]
-}
-```
+**输出校验规则**：
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|---------|------|------|------|
+| review_summary.total_checks | integer | 是 | 检查总数 |
+| review_summary.pass_rate | string | 是 | 通过率 |
+| review_summary.p0_issues | integer | 是 | P0问题数 |
+| issues | array | 是 | 问题清单 |
+| issues[].id | string | 是 | 问题ID |
+| issues[].severity | enum(P0,P1,P2) | 是 | 严重级别 |
+| issues[].category | string | 是 | 问题类别 |
+| issues[].description | string | 是 | 问题描述 |
+| issues[].fix_suggestion | string | 是 | 修复建议 |
+
+## 上游变更响应
+
+上游变更影响表：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 设计令牌变更 | 设计规范一致性检查基准 | 更新检查基准，重新审查受影响组件 |
+| 组件代码变更 | 审查对象 | 标注受影响的审查项，建议重新审查 |
+| 交互规格变更 | 交互完整性检查基准 | 更新检查基准，重新审查交互实现 |
+
+下游通知机制表：
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| P0问题新增 | frontend-test | 阻塞测试的问题清单 | P0问题数>0 |
+| P1问题变更 | frontend-test | 需关注的非阻塞问题 | P1问题列表变更 |
+| 审查通过 | ui-component-gen | 可进入测试阶段 | P0问题=0 |
 
 ## 决策规则
 
@@ -184,8 +185,14 @@ metadata:
 | 交互规格缺失 | 跳过交互完整性检查 | 无法检查交互实现完整性 |
 | 页面代码缺失 | 仅审查组件级问题 | 缺少页面级布局和响应式检查 |
 
-数据获取说明：
-- 本Skill需要组件代码和设计令牌，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要组件代码和设计令牌，请通过以下方式之一提供：
   1. 上传组件代码文件和tokens.json
   2. 提供代码仓库路径
   3. 描述需要审查的组件和页面
+
+## 变更记录
+
+- v2.1: 新增目标语言参数；外部Skill调用点重构为表格格式；新增audit/critique/distill子命令及反馈闭环规则；a11y-audit改为ext-impeccable audit
+- v2.0: 初始版本

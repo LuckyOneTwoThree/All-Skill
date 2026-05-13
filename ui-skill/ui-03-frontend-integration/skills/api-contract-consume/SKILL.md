@@ -34,7 +34,8 @@ metadata:
 | API契约文档 | YAML/JSON | 是 | output/backend-api-design/api-contract/openapi.yaml | OpenAPI 3.0规范文档 |
 | 页面数据需求 | JSON | 是 | output/ui-frontend/page-assembly | 页面需要的API接口清单 |
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
-| 设计令牌 | JSON | ○ | output/ui-design-system/design-token/tokens.json | 设计变量，用于生成带令牌引用的错误/加载状态UI |
+| 设计令牌 | JSON | ○ | output/ui-design-system/design-system/tokens.json | 设计变量，用于生成带令牌引用的错误/加载状态UI |
+| 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响Mock数据内容和错误提示文案语言 |
 
 ## 执行步骤
 
@@ -90,7 +91,7 @@ metadata:
 
 基于API Schema生成Mock数据：
 
-- 字符串类型 → 有意义的中文内容（非lorem ipsum）
+- 字符串类型 → 有意义的目标语言内容（目标语言=zh-CN时用中文，en-US时用英文）
 - 数字类型 → 符合业务范围的数值
 - 日期类型 → 近期日期
 - 枚举类型 → 随机枚举值
@@ -108,30 +109,16 @@ metadata:
 
 **输出文件**：api-client-config.json
 
+**输出Schema**：
+
 ```json
 {
-  "api_metadata": {
-    "source": "openapi.yaml",
-    "version": "1.0.0",
-    "total_endpoints": 25,
-    "generated_types": 42,
-    "generated_hooks": 25
-  },
-  "files": [
-    { "path": "api/client.ts", "type": "http_client", "description": "HTTP客户端封装" },
-    { "path": "api/types.ts", "type": "types", "description": "TypeScript类型定义" },
-    { "path": "api/endpoints/course.ts", "type": "endpoint", "description": "课程相关接口" },
-    { "path": "api/hooks/useCourse.ts", "type": "hook", "description": "课程数据Hook" },
-    { "path": "api/mocks/course.mock.ts", "type": "mock", "description": "课程Mock数据" },
-    { "path": "api/mocks/handlers.ts", "type": "mock_handler", "description": "MSW请求处理器" }
-  ],
-  "endpoint_example": {
-    "method": "GET",
-    "path": "/api/v1/courses",
-    "request_type": "GetCoursesRequest",
-    "response_type": "GetCoursesResponse",
-    "hook": "useCourses",
-    "mock_available": true
+  "type": "object",
+  "required": ["api_metadata", "files"],
+  "properties": {
+    "api_metadata": {"type": "object", "description": "API元信息，包含source/version/total_endpoints/generated_types/generated_hooks"},
+    "files": {"type": "array", "description": "生成文件列表，每项含path/type/description"},
+    "endpoint_example": {"type": "object", "description": "典型端点示例，包含method/path/request_type/response_type/hook/mock_available"}
   }
 }
 ```
@@ -173,8 +160,28 @@ metadata:
 | 设计令牌缺失 | 错误/加载状态UI使用内联样式+TODO标注 | 错误提示样式硬编码，需后续替换为Token |
 | 目标框架缺失 | 若用户未提供目标框架，提示用户提供或跳过该输入相关步骤 | 默认React + TypeScript |
 
-数据获取说明：
-- 本Skill需要API契约文档，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要API契约文档，请通过以下方式之一提供：
   1. 上传openapi.yaml / swagger.json文件
   2. 提供API文档URL
   3. 描述核心API接口列表
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| API契约接口增删 | 请求层代码和类型定义 | 标注受影响的接口，建议重新生成对应代码 |
+| API契约字段变更 | TypeScript类型和Mock数据 | 标注受影响的类型，建议更新类型定义和Mock |
+| 页面数据需求变更 | 接口调用Hook | 标注新增/删除的数据需求，建议调整Hook生成 |
+| 设计令牌变更 | 错误/加载状态UI样式 | 标注受影响的样式引用，建议更新Token引用 |
+
+### 下游通知机制表
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| 接口类型变更 | frontend-performance | 受影响的类型文件 | TypeScript类型定义变更 |
+| Mock数据变更 | frontend-test | Mock数据更新 | Mock处理器变更 |
+| API端点增删 | page-assembly | 数据获取方式变更 | 接口端点列表变更 |

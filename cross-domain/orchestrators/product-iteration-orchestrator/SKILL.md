@@ -223,6 +223,7 @@ Skill: backend-architecture-orchestrator
 Skill: design-system-orchestrator
 输入:
   PRD变更: output/cross-domain/design-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
 输出: output/cross-domain/design-system-orchestrator/
 验证: 设计令牌变更人类确认通过
 模式: 🤖→👤
@@ -237,6 +238,7 @@ Skill: ui-frontend-orchestrator
 输入:
   PRD变更: output/cross-domain/design-orchestrator/
   设计令牌变更输出: output/cross-domain/design-system-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
 输出: output/cross-domain/ui-frontend-orchestrator/
 验证: 前端代码审查通过
 模式: 🤖→👤
@@ -251,6 +253,7 @@ Skill: frontend-integration-orchestrator
 输入:
   API变更输出: output/cross-domain/api-design-orchestrator/
   前端代码变更输出: output/cross-domain/ui-frontend-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
 输出: output/cross-domain/frontend-integration-orchestrator/
 验证: 前后端联调通过
 模式: 🤖

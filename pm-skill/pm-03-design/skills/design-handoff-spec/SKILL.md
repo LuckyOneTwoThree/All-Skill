@@ -32,11 +32,11 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 页面原型和交互规格 |
-| 设计令牌 | JSON | ○ | output/pm-design/design-token/tokens.json | 颜色/字体/间距/阴影 |
+| 设计令牌 | JSON | ○ | output/ui-design-system/design-system/design-system.json | 颜色/字体/间距/阴影（tokens字段） |
 | IA信息架构 | JSON | ○ | output/pm-design/design-ia/ia.json | 页面路由和导航结构 |
 | 用户流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户操作流程和状态机 |
 | PRD文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 产品需求参考 |
-| 组件库 | JSON | ○ | output/pm-design/component-library/component-library.json | 可复用组件清单 |
+| 组件库 | JSON | ○ | output/ui-design-system/design-system/design-system.json | 可复用组件清单（components字段） |
 
 ## 执行步骤
 

@@ -271,6 +271,7 @@ Skill: design-system-orchestrator
 输入:
   品牌规范: 品牌规范资料
   产品定位: output/cross-domain/positioning-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
   PRD: output/cross-domain/design-orchestrator/
 输出: output/cross-domain/design-system-orchestrator/
 验证: 设计令牌人类确认通过
@@ -288,6 +289,7 @@ Skill: ui-frontend-orchestrator
   组件库: output/cross-domain/design-system-orchestrator/
   PRD: output/cross-domain/design-orchestrator/
   原型规格: output/cross-domain/design-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
 输出: output/cross-domain/ui-frontend-orchestrator/
 验证: 前端代码审查通过
 模式: 🤖→👤
@@ -302,6 +304,7 @@ Skill: frontend-integration-orchestrator
 输入:
   API契约: output/cross-domain/api-design-orchestrator/
   前端代码: output/cross-domain/ui-frontend-orchestrator/
+  目标语言: 用户提供（默认zh-CN）
 输出: output/cross-domain/frontend-integration-orchestrator/
 验证: 前后端联调核心流程100%通过
 模式: 🤖

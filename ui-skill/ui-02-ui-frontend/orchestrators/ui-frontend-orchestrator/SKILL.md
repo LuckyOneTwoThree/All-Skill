@@ -1,11 +1,11 @@
 ---
 name: ui-frontend-orchestrator
-description: 当需要生成UI组件与前端代码时使用。UI前端指挥官，调度ui-component-gen/page-assembly/interaction-design/ui-review/frontend-test。关键词：UI前端、组件生成、页面组装、交互设计、UI审查、前端测试、前端开发、页面开发。
+description: 当需要生成UI组件与前端代码时使用。UI前端指挥官，调度ui-component-gen/page-assembly/ui-review/frontend-test。关键词：UI前端、组件生成、页面组装、UI审查、前端测试、前端开发、页面开发。
 metadata:
   module: "UI设计与前端开发"
   sub-module: "UI前端生成"
   type: "orchestrator"
-  version: "4.1"
+  version: "5.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "生成前端代码"
@@ -22,8 +22,8 @@ UI与前端一体化，设计即实现，实现即设计。
 
 ## 执行步骤
 
-1. **组件先行**：先完成组件生成，再组装页面
-2. **交互增强**：页面组装后添加交互设计
+1. **组件先行**：先完成组件生成（含交互设计），再组装页面
+2. **页面组装**：将组件组装为完整页面，配置路由和数据流
 3. **审查闭环**：审查不通过则回退修复，不跳过
 4. **测试保障**：测试覆盖核心流程，不盲目追求覆盖率
 
@@ -60,25 +60,23 @@ UI与前端一体化，设计即实现，实现即设计。
 ## Pipeline
 
 ```yaml
-post_pipeline:
-  - action: stage-summary
-    output: output/phase-reports/ui/ui-frontend-orchestrator.md
-
 pipeline:
-  - stage: ui-component-gen
-    gate: Design Token引用率100% + TypeScript类型定义完整 + 交互组件包含ARIA属性
-  - stage: page-assembly
-    depends_on: [ui-component-gen]
-    gate: 组件树层级≤4层 + 100%组件来自组件库或ui-component-gen生成
-  - stage: interaction-design
-    depends_on: [ui-component-gen, page-assembly]
-    gate: 所有异步操作有loading状态 + 状态机无死锁 + 动画时长100-500ms
-  - stage: ui-review
-    depends_on: [ui-component-gen, page-assembly, interaction-design]
-    gate: P0问题=0
-  - stage: frontend-test
-    depends_on: [ui-component-gen, page-assembly, interaction-design, ui-review]
-    gate: 核心流程E2E测试100%通过
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/ui/ui-frontend-orchestrator.md
+  stages:
+    - id: ui-component-gen
+      name: UI组件生成
+      depends_on: []
+    - id: page-assembly
+      name: 页面组装
+      depends_on: [ui-component-gen]
+    - id: ui-review
+      name: UI审查
+      depends_on: [ui-component-gen, page-assembly]
+    - id: frontend-test
+      name: 前端测试
+      depends_on: [ui-review]
 ```
 
 ## 阶段执行计划
@@ -91,13 +89,14 @@ pipeline:
 Skill: ui-component-gen
 输入:
   组件意图描述: 用户提供
-  设计令牌: output/ui-design-system/design-token/tokens.json
-  组件库: output/ui-design-system/component-library/library.json
+  设计令牌: output/ui-design-system/design-system/tokens.json
+  组件库: output/ui-design-system/design-system/library.json
   目标框架: 用户提供
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
   原型规格: output/pm-design/design-prototype/prototype_spec.json（可选）
   PRD: output/pm-design/design-prd/prd.md（可选）
 输出: output/ui-frontend/ui-component-gen/
-验证: Design Token引用率100% + TypeScript类型定义完整 + 交互组件包含ARIA属性
+验证: Design Token引用率100% + TypeScript类型定义完整 + 交互组件包含ARIA属性 + 状态机无死锁 + 动画时长100-500ms
 模式: 🤖→👤
 ```
 
@@ -109,32 +108,17 @@ Skill: ui-component-gen
 Skill: page-assembly
 输入:
   页面需求: 用户提供 / output/pm-design/design-prd/prd.md
-  组件库: output/ui-design-system/component-library/library.json
+  组件库: output/ui-design-system/design-system/library.json
   已生成组件: output/ui-frontend/ui-component-gen/components.json
-  设计令牌: output/ui-design-system/design-token/tokens.json
+  设计令牌: output/ui-design-system/design-system/tokens.json
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
   路由结构: output/pm-design/design-ia/ia_proposals.json（可选）
-  原型规格: output/pm-design/design-prototype/prototype_spec.json（可选）
 输出: output/ui-frontend/page-assembly/
 验证: 组件树层级≤4层 + 100%组件来自组件库或ui-component-gen生成
 模式: 🤖→👤
 ```
 
-### 阶段3：interaction-design
-
-#### 调用 interaction-design
-
-```
-Skill: interaction-design
-输入:
-  组件规格: output/ui-frontend/ui-component-gen/ / output/ui-design-system/component-library
-  页面需求: output/ui-frontend/page-assembly/ / output/pm-design/design-prd
-  设计令牌: output/ui-design-system/design-token/tokens.json
-输出: output/ui-frontend/interaction-design/
-验证: 所有异步操作有loading状态 + 状态机无死锁 + 动画时长100-500ms
-模式: 🤖→👤
-```
-
-### 阶段4：ui-review
+### 阶段3：ui-review
 
 #### 调用 ui-review
 
@@ -143,14 +127,14 @@ Skill: ui-review
 输入:
   组件代码: output/ui-frontend/ui-component-gen/
   页面代码: output/ui-frontend/page-assembly/
-  设计令牌: output/ui-design-system/design-token/tokens.json
-  交互规格: output/ui-frontend/interaction-design/（可选）
+  设计令牌: output/ui-design-system/design-system/tokens.json
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend/ui-review/
 验证: P0问题=0
 模式: 🤖
 ```
 
-### 阶段5：frontend-test
+### 阶段4：frontend-test
 
 #### 调用 frontend-test
 
@@ -159,8 +143,9 @@ Skill: frontend-test
 输入:
   组件代码: output/ui-frontend/ui-component-gen/
   页面代码: output/ui-frontend/page-assembly/
-  交互规格: output/ui-frontend/interaction-design/（可选）
+  交互规格: output/ui-frontend/ui-component-gen/（可选）
   UI审查结果: output/ui-frontend/ui-review/（可选）
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend/frontend-test/
 验证: 核心流程E2E测试100%通过
 模式: 🤖
@@ -186,9 +171,8 @@ Skill: frontend-test
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 组件生成完成 | Design Token引用率100% | 硬编码值必须替换为Token引用 |
-| 页面组装完成 | 组件树层级≤4层 | 层级过深需重构后才能进入交互阶段 |
-| 交互设计完成 | 所有异步操作有loading状态 | 缺失loading状态必须补充 |
+| 组件生成完成 | Design Token引用率100% + 状态机无死锁 | 硬编码值必须替换为Token引用；死锁状态必须修复 |
+| 页面组装完成 | 组件树层级≤4层 | 层级过深需重构后才能进入审查阶段 |
 | UI审查完成 | P0问题=0 | P0问题必须修复后才能进入测试阶段 |
 | 前端测试完成 | 核心流程E2E测试100%通过 | 不通过则回退到组件生成阶段修复 |
 | 阶段总结已生成 | output/phase-reports/ui/ui-frontend-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
@@ -197,9 +181,8 @@ Skill: frontend-test
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 组件方案确认 | ui-component-gen执行时 | AI生成组件清单，人类确认组件边界和Props设计 |
+| 组件方案确认 | ui-component-gen执行时 | AI生成组件清单和交互状态机，人类确认组件边界、Props设计和交互行为 |
 | 页面布局确认 | page-assembly执行时 | AI生成页面布局方案，人类确认布局选择 |
-| 交互方案确认 | interaction-design执行时 | AI生成交互状态机，人类确认交互行为 |
 | UI审查P1问题处理 | ui-review发现P1问题时 | P1问题修复还是接受为技术债务 |
 | 测试策略确认 | frontend-test执行时 | AI生成测试方案后，人类确认测试范围和优先级 |
 
@@ -212,11 +195,12 @@ Skill: frontend-test
 | UI审查P0问题 | 必须修复后才能进入测试阶段 |
 | E2E测试环境不可用 | 跳过E2E测试，标注"E2E待执行"，不阻塞发布 |
 | 组件树层级过深 | 标注"需重构"，人类确认是否立即重构或标记为技术债务 |
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失" |
 
 ## 变更记录
 
-- v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析
+- v5.0: 移除 interaction-design 独立阶段（合并到 ui-component-gen）；Pipeline格式对齐pm-skill规范；阶段从5个简化为4个
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加命令式调度指令
 - v1.0: 初始版本

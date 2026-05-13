@@ -132,6 +132,7 @@ product-launch-orchestrator
 - design-orchestrator 输出 PRD → api-design-orchestrator 和 development-orchestrator 消费
 - positioning-orchestrator 输出定位陈述 → design-system-orchestrator 消费（品牌基因）
 - metrics-orchestrator 输出指标体系 → quality-orchestrator 消费（验收标准）
+- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 design-system-orchestrator → ui-frontend-orchestrator → frontend-integration-orchestrator
 
 ### 模板2：从0到1做C端/移动端产品
 
@@ -156,6 +157,7 @@ product-launch-orchestrator
 - design-orchestrator 输出 IA/原型 → ui-frontend-orchestrator 消费
 - api-design-orchestrator 输出 OpenAPI契约 → frontend-integration-orchestrator 消费
 - design-system-orchestrator 输出设计令牌 → ui-frontend-orchestrator 消费
+- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 design-system-orchestrator → ui-frontend-orchestrator → frontend-integration-orchestrator
 
 ### 模板3：已有产品数据驱动优化
 
@@ -458,7 +460,7 @@ output/pm-{源模块}/{源skill-name}/{文件名}
 | 嵌套字段 | ... | ... | ... |
 ```
 
-> 注：校验规则为渐进式添加。核心 Skill（design-prd、api-contract、design-token、metrics-system 等）已包含完整校验规则，其余 Skill 按需补充。
+> 注：校验规则为渐进式添加。核心 Skill（design-prd、api-contract、design-system、metrics-system 等）已包含完整校验规则，其余 Skill 按需补充。
 
 ## AI能力边界
 

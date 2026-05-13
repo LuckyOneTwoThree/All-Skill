@@ -81,6 +81,14 @@ output/ui-frontend-integration/
 | 部署目标选择 | 人类确认部署平台和环境配置 |
 | 性能预算调整 | 人类确认性能预算阈值是否合理 |
 
+## 外部 Skill 扩展
+
+> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+
+| 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
+|----------------|---------|---------|------|------|
+| `ext-impeccable` `optimize` | UI渲染性能专项诊断和修复 | frontend-performance Step 3 | LCP数据+渲染瓶颈 | 优化后的渲染代码 |
+
 ## 核心信念
 
 - 前后端通过契约解耦，集成通过自动化保障

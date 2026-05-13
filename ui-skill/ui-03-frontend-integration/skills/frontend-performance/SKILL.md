@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.1"
+  version: "1.2"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "页面加载太慢怎么办"
@@ -34,6 +34,7 @@ metadata:
 | 前端代码 | code | 是 | output/ui-frontend/page-assembly / output/ui-frontend/ui-component-gen | 待优化的前端代码 |
 | 构建产物 | JSON | 是 | output/ui-frontend-integration/frontend-build-deploy | 构建配置和产物分析 |
 | 性能数据 | JSON | ○ | 用户提供 | Lighthouse报告 / Web Vitals数据 |
+| 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响字体子集化策略和i18n资源优化 |
 
 ## 执行步骤
 
@@ -90,6 +91,12 @@ metadata:
 | CSS containment | 独立渲染区域 | 重排范围缩小 |
 | will-change | 动画元素 | GPU加速 |
 
+**外部 Skill 调用**：
+
+| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
+|------|------|-------------|--------------|-------------------|
+| 1 | `ext-impeccable` `optimize` | LCP>2.5s 且瓶颈为UI渲染（非网络/非包体积） | brand:优化视觉表现力；product:优化交互响应 | 性能瓶颈为网络延迟或包体积（非UI渲染问题） |
+
 ### Step 5: 性能预算与防退化
 
 建立性能预算和CI拦截：
@@ -108,41 +115,16 @@ metadata:
 
 **输出文件**：performance-report.json
 
+**输出Schema**：
+
 ```json
 {
-  "baseline": {
-    "LCP": "3.2s",
-    "FID": "85ms",
-    "CLS": "0.15",
-    "TTI": "4.5s",
-    "first_screen_js": "380KB",
-    "first_screen_css": "72KB"
-  },
-  "bottlenecks": [
-    {
-      "id": "PERF-001",
-      "severity": "P0",
-      "category": "bundle_size",
-      "description": "首屏JS 380KB，超出预算200KB",
-      "root_cause": "moment.js全量引入(230KB)，未使用按需加载",
-      "fix": "替换为day.js(2KB)或使用Intl API",
-      "expected_improvement": "首屏JS减少60%"
-    },
-    {
-      "id": "PERF-002",
-      "severity": "P1",
-      "category": "rendering",
-      "description": "课程列表页滚动卡顿，FPS<30",
-      "root_cause": "100+课程卡片全部DOM渲染",
-      "fix": "使用虚拟滚动（react-virtualized）",
-      "expected_improvement": "FPS稳定60"
-    }
-  ],
-  "performance_budget": {
-    "first_screen_js": "200KB",
-    "first_screen_css": "50KB",
-    "LCP": "2.5s",
-    "CLS": "0.1"
+  "type": "object",
+  "required": ["baseline", "bottlenecks", "performance_budget"],
+  "properties": {
+    "baseline": {"type": "object", "description": "性能基线，包含LCP/FID/CLS/TTI/FCP/首屏JS/首屏CSS"},
+    "bottlenecks": {"type": "array", "description": "性能瓶颈列表，每项含id/severity/category/description/root_cause/fix/expected_improvement"},
+    "performance_budget": {"type": "object", "description": "性能预算阈值，包含first_screen_js/first_screen_css/LCP/CLS"}
   }
 }
 ```
@@ -182,8 +164,26 @@ metadata:
 | 构建产物缺失 | 基于代码结构估算包体积 | 体积数据为估算值 |
 | 前端代码缺失 | 仅输出通用优化建议 | 无法提供代码级修复方案 |
 
-数据获取说明：
-- 本Skill需要前端代码和构建配置，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要前端代码和构建配置，请通过以下方式之一提供：
   1. 上传Lighthouse报告JSON
   2. 提供Web Vitals数据
   3. 描述页面加载慢的具体场景
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 前端代码变更 | 性能基线和瓶颈分析 | 标注受影响的性能指标，建议重新建立基线 |
+| 构建产物变更 | 包体积和加载速度 | 标注受影响的优化项，建议重新分析 |
+| API契约变更 | 数据请求性能 | 标注受影响的接口调用，建议评估请求优化 |
+
+### 下游通知机制表
+
+| 本Skill输出变更 | 通知下游Skill | 通知内容 | 触发条件 |
+|---------------|-------------|---------|---------|
+| 性能预算调整 | frontend-build-deploy | 更新的性能预算阈值 | 预算阈值变更 |
+| 优化方案变更 | ui-component-gen | 受影响的组件代码 | 组件级优化建议变更 |

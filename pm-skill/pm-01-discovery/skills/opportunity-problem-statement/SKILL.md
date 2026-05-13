@@ -1,4 +1,4 @@
----
+﻿---
 name: opportunity-problem-statement
 description: 当需要基于用户研究数据和需求洞察生成结构化问题陈述时使用。Problem Statement自动生成，包含目标用户、场景、痛点、现有方案不足和预期收益。关键词：Problem Statement、问题陈述、痛点定义、用户问题、机会定义、问题定义、核心问题、说清楚问题。
 metadata:
@@ -221,8 +221,7 @@ metadata:
 | 需求洞察数据（persona / jtbd / kano） | 基于用户描述直接生成，标注"缺乏需求洞察数据" | `template_elements.target_user` 可能使用泛称，`template_elements.task` 缺乏JTBD关联，`quality_check.specific_user_group` 可能不通过 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的问题和用户群体直接生成 | `data_support` 多字段为用户估算，`confidence` 极低，`quality_check` 多项可能不通过，`retry_count` 可能达到上限 |
 
-数据获取说明：
-- 本Skill需要用户研究和需求洞察数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要用户研究和需求洞察数据，请通过以下方式之一提供：
   1. 直接描述目标用户群体、核心痛点和场景
   2. 上传persona.json / jtbd.json / voice-analysis.json等文件
   3. 提供数据文件路径

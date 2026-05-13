@@ -47,7 +47,7 @@
 
 | 所属模块 | Skill 名称 | 说明 | 状态 |
 |----------|-----------|------|------|
-| ui-01-design-system | design-token-dark-mode | 暗色模式：基于亮色令牌自动推导暗色方案 | 💡 提案中 |
+| ui-01-design-system | ~~design-token-dark-mode~~ | ~~暗色模式：已内建到 design-system Step 1~~ | ✅ 已完成 |
 | ui-02-ui-frontend | ui-responsive-adapt | 响应式适配：多端自适应布局与断点策略 | 💡 提案中 |
 | ui-03-frontend-integration | frontend-error-boundary | 前端错误边界：异常捕获、降级渲染与用户反馈 | 💡 提案中 |
 

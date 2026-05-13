@@ -47,14 +47,14 @@ node scripts/validate-skill.js {skill-name}/SKILL.md
 
 领域前缀：
   pm-skill       → insight / market / opportunity / user-research / business / planning / positioning / stakeholder / ideation / requirements / design / validation / metrics / development / quality / release / retrospective / analysis / decision / experiment / growth / acquisition / activation / retention / revenue / monitoring / diagnosis / iteration / agile / planning / risk
-  ui-skill       → design-token / component / page / interaction / ui / frontend / api-contract
+  ui-skill       → design-system / component / page / ui / frontend / api-contract
   backend-skill  → api / data / architecture / backend / auth / cache
   cross-domain   → product
 
 示例：
 ✅ insight-5whys          （需求洞察-5Whys）
 ✅ api-contract           （API设计-契约）
-✅ design-token           （设计系统-令牌）
+✅ design-system           （设计系统一体化）
 ❌ 5whys                  （缺少领域前缀）
 ❌ insight_5whys          （使用了下划线）
 ❌ Insight-5Whys          （大写不规范）
@@ -175,7 +175,7 @@ pm-skill/pm-01-discovery/orchestrators/your-new-orchestrator/SKILL.md
 | 领域 | Skill | 参考亮点 |
 |------|-------|----------|
 | PM | insight-5whys | 输入输出完整、决策规则清晰、降级策略完善 |
-| UI | design-token | 多平台输出、对比度校验、上游变更响应完整 |
+| UI | design-system | 多平台输出、对比度校验、上游变更响应完整 |
 | Backend | api-contract | 契约驱动、降级策略、上下游通知机制完整 |
 
 ### Orchestrator 参考

@@ -1,4 +1,4 @@
----
+﻿---
 name: insight-jtbd
 description: 当需要从用户反馈和行为数据中提取功能性、情感性、社会性三层Job时使用。JTBD结构化分析，通过模式匹配与语义推断识别用户真正想完成的任务。关键词：JTBD、Jobs-to-be-Done、用户任务、功能诉求、情感诉求、社会诉求、用户真正想要什么、用户目的、雇用产品。
 metadata:
@@ -267,8 +267,7 @@ metadata:
 | voice-analysis.json + behavior-analysis.json | 用户提供用户反馈文本 → 直接提取JTBD | 整体置信度降低，frequency为估算值 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版JTBD提取 | 输出为轻量版，仅含Functional Job，Emotional/Social Job标注"待补充" |
 
-数据获取说明：
-- 本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：
   1. 直接粘贴用户反馈文本
   2. 上传voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径

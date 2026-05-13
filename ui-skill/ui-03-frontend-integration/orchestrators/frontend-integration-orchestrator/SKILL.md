@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "orchestrator"
-  version: "4.1"
+  version: "5.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "前后端联调"
@@ -60,20 +60,20 @@ metadata:
 ## Pipeline
 
 ```yaml
-post_pipeline:
-  - action: stage-summary
-    output: output/phase-reports/ui/frontend-integration-orchestrator.md
-
 pipeline:
-  - stage: api-contract-consume
-    parallel: true
-    gate: 100%接口有类型定义 + 100%接口有Mock数据 + 错误处理覆盖401/403/500
-  - stage: frontend-build-deploy
-    parallel: true
-    gate: 构建成功 + CI流水线通过
-  - stage: frontend-performance
-    depends_on: [api-contract-consume, frontend-build-deploy]
-    gate: LCP≤2.5s + 首屏JS≤200KB
+  post_pipeline:
+    - action: stage-summary
+      output: output/phase-reports/ui/frontend-integration-orchestrator.md
+  stages:
+    - id: api-contract-consume
+      name: API契约消费
+      depends_on: []
+    - id: frontend-build-deploy
+      name: 构建部署
+      depends_on: []
+    - id: frontend-performance
+      name: 性能优化
+      depends_on: [api-contract-consume, frontend-build-deploy]
 ```
 
 ## 阶段执行计划
@@ -88,7 +88,8 @@ Skill: api-contract-consume
   API契约文档: output/backend-api-design/api-contract/openapi.yaml
   页面数据需求: output/ui-frontend/page-assembly/
   目标框架: 用户提供
-  设计令牌: output/ui-design-system/design-token/tokens.json（可选）
+  设计令牌: output/ui-design-system/design-system/tokens.json（可选）
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend-integration/api-contract-consume/
 验证: 100%接口有类型定义 + 100%接口有Mock数据 + 错误处理覆盖401/403/500
 模式: 🤖
@@ -104,6 +105,7 @@ Skill: frontend-build-deploy
   项目信息: 用户提供
   部署目标: 用户提供
   环境配置: 用户提供（可选）
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend-integration/frontend-build-deploy/
 验证: 构建成功 + CI流水线通过
 模式: 🤖
@@ -119,6 +121,7 @@ Skill: frontend-performance
   前端代码: output/ui-frontend/page-assembly/ / output/ui-frontend/ui-component-gen/
   构建产物: output/ui-frontend-integration/frontend-build-deploy/
   性能数据: 用户提供（可选）
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend-integration/frontend-performance/
 验证: LCP≤2.5s + 首屏JS≤200KB
 模式: 🤖
@@ -172,7 +175,8 @@ Skill: frontend-performance
 
 ## 变更记录
 
-- v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，识别api-contract-consume与frontend-build-deploy可并行执行
+- v5.0: Pipeline格式对齐pm-skill规范；api-contract-consume与frontend-build-deploy标记为可并行（depends_on: []）；输入路径更新为合并后的design-system路径
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，识别api-contract-consume与frontend-build-deploy可并行执行
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加命令式调度指令
 - v1.0: 初始版本

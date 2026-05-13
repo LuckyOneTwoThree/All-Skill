@@ -36,7 +36,7 @@ metadata:
 | IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
 | User Flow | JSON | 是 | output/pm-design/design-userflow/userflow.json | Pipeline 10输出的用户流程 |
 | 设计系统规范 | JSON/object | ○ | 用户提供 | 设计系统组件和规范定义 |
-| 设计令牌 | JSON | ○ | output/pm-design/design-token/tokens.json | 设计变量定义，用于设计规范一致性检查 |
+| 设计令牌 | JSON | ○ | output/ui-design-system/design-system/design-system.json | 设计变量定义（tokens字段），用于设计规范一致性检查 |
 
 ## 执行步骤
 
@@ -203,8 +203,7 @@ metadata:
 | 组件规格变更 | design-handoff-spec | 标记组件变更，触发交接文档更新 |
 | 设计规范合规性变更 | design-handoff-spec | 标记合规性变更，触发交接文档更新 |
 
-数据获取说明：
-- 本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：
   1. 直接描述功能、页面结构和交互流程
   2. 上传ia_proposals.json / userflow.json / 设计规范文件
   3. 提供数据文件路径
