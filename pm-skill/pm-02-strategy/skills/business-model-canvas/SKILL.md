@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# ��商业模式画布自动生成
+# 商业模式画布自动生成
 
 ## 核心原则
 
@@ -34,8 +34,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| product_context | JSON | 是 | user-research-user-modeling / opportunity-brief | 探索阶段输出：用户画像、问题陈述、机会简报 |
-| market_data | JSON | 是 | market-competitor-intel | 市场数据：竞品商业模式、市场规模、行业基准 |
+| product_context | JSON | 是 | user-research-user-modeling / opportunity-definition | 探索阶段输出：用户画像、问题陈述、机会定义 |
+| market_data | JSON | 是 | market-competitor-analysis | 市场数据：竞品商业模式、市场规模、行业基准 |
 
 ### 必需输入
 
@@ -44,7 +44,7 @@ metadata:
 {
   "persona_summary": "目标用户画像摘要，包含用户特征、需求、痛点",
   "problem_statement": "用户问题陈述，明确要解决的核心问题",
-  "opportunity_brief": "商业机会简报，包含市场规模、机会描述"
+  "opportunity_definition": "商业机会定义，包含市场规模、机会描述"
 }
 ```
 
@@ -485,13 +485,13 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| persona.json / opportunity-brief.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，置信度降低 |
+| persona.json / opportunity-definition.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，置信度降低 |
 | exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块置信度降低，假设条目增多 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度显著降低，大部分内容为假设推断 |
 
 ## 数据获取说明`n本Skill需要探索阶段输出数据（Persona、机会简报等），请通过以下方式之一提供：
   1. 直接描述产品概念、目标用户和价值主张
-  2. 上传persona.json / opportunity-brief.json等文件
+  2. 上传persona.json / opportunity-definition.json等文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
 
@@ -504,8 +504,8 @@ metadata:
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | persona.json用户画像更新 | 客户细分、客户关系模块需重新填充 | 重新执行Step 1和Step 7，标注变更来源 |
-| opportunity-brief机会简报更新 | 价值主张、收入模式可能需调整 | 重新评估价值主张优先级，检查收入模式匹配度 |
-| competitor-intel竞品数据更新 | 价值主张差异化、收入模式定价参考 | 重新执行Step 2和Step 3，更新竞品对标数据 |
+| opportunity-definition机会定义更新 | 价值主张、收入模式可能需调整 | 重新评估价值主张优先级，检查收入模式匹配度 |
+| competitor-analysis竞品数据更新 | 价值主张差异化、收入模式定价参考 | 重新执行Step 2和Step 3，更新竞品对标数据 |
 | 市场规模数据变更 | 收入预期和成本结构 | 重新计算单位经济指标，更新市场规模假设 |
 
 ### 下游通知机制表
@@ -513,7 +513,7 @@ metadata:
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
 | 客户细分调整 | business-value-fit、business-pricing | 输出文件版本号+变更摘要 |
-| 价值主张变更 | business-value-fit、positioning-statement | 输出文件版本号+变更摘要 |
+| 价值主张变更 | business-value-fit、positioning-strategy | 输出文件版本号+变更摘要 |
 | 收入模式变更 | business-pricing | 输出文件版本号+变更摘要 |
 | 成本结构变更 | business-pricing、business-strategy-report | 输出文件版本号+变更摘要 |
 

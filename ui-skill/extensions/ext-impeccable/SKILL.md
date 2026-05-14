@@ -13,13 +13,29 @@ Designs and iterates production-grade frontend interfaces. Real working code, co
 
 **{SKILL_DIR}** 表示 ext-impeccable Skill 所在目录的绝对路径，在执行脚本时替换为实际路径。
 
-Before any design work or file edits:
+Before any design work or file edits, load project context. There are two modes:
+
+### Mode A: Full Setup (default)
+
+When PRODUCT.md/DESIGN.md already exist in the project (typical for page-builder and production-ready calls):
 
 1. Load context (PRODUCT.md / DESIGN.md) via the loader script.
 2. Identify the register and load the matching register reference (brand.md or product.md).
 3. **If the user invoked a sub-command (e.g. `craft`, `shape`, `audit`), load its reference file too.** This is non-negotiable: `craft` without `craft.md` loaded means you'll skip the shape-and-confirm step the user expects.
 
-Skipping these produces generic output that ignores the project.
+### Mode B: Inline Context (PRODUCT.md/DESIGN.md not yet generated)
+
+When a core Skill (project-init Step 1-2) passes inline context because PRODUCT.md/DESIGN.md haven't been generated yet:
+
+1. **Skip `load-context.mjs` entirely.** Do NOT run the loader script.
+2. **Do NOT trigger `teach`.** The calling Skill will generate PRODUCT.md/DESIGN.md later.
+3. Consume the inline context directly. It contains: register (brand/product), product name, product positioning, brand spec, current step output, target language.
+4. Load the register reference matching the inline context's register field (brand.md or product.md).
+5. If a sub-command was specified, load its reference file as usual.
+
+**How to detect Mode B**: The calling Skill will explicitly state `跳过 Setup，使用内联上下文` (or equivalent English: `Skip Setup, use inline context`) in the input. If you see this directive, enter Mode B immediately without attempting load-context.mjs.
+
+Skipping context entirely (neither Mode A nor Mode B) produces generic output that ignores the project.
 
 ### 1. Context gathering
 

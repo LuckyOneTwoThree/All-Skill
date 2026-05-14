@@ -34,6 +34,12 @@ Skill: ui-orchestrator
 | Token引用率 | page-builder 内建检查 |
 | 组件可访问性 | page-builder 内建ARIA |
 | 状态机完整性 | page-builder 内建校验 |
+| 视觉节奏遵循 | page-builder 美学验证检查 |
+| visual_direction一致性 | page-builder 美学验证检查 |
+| 品牌色占比 | page-builder 美学验证检查 |
+| 排版层级跳跃 | page-builder 美学验证检查 |
+| 留白节奏 | page-builder 美学验证检查 |
+| 设计品味 | page-builder 必经 audit/critique |
 | 单元测试 | production-ready 覆盖 |
 | E2E测试 | production-ready 覆盖 |
 | API联调 | api-integration 覆盖 |
@@ -41,7 +47,7 @@ Skill: ui-orchestrator
 
 ### 部署方式
 
-本目录的嵌套结构（`ui-0X-xxx/skills/`）仅用于**人工浏览和管理**。Trae 按**单个 SKILL.md** 递归扫描识别 Skill，`name` 字段必须匹配直接父目录名。
+本目录的模块结构（`ui-0X-xxx/`）仅用于**人工浏览和管理**。Trae 按**单个 SKILL.md** 递归扫描识别 Skill，`name` 字段必须匹配直接父目录名。
 
 实际使用时，需将所有最小 Skill 单元**扁平化**放入 `.trae/skills/` 下：
 
@@ -69,7 +75,7 @@ Skill: ui-orchestrator
 3. **按需部署**：只复制当前项目阶段需要的 Skill 文件夹
 4. **触发使用**：在对话中描述需求，AI 自动匹配对应 Skill
 
-> ⚠️ 部署时只需复制最内层的 `{skill-name}/` 文件夹（含 SKILL.md），不需要保留外层的 `ui-0X-xxx/`、`skills/` 目录结构。
+> ⚠️ 部署时只需复制最内层的 `{skill-name}/` 文件夹（含 SKILL.md），不需要保留外层的 `ui-0X-xxx/` 目录结构。
 
 ## 目录结构
 
@@ -77,18 +83,13 @@ Skill: ui-orchestrator
 ui-skill/
 ├── orchestrators/                  顶层编排器（统一入口）
 │   └── ui-orchestrator/            UI总指挥（按需跳过路由）
-├── ui-01-project-init/             模块1：项目初始化（脚手架+设计系统+视觉风格）
-│   └── skills/
-│       └── project-init/           项目初始化一体化（脚手架+设计令牌+视觉风格+文档）
-├── ui-02-page-builder/             模块2：页面构建（组件+页面+审查，设计即实现）
-│   └── skills/
-│       └── page-builder/           页面构建一体化（组件生成+页面组装+视觉节奏+质量门禁）
-├── ui-03-api-integration/          模块3：API集成（契约驱动联调）
-│   └── skills/
-│       └── api-integration/        API契约消费一体化（类型/Mock/Hook）
-├── ui-04-production-ready/         模块4：生产就绪（测试+构建+性能，自动化保障上线）
-│   └── skills/
-│       └── production-ready/       生产就绪一体化（测试+构建部署+性能优化）
+├── ui-01-design-system/            模块1：设计系统（脚手架+设计系统+视觉风格）
+│   └── project-init/               项目初始化一体化（脚手架+设计令牌+视觉风格+文档）
+├── ui-02-ui-frontend/              模块2：UI前端（组件+页面+审查，设计即实现）
+│   └── page-builder/               页面构建一体化（组件生成+页面组装+视觉节奏+质量门禁）
+├── ui-03-frontend-integration/     模块3：前端集成（API联调+生产就绪）
+│   ├── api-integration/            API契约消费一体化（类型/Mock/Hook）
+│   └── production-ready/           生产就绪一体化（测试+构建部署+性能优化）
 └── extensions/                     外部 Skill 适配层（按需获取，ext- 前缀）
     └── README.md
 ```
@@ -129,7 +130,7 @@ UI与前端一体化流程的起点。合并原 project-scaffold 与 design-syst
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
-| project-init | 初始化项目骨架+设计系统+视觉风格，生成PRODUCT.md和DESIGN.md | 项目名称、框架、品牌规范、产品定位、项目目录 | scaffold.json + design-system.json + PRODUCT.md + DESIGN.md + 可运行项目 | 🤖→👤 |
+| project-init | 初始化项目骨架+设计系统+视觉风格，生成PRODUCT.md和DESIGN.md | 项目名称、框架、品牌规范、产品定位、项目目录、PRD(可选)、handoff-spec(可选) | project-init.json（含visual_direction/tokens/component_library/scaffold）+ PRODUCT.md + DESIGN.md + 可运行项目 | 🤖→👤 |
 
 **新增能力**：
 - 视觉风格定义步骤：从品牌基因推导差异化美学方向
@@ -138,12 +139,15 @@ UI与前端一体化流程的起点。合并原 project-scaffold 与 design-syst
 - `DESIGN.md` 生成：设计决策文档，记录视觉风格和设计令牌依据
 
 **阶段卡口**：
+- visual_direction 10维度均有明确定义
+- ext-frontend-design 已调用且输出不含AI同质化特征
+- PRODUCT.md 和 DESIGN.md 已生成且内容非占位符
 - WCAG AA对比度100%达标
-- 组件依赖图无循环
-- 100%组件有文档
-- 进入页面构建前：设计令牌人类已确认，视觉风格人类已确认，组件层级划分人类已确认
+- 令牌文件已写入项目目录
+- npm run dev 启动成功
+- 进入页面构建前：设计令牌人类已确认，视觉风格人类已确认
 
-**人类决策点**：品牌色确认、视觉风格方向确认、组件层级划分、令牌命名规范
+**人类决策点**：品牌色确认、视觉风格方向确认、组件库选择、令牌命名规范
 
 **外部扩展**：`ext-frontend-design`（必调，视觉差异化）、`ext-impeccable`（colorize/typeset/extract）、`ext-ui-ux-pro-max`（数据驱动设计推荐）
 
@@ -153,7 +157,7 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
-| page-builder | 基于设计系统生成组件+组装页面+视觉节奏设计+内建质量审查 | 组件意图、页面需求、设计令牌、组件库 | 组件代码+页面代码+路由配置+质量报告 | 🤖→👤 |
+| page-builder | 基于设计系统生成组件+组装页面+视觉节奏设计+内建质量审查 | 组件意图、页面需求、设计令牌、组件库、PRD(可选)、路由结构(可选)、原型规格(可选)、userflow(可选)、interaction-spec(可选) | pages.json（含pages/components/quality_report/visual_direction）+ 组件代码 + 页面代码 | 🤖→👤 |
 
 **新增能力**：
 - 视觉节奏设计：在页面组装阶段引入视觉节奏规划，确保页面层次感和信息引导
@@ -164,9 +168,10 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 - 状态机无死锁
 - 组件树层级≤4层
 - P0问题=0
-- 进入API集成前：核心流程可运行，P0问题全部修复
+- 美学验证通过 + audit设计品味评分≥80分
+- 进入API集成前：P0问题全部修复
 
-**人类决策点**：组件方案确认（含交互行为）、页面布局确认、视觉节奏确认、P1问题处理
+**人类决策点**：页面布局确认、组件方案确认（含交互行为）、P1问题处理
 
 **外部扩展**：`ext-interaction-design`（交互动效模式）、`ext-impeccable`（shape/animate/bolder/quieter/delight/harden/polish/layout/adapt/clarify/onboard/distill/audit/critique）、`ext-frontend-design`（组件视觉差异化）、`ext-ui-ux-pro-max`（落地页/仪表盘数据推荐）
 
@@ -193,12 +198,12 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 | production-ready | 自动生成测试+构建配置+性能优化，确保产品可上线 | 项目信息、部署目标、性能数据 | 测试代码+覆盖率报告+构建配置+CI/CD+优化方案 | 🤖 |
 
 **阶段卡口**：
-- 核心流程E2E测试100%通过
-- 构建成功+CI流水线通过
+- 核心用户流程E2E测试100%通过
+- 构建成功
 - LCP≤2.5s，首屏JS≤200KB
 - P0性能问题=0
 
-**人类决策点**：测试策略确认、部署目标选择、性能预算调整
+**人类决策点**：部署目标选择、性能预算调整
 
 ## 输出路径
 
@@ -219,11 +224,12 @@ Skill 执行结果采用**双输出模式**：
 ├── DESIGN.md                         ← project-init 写入
 └── output/                           ← 元数据文件（供下游 Skill 消费）
     ├── ui-project-init/
-    │   ├── scaffold/
-    │   └── design-system/
-    ├── ui-page-builder/
-    ├── ui-api-integration/
-    └── ui-production-ready/
+    │   └── project-init/
+    ├── ui-frontend/
+    │   └── page-builder/
+    └── ui-frontend-integration/
+        ├── api-integration/
+        └── production-ready/
 ```
 
 output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各项目产出互不干扰。代码文件直接写入项目目录，每个 Skill 执行后 `npm run dev` 可验证最新产出。
@@ -281,3 +287,39 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 - **性能预算卡口**：写入CI，超标自动拦截
 - **核心精简+外部扩展**：核心流程不拉长，专业能力按需接入
 - **代码即产出**：代码直接写入可运行项目，不浪费生成结果
+
+## 版本兼容性协议
+
+各 Skill 独立版本化，上下游 Skill 之间通过输出 Schema 契约耦合。版本变更时遵循以下规则：
+
+### 版本号规则
+
+格式：`MAJOR.MINOR`（无 PATCH，因为 Skill 是方法论而非代码库）
+
+| 变更类型 | 版本变更 | 示例 |
+|----------|---------|------|
+| 输出 Schema 新增字段（向后兼容） | MINOR+1 | project-init 1.2→1.3 |
+| 输出 Schema 删除/重命名字段（破坏兼容） | MAJOR+1 | project-init 1.x→2.0 |
+| 输入新增可选字段 | MINOR+1 | page-builder 1.2→1.3 |
+| 输入新增必填字段 | MAJOR+1 | page-builder 1.x→2.0 |
+| 内部逻辑调整（不影响契约） | 不变 | — |
+
+### 兼容性检查
+
+编排器在调用子 Skill 前应检查版本兼容性：
+
+| 上游 Skill 版本 | 下游 Skill 版本 | 兼容性 |
+|----------------|----------------|--------|
+| 同 MAJOR | 同或更高 MINOR | ✅ 兼容 |
+| 同 MAJOR | 更低 MINOR | ⚠️ 可能缺失新字段，下游应有降级策略 |
+| 不同 MAJOR | 任意 | ❌ 不兼容，需人工确认 |
+
+### 当前版本矩阵
+
+| Skill | 版本 | 输出 Schema 版本 |
+|-------|------|----------------|
+| ui-orchestrator | 3.3 | — |
+| project-init | 1.3 | visual_direction v1.1（含 minLength/minItems 约束） |
+| page-builder | 1.3 | pages.json v1.1（含 api_integration_skipped） |
+| api-integration | 1.1 | api-integration.json v1.0 |
+| production-ready | 1.1 | production-ready.json v1.0 |

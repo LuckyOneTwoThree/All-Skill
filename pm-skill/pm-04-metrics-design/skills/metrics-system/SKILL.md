@@ -665,10 +665,10 @@ THEN 标记为「不可操作」虚荣指标
 
 | 指标变更类型 | 通知范围 | 通知方式 |
 |-------------|----------|----------|
-| 北极星指标变更 | tracking-plan、metrics-dashboard、monitoring-system | 标记核心指标变更，触发全链路更新 |
+| 北极星指标变更 | tracking-plan、metrics-dashboard、monitoring-pipeline | 标记核心指标变更，触发全链路更新 |
 | L1/L2指标增删 | tracking-plan、metrics-dashboard | 标记指标增删，触发埋点和看板更新 |
 | 行动指标变更 | tracking-plan | 标记行动指标变更，触发埋点更新 |
-| 指标定义修改 | tracking-plan、metrics-dashboard、monitoring-system | 标记定义变更，触发相关Skill重新评估 |
+| 指标定义修改 | tracking-plan、metrics-dashboard、monitoring-pipeline | 标记定义变更，触发相关Skill重新评估 |
 
 ---
 

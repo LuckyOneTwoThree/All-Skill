@@ -1,11 +1,11 @@
-﻿---
+---
 name: design-ia
 description: 当需要设计产品信息架构时使用。信息架构自动设计，从PRD自动提取内容、进行语义聚类、推荐导航模式、模拟卡片分类、生成IA候选方案。适用于产品信息架构重构或新功能导航设计。关键词：信息架构、IA设计、导航设计、卡片分类、内容组织、导航梳理、内容分类。
 metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "2.1"
+  version: "3.0"
   domain_tags: ["互联网", "内容平台", "通用"]
   trigger_examples:
     - "网站导航怎么组织"
@@ -59,16 +59,16 @@ metadata:
 - 语义相似度计算
 - 聚类结果生成
 
-### Step 3: 导航模式推荐
+### Step 3: 导航需求定义
 
-根据内容特点和用户场景，推荐导航模式：
+根据内容特点和用户场景，定义导航需求（不定义具体导航模式，由 UI Skill 决定实现方式）：
 
-| 内容特点 | 推荐导航模式 |
-|----------|--------------|
-| 扁平结构 | Tab导航 |
-| 层级分明 | 侧边栏导航 |
-| 功能导向 | 菜单导航 |
-| 内容丰富 | 浏览+搜索组合 |
+| 内容特点 | 导航需求 |
+|----------|---------|
+| 扁平结构 | 3-5个同级入口需同时可见 |
+| 层级分明 | 层级深度≤3，核心功能2次点击可达 |
+| 功能导向 | 核心功能入口需常驻可见 |
+| 内容丰富 | 需支持浏览+搜索组合 |
 
 ### Step 4: 卡片分类模拟
 
@@ -101,7 +101,7 @@ AI模拟开放式卡片分类测试：
     {
       "name": "方案A：功能导向型",
       "structure": {...},
-      "navigation_pattern": "side_menu",
+      "navigation_needs": "4个同级模块需快速切换，层级深度≤2",
       "routes": [
         { "path": "/dashboard", "page": "仪表盘", "depth": 1 },
         { "path": "/courses", "page": "课程列表", "depth": 1 },
@@ -135,7 +135,7 @@ AI模拟开放式卡片分类测试：
 |--------|------|------------|
 | 内容清单完整性 | 覆盖PRD所有功能点 | 补充缺失功能点，标注"功能覆盖缺失" |
 | 分类合理性 | 符合米勒定律（每类3-7项） | 重新聚类，拆分过大类或合并过小类 |
-| 导航模式推荐 | 有明确推荐理由且与内容特点匹配 | 补充推荐理由，重新评估导航模式 |
+| 导航需求定义 | 有明确导航需求且与内容特点匹配 | 补充导航需求描述，重新评估 |
 | 验证节点标注 | 所有关键分类节点已标注需用户验证 | 补充缺失的验证标注，升级为人工审核 |
 
 ---
@@ -156,7 +156,7 @@ AI模拟开放式卡片分类测试：
 | ia_proposals | array | 是 | IA候选方案列表，至少2个 |
 | ia_proposals[].name | string | 是 | 方案名称 |
 | ia_proposals[].structure | object | 是 | 层级结构定义 |
-| ia_proposals[].navigation_pattern | string | 是 | 导航模式选择 |
+| ia_proposals[].navigation_needs | string | 是 | 导航需求描述（不定义具体导航模式） |
 | ia_proposals[].routes | array | 是 | 路由列表 |
 | ia_proposals[].routes[].path | string | 是 | 路由路径 |
 | ia_proposals[].routes[].page | string | 是 | 页面名称 |
@@ -181,7 +181,7 @@ AI模拟开放式卡片分类测试：
 | IA变更类型 | 通知范围 | 通知方式 |
 |-----------|----------|----------|
 | 路由结构变更 | design-userflow、design-prototype、design-handoff-spec | 标记路由变更，触发用户流程和原型重新设计 |
-| 导航模式变更 | design-prototype、interaction-spec | 标记导航变更，触发原型和交互规范更新 |
+| 导航需求变更 | design-prototype、interaction-spec | 标记导航需求变更，触发原型和交互规范更新 |
 | 层级深度变更 | design-userflow、design-handoff-spec | 标记层级变更，触发流程和交接文档更新 |
 | 分类节点变更 | design-userflow、design-prototype | 标记分类变更，触发流程和原型更新 |
 

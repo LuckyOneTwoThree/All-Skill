@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-okr
 description: 当需要制定季度/年度OKR、目标分解、绩效考核标准时使用。OKR自动生成。从战略方向生成目标与关键结果，包括Objective生成、Key Results设计、可行性评估和OKR对齐检查。关键词：OKR、目标管理、关键结果、目标分解、OKR对齐、定目标、目标拆解。
 metadata:
@@ -29,7 +29,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| SWOT战略方向 | JSON | 是 | output/pm-strategy/planning-swot/swot.json | SO/ST/WO/WT战略方向 |
+| SWOT战略方向 | JSON | 是 | output/pm-strategy/strategic-analysis/strategic-analysis.json | SO/ST/WO/WT战略方向 |
 | 北极星指标 | JSON | 是 | output/pm-strategy/planning-north-star/north-star.json | 北极星指标及下钻指标 |
 | BMC商业模式画布 | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、收入来源 |
 | 业务现状数据 | JSON | ○ | 用户提供 | 当前业务指标基线 |
@@ -182,16 +182,16 @@ okr_candidates:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| swot.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏SWOT数据支撑，O与战略方向对齐度可能不足 |
+| strategic-analysis.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏战略分析数据支撑，O与战略方向对齐度可能不足 |
 | north-star.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏北极星指标对齐，KR可能与核心指标脱节 |
 | bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏BMC数据，OKR与商业模型关联度可能偏弱 |
-| swot.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 整体置信度降低，OKR缺乏战略和指标锚定 |
+| strategic-analysis.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 整体置信度降低，OKR缺乏战略和指标锚定 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 | 整体置信度显著降低，OKR仅为通用目标参考 |
 | 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，KR目标值缺乏参照 |
 
-## 数据获取说明`n本Skill需要SWOT、北极星指标和BMC数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要战略分析、北极星指标和BMC数据，请通过以下方式之一提供：
   1. 直接描述业务目标和关键结果预期
-  2. 上传swot.json / north-star.json / bmc.json文件
+  2. 上传strategic-analysis.json / north-star.json / bmc.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
 
@@ -203,7 +203,7 @@ okr_candidates:
 
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
-| swot.json战略方向调整 | Objective生成需重新对齐 | 重新执行Step 1，更新O候选 |
+| strategic-analysis.json战略方向调整 | Objective生成需重新对齐 | 重新执行Step 1，更新O候选 |
 | north-star.json北极星变更 | KR需与北极星重新对齐 | 重新执行Step 2，更新KR和关联关系 |
 | bmc.json商业模式变更 | OKR与商业模型关联 | 重新评估OKR与收入/成本结构对齐 |
 

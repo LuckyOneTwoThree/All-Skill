@@ -1,11 +1,11 @@
 ---
 name: insight-orchestrator
-description: 当需要执行完整的需求分析流程时使用。需求洞察指挥官，按阶段调度子Skill执行，包括insight-jtbd、insight-requirement-layers、insight-5whys、insight-kano、insight-priority-scoring。关键词：需求分析流程、需求洞察编排、需求优先级全流程、JTBD、5Whys、KANO、优先级评分、分析需求、挖掘需求、用户需求、需求排序。
+description: 当需要执行完整的需求分析流程时使用。需求洞察指挥官，调度insight-analysis完成JTBD、需求分层、5Whys、KANO分类和优先级评分。关键词：需求分析流程、需求洞察编排、需求优先级全流程、JTBD、5Whys、KANO、优先级评分、分析需求、挖掘需求、用户需求、需求排序。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
   type: "orchestrator"
-  version: "7.1"
+  version: "8.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我分析一下用户需求"
@@ -57,7 +57,7 @@ metadata:
 
 ```yaml
 pipeline: insight-orchestrator
-version: 7.0
+version: 8.0
 
 post_pipeline:
   - action: stage-summary
@@ -65,119 +65,34 @@ post_pipeline:
 
 stages:
   - id: phase-1
-    name: "并行洞察"
-    parallel: true
-    skills:
-      - insight-jtbd
-      - insight-requirement-layers
+    name: "需求洞察分析"
+    skills: [insight-analysis]
     gate:
-      condition: "jtbd.json + requirement-layers.json 均已生成且验证通过"
-      fail_action: "补充输入数据或检查子Skill执行结果"
-
-  - id: phase-2
-    name: "根因深挖"
-    depends_on: [phase-1]
-    skills: [insight-5whys]
-    gate:
-      condition: "chains和root_cause字段非空"
-      fail_action: "检查输入数据是否充分"
-
-  - id: phase-3
-    name: "需求分类"
-    depends_on: [phase-1]
-    skills: [insight-kano]
-    gate:
-      condition: "kano_classification字段非空，边界情况已标注"
-      fail_action: "边界情况升级人类判定"
-
-  - id: phase-4
-    name: "优先级评分"
-    depends_on: [phase-1, phase-2, phase-3]
-    skills: [insight-priority-scoring]
-    gate:
-      condition: "priority_list和total_score字段非空，score_confidence已标注"
-      fail_action: "优先级权重需人类确认"
+      condition: "insight-analysis.json已生成，JTBD三层Job已提取，需求三层已拆解，5Whys根因已定位，KANO分类完成，优先级评分完成"
+      fail_action: "按子步骤失败原因分别处理：JTBD缺失补充数据、5Whys根因为空标注降级、KANO边界情况升级人类、优先级权重需人类确认"
 ```
 
 ## 阶段执行计划
 
-### 阶段1：并行洞察
+### 阶段1：需求洞察分析
 
-**并行调用** `insight-jtbd` + `insight-requirement-layers`
-
-#### 调用 insight-jtbd
+#### 调用 insight-analysis
 
 ```
-Skill: insight-jtbd
-输入:
-  user_feedback: 用户提供 或 output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-  behavior_data: 用户提供 或 output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
-输出: output/pm-discovery/insight-jtbd/jtbd.json
-验证: jobs数组非空，三层Job（functional/emotional/social）均已提取
-模式: 🤖→👤
-```
-
-#### 调用 insight-requirement-layers
-
-```
-Skill: insight-requirement-layers
-输入:
-  requirements: 用户提供 或 output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-输出: output/pm-discovery/insight-requirement-layers/requirement-layers.json
-验证: requirement_layers数组非空，三层（surface/behavioral/essential）均已拆解
-模式: 🤖→👤
-```
-
-⏸ **阶段卡口**：`jtbd.json` + `requirement-layers.json` 均已生成且验证通过 → 未通过：补充输入数据或检查子Skill执行结果
-
-### 阶段2：根因深挖
-
-**顺序调用** `insight-5whys`（依赖阶段1的 jtbd 输出）
-
-```
-Skill: insight-5whys
-输入:
-  jobs: output/pm-discovery/insight-jtbd/jtbd.json
-输出: output/pm-discovery/insight-5whys/5whys.json
-验证: chains和root_cause字段非空，actionable_fix含effort/impact
-模式: 🤖→👤
-```
-
-⏸ **阶段卡口**：chains和root_cause字段非空 → 未通过：检查输入数据是否充分
-
-### 阶段3：需求分类
-
-**顺序调用** `insight-kano`（依赖阶段1的 requirement-layers 输出）
-
-```
-Skill: insight-kano
+Skill: insight-analysis
 输入:
   voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-  requirement_layers: output/pm-discovery/insight-requirement-layers/requirement-layers.json
-输出: output/pm-discovery/insight-kano/kano.json
-验证: kano_classification字段非空，边界情况已标注
-模式: 🤖→👤
-```
-
-⏸ **阶段卡口**：kano_classification字段非空，边界情况已标注 → 未通过：边界情况升级人类判定
-
-### 阶段4：优先级评分
-
-**顺序调用** `insight-priority-scoring`（汇聚阶段1-3全部输出）
-
-```
-Skill: insight-priority-scoring
-输入:
-  requirement_layers: output/pm-discovery/insight-requirement-layers/requirement-layers.json
-  kano: output/pm-discovery/insight-kano/kano.json
-  jtbd: output/pm-discovery/insight-jtbd/jtbd.json
-  whys: output/pm-discovery/insight-5whys/5whys.json
-输出: output/pm-discovery/insight-priority-scoring/priority-scoring.json
-验证: priority_list和total_score字段非空，score_confidence已标注，base_score和kano_bonus分别计算
+  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
+  requirements: 用户提供 或 output/pm-discovery/user-research-voice-analysis/voice-analysis.json（可选）
+输出: output/pm-discovery/insight-analysis/insight-analysis.json
+验证:
+  - jtbd: jobs数组非空，三层Job（functional/emotional/social）均已提取
+  - requirement_layers: requirement_layers数组非空，三层（surface/behavioral/essential）均已拆解
+  - 5whys: chains和root_cause字段非空，actionable_fix含effort/impact
+  - kano: kano_classification字段非空，边界情况已标注
+  - priority_scoring: priority_list和total_score字段非空，score_confidence已标注，base_score和kano_bonus分别计算
 模式: 🤖→👤（优先级权重需人类确认）
 ```
-
-⏸ **阶段卡口**：priority_list和total_score字段非空，score_confidence已标注 → 未通过：优先级权重需人类确认
 
 ### 阶段总结（post_pipeline）
 
@@ -186,7 +101,7 @@ Skill: insight-priority-scoring
 ```
 动作: 生成阶段总结
 输入:
-  所有子Skill输出: output/pm-discovery/
+  所有子Skill输出: output/pm-discovery/insight-analysis/
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/insight-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
@@ -199,31 +114,31 @@ Skill: insight-priority-scoring
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 阶段1完成 | jtbd.json + requirement-layers.json 均已生成 | 补充输入数据或检查子Skill执行结果 |
-| JTBD三层Job已提取 | functional/emotional/social Job均存在 | 补充数据重新调用insight-jtbd |
-| 阶段2完成 | 5whys.json 已生成，root_cause非空 | 检查输入数据是否充分 |
-| 阶段3完成 | kano.json 已生成，分类完成 | 边界情况升级人类判定 |
-| 阶段4完成 | priority-scoring.json 已生成 | 优先级权重需人类确认 |
+| 阶段1完成 | insight-analysis.json 已生成且5个子步骤验证通过 | 按子步骤失败原因分别处理 |
+| JTBD三层Job已提取 | functional/emotional/social Job均存在 | 补充数据重新调用 |
+| 需求三层已拆解 | surface/behavioral/essential均有内容 | 补充输入数据 |
+| 5Whys根因已定位 | root_cause非空 | 检查输入数据是否充分 |
+| KANO分类完成 | kano_classification非空，边界情况已标注 | 边界情况升级人类判定 |
+| 优先级评分完成 | priority-scoring部分total_score非空 | 优先级权重需人类确认 |
 | 阶段总结已生成 | output/phase-reports/pm-discovery/insight-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| Emotional/Social Job验证 | insight-jtbd完成 | 确认情感和社会诉求推断是否合理 |
-| KANO边界判定 | insight-kano完成 | 确认边界情况的分类归属 |
-| 优先级权重确认 | insight-priority-scoring完成 | 确认评分权重和最终优先级排序 |
+| Emotional/Social Job验证 | insight-analysis Step 1 JTBD完成 | 确认情感和社会诉求推断是否合理 |
+| KANO边界判定 | insight-analysis Step 3 KANO完成 | 确认边界情况的分类归属 |
+| 优先级权重确认 | insight-analysis Step 4 优先级评分完成 | 确认评分权重和最终优先级排序 |
 
 ## 异常处理
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| 阶段1某子Skill失败 | 不阻塞另一子Skill，失败子Skill使用降级方案继续，标注"降级执行" |
-| jtbd.json无Functional Job | 跳过阶段2（5whys依赖Functional Job），直接进入阶段3（kano不依赖jtbd） |
-| 5whys.json根因为空 | 标注"根因未定位"，阶段4中痛点强度维度使用默认值，score_confidence降级 |
-| kano.json全部为边界情况 | 全部升级人类判定，阶段4暂缓执行直到KANO分类确认 |
-| priority-scoring权重未确认 | 输出评分结果但标注"权重待确认"，建议人类确认后再进入下游编排器 |
-| 上游数据全部缺失 | 降级为轻量版流程：用户口述需求 → 调用insight-requirement-layers拆解 → 基于描述评分 |
+| JTBD无Functional Job | 标注"缺乏Functional Job"，跳过5Whys分析（依赖Functional Job），直接进入KANO分类 |
+| 5Whys根因为空 | 标注"根因未定位"，优先级评分中痛点强度维度使用默认值，score_confidence降级 |
+| KANO全部为边界情况 | 全部升级人类判定，优先级评分暂缓执行直到KANO分类确认 |
+| 优先级评分权重未确认 | 输出评分结果但标注"权重待确认"，建议人类确认后再进入下游编排器 |
+| 上游数据全部缺失 | 降级为轻量版流程：用户口述需求 → 调用insight-analysis拆解 → 基于描述评分 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
@@ -232,6 +147,7 @@ Skill: insight-priority-scoring
 - v2.0: description触发词优化
 - v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格
 - v4.0: 统一阶段执行计划为表格格式，移除数据流转图
-- v5.0: 核心原则重写为编排理念；新增异常处理表；阶段2验证条件更新为chains（支持多路径）；阶段4验证条件新增base_score/kano_bonus
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则简化为编排协议
-- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v5.0: 核心原则重写为编排理念；新增异常处理表；阶段4验证条件新增base_score/kano_bonus
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义；阶段执行计划改为调用指令格式
+- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；异常处理新增阶段总结生成失败策略
+- v8.0: 合并insight-jtbd/insight-requirement-layers/insight-5whys/insight-kano/insight-priority-scoring为insight-analysis，Pipeline stages从4阶段简化为1阶段调用

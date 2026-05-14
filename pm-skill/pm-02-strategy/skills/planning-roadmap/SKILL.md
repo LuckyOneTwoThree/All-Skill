@@ -1,4 +1,4 @@
-﻿---
+---
 name: planning-roadmap
 description: 当需要制定产品路线图、季度规划、版本规划、资源分配时使用。路线图自动规划。基于OKR和战略方向，规划Epic级别的产品路线图，进行Now/Next/Later分层和RICE评分排序。关键词：产品路线图、版本规划、RICE评分、季度规划、Epic规划、做什么功能、排期规划。
 metadata:
@@ -30,8 +30,8 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | OKR目标与关键结果 | JSON | 是 | output/pm-strategy/planning-okr/okr.json | Objective与Key Results |
-| SWOT战略方向 | JSON | 是 | output/pm-strategy/planning-swot/swot.json | SO/ST/WO/WT战略方向 |
-| 需求优先级评分 | JSON | ○ | requirements-prioritization | RICE评分结果 |
+| SWOT战略方向 | JSON | 是 | output/pm-strategy/strategic-analysis/strategic-analysis.json | SO/ST/WO/WT战略方向 |
+| 需求优先级评分 | JSON | ○ | 由 design-prd 覆盖 | RICE评分结果 |
 | 资源约束条件 | JSON | ○ | 用户提供 | 团队容量、预算、时间约束 |
 
 ## 执行步骤
@@ -212,15 +212,15 @@ roadmap:
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
 | okr.json | 用户提供目标列表 → 直接规划路线图 | 缺乏OKR结构化数据，战略主题与OKR对齐度不足 |
-| swot.json | 用户提供目标列表 → 直接规划路线图 | 缺乏SWOT数据，战略主题可能偏离战略方向 |
-| 需求优先级数据（priority-scoring / kano） | 用户提供目标列表 → 直接规划路线图 | 缺乏需求优先级数据，RICE评分缺乏输入依据 |
-| okr.json + swot.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图 | 整体置信度降低，Epic排序缺乏数据锚定 |
+| strategic-analysis.json | 用户提供目标列表 → 直接规划路线图 | 缺乏战略分析数据，战略主题可能偏离战略方向 |
+| 需求优先级数据（insight-analysis / design-prd） | 用户提供目标列表 → 直接规划路线图 | 缺乏需求优先级数据，RICE评分缺乏输入依据 |
+| okr.json + strategic-analysis.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图 | 整体置信度降低，Epic排序缺乏数据锚定 |
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 | 整体置信度显著降低，路线图仅为通用规划参考 |
 | 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 | 缺乏资源约束，Epic工作量估算可能不切实际 |
 
-## 数据获取说明`n本Skill需要OKR、SWOT和需求优先级数据，请通过以下方式之一提供：
+## 数据获取说明`n本Skill需要OKR、战略分析和需求优先级数据，请通过以下方式之一提供：
   1. 直接描述业务目标和功能优先级
-  2. 上传okr.json / swot.json / priority-scoring.json文件
+  2. 上传okr.json / strategic-analysis.json / insight-analysis.json文件
   3. 提供数据文件路径
 - AI不负责外部数据采集，仅负责分析
 
@@ -233,13 +233,13 @@ roadmap:
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | okr.json OKR调整 | 战略主题和Epic规划 | 重新执行Step 1-2，更新战略主题和Epic |
-| swot.json SWOT更新 | 战略主题方向 | 重新执行Step 1，更新战略主题 |
+| strategic-analysis.json战略分析更新 | 战略主题方向 | 重新执行Step 1，更新战略主题 |
 | 需求优先级数据变更 | RICE评分和排序 | 重新执行Step 4，更新RICE评分和分层 |
 
 ### 下游通知机制表
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| 战略主题调整 | business-strategy-report、stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
+| 战略主题调整 | business-strategy-report、stakeholder-analysis | 输出文件版本号+变更摘要 |
 | Epic优先级变更 | business-strategy-report | 输出文件版本号+变更摘要 |
-| Now/Next/Later分层变更 | stakeholder-brief | 输出文件版本号+变更摘要 |
+| Now/Next/Later分层变更 | stakeholder-analysis | 输出文件版本号+变更摘要 |

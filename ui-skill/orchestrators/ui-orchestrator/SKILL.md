@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "UI总指挥"
   type: "orchestrator"
-  version: "3.0"
+  version: "3.4"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "做UI"
@@ -34,7 +34,7 @@ project-init → page-builder → [api-integration] → [production-ready]
 |------|-------|---------|---------|
 | 项目初始化与视觉定义 | project-init | 必选 | — |
 | 页面与组件构建 | page-builder | 必选 | — |
-| API集成 | api-integration | 按需 | 无后端 / 静态数据 |
+| API集成 | api-integration | 按需 | 无后端 / 静态数据（page-builder 将自行生成数据层 fallback） |
 | 生产就绪 | production-ready | 按需 | 无需构建部署 |
 
 ## 编排协议
@@ -50,10 +50,61 @@ project-init → page-builder → [api-integration] → [production-ready]
 5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
 6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作
 
+### 断点续执行
+
+每个子 Skill 执行完成后，编排器将执行状态写入检查点文件，支持中断后从断点恢复。
+
+**检查点文件**：`output/checkpoints/ui-orchestrator.json`
+
+**检查点 Schema**：
+```json
+{
+  "type": "object",
+  "required": ["completed_stages", "pending_stages", "skipped_stages", "stage_outputs", "last_updated"],
+  "properties": {
+    "completed_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "已成功完成的阶段ID列表（如 ['project-init', 'page-builder']）"
+    },
+    "pending_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "待执行的阶段ID列表（如 ['api-integration', 'production-ready']）"
+    },
+    "skipped_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "reason": {"type": "string"}
+        }
+      },
+      "description": "跳过的阶段及原因"
+    },
+    "stage_outputs": {
+      "type": "object",
+      "description": "每个已完成阶段的输出文件路径，键为阶段ID，值为输出路径"
+    },
+    "last_updated": {"type": "string", "description": "最后更新时间（ISO 8601）"}
+  }
+}
+```
+
+**续执行规则**：
+1. 编排器启动时，检查 `output/checkpoints/ui-orchestrator.json` 是否存在
+2. 若存在且有 `pending_stages`，从第一个 pending 阶段继续执行，跳过已完成的阶段
+3. 每个阶段完成后立即更新检查点文件（先写文件再推进，确保断电不丢失）
+4. 阶段失败时，将该阶段保留在 `pending_stages` 中，检查点记录失败原因
+5. 全部阶段完成后，检查点文件保留作为执行记录
+
+**手动恢复**：用户可通过删除检查点文件重新全量执行，或手动修改 `pending_stages` 指定从某个阶段恢复。
+
 ### 上下文管理
 
 - 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入 `output/ui/` 目录
+- 详细输出写入各子Skill对应的 `output/` 子目录（output/ui-project-init/、output/ui-frontend/、output/ui-frontend-integration/）
 - 若上下文接近上限，优先保留当前阶段内容和待执行阶段的名称
 
 ### 阶段总结
@@ -98,8 +149,8 @@ pipeline:
 ```
 动作: 收集项目信息
 输入:
-  品牌规范: 用户提供 / output/pm-strategy/positioning-statement/positioning-statements.json
-  产品定位: output/pm-strategy/positioning-statement/positioning-statements.json（可选）
+  品牌规范: 用户提供 / output/pm-strategy/positioning-strategy/positioning-strategy.json
+  产品定位: output/pm-strategy/positioning-strategy/positioning-strategy.json（可选）
   目标平台: 用户提供
   目标语言: 用户提供（默认zh-CN）
   project_name: 用户提供
@@ -131,7 +182,7 @@ Skill: project-init
   组件库偏好: 项目信息收集阶段确定（可选）
   PRD: output/pm-design/design-prd/prd.md（可选）
 输出: output/ui-project-init/ + 代码写入 {project_dir}/ + PRODUCT.md + DESIGN.md
-验证: visual_direction 8个维度均有定义 + ext-frontend-design已调用 + WCAG AA对比度100%达标 + npm run dev启动成功
+验证: visual_direction 10个维度均有定义 + ext-frontend-design已调用 + ext-frontend-design输出已写入visual_bans + WCAG AA对比度100%达标 + PRODUCT.md和DESIGN.md已生成且非占位符 + 令牌文件已写入 + npm run dev启动成功
 模式: 🤖→👤
 ```
 
@@ -151,8 +202,9 @@ Skill: page-builder
   project_dir: 项目信息收集阶段确定
   PRD: output/pm-design/design-prd/prd.md（可选）
   路由结构: output/pm-design/design-ia/ia_proposals.json（可选）
+  交互规范: output/pm-design/design-interaction-spec/interaction_spec.md（可选）
 输出: output/ui-frontend/page-builder/ + 代码写入 {project_dir}/src/
-验证: 内建质量门禁P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式覆盖375px/768px/1024px
+验证: 内建质量门禁P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式覆盖375px/768px/1024px + 美学验证通过 + audit设计品味评分≥75分
 模式: 🤖→👤
 ```
 
@@ -165,7 +217,7 @@ Skill: page-builder
 ```
 Skill: api-integration
 输入:
-  API契约: output/backend-api-design/api-contract/（可选）
+  API契约: output/backend-api-design/api-design/（可选）
   页面数据流: output/ui-frontend/page-builder/pages.json
   目标框架: 项目信息收集阶段确定
   目标语言: 项目信息收集阶段确定
@@ -198,7 +250,7 @@ Skill: production-ready
 ```
 动作: 生成阶段总结
 输入:
-  所有子Skill输出: output/ui/
+  所有子Skill输出: output/ui-project-init/、output/ui-frontend/、output/ui-frontend-integration/
   执行计划: 哪些阶段执行/跳过
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/ui/ui-orchestrator.md
@@ -211,8 +263,8 @@ Skill: production-ready
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 项目信息收集完成 | 必选信息已收集 + 人类确认执行计划 | 补充信息后重新收集 |
-| project-init 完成 | visual_direction 8维度有定义 + WCAG达标 + 项目可运行 | 调整视觉方向或修复令牌 |
-| page-builder 完成 | P0问题=0 + Token引用率100% + WCAG达标 | P0问题必须修复 |
+| project-init 完成 | visual_direction 10维度有定义 + ext-frontend-design输出已写入visual_bans + WCAG达标 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + 项目可运行 | 调整视觉方向或修复令牌 |
+| page-builder 完成 | P0问题=0 + Token引用率100% + WCAG达标 + 美学验证通过 + audit评分≥75分 | P0问题必须修复；美学不达标触发critique闭环 |
 | api-integration 完成 | 100%端点有请求函数 + 类型完整 | 补充缺失端点 |
 | production-ready 完成 | 构建成功 + LCP≤2.5s | 构建失败修复重试；性能不达标优化重测 |
 | 阶段总结已生成 | 6项结构均非空 | 补充缺失项后重新生成 |
@@ -239,6 +291,10 @@ Skill: production-ready
 
 ## 变更记录
 
+- v3.4: PM输入精简（project-init移除handoff-spec；page-builder移除prototype-spec/userflow）；PM→UI职责边界明确化（PM定义产品需求，UI决定实现方式）
+- v3.3: 新增断点续执行机制（检查点文件+续执行规则）；api-integration跳过条件补充page-builder数据层fallback说明
+- v3.2: project-init输入新增handoff-spec；page-builder输入新增userflow和interaction-spec
+- v3.1: 卡口新增美学验证和audit评分要求；目录结构扁平化（移除skills/中间层）
 - v3.0: 精简为1层编排器+4个Skill；取消L1/L2分级改为按需跳过；取消3个子编排器；新增视觉方向定义；ext-frontend-design改为必调
 - v2.1: L2模式移除重复的project-scaffold调用
 - v2.0: L1/L2模式增加project-scaffold；所有子Skill传递project_dir

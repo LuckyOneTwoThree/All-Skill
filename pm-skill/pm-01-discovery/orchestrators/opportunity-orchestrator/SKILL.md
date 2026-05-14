@@ -1,11 +1,11 @@
 ---
 name: opportunity-orchestrator
-description: 当需要执行完整的机会识别与定义流程时使用。机会识别指挥官，调度opportunity-scoring/hmw/problem-statement/brief。关键词：机会识别、机会评分、HMW、Problem Statement、Opportunity Brief、产品机会、机会评估、问题定义。
+description: 当需要执行完整的机会识别与定义流程时使用。机会识别指挥官，调度opportunity-definition完成机会评分、问题陈述、HMW发散和机会简报。关键词：机会识别、机会评分、HMW、Problem Statement、Opportunity Brief、产品机会、机会评估、问题定义。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
   type: "orchestrator"
-  version: "7.1"
+  version: "8.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我评估一下这个产品机会"
@@ -57,7 +57,7 @@ metadata:
 
 ```yaml
 pipeline: opportunity-orchestrator
-version: 7.0
+version: 8.0
 
 post_pipeline:
   - action: stage-summary
@@ -65,109 +65,36 @@ post_pipeline:
 
 stages:
   - id: phase-1
-    name: "机会评分"
-    skills: [opportunity-scoring]
+    name: "机会识别与定义"
+    skills: [opportunity-definition]
     gate:
-      condition: "5个维度均已评分，战略契合度由人类判定"
-      fail_action: "等待人类判定战略契合度"
-
-  - id: phase-2
-    name: "问题定义"
-    depends_on: [phase-1]
-    skills: [opportunity-problem-statement]
-    gate:
-      condition: "5项质量检查全部通过"
-      fail_action: "针对未通过项定向修复重试，3次仍不通过升级人类"
-
-  - id: phase-3
-    name: "HMW发散"
-    depends_on: [phase-2]
-    skills: [opportunity-hmw]
-    gate:
-      condition: "4维度均已覆盖，总计8-12个HMW陈述"
-      fail_action: "补充Problem Statement或用户研究数据"
-
-  - id: phase-4
-    name: "机会简报"
-    depends_on: [phase-1, phase-2, phase-3]
-    skills: [opportunity-brief]
-    gate:
-      condition: "证据摘要完整，关键假设可验证，人类决策项非空"
-      fail_action: "补充上游数据或等待人类决策"
+      condition: "opportunity-definition.json已生成，评分完整，Problem Statement质量检查通过，HMW 4维度覆盖，Brief证据摘要完整"
+      fail_action: "按子步骤失败原因分别处理：评分缺失等人类判定、Problem Statement质量不通过自动重试3次后升级人类、HMW维度不完整补充数据、Brief缺失补充上游数据"
 ```
 
 ## 阶段执行计划
 
-### 阶段1：机会评分
+### 阶段1：机会识别与定义
 
-#### 调用 opportunity-scoring
+#### 调用 opportunity-definition
 
 ```
-Skill: opportunity-scoring
+Skill: opportunity-definition
 输入:
   voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
   behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
   tam_som: output/pm-discovery/market-tam-som/tam-som.json
-  competitor_intel: output/pm-discovery/market-competitor-intel/competitor-intel.json
+  competitor_analysis: output/pm-discovery/market-competitor-analysis/competitor-analysis.json
+  persona: output/pm-discovery/user-research-user-modeling/persona.json（可选）
+  insight_analysis: output/pm-discovery/insight-analysis/insight-analysis.json（可选）
   tech_assessment: 用户提供（可选，技术团队评估）
-输出: output/pm-discovery/opportunity-scoring/opportunity-scoring.json
-验证: 5个维度均已评分，战略契合度标记为needs_human=true，评分依据完整
-模式: 🤖（战略契合度维度👤由人类判定）
-```
-
-### 阶段2：问题定义
-
-#### 调用 opportunity-problem-statement
-
-```
-Skill: opportunity-problem-statement
-输入:
-  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
-  persona: output/pm-discovery/user-research-user-modeling/persona.json
-  jtbd: output/pm-discovery/insight-jtbd/jtbd.json
-  kano: output/pm-discovery/insight-kano/kano.json
-  opportunity_scoring: output/pm-discovery/opportunity-scoring/opportunity-scoring.json（可选）
-输出: output/pm-discovery/opportunity-problem-statement/problem-statement.json
-验证: 5项质量检查全部通过（quality_check.all_passed=true），数据支撑完整
-模式: 🤖→👤
-```
-
-### 阶段3：HMW发散
-
-#### 调用 opportunity-hmw
-
-```
-Skill: opportunity-hmw
-输入:
-  problem_statement: output/pm-discovery/opportunity-problem-statement/problem-statement.json
-  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
-输出: output/pm-discovery/opportunity-hmw/hmw.json
-验证: 4个维度（eliminate_barriers/enhance_experience/create_value/redefine）均已覆盖，总计8-12个HMW陈述
-模式: 🤖→👤
-```
-
-### 阶段4：机会简报
-
-#### 调用 opportunity-brief
-
-```
-Skill: opportunity-brief
-输入:
-  voice_analysis: output/pm-discovery/user-research-voice-analysis/voice-analysis.json
-  behavior_analysis: output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json
-  persona: output/pm-discovery/user-research-user-modeling/persona.json
-  jtbd: output/pm-discovery/insight-jtbd/jtbd.json
-  kano: output/pm-discovery/insight-kano/kano.json
-  tam_som: output/pm-discovery/market-tam-som/tam-som.json
-  competitor_intel: output/pm-discovery/market-competitor-intel/competitor-intel.json
-  opportunity_scoring: output/pm-discovery/opportunity-scoring/opportunity-scoring.json
-  hmw: output/pm-discovery/opportunity-hmw/hmw.json
-  problem_statement: output/pm-discovery/opportunity-problem-statement/problem-statement.json
-输出: output/pm-discovery/opportunity-brief/opportunity-brief.json
-验证: 证据摘要3个子字段均有内容，关键假设已列出可验证性，人类决策项非空，机会评分完整
-模式: 🤖→👤
+输出: output/pm-discovery/opportunity-definition/opportunity-definition.json
+验证:
+  - scoring: 5个维度均已评分，战略契合度标记为needs_human=true，评分依据完整
+  - problem_statement: 5项质量检查全部通过（quality_check.all_passed=true），数据支撑完整
+  - hmw: 4个维度均已覆盖，总计8-12个HMW陈述
+  - brief: 证据摘要3个子字段均有内容，关键假设已列出可验证性，人类决策项非空，机会评分完整
+模式: 🤖→👤（战略契合度维度👤由人类判定，Brief最终决策👤人类审批）
 ```
 
 ### 阶段总结（post_pipeline）
@@ -177,7 +104,7 @@ Skill: opportunity-brief
 ```
 动作: 生成阶段总结
 输入:
-  所有子Skill输出: output/pm-discovery/
+  所有子Skill输出: output/pm-discovery/opportunity-definition/
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/opportunity-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
@@ -190,31 +117,30 @@ Skill: opportunity-brief
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 阶段1完成 | opportunity-scoring.json 已生成 | 补充用户研究/市场/竞品数据或检查子Skill执行结果 |
-| 战略契合度已人类判定 | strategic_fit.needs_human已由人类确认评分 | 等待人类判定战略契合度 |
-| 阶段2完成 | hmw.json 已生成，4维度均已覆盖 | 补充Problem Statement或用户研究数据 |
-| 阶段3完成 | problem-statement.json 已生成，quality_check.all_passed=true | 质量检查不通过则自动重试（最多3次），3次仍不通过升级人类 |
-| Problem Statement质量检查通过 | 5项质量检查全部通过 | 针对未通过项定向修复重试 |
-| 阶段4完成 | opportunity-brief.json 已生成，人类已做最终决策 | 补充上游数据或等待人类决策 |
-| Opportunity Brief人类已决策 | human_decisions_needed中各项已确认 | 等待人类审批决策项 |
+| 阶段1完成 | opportunity-definition.json 已生成且4个子步骤验证通过 | 按子步骤失败原因分别处理 |
+| 战略契合度已人类判定 | scoring中strategic_fit.needs_human已由人类确认评分 | 等待人类判定战略契合度 |
+| Problem Statement质量检查通过 | problem_statement.quality_check.all_passed=true | 质量检查不通过则自动重试（最多3次），3次仍不通过升级人类 |
+| HMW维度覆盖完整 | hmw.dimension_coverage中4个维度均≥1 | 补充Problem Statement或用户研究数据 |
+| Brief证据摘要完整 | brief.evidence_summary的3个子字段均有内容 | 补充上游数据 |
+| Opportunity Brief人类已决策 | brief.human_decisions_needed中各项已确认 | 等待人类审批决策项 |
 | 阶段总结已生成 | output/phase-reports/pm-discovery/opportunity-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 战略契合度判定 | opportunity-scoring完成 | 确认每个机会的战略契合度评分（AI仅提供分析建议，最终得分必须由人类判定） |
-| Problem Statement质量检查 | opportunity-problem-statement质量检查3次不通过 | 人工审核所有尝试版本并决定最终Problem Statement |
-| Opportunity Brief最终决策 | opportunity-brief完成 | 审批机会简报的结论、关键假设验证优先级和推荐下一步方案 |
+| 战略契合度判定 | opportunity-definition Step 1 机会评分完成 | 确认每个机会的战略契合度评分（AI仅提供分析建议，最终得分必须由人类判定） |
+| Problem Statement质量检查 | opportunity-definition Step 2 质量检查3次不通过 | 人工审核所有尝试版本并决定最终Problem Statement |
+| Opportunity Brief最终决策 | opportunity-definition Step 4 机会简报完成 | 审批机会简报的结论、关键假设验证优先级和推荐下一步方案 |
 
 ## 异常处理
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| opportunity-scoring战略契合度未判定 | 暂停进入阶段2，等待人类判定战略契合度评分，其余4个维度评分结果可先输出 |
-| opportunity-hmw某维度未覆盖 | 标注"维度覆盖不完整"，基于已有Problem Statement补充生成该维度HMW，标注"推断补充" |
-| opportunity-problem-statement质量检查3次不通过 | 升级人类仲裁，输出3次尝试版本及未通过项对比，由人类决定最终Problem Statement |
-| opportunity-brief上游数据大量缺失 | 基于已有数据生成Brief，缺失字段标注"数据缺失"，证据摘要和关键假设置信度降级，建议人类补充数据后重新生成 |
+| 机会评分战略契合度未判定 | 暂停Brief生成，等待人类判定战略契合度评分，其余4个维度评分结果可先输出 |
+| Problem Statement质量检查3次不通过 | 升级人类仲裁，输出3次尝试版本及未通过项对比，由人类决定最终Problem Statement |
+| HMW某维度未覆盖 | 标注"维度覆盖不完整"，基于已有Problem Statement补充生成该维度HMW，标注"推断补充" |
+| Brief上游数据大量缺失 | 基于已有数据生成Brief，缺失字段标注"数据缺失"，证据摘要和关键假设置信度降级，建议人类补充数据后重新生成 |
 | 所有上游数据全部缺失 | 降级为轻量版流程：用户口述问题 → 基于描述生成Problem Statement → 基于Problem Statement生成HMW → 输出轻量版Brief，全流程标注"数据缺失" |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
@@ -224,6 +150,7 @@ Skill: opportunity-brief
 - v2.0: description触发词优化
 - v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格和人类决策点表格
 - v4.0: 统一阶段执行计划为表格格式，移除数据流转图
-- v5.0: 核心原则重写为4条编排理念（好机会是定义出来的/评分先于发散/Problem Statement是锚点/人类判定三节点）；移除通用4条执行步骤原则；新增异常处理表（5种异常场景）
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
-- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v5.0: 核心原则重写为4条编排理念；移除通用4条执行步骤原则；新增异常处理表
+- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义；阶段执行计划改为调用指令格式
+- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；异常处理新增阶段总结生成失败策略
+- v8.0: 合并opportunity-scoring/opportunity-problem-statement/opportunity-hmw/opportunity-brief为opportunity-definition，Pipeline stages从4阶段简化为1阶段调用

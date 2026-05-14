@@ -32,34 +32,25 @@
 | user-research-interview-assist | 访谈辅助：生成访谈提纲、记录分析 | 访谈目标/记录 | interview-output.json |
 | user-research-report | 用户研究报告：整合声音分析、行为分析、用户建模和访谈数据，补充研究方法论和行动建议 | 用户研究各输出 | user-research-report.json |
 
-### 需求洞察（5个）
+### 需求洞察（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| insight-jtbd | Jobs-to-be-Done 分析 | 用户研究输出 | jtbd.json |
-| insight-5whys | 5 Whys 根因分析 | 问题描述 | 5whys-result.json |
-| insight-requirement-layers | 需求层次分析（表层/功能/情感/价值观） | 需求描述 | requirement-layers.json |
-| insight-kano | Kano 需求分类（基本/期望/兴奋） | 需求列表 | kano.json |
-| insight-priority-scoring | 需求优先级评分 | 洞察结果 | priority-scoring.json |
+| insight-analysis | 需求洞察分析：整合JTBD、5Whys、需求层次、Kano分类和优先级评分 | 用户研究输出 | insight-analysis.json |
 
-### 市场分析（5个）
+### 市场分析（3个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
 | market-tam-som | 市场规模估算（TAM/SAM/SOM） | 行业数据 | tam-som.json |
 | market-pest | PEST 宏观环境分析 | 行业信息 | pest.json |
-| market-competitor-intel | 竞品情报收集 | 竞品信息 | competitor-intel.json |
-| market-competitor-quadrant | 竞品象限分析 | 竞品情报 | competitor-quadrant.json |
-| market-competitor-report | 竞品分析报告：整合竞品情报和四象限数据，补充SWOT分析、竞争定位图、护城河评估和差异化策略 | 竞品情报+四象限数据 | competitor-report.json |
+| market-competitor-analysis | 竞品分析：整合竞品情报收集、象限分析、SWOT分析、竞争定位图、护城河评估和差异化策略 | 竞品信息 | competitor-analysis.json |
 
-### 机会识别（4个）
+### 机会识别（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| opportunity-scoring | 机会评分排序 | 洞察+市场分析 | opportunity-scoring.json |
-| opportunity-hmw | How Might We 问题重构 | 问题陈述 | hmw.json |
-| opportunity-problem-statement | 问题陈述定义 | 用户研究+洞察 | problem-statement.json |
-| opportunity-brief | 机会简报汇总 | 所有上游输出 | opportunity-brief.json |
+| opportunity-definition | 机会定义：整合机会评分、问题陈述、HMW发散和机会简报 | 洞察+市场分析 | opportunity-definition.json |
 
 ## 执行顺序
 
@@ -74,7 +65,7 @@
 - 用户研究和市场分析可并行
 - 需求洞察依赖用户研究的输出
 - 机会识别依赖洞察和市场分析的输出
-- opportunity-brief 是本模块的最终汇总产出
+- opportunity-definition 是本模块的最终汇总产出
 
 ## 输出路径
 
@@ -85,20 +76,11 @@ output/pm-discovery/
 ├── user-research-user-modeling/
 ├── user-research-interview-assist/
 ├── user-research-report/
-├── insight-jtbd/
-├── insight-5whys/
-├── insight-requirement-layers/
-├── insight-kano/
-├── insight-priority-scoring/
+├── insight-analysis/
 ├── market-tam-som/
 ├── market-pest/
-├── market-competitor-intel/
-├── market-competitor-quadrant/
-├── market-competitor-report/
-├── opportunity-scoring/
-├── opportunity-hmw/
-├── opportunity-problem-statement/
-└── opportunity-brief/
+├── market-competitor-analysis/
+└── opportunity-definition/
 ```
 
 ## 阶段卡口

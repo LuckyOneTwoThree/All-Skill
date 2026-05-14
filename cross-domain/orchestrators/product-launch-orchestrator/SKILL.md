@@ -121,7 +121,7 @@ pipeline:
     gate: 后端审查通过（P0=0）
 
   - stage: delivery
-    skills: [quality-orchestrator, release-orchestrator, retrospective-orchestrator]
+    skills: [monitoring-orchestrator, iteration-orchestrator, agile-orchestrator]
     depends_on: [ui-development, metrics]
     gate: P0问题=0，P1问题≤3 → 灰度发布通过 → 复盘结论确认
 ```
@@ -273,38 +273,38 @@ Skill: ui-orchestrator
 
 ### 阶段9：质量→发布→复盘
 
-#### 调用 quality-orchestrator
+#### 调用 monitoring-orchestrator
 
 ```
-Skill: quality-orchestrator
+Skill: monitoring-orchestrator
 输入:
   集成输出: output/cross-domain/ui-orchestrator/
   指标体系: output/cross-domain/metrics-orchestrator/
-输出: output/cross-domain/quality-orchestrator/
+输出: output/cross-domain/monitoring-orchestrator/
 验证: P0问题=0，P1问题≤3
 模式: 🤖→👤
 ```
 
-#### 调用 release-orchestrator
+#### 调用 iteration-orchestrator
 
 ```
-Skill: release-orchestrator
+Skill: iteration-orchestrator
 输入:
-  质量报告: output/cross-domain/quality-orchestrator/
+  质量报告: output/cross-domain/monitoring-orchestrator/
   集成输出: output/cross-domain/ui-orchestrator/
-输出: output/cross-domain/release-orchestrator/
+输出: output/cross-domain/iteration-orchestrator/
 验证: 灰度发布通过
 模式: 🤖→👤
 ```
 
-#### 调用 retrospective-orchestrator
+#### 调用 agile-orchestrator
 
 ```
-Skill: retrospective-orchestrator
+Skill: agile-orchestrator
 输入:
-  发布产物: output/cross-domain/release-orchestrator/
+  发布产物: output/cross-domain/iteration-orchestrator/
   指标体系: output/cross-domain/metrics-orchestrator/
-输出: output/cross-domain/retrospective-orchestrator/
+输出: output/cross-domain/agile-orchestrator/
 验证: 复盘结论确认
 模式: 🤖→👤
 ```
@@ -352,8 +352,8 @@ Skill: retrospective-orchestrator
 | API契约确认 | api-design-orchestrator完成 | 确认API契约可交付前端 |
 | UI开发确认 | ui-orchestrator完成 | 确认UI开发与集成验证通过 |
 | 前后端冲突裁决 | API契约与前端需求冲突 | 决策API侧改还是前端侧改 |
-| 发布决策 | release-orchestrator灰度完成 | 确认是否全量发布 |
-| 复盘确认 | retrospective-orchestrator完成 | 确认复盘结论和行动项 |
+| 发布决策 | iteration-orchestrator灰度完成 | 确认是否全量发布 |
+| 复盘确认 | agile-orchestrator完成 | 确认复盘结论和行动项 |
 
 ## 异常处理
 

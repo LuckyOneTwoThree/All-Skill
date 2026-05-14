@@ -16,9 +16,9 @@
 | 子模块 | 编排器 | 作用 | 何时调用 |
 |--------|--------|------|----------|
 | 商业模式设计 | business-orchestrator | 设计商业模式画布、验证价值匹配、制定定价方案 | 需要系统化设计商业模式时 |
-| 产品定位与差异化 | positioning-orchestrator | 定义定位陈述、构建价值曲线、评估差异化、做出排他决策 | 需要明确产品在市场中的独特位置时 |
-| 战略规划与路线图 | planning-orchestrator | SWOT分析、行业分析、OKR设定、北极星确认、路线图制定、增长路径选择 | 需要制定战略方向和执行计划时 |
-| Stakeholder对齐 | stakeholder-orchestrator | 绘制Stakeholder地图、编写战略文档、生成战略简报 | 需要对齐各方利益和期望时 |
+| 产品定位与差异化 | positioning-orchestrator | 整合定位陈述、价值曲线、差异化评估和排除策略 | 需要明确产品在市场中的独特位置时 |
+| 战略规划与路线图 | planning-orchestrator | 战略分析、OKR设定、北极星确认、路线图制定 | 需要制定战略方向和执行计划时 |
+| Stakeholder对齐 | stakeholder-orchestrator | 整合利益相关者地图、沟通策略和战略简报 | 需要对齐各方利益和期望时 |
 
 ## Pipeline Skill 清单
 
@@ -31,33 +31,26 @@
 | business-pricing | 生成多个定价方案（成本加成/价值定价/竞争定价） | BMC、竞品情报、价值匹配结果 | pricing.json |
 | business-strategy-report | 商业战略规划报告：整合商业画布、SWOT、OKR、路线图、定位和利益相关者数据，补充战略推演和执行路径 | 商业画布、SWOT、OKR、路线图、定位 | business-strategy-report.json |
 
-### 产品定位与差异化（4个）
+### 产品定位与差异化（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| positioning-statement | 生成定位陈述候选，执行质量检查 | BMC、竞品分析、用户洞察 | positioning-statement.json |
-| positioning-value-curve | 构建价值曲线，量化差异化强度 | 定位陈述、竞品价值曲线 | value-curve.json |
-| positioning-differentiation | 从5个维度评估差异化程度 | 价值曲线、竞品情报 | differentiation.json |
-| positioning-exclusion | 生成排他建议，明确不为谁服务 | 差异化评估、用户研究 | exclusion.json |
+| positioning-strategy | 整合定位陈述、价值曲线、差异化评估和排除策略 | BMC、竞品分析、用户洞察 | positioning-strategy.json |
 
-### 战略规划与路线图（6个）
+### 战略规划与路线图（4个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| planning-swot | SWOT分析，生成SO/ST/WO/WT四种战略方向 | 市场分析、竞品情报、内部资源 | swot.json |
-| planning-porter-five-forces | 波特五力分析，评估行业竞争格局 | 行业数据、竞品情报 | porter-five-forces.json |
+| strategic-analysis | 战略分析，自动选择战略分析框架（SWOT/波特五力/Ansoff矩阵） | 市场分析、竞品情报、内部资源 | strategic-analysis.json |
 | planning-okr | 生成OKR候选，对齐战略方向 | SWOT方向、北极星指标 | okr.json |
 | planning-north-star | 推荐北极星指标候选 | OKR、业务目标 | north-star.json |
 | planning-roadmap | 生成产品路线图，RICE评分排序 | OKR、需求列表、资源约束 | roadmap.json |
-| planning-ansoff | Ansoff增长矩阵分析，选择增长路径 | 市场分析、产品现状 | ansoff.json |
 
-### Stakeholder对齐（3个）
+### Stakeholder对齐（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| stakeholder-map | 绘制Stakeholder地图，评估影响力和利益 | 项目信息、组织架构 | stakeholder-map.json |
-| stakeholder-strategy-doc | 编写战略文档，质量检查 | SWOT、OKR、路线图、定位 | strategy-doc.json |
-| stakeholder-brief | 生成战略简报，可执行性检查 | 战略文档、Stakeholder地图 | stakeholder-brief.json |
+| stakeholder-analysis | 绘制Stakeholder地图、编写战略文档、生成战略简报 | 项目信息、组织架构、SWOT、OKR、路线图、定位 | stakeholder-analysis.json |
 
 ### 产品提案（1个）
 
@@ -81,7 +74,7 @@
 - 商业模式设计和战略规划可并行启动
 - 产品定位与差异化依赖商业模式设计的输出
 - Stakeholder对齐依赖定位和战略规划的输出
-- stakeholder-brief 是本模块的最终汇总产出
+- stakeholder-analysis 是本模块的最终汇总产出
 
 ## 输出路径
 
@@ -91,19 +84,12 @@ output/pm-strategy/
 ├── business-value-fit/
 ├── business-pricing/
 ├── business-strategy-report/
-├── positioning-statement/
-├── positioning-value-curve/
-├── positioning-differentiation/
-├── positioning-exclusion/
-├── planning-swot/
-├── planning-porter-five-forces/
+├── positioning-strategy/
+├── strategic-analysis/
 ├── planning-okr/
 ├── planning-north-star/
 ├── planning-roadmap/
-├── planning-ansoff/
-├── stakeholder-map/
-├── stakeholder-strategy-doc/
-├── stakeholder-brief/
+├── stakeholder-analysis/
 └── product-proposal/
 ```
 
@@ -114,19 +100,12 @@ output/pm-strategy/
 - BMC生成完成：BMC 9格全部填充、假设已标注
 - 价值主张匹配完成：价值主张匹配度≥3.0
 - 定价方案完成：3个定价方案已生成
-- 定位陈述完成：质量检查5项全部通过
-- 价值曲线完成：差异化强度≥0.5
-- 差异化评估完成：5个维度都已评估
-- 排他决策完成：排他陈述已生成
-- SWOT完成：SWOT战略方向人类已选择
-- 行业分析完成：波特五力评分完成
+- 定位策略完成：定位陈述质量检查5项全部通过，差异化强度≥0.5，排他陈述已生成
+- 战略分析完成：strategic-analysis.json已生成，战略结论整合完成
 - OKR完成：OKR人类已确认
 - 北极星确认：北极星指标人类已选择
 - 路线图完成：路线图资源人类已审批
-- 增长路径确认：Ansoff增长路径已选择
-- Stakeholder地图完成：Stakeholder地图人类已校准
-- 战略文档完成：战略文档质量检查通过
-- 战略简报完成：简报可执行性检查通过
+- Stakeholder分析完成：Stakeholder分析人类已校准
 
 ## 人类决策点
 

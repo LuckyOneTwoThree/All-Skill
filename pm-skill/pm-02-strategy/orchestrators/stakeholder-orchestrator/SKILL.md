@@ -1,11 +1,11 @@
 ---
 name: stakeholder-orchestrator
-description: 当需要进行Stakeholder管理或战略文档编写时使用。Stakeholder对齐指挥官，调度stakeholder-map/strategy-doc/brief。关键词：Stakeholder对齐、战略文档、战略沟通、利益相关者、干系人管理、对齐沟通。
+description: 当需要进行Stakeholder管理或战略文档编写时使用。Stakeholder对齐指挥官，调度stakeholder-analysis。关键词：Stakeholder对齐、战略文档、战略沟通、利益相关者、干系人管理、对齐沟通。
 metadata:
   module: "产品商业与战略"
   sub-module: "Stakeholder对齐"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["SaaS", "通用"]
   trigger_examples:
     - "帮我管理Stakeholder"
@@ -58,7 +58,7 @@ metadata:
 
 ```yaml
 pipeline: stakeholder-orchestrator
-version: 6.0
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
@@ -66,66 +66,27 @@ post_pipeline:
 
 stages:
   - id: phase-1
-    name: "Stakeholder地图"
-    skills: [stakeholder-map]
+    name: "利益相关者分析"
+    skills: [stakeholder-analysis]
     gate:
-      condition: "Stakeholder地图人类已校准"
-      fail_action: "影响力评估需人类校准，遗漏的相关方需人工补充"
-
-  - id: phase-2
-    name: "战略文档"
-    depends_on: [phase-1]
-    skills: [stakeholder-strategy-doc]
-    gate:
-      condition: "战略文档质量检查通过"
-      fail_action: "质量检查不通过自动修改，修改后仍不达标需人类审核精炼"
-
-  - id: phase-3
-    name: "战略简报"
-    depends_on: [phase-2]
-    skills: [stakeholder-brief]
-    gate:
-      condition: "简报可执行性检查通过"
-      fail_action: "语气和重点需根据受众调整"
+      condition: "Stakeholder地图人类已校准，战略文档质量检查通过，简报可执行性检查通过"
+      fail_action: "影响力评估需人类校准；质量检查不通过自动修改，修改后仍不达标需人类审核；语气和重点需根据受众调整"
 ```
 
 ## 阶段执行计划
 
-### 阶段1：stakeholder-map
+### 阶段1：利益相关者分析
 
-- **Skill**: stakeholder-map
+- **Skill**: stakeholder-analysis
 - **输入**:
-  - org_structure: 组织架构信息（来自 planning-okr / planning-roadmap）
-  - project_scope: 项目涉及范围（来自 planning-okr / planning-roadmap）
-- **输出**: `output/pm-strategy/stakeholder-map/stakeholder-map.json`
-- **验证**: Stakeholder地图人类已校准
+  - bmc: 商业模式画布（来自 output/pm-strategy/business-model-canvas/bmc.json）
+  - product_info: 产品/业务信息（用户提供）
+  - strategy_report: 商业战略报告（来自 output/pm-strategy/business-strategy-report/business-strategy-report.json，可选）
+  - audience_type: 受众类型（用户提供：executive/team/external）
+- **输出**: `output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json` + `output/pm-strategy/stakeholder-analysis/stakeholder-analysis.md`
+- **验证**: Stakeholder地图人类已校准，战略文档质量检查通过，简报可执行性检查通过
 - **执行模式**: 🤖→👤 AI建议，人类审批
-- **⏸ 阶段卡口**: Stakeholder地图人类已校准 → 未通过：影响力评估需人类校准，遗漏的相关方需人工补充
-
-### 阶段2：stakeholder-strategy-doc
-
-- **Skill**: stakeholder-strategy-doc
-- **输入**:
-  - bmc: BMC（来自 output/pm-strategy/business-model-canvas/bmc.json）
-  - positioning: 定位陈述（来自 output/pm-strategy/positioning-statement/positioning-statements.json）
-  - swot: SWOT（来自 output/pm-strategy/planning-swot/swot.json）
-  - okr: OKR（来自 output/pm-strategy/planning-okr/okr.json）
-  - roadmap: 路线图（可选，来自 output/pm-strategy/planning-roadmap/roadmap.json）
-  - stakeholder_map: Stakeholder地图（来自阶段1 `output/pm-strategy/stakeholder-map/stakeholder-map.json`）
-- **输出**: `output/pm-strategy/stakeholder-strategy-doc/strategy-doc.md`
-- **验证**: 战略文档质量检查通过
-- **执行模式**: 🤖→👤 AI建议，人类审批
-- **⏸ 阶段卡口**: 战略文档质量检查通过 → 未通过：质量检查不通过自动修改，修改后仍不达标需人类审核精炼
-
-### 阶段3：stakeholder-brief
-
-- **Skill**: stakeholder-brief
-- **输入**:
-  - strategy_doc: 产品战略文档（来自阶段2 `output/pm-strategy/stakeholder-strategy-doc/strategy-doc.md`）
-- **输出**: `output/pm-strategy/stakeholder-brief/stakeholder-brief.md`
-- **验证**: 简报可执行性检查通过
-- **执行模式**: 🤖→👤 AI建议，人类审批
-- **⏸ 阶段卡口**: 简报可执行性检查通过 → 未通过：语气和重点需根据受众调整
+- **⏸ 阶段卡口**: Stakeholder地图人类已校准，战略文档质量检查通过，简报可执行性检查通过 → 未通过：影响力评估需人类校准；质量检查不通过自动修改，修改后仍不达标需人类审核；语气和重点需根据受众调整
 
 ### 阶段总结（post_pipeline）
 
@@ -156,7 +117,7 @@ stages:
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| 阶段1某子Skill失败 | 暂停编排，输出失败诊断信息，请求人类介入修复后重试该阶段 |
+| 阶段1子Skill失败 | 暂停编排，输出失败诊断信息，请求人类介入修复后重试该阶段 |
 | 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
 | 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
 | 所有上游数据全部缺失 | 终止编排，输出数据依赖图和缺失清单，要求人类提供最小必要输入后重新启动 |
@@ -166,8 +127,8 @@ stages:
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 影响力评估校准 | 阶段1 stakeholder-map 评估影响力评分 | 人类校准涉及人际判断的最终结果 |
-| 战略文档审核 | 阶段2 stakeholder-strategy-doc 组装战略文档 | 人类审核内容准确性和表达方式 |
+| 影响力评估校准 | 阶段1 stakeholder-analysis 评估影响力评分 | 人类校准涉及人际判断的最终结果 |
+| 战略文档审核 | 阶段1 stakeholder-analysis 组装战略文档 | 人类审核内容准确性和表达方式 |
 
 ## 变更记录
 
@@ -177,3 +138,4 @@ stages:
 - v4.0: 核心原则替换为编排理念原则，新增异常处理表
 - v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
 - v6.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v7.0: 合并利益相关者三件套——将stakeholder-map/strategy-doc/brief合并为stakeholder-analysis；Pipeline stages从3阶段简化为1阶段；更新阶段执行计划、阶段卡口和人类决策点

@@ -16,9 +16,9 @@ UI与前端一体化的核心模块。将设计系统转化为可运行的前端
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| page-builder | 基于视觉方向和设计令牌，在页面上下文中生成组件并组装为完整页面，内建质量门禁 | 页面需求、视觉方向、设计令牌、组件库、目标框架、project_dir | pages.json（含pages/components/quality_report）+ 组件代码 + 页面代码 |
+| page-builder | 基于视觉方向和设计令牌，在页面上下文中生成组件并组装为完整页面，内建质量门禁 | 页面需求、视觉方向、设计令牌、组件库、目标框架、project_dir、PRD(可选)、路由结构(可选)、原型规格(可选)、userflow(可选)、interaction-spec(可选) | pages.json（含pages/components/quality_report）+ 组件代码 + 页面代码 |
 
-> 💡 **合并说明**：v2.0 将原 ui-component-gen + page-assembly + ui-review + frontend-test 合并为 page-builder 一个 Skill，消除阶段交接开销。新增视觉节奏设计（消费 visual_direction 定义视觉重心/密度分布/色彩节奏/层次感），组件改为页面上下文生成（确保视觉一致性和交互连贯性），审查改为内建质量门禁（生成即校验，不依赖独立审查步骤）。国际化能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨、交互增强等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-interaction-design、ext-ui-ux-pro-max）增强。
+> 💡 **合并说明**：v2.0 将原 ui-component-gen + page-assembly + ui-review 合并为 page-builder 一个 Skill，消除阶段交接开销。新增视觉节奏设计（消费 visual_direction 定义视觉重心/密度分布/色彩节奏/层次感），组件改为页面上下文生成（确保视觉一致性和交互连贯性），审查改为内建质量门禁（生成即校验，不依赖独立审查步骤）。国际化能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨、交互增强等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-interaction-design、ext-ui-ux-pro-max）增强。
 
 ## 执行顺序
 
@@ -61,11 +61,15 @@ output/ui-frontend/
 - 交互组件100%包含ARIA属性和键盘导航
 - 状态机无死锁
 - visual_direction 的视觉禁忌100%未被违反
+- 视觉节奏6维度已在页面中体现
+- visual_direction一致性：组件视觉风格与aesthetic_direction一致
+- audit设计品味评分≥80分
 
 ### 进入下一模块（前端集成）前需满足：
 - P0问题=0
 - 组件树层级≤4层
 - 响应式覆盖375px/768px/1024px
+- 品牌色占比在color_strategy对应区间内
 
 ## 人类决策点
 
@@ -84,6 +88,7 @@ output/ui-frontend/
 | `ext-ui-ux-pro-max` `--domain landing\|dashboard` | 数据驱动页面结构推荐 | page-builder Step 1 | 页面类型+需求 | 页面结构推荐 |
 | `ext-impeccable` `layout adapt` | 布局增强+响应式适配 | page-builder Step 1 | 页面区块+目标平台 | 增强后的布局代码 |
 | `ext-impeccable` `shape` | 编码前设计简报 | page-builder Step 2 | 组件意图+状态数 | 设计简报 |
+| `ext-frontend-design` | 组件视觉差异化，避免AI同质化 | page-builder Step 2（按需） | 组件意图+visual_direction+设计令牌 | 差异化视觉建议 |
 | `ext-interaction-design` | 交互动效代码模式 | page-builder Step 2 | 拖拽/手势/复杂状态转换 | 交互动效代码 |
 | `ext-impeccable` `animate bolder\|quieter delight` | 动效策略+视觉表现力+愉悦感 | page-builder Step 2 | 组件状态+品牌色占比 | 增强后的组件代码 |
 | `ext-impeccable` `clarify onboard distill` | UX文案+新手引导+简化 | page-builder Step 3 | 页面内容+类型 | 增强后的页面代码 |

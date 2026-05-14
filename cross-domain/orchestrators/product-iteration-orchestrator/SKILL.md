@@ -72,7 +72,7 @@ post_pipeline:
 
 pipeline:
   - stage: requirements
-    skills: [requirements-orchestrator]
+    skills: [design-prd]
     depends_on: []
     gate: 需求文档人类确认通过
 
@@ -114,7 +114,7 @@ pipeline:
     gate: 后端审查通过（P0=0）
 
   - stage: delivery
-    skills: [quality-orchestrator, release-orchestrator]
+    skills: [monitoring-orchestrator, iteration-orchestrator]
     depends_on: [backend-update, ui-development]
     gate: P0问题=0，回归测试通过
 ```
@@ -123,15 +123,15 @@ pipeline:
 
 ### 阶段1：需求分析
 
-#### 调用 requirements-orchestrator
+#### 调用 design-prd
 
 ```
-Skill: requirements-orchestrator
+Skill: design-prd
 输入:
   用户反馈: 迭代用户反馈数据
   业务需求: 业务需求变更
   数据异常: 数据异常指标
-输出: output/cross-domain/requirements-orchestrator/
+输出: output/pm-design/design-prd/
 验证: 需求文档人类确认通过
 模式: 🤖→👤
 ```
@@ -143,7 +143,7 @@ Skill: requirements-orchestrator
 ```
 Skill: design-orchestrator
 输入:
-  需求文档: output/cross-domain/requirements-orchestrator/
+  需求文档: output/pm-design/design-prd/
 输出: output/cross-domain/design-orchestrator/
 验证: PRD变更部分人类确认通过
 模式: 🤖→👤
@@ -220,26 +220,26 @@ Skill: ui-orchestrator
 
 ### 阶段5：质量验证与发布
 
-#### 调用 quality-orchestrator
+#### 调用 monitoring-orchestrator
 
 ```
-Skill: quality-orchestrator
+Skill: monitoring-orchestrator
 输入:
   变更部分输出: output/cross-domain/
   集成输出: output/cross-domain/ui-orchestrator/
-输出: output/cross-domain/quality-orchestrator/
+输出: output/cross-domain/monitoring-orchestrator/
 验证: P0问题=0，回归测试通过
 模式: 🤖→👤
 ```
 
-#### 调用 release-orchestrator
+#### 调用 iteration-orchestrator
 
 ```
-Skill: release-orchestrator
+Skill: iteration-orchestrator
 输入:
-  质量报告: output/cross-domain/quality-orchestrator/
+  质量报告: output/cross-domain/monitoring-orchestrator/
   变更部分输出: output/cross-domain/
-输出: output/cross-domain/release-orchestrator/
+输出: output/cross-domain/iteration-orchestrator/
 验证: 发布决策人类确认
 模式: 🤖→👤
 ```
@@ -248,10 +248,10 @@ Skill: release-orchestrator
 
 | 触发事件 | 调度动作 |
 |----------|----------|
-| 需要数据支撑决策 | → analysis-orchestrator（在requirements-orchestrator之前执行） |
-| 需要A/B验证 | → experiment-orchestrator（在release-orchestrator之前执行） |
+| 需要数据支撑决策 | → analysis-orchestrator（在design-prd之前执行） |
+| 需要A/B验证 | → experiment-orchestrator（在iteration-orchestrator之前执行） |
 | 需要项目管理支撑 | → agile-orchestrator（贯穿全程） |
-| 迭代效果评估 | → analysis-orchestrator（在release-orchestrator之后执行） |
+| 迭代效果评估 | → analysis-orchestrator（在iteration-orchestrator之后执行） |
 
 ### 阶段总结（post_pipeline）
 
@@ -284,7 +284,7 @@ Skill: release-orchestrator
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 需求确认 | requirements-orchestrator完成 | 确认需求范围和优先级 |
+| 需求确认 | design-prd完成 | 确认需求范围和优先级 |
 | PRD变更确认 | design-orchestrator完成 | 确认PRD变更可分发到受影响领域 |
 | 影响范围确认 | 影响分析完成 | 确认哪些领域需要变更，是否有遗漏 |
 | 集成就绪确认 | ui-orchestrator完成 | 确认前后端联调通过 |

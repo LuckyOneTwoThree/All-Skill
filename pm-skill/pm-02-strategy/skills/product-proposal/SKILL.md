@@ -31,12 +31,12 @@ metadata:
 |--------|------|------|------|------|
 | 用户研究数据 | JSON | ○ | user-research-user-modeling | 用户画像、痛点、需求 |
 | 商业模式画布 | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 商业模式9宫格 |
-| SWOT分析 | JSON | ○ | output/pm-strategy/planning-swot/swot.json | 战略态势 |
+| SWOT分析 | JSON | ○ | output/pm-strategy/strategic-analysis/strategic-analysis.json | 战略态势 |
 | OKR | JSON | ○ | output/pm-strategy/planning-okr/okr.json | 目标与关键结果 |
 | 路线图 | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | 产品路线图 |
 | 定价策略 | JSON | ○ | output/pm-strategy/business-pricing/pricing_analysis.json | 定价方案 |
-| 定位陈述 | JSON | ○ | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位 |
-| 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-map/stakeholder-map.json | 利益相关者 |
+| 定位策略 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 产品定位 |
+| 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json | 利益相关者 |
 | 产品/业务信息 | string | 是 | 用户提供 | 产品名称、业务描述 |
 
 ## 执行步骤
@@ -246,7 +246,7 @@ metadata:
 |---------------|---------|---------|
 | 用户研究数据 | 基于产品描述推导用户画像 | 用户定义缺乏实证数据，画像可能偏主观 |
 | bmc.json | 基于产品描述推导商业模式 | 商业模式缺乏9格画布结构化支撑 |
-| swot.json | 基于产品描述推导战略态势 | 战略分析缺乏SWOT结构化依据 |
+| strategic-analysis.json | 基于产品描述推导战略态势 | 战略分析缺乏结构化依据 |
 | okr.json | 基于产品描述推导目标 | OKR缺乏战略对齐，可量化性可能不足 |
 | roadmap.json | 基于产品描述推导路线图 | 路线图缺乏RICE排序依据 |
 | 定价/定位/利益相关者数据 | 基于产品描述推导 | 对应章节缺乏数据锚定 |
@@ -262,7 +262,7 @@ metadata:
 |----------|----------|----------|
 | 用户研究数据更新 | 产品定义、目标用户 | 更新产品定义章节 |
 | bmc.json商业模式变更 | 商业分析章节 | 更新商业模式和单位经济 |
-| swot.json SWOT更新 | 商业分析竞争分析 | 更新竞争分析和风险评估 |
+| strategic-analysis.json战略分析更新 | 商业分析竞争分析 | 更新竞争分析和风险评估 |
 | okr.json OKR调整 | 执行计划章节 | 更新目标体系和路线图 |
 | roadmap.json路线图变更 | 执行计划章节 | 更新路线图和资源需求 |
 | 定价策略变更 | 商业分析章节 | 更新定价策略和单位经济 |
@@ -271,6 +271,6 @@ metadata:
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| 提案内容变更 | stakeholder-brief、stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
-| 风险评估变更 | stakeholder-brief | 输出文件版本号+变更摘要 |
-| 决策请求变更 | stakeholder-strategy-doc | 输出文件版本号+变更摘要 |
+| 提案内容变更 | stakeholder-analysis | 输出文件版本号+变更摘要 |
+| 风险评估变更 | stakeholder-analysis | 输出文件版本号+变更摘要 |
+| 决策请求变更 | stakeholder-analysis | 输出文件版本号+变更摘要 |

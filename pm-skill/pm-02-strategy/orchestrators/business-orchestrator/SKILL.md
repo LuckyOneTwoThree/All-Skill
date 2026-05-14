@@ -103,8 +103,8 @@ stages:
 ```
 Skill: business-model-canvas
 输入:
-  product_context: 来自 user-research-user-modeling / opportunity-brief
-  market_data: 来自 market-competitor-intel
+  product_context: 来自 user-research-user-modeling / opportunity-definition
+  market_data: 来自 market-competitor-analysis
 输出: output/pm-strategy/business-model-canvas/
 验证: BMC 9格全部填充、假设已标注
 模式: 🤖→👤
@@ -128,7 +128,7 @@ Skill: business-value-fit
 Skill: business-pricing
 输入:
   bmc_data: 来自阶段1 output/pm-strategy/business-model-canvas/bmc.json
-  competitor_pricing_data: 来自 market-competitor-intel → competitor-intel.json
+  competitor_pricing_data: 来自 market-competitor-analysis → competitor-analysis.json
   willingness_to_pay: 用户提供
 输出: output/pm-strategy/business-pricing/
 验证: 3个定价方案已生成

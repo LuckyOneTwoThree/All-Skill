@@ -52,7 +52,7 @@ node scripts/validate-skill.js {skill-name}/SKILL.md
   cross-domain   → product
 
 示例：
-✅ insight-5whys          （需求洞察-5Whys）
+✅ insight-analysis          （需求洞察-5Whys）
 ✅ api-contract           （API设计-契约）
 ✅ design-system           （设计系统一体化）
 ❌ 5whys                  （缺少领域前缀）
@@ -140,10 +140,10 @@ metadata:
   backend-skill  → backend-api-design / backend-data-architecture / backend-architecture
 
 示例：
-✅ output/pm-discovery/insight-5whys/5whys.json
+✅ output/pm-discovery/insight-analysis/insight-analysis.json
 ✅ output/backend-api-design/api-contract/openapi.yaml
 ❌ output/5whys.json                        （缺少领域路径）
-❌ output/pm/insight-5whys/5whys.json       （领域路径不正确）
+❌ output/pm/insight-analysis/insight-analysis.json       （领域路径不正确）
 ```
 
 ### 目录放置规范
@@ -174,7 +174,7 @@ pm-skill/pm-01-discovery/orchestrators/your-new-orchestrator/SKILL.md
 
 | 领域 | Skill | 参考亮点 |
 |------|-------|----------|
-| PM | insight-5whys | 输入输出完整、决策规则清晰、降级策略完善 |
+| PM | insight-analysis | 输入输出完整、决策规则清晰、降级策略完善 |
 | UI | design-system | 多平台输出、对比度校验、上游变更响应完整 |
 | Backend | api-contract | 契约驱动、降级策略、上下游通知机制完整 |
 

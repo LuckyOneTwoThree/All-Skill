@@ -32,8 +32,8 @@
 
 | 调用时机 | 调用方 Skill | 作用 |
 |----------|-------------|------|
-| design-system Step 1 | `design-system` | 提供差异化美学方向建议 |
-| ui-component-gen Step 4 | `ui-component-gen` | 组件视觉差异化实现 |
+| project-init Step 2 | `project-init` | 提供差异化美学方向建议 |
+| page-builder Step 2 | `page-builder` | 组件视觉差异化实现 |
 
 ### ext-impeccable — 设计质量全生命周期工具箱
 
@@ -47,24 +47,24 @@
 
 | 子命令 | 作用 | 调用方 Skill | 客观触发条件 |
 |--------|------|-------------|-------------|
-| colorize | 战略性色彩增强 | `design-system` | 品牌色占比<10% 或 中性色占比>70% |
-| typeset | 排版层级增强 | `design-system` | 字号层级<6级 或 最大/最小字号比<2 |
-| extract | 从现有代码逆向提取设计系统 | `design-system` | 输入包含"现有组件库"或"已有项目" |
-| shape | 编码前先设计（产出设计简报） | `ui-component-gen` | 组件意图描述含"复杂"/状态数>5 |
-| animate | 动效策略评估 | `ui-component-gen` | 组件状态转换>3个 或 有异步操作 |
-| bolder | 放大视觉表现力 | `ui-component-gen` | 品牌色占比<15% 或 视觉描述含"安全/标准" |
-| quieter | 收敛视觉强度 | `ui-component-gen` | 品牌色占比>40% 或 医疗/金融/法律场景 |
-| delight | 增加愉悦感微细节 | `ui-component-gen` | 组件为核心用户流程节点 |
-| harden | 生产就绪化（边界/错误/i18n） | `ui-component-gen` | 组件有表单输入/异步操作/国际化需求 |
-| polish | 最终质量打磨（始终最后执行） | `ui-component-gen` | 所有其他外部调用完成后 |
-| layout | 页面布局/间距/视觉层级增强 | `page-assembly` | 页面区块>5个 或 组件树层级>3 |
-| adapt | 响应式设计策略层适配 | `page-assembly` | 目标平台含"跨平台"或"移动端" |
-| clarify | UX文案优化 | `page-assembly` | 页面含表单/空状态/错误状态 |
-| onboard | 新手引导设计 | `page-assembly` | 页面为首页/注册页/新手引导页 |
-| distill | 简化过度复杂的UI | `page-assembly`/`ui-review` | 组件数>10 或 P1问题中复杂度类占比>30% |
-| audit | 5维度技术质量审计 | `ui-review` | 始终调用（如已部署） |
-| critique | UX设计评审（启发式评分） | `ui-review` | audit通过率<90% |
-| optimize | UI渲染性能专项诊断和修复 | `frontend-performance` | LCP>2.5s且瓶颈为UI渲染 |
+| colorize | 战略性色彩增强 | `project-init` | 品牌色占比<10% 或 中性色占比>70% |
+| typeset | 排版层级增强 | `project-init` | 字号层级<6级 或 最大/最小字号比<2 |
+| extract | 从现有代码逆向提取设计系统 | `project-init` | 输入包含"现有组件库"或"已有项目" |
+| shape | 编码前先设计（产出设计简报） | `page-builder` | 组件意图描述含"复杂"/状态数>5 |
+| animate | 动效策略评估 | `page-builder` | 组件状态转换>3个 或 有异步操作 |
+| bolder | 放大视觉表现力 | `page-builder` | 品牌色占比<15% 或 视觉描述含"安全/标准" |
+| quieter | 收敛视觉强度 | `page-builder` | 品牌色占比>40% 或 医疗/金融/法律场景 |
+| delight | 增加愉悦感微细节 | `page-builder` | 组件为核心用户流程节点 |
+| harden | 生产就绪化（边界/错误/i18n） | `page-builder` | 组件有表单输入/异步操作/国际化需求 |
+| polish | 最终质量打磨（始终最后执行） | `page-builder` | 所有其他外部调用完成后 |
+| layout | 页面布局/间距/视觉层级增强 | `page-builder` | 页面区块>5个 或 组件树层级>3 |
+| adapt | 响应式设计策略层适配 | `page-builder` | 目标平台含"跨平台"或"移动端" |
+| clarify | UX文案优化 | `page-builder` | 页面含表单/空状态/错误状态 |
+| onboard | 新手引导设计 | `page-builder` | 页面为首页/注册页/新手引导页 |
+| distill | 简化过度复杂的UI | `page-builder` | 页面组件数>10个 或 操作按钮>5个 |
+| audit | 5维度技术质量审计 | `page-builder` | 始终调用（如已部署） |
+| critique | UX设计评审（启发式评分） | `page-builder` | audit设计品味评分<80分 |
+| optimize | UI渲染性能专项诊断和修复 | `production-ready` | LCP>2.5s且瓶颈为UI渲染 |
 
 ### ext-interaction-design — 交互动效模式库
 
@@ -78,7 +78,7 @@
 
 | 调用时机 | 调用方 Skill | 作用 |
 |----------|-------------|------|
-| ui-component-gen Step 4 | `ui-component-gen` | 提供可直接使用的交互动效代码模式 |
+| page-builder Step 2 | `page-builder` | 提供可直接使用的交互动效代码模式 |
 
 ### ext-ui-ux-pro-max — 数据驱动设计决策引擎
 
@@ -92,12 +92,32 @@
 
 | 调用时机 | 调用方 Skill | 作用 |
 |----------|-------------|------|
-| design-system Step 1 | `design-system` | 配色/字体/风格数据推荐（`--design-system`） |
-| page-assembly Step 1 | `page-assembly` | 落地页结构推荐（`--domain landing`） |
+| project-init Step 1 | `project-init` | 配色/字体/风格数据推荐（`--design-system`） |
+| page-builder Step 1 | `page-builder` | 落地页/仪表盘结构推荐（`--domain landing/dashboard`） |
 
 ## 调用机制
 
 核心 Skill 通过 `Skill: ext-xxx` 定向调用外部 Skill。调用前必须先检测外部 Skill 是否已部署，避免调用不存在的能力导致流程中断。
+
+### ext-impeccable Setup（统一规范）
+
+核心 Skill 调用 ext-impeccable 时，根据 PRODUCT.md/DESIGN.md 是否已生成，采用不同策略：
+
+**策略一：完整 Setup**（PRODUCT.md/DESIGN.md 已存在）
+
+1. 运行 `node {SKILL_DIR}/scripts/load-context.mjs` 加载 PRODUCT.md / DESIGN.md（从 {project_dir}/ 读取）
+2. 识别 register：从 PRODUCT.md 的 register 字段获取；若无则从产品定位推断（创意/设计/品牌/展示/作品集→brand；管理/工具/平台/系统/数据→product；无法判断→默认product）
+3. 加载对应 register reference：brand→`{SKILL_DIR}/reference/brand.md`，product→`{SKILL_DIR}/reference/product.md`
+4. 若调用子命令，同时加载该子命令的 reference 文件（如 shape→`{SKILL_DIR}/reference/shape.md`）
+
+**策略二：内联上下文**（PRODUCT.md/DESIGN.md 尚未生成，如 project-init Step 1-2）
+
+1. 跳过 `load-context.mjs`，由调用方 Skill 直接将品牌规范+产品定位+当前步骤产出作为内联上下文传递
+2. 内联上下文必须包含：register（brand/product）、产品名称、产品定位、品牌规范、当前步骤产出、目标语言
+3. 调用时显式声明 `跳过 Setup，使用内联上下文`，ext-impeccable 直接消费内联上下文执行子命令，不触发 teach 或 load-context
+4. 内联上下文中 register 的判断规则同策略一第 2 步
+
+> 各核心 Skill 的 SKILL.md 中不再重复此 Setup 说明，统一引用本规范。
 
 ### Register 感知
 
@@ -127,7 +147,7 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 2. **同 Skill 多子命令合并调用**：同一步骤内同一外部 Skill 的多个子命令合并为单次调用（如 `ext-impeccable animate bolder delight`），避免重复加载 SKILL.md 浪费 token
 3. **polish 始终是最后一步**，不可在其他外部调用之前执行
 4. **bolder 和 quieter 互斥**，同一组件只能调用其中一个（品牌色占比<25%→bolder，>40%→quieter，25%-40%→不调用）
-5. **audit 后可触发反馈闭环**：若 distill 执行后修改了代码，需重新 audit 验证，最多循环2次
+5. **audit 后可触发反馈闭环**：若 critique 执行后修改了代码，需重新 audit 验证，最多循环2次
 
 ### 冲突解决规则
 
@@ -170,10 +190,10 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 
 | 原外部 Skill | 内建位置 | 内建方式 |
 |-------------|---------|---------|
-| ext-dark-mode | `design-system` Step 1 | 基于亮色令牌自动推导暗色方案（规则：主色相不变降明度升饱和度、背景反转、文字对比度≥4.5:1） |
-| ext-figma-sync | `design-system` Step 4 | 输出标准 Design Tokens JSON 格式，可被 Figma Tokens 插件直接消费 |
-| ext-i18n | `page-assembly` Step 2 | 多语言场景下内建引入i18n框架（react-i18next/vue-i18n），文案抽取为语言包 |
-| ext-visual-regression | `frontend-test` Step 2 | 使用Playwright截图对比+Storybook Chromatic实现视觉回归检测 |
+| ext-dark-mode | `project-init` Step 1 | 基于亮色令牌自动推导暗色方案（规则：主色相不变降明度升饱和度、背景反转、文字对比度≥4.5:1） |
+| ext-figma-sync | `project-init` Step 5 | 输出标准 Design Tokens JSON 格式，可被 Figma Tokens 插件直接消费 |
+| ext-i18n | `page-builder` Step 3 | 多语言场景下内建引入i18n框架（react-i18next/vue-i18n），文案抽取为语言包 |
+| ext-visual-regression | `production-ready` Step 2 | 使用Playwright截图对比+Storybook Chromatic实现视觉回归检测 |
 
 ## 部署方式
 
@@ -183,12 +203,15 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 
 ```
 .trae/skills/
-├── design-system/SKILL.md              ← 核心自建
-├── ui-component-gen/SKILL.md           ← 核心自建
-├── ext-frontend-design/SKILL.md        ← 外部扩展
-├── ext-impeccable/SKILL.md             ← 外部扩展
-├── ext-interaction-design/SKILL.md     ← 外部扩展
-├── ext-ui-ux-pro-max/SKILL.md          ← 外部扩展
+├── ui-orchestrator/SKILL.md             ← 核心自建（编排器）
+├── project-init/SKILL.md                ← 核心自建
+├── page-builder/SKILL.md                ← 核心自建
+├── api-integration/SKILL.md             ← 核心自建
+├── production-ready/SKILL.md            ← 核心自建
+├── ext-frontend-design/SKILL.md         ← 外部扩展
+├── ext-impeccable/SKILL.md              ← 外部扩展
+├── ext-interaction-design/SKILL.md      ← 外部扩展
+├── ext-ui-ux-pro-max/SKILL.md           ← 外部扩展
 └── ...
 ```
 

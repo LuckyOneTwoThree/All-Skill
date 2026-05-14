@@ -1,11 +1,11 @@
 ---
 name: ideation-orchestrator
-description: 当需要发散创意或构思解决方案时使用。创意发散与方案构思子模块指挥官，调度子Skill：ideation-hmw、ideation-scamper、ideation-inversion、ideation-convergence。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意、思维逆转、方案收敛、头脑风暴、创新方案。
+description: 当需要发散创意或构思解决方案时使用。创意发散与方案构思子模块指挥官，调度子Skill：ideation-workshop。关键词：创意发散、HMW、SCAMPER、方案构思、产品创意、思维逆转、方案收敛、头脑风暴、创新方案、创意工作坊。
 metadata:
   module: "产品构思与设计"
   sub-module: "创意发散与方案构思"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我发散一下创意"
@@ -72,71 +72,25 @@ pipeline:
     - action: stage-summary
       output: output/phase-reports/pm-design/ideation-orchestrator.md
   stages:
-    - id: ideation-hmw
-      name: HMW问题重构
+    - id: ideation-workshop
+      name: 创意工作坊
       depends_on: []
-    - id: ideation-scamper
-      name: SCAMPER创意发散
-      depends_on: [ideation-hmw]
-      parallel_with: [ideation-inversion]
-    - id: ideation-inversion
-      name: 思维逆转分析
-      depends_on: [ideation-hmw]
-      parallel_with: [ideation-scamper]
-    - id: ideation-convergence
-      name: 方案收敛
-      depends_on: [ideation-scamper, ideation-inversion]
 ```
 
 ## 阶段执行计划
 
-#### 调用 ideation-hmw
+#### 调用 ideation-workshop
 
 ```
-Skill: ideation-hmw
+Skill: ideation-workshop
 输入:
-  problem_statement: output/pm-design/requirements-understanding/requirement_analysis.json（或用户提供）
-  user_research_data: output/pm-design/requirements-collection/requirements.json（或用户提供）
-输出: output/pm-design/ideation-hmw/hmw_statements.json
-验证: HMW通过质量检查，6个维度都已覆盖
-模式: 🤖
-```
-
-#### 调用 ideation-scamper
-
-```
-Skill: ideation-scamper
-输入:
-  hmw_statements: output/pm-design/ideation-hmw/hmw_statements.json（选择发散潜力≥3的HMW）
-  current_solution: 用户提供
+  problem_statement: 用户提供（或上游产出）
+  user_research_data: 用户提供（或上游产出）
+  current_solution: 可选
   competitor_solutions: 可选
-输出: output/pm-design/ideation-scamper/solutions.json
-验证: 至少10个候选方案，7个SCAMPER维度都已覆盖
-模式: 🤖
-```
-
-#### 调用 ideation-inversion
-
-```
-Skill: ideation-inversion
-输入:
-  product_goals: output/pm-design/ideation-hmw/hmw_statements.json（或用户提供）
   product_context: 可选
-输出: output/pm-design/ideation-inversion/inversion_analysis.json
-验证: 设计约束已生成，失败路径覆盖5个维度
-模式: 🤖
-```
-
-#### 调用 ideation-convergence
-
-```
-Skill: ideation-convergence
-输入:
-  solutions: output/pm-design/ideation-scamper/solutions.json
-  inversion_analysis: output/pm-design/ideation-inversion/inversion_analysis.json
-  product_context: 可选
-输出: output/pm-design/ideation-convergence/converged_solutions.json
-验证: Top5方案已深化，对比矩阵6个维度完整
+输出: output/pm-design/ideation-workshop/ideation-workshop.json + ideation-workshop.md
+验证: HMW通过质量检查且6个维度都已覆盖；SCAMPER至少10个候选方案且7个维度都已覆盖；反转思维设计约束已生成且失败路径覆盖5个维度；Top5方案已深化且对比矩阵6个维度完整
 模式: 🤖→👤
 ```
 
@@ -147,7 +101,7 @@ Skill: ideation-convergence
 ```
 动作: 生成阶段总结
 输入:
-  所有子Skill输出: output/pm-design/
+  所有子Skill输出: output/pm-design/ideation-workshop/
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-design/ideation-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
@@ -160,17 +114,14 @@ Skill: ideation-convergence
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| HMW完成 | HMW通过质量检查 | 未通过质量检查的HMW重新生成，维度覆盖不全则补充 |
-| 方案生成完成 | 至少10个候选方案 | 方案数量不足则针对稀缺维度补充生成 |
-| 逆转分析完成 | 设计约束已生成 | 失败路径覆盖不全则补充，约束过于抽象则重新定义 |
-| 收敛完成 | Top5方案已深化 | 深化不足则补充，对比矩阵不完整则补充缺失维度 |
+| 创意工作坊完成 | HMW 6维度覆盖、SCAMPER 7维度覆盖且至少10个方案、反转思维设计约束已生成、Top5方案已深化且对比矩阵6维度完整 | 针对不达标项补充生成或重新深化 |
 | 阶段总结已生成 | output/phase-reports/pm-design/ideation-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 方案最终选择 | 收敛完成，对比矩阵已生成 | 人类做最终方案选择，可接受AI推荐、调整优先级、组合方案或否决 |
+| 方案最终选择 | 创意工作坊收敛完成，对比矩阵已生成 | 人类做最终方案选择，可接受AI推荐、调整优先级、组合方案或否决 |
 
 ## 变更记录
 
@@ -179,3 +130,4 @@ Skill: ideation-convergence
 - v3.0: 编排器优化——新增子Skill执行协议、任务调度改为阶段执行计划、调度规则改为执行模式、阶段卡口和人类决策点改为表格、增加子Skill输入输出路径
 - v5.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
 - v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v7.0: 子Skill合并——ideation-hmw/ideation-scamper/ideation-inversion/ideation-convergence合并为ideation-workshop；Pipeline stages从4个阶段简化为1个阶段；阶段执行计划、阶段卡口、人类决策点相应更新

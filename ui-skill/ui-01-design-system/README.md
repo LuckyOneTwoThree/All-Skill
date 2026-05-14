@@ -17,7 +17,7 @@ UI与前端一体化流程的起点。在需要建立设计系统或统一视觉
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| project-init | 从品牌规范推导视觉方向，选择组件库并定制主题，同步生成项目脚手架和设计上下文文件 | 品牌规范、产品定位、目标平台、目标语言、framework、project_dir | project-init.json（含visual_direction/tokens/component_library/scaffold）+ PRODUCT.md + DESIGN.md + 项目骨架 |
+| project-init | 从品牌规范推导视觉方向，选择组件库并定制主题，同步生成项目脚手架和设计上下文文件 | 品牌规范、产品定位、目标平台、目标语言、framework、project_dir、PRD(可选)、handoff-spec(可选) | project-init.json（含visual_direction/tokens/component_library/scaffold）+ PRODUCT.md + DESIGN.md + 项目骨架 |
 
 > 💡 **合并说明**：v2.0 将原 project-scaffold + design-system 合并为 project-init 一个 Skill，减少阶段交接开销。新增视觉风格定义步骤（Step 2），ext-frontend-design 改为必调（每个项目必须经过美学方向审视），新增 PRODUCT.md/DESIGN.md 生成供后续 Skill 和 ext-impeccable 消费。暗色模式推导、语言适配等能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-ui-ux-pro-max）增强。
 
@@ -27,8 +27,8 @@ UI与前端一体化流程的起点。在需要建立设计系统或统一视觉
 ┌───────────────────────────────────────────────────────────────────┐
 │                    project-init 一体化生成                         │
 │  Step1: 品牌基因+色彩 → Step2: 视觉风格定义(必调ext-frontend-design)│
-│  → Step3: 组件库选择+主题定制 → Step4: 项目脚手架初始化             │
-│  → Step5: 上下文文件(PRODUCT.md/DESIGN.md)+令牌文件输出            │
+│  → Step3: 组件库选择+主题定制 → Step4: 项目脚手架初始化+令牌文件输出  │
+│  → Step5: 上下文文件(PRODUCT.md/DESIGN.md)输出                       │
 └───────────────────────────────────────────────────────────────────┘
 ```
 
@@ -54,7 +54,7 @@ output/ui-project-init/
 ## 阶段卡口
 
 ### 进入下一模块（UI前端生成）前需满足：
-- visual_direction 8个维度均有明确定义
+- visual_direction 10个维度均有明确定义
 - ext-frontend-design 已调用且输出不含AI同质化特征
 - PRODUCT.md 和 DESIGN.md 已生成且内容非占位符
 - 设计令牌人类已确认

@@ -16,7 +16,7 @@ metadata:
 
 # PRD生成器
 
-本Skill负责将上游阶段的产出（需求管理、创意发散）自动转化为符合质量标准的PRD文档，为后续产品设计（IA、流程、原型）提供结构化输入。支持PRD-L/S/X三级分层，自动进行4道质量门禁检查，确保文档完整性、一致性、歧义消除和可追溯性。
+本Skill负责将上游阶段的产出（用户洞察、机会定义、创意发散）自动转化为符合质量标准的PRD文档，为后续产品设计（IA、流程、原型）提供结构化输入。需求收集、理解和优先级排序已内建于 design-prd 的 Step 1-3 中，无需单独的需求管理阶段。支持PRD-L/S/X三级分层，自动进行4道质量门禁检查，确保文档完整性、一致性、歧义消除和可追溯性。
 
 ## 核心原则
 1. 质量门禁不可绕过——4道门禁是PRD质量的底线，任何情况下不得跳过
@@ -289,6 +289,8 @@ L2处理：
 
 | 阶段 | 输出物 | 消费方式 |
 |------|--------|----------|
+| **洞察分析（insight-analysis）** | 用户洞察、痛点、行为模式 | 替代原 requirements-collection 输入，提取用户研究数据和需求收集 |
+| **机会定义（opportunity-definition）** | 机会列表、优先级排序、问题陈述 | 替代原 requirements-understanding/prioritization 输入，提供需求理解和优先级排序 |
 | **探索（Discovery）** | 用户洞察、问题陈述、需求池 | 提取Problem Statement、目标用户定义 |
 | **战略（Strategy）** | OKR、路线图、价值主张 | 对齐业务目标、优先级判断 |
 | **构思（Ideation）** | 解决方案、功能列表 | 引用方案设计、验收标准来源 |
@@ -310,16 +312,15 @@ L2处理：
 ### 6.3 数据流向图
 
 ```
-[需求管理输出] → [创意发散输出]
-        ↓              ↓
-        └──────────────┘
-              ↓
-      PRD生成器（Pipeline 8）
-              ↓
-    ┌─────────┼─────────┐
-    ↓         ↓         ↓
+[洞察分析产出] → [机会定义产出] → [创意发散产出]
+        ↓              ↓                ↓
+        └──────────────┴────────────────┘
+                      ↓
+          PRD生成器（需求收集、理解、优先级排序已内建于 Step 1-3）
+                      ↓
+        ┌─────────┼─────────┐
+        ↓         ↓         ↓
 [IA设计]  [流程设计]  [原型设计]
- Pipeline9 Pipeline10 Pipeline11
 ```
 
 ## 交互模式
@@ -331,6 +332,8 @@ L2处理：
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | metadata | JSON/object | 是 | 系统生成 | 请求元信息 |
+| insight_analysis | JSON/object | ○ | output/pm-discovery/insight-analysis / 上游探索阶段 | 用户洞察分析产出，替代原 requirements-collection 输入，提供用户研究数据和需求收集 |
+| opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition / 上游探索阶段 | 机会定义产出，替代原 requirements-understanding/prioritization 输入，提供需求理解和优先级排序 |
 | exploration_outputs | JSON/object | ○ | 上游探索阶段 | 用户洞察、问题陈述 |
 | strategy_outputs | JSON/object | ○ | 上游战略阶段 | OKR、路线图 |
 | ideation_outputs | JSON/object | ○ | 上游构思阶段 | 解决方案、功能列表 |
@@ -462,13 +465,16 @@ L2处理：
 
 | 缺失范围 | 降级方案 | 输出影响 |
 |----------|----------|----------|
+| insight_analysis缺失 | 基于用户描述和opportunity_definition补充用户洞察，标注"洞察数据待补充" | Section 2用户需求部分简化，需求收集可能不够完整 |
+| opportunity_definition缺失 | 基于用户描述和insight_analysis推断机会和优先级，标注"优先级待确认" | 需求理解和优先级排序可能不够精准 |
+| insight_analysis + opportunity_definition均缺失 | 基于用户口头描述执行内建的需求收集、理解和优先级排序（Step 1-3），标注"需求管理数据为AI推断" | 需求管理全流程依赖AI推断，置信度降低 |
 | 部分上游缺失（如仅缺exploration_outputs） | 生成对应章节时标注"待补充"，其他章节正常生成 | 部分章节内容不完整，标注待补充 |
 | exploration_outputs缺失 | 背景与目标章节标注"待补充"，基于用户描述生成简化版 | Section 2内容简化 |
 | strategy_outputs缺失 | OKR对齐和优先级判断章节标注"待补充" | Section 2.2目标定义简化 |
 | ideation_outputs缺失 | 方案设计章节标注"待补充"，基于用户描述生成功能列表 | Section 3功能规格简化 |
 | design_outputs缺失 | 交互逻辑和状态设计标注"待补充" | Section 3.2交互逻辑简化 |
 | metrics_outputs缺失 | 数据埋点方案标注"待补充" | Section 6内容简化 |
-| 所有上游缺失 | 基于用户口头描述生成简化版PRD-L（200-500字） | 输出PRD-L级别文档 |
+| 所有上游缺失 | 基于用户口头描述生成简化版PRD-L（200-500字），内建执行需求收集、理解和优先级排序 | 输出PRD-L级别文档 |
 
 ### 数据获取说明
 
@@ -491,11 +497,12 @@ L2处理：
 
 | PRD变更类型 | 通知范围 | 通知方式 |
 |-------------|----------|----------|
-| 功能点增删 | api-contract、design-ia、development-task-breakdown、quality-auto-test | 标记变更影响范围，触发受影响Skill重新执行 |
-| 优先级调整 | development-task-breakdown、release-auto-checklist | 标记优先级变更，触发重新排序 |
+| 功能点增删 | change-impact-analysis | 标记变更影响范围，触发变更影响分析 |
+| 优先级调整 | change-impact-analysis | 标记优先级变更，触发影响评估 |
 | 目标指标变更 | metrics-system、tracking-plan | 标记指标变更，触发度量体系更新 |
 | 商业逻辑变更 | business-model-canvas、business-strategy-report | 标记商业逻辑变更，触发战略文档更新 |
 
 ## 变更记录
 
 - v3.0: 将PRD完整9节结构、输入Schema、输出Schema拆分到Reference文件夹，SKILL.md保留核心逻辑和概览表格
+- v3.1: 需求管理内建——输入新增insight_analysis和opportunity_definition引用（替代原requirements-collection/understanding/prioritization输入）；标注需求收集、理解和优先级排序已内建于Step 1-3；上游消费新增洞察分析和机会定义；降级策略新增insight_analysis/opportunity_definition缺失方案；数据流向图更新

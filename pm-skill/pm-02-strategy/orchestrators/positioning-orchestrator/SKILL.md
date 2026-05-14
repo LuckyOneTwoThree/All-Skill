@@ -1,11 +1,11 @@
 ---
 name: positioning-orchestrator
-description: 当需要确定产品定位或评估差异化策略时使用。产品定位指挥官，调度positioning-statement/value-curve/differentiation/exclusion。关键词：产品定位、差异化、价值曲线、竞争策略、品牌定位、市场定位、竞争优势。
+description: 当需要确定产品定位或评估差异化策略时使用。产品定位指挥官，调度positioning-strategy。关键词：产品定位、差异化、价值曲线、竞争策略、品牌定位、市场定位、竞争优势。
 metadata:
   module: "产品商业与战略"
   sub-module: "产品定位与差异化"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我确定产品定位"
@@ -58,7 +58,7 @@ metadata:
 
 ```yaml
 pipeline: positioning-orchestrator
-version: 6.0
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
@@ -66,85 +66,28 @@ post_pipeline:
 
 stages:
   - id: phase-1
-    name: "定位陈述"
-    skills: [positioning-statement]
+    name: "定位策略"
+    skills: [positioning-strategy]
     gate:
-      condition: "定位陈述质量检查5项全部通过"
-      fail_action: "自动重试≤3次，仍不通过升级人类"
-
-  - id: phase-2
-    name: "价值曲线"
-    depends_on: [phase-1]
-    skills: [positioning-value-curve]
-    gate:
-      condition: "差异化强度≥0.5"
-      fail_action: "<0.5警告，蓝海动作需人类审核战略意图"
-
-  - id: phase-3
-    name: "差异化评估"
-    depends_on: [phase-2]
-    skills: [positioning-differentiation]
-    gate:
-      condition: "5个维度都已评估"
-      fail_action: "各维度需人类校准"
-
-  - id: phase-4
-    name: "排他决策"
-    depends_on: [phase-1, phase-3]
-    skills: [positioning-exclusion]
-    gate:
-      condition: "排他陈述已生成"
-      fail_action: "排他决策必须由人类产品负责人做出"
+      condition: "定位陈述质量检查5项全部通过，差异化强度≥0.5，排他陈述已生成"
+      fail_action: "定位陈述不通过自动重试≤3次；差异化强度<0.5警告；排他决策必须由人类产品负责人做出"
 ```
 
 ## 阶段执行计划
 
-### 阶段1：定位陈述
+### 阶段1：定位策略
 
-- **调用Skill**: `positioning-statement`
+- **调用Skill**: `positioning-strategy`
 - **输入参数**:
-  - `exploration_output`: 探索阶段输出（来自 user-research-user-modeling / opportunity-brief）
-  - `bmc`: BMC（来自 output/pm-strategy/business-model-canvas/bmc.json）
-  - `competitor_intel`: 竞品分析数据（来自 market-competitor-intel → competitor-intel.json）
-- **输出**: `output/pm-strategy/positioning-statement/positioning-statements.json`
-- **验证**: 定位陈述质量检查5项全部通过
-- **执行模式**: 🤖→👤 AI建议，人类审批
-- **卡口**: 定位陈述质量检查5项全部通过 → 未通过：自动重试≤3次，仍不通过升级人类
-
-### 阶段2：价值曲线
-
-- **调用Skill**: `positioning-value-curve`
-- **输入参数**:
-  - `competitor_intel`: 竞品分析数据（来自 market-competitor-intel → competitor-intel.json）
-  - `product_capability`: 自身产品能力评估（用户提供）
-  - `user_research`: 用户研究数据（来自 user-research-user-modeling → persona.json）
-- **输出**: `output/pm-strategy/positioning-value-curve/value-curve.json`
-- **验证**: 差异化强度≥0.5
-- **执行模式**: 🤖→👤 AI建议，人类审批
-- **卡口**: 差异化强度≥0.5 → 未通过：<0.5警告，蓝海动作需人类审核战略意图
-
-### 阶段3：差异化评估
-
-- **调用Skill**: `positioning-differentiation`
-- **输入参数**:
-  - `value_curve`: 价值曲线（来自阶段2 `output/pm-strategy/positioning-value-curve/value-curve.json`）
-  - `competitor_intel`: 竞品分析（来自 market-competitor-intel → competitor-intel.json）
+  - `value_fit`: 价值主张匹配结果（来自 output/pm-strategy/business-value-fit/evaluation_report.json）
+  - `competitor_analysis`: 竞品分析数据（来自 market-competitor-analysis → competitor-analysis.json）
+  - `user_insight`: 用户洞察（来自 user-research-user-modeling）
+  - `bmc`: 价值主张（来自 output/pm-strategy/business-model-canvas/bmc.json，可选）
   - `capability_assessment`: 自身能力评估（可选，用户提供）
-- **输出**: `output/pm-strategy/positioning-differentiation/differentiation-assessment.json`
-- **验证**: 5个维度都已评估
+- **输出**: `output/pm-strategy/positioning-strategy/positioning-strategy.json` + `output/pm-strategy/positioning-strategy/positioning-strategy.md`
+- **验证**: 定位陈述质量检查5项全部通过，差异化强度≥0.5，排他陈述已生成
 - **执行模式**: 🤖→👤 AI建议，人类审批
-- **卡口**: 5个维度都已评估 → 未通过：各维度需人类校准，综合推荐需人类最终判断
-
-### 阶段4：排他决策
-
-- **调用Skill**: `positioning-exclusion`
-- **输入参数**:
-  - `positioning_statements`: positioning-statement输出（来自阶段1 `output/pm-strategy/positioning-statement/positioning-statements.json`）
-  - `competitor_intel`: 竞品分析（来自 market-competitor-intel → competitor-intel.json）
-- **输出**: `output/pm-strategy/positioning-exclusion/exclusion-decision.json`
-- **验证**: 排他陈述已生成
-- **执行模式**: 👤 人类执行，AI辅助
-- **卡口**: 排他陈述已生成 → 未通过：排他决策必须由人类产品负责人做出
+- **卡口**: 定位陈述质量检查5项全部通过，差异化强度≥0.5，排他陈述已生成 → 未通过：定位陈述不通过自动重试≤3次；差异化强度<0.5警告；排他决策必须由人类产品负责人做出
 
 ### 阶段总结（post_pipeline）
 
@@ -166,8 +109,8 @@ stages:
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 定位陈述完成 | 定位陈述质量检查5项全部通过 | 自动重试≤3次，仍不通过升级人类 |
-| 价值曲线完成 | 差异化强度≥0.5 | <0.5警告，蓝海动作需人类审核战略意图 |
+| 定位策略完成 | 定位陈述质量检查5项全部通过 | 自动重试≤3次，仍不通过升级人类 |
+| 差异化强度达标 | 差异化强度≥0.5 | <0.5警告，蓝海动作需人类审核战略意图 |
 | 差异化评估完成 | 5个维度都已评估 | 各维度需人类校准，综合推荐需人类最终判断 |
 | 排他决策完成 | 排他陈述已生成 | 排他决策必须由人类产品负责人做出 |
 | 阶段总结已生成 | output/phase-reports/pm-strategy/positioning-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
@@ -176,7 +119,7 @@ stages:
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| 阶段1某子Skill失败 | 暂停编排，输出失败诊断信息，请求人类介入修复后重试该阶段 |
+| 阶段1子Skill失败 | 暂停编排，输出失败诊断信息，请求人类介入修复后重试该阶段 |
 | 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
 | 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
 | 所有上游数据全部缺失 | 终止编排，输出数据依赖图和缺失清单，要求人类提供最小必要输入后重新启动 |
@@ -186,8 +129,9 @@ stages:
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 定位陈述最终选择 | 阶段1 positioning-statement 生成3-5个候选 | 人类选择最终定位陈述 |
-| 排他决策 | 阶段4 positioning-exclusion 提供排他建议 | 人类决定不为哪些用户服务 |
+| 定位陈述最终选择 | 阶段1 positioning-strategy 生成3-5个候选 | 人类选择最终定位陈述 |
+| 差异化评估校准 | 阶段1 positioning-strategy 差异化评估完成 | 人类校准主观维度评分 |
+| 排他决策 | 阶段1 positioning-strategy 提供排他建议 | 人类决定不为哪些用户服务 |
 
 ## 变更记录
 
@@ -197,3 +141,4 @@ stages:
 - v4.0: 核心原则替换为编排理念原则，新增异常处理表
 - v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
 - v6.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
+- v7.0: 合并定位四件套——将positioning-statement/value-curve/differentiation/exclusion合并为positioning-strategy；Pipeline stages从4阶段简化为1阶段；更新阶段执行计划、阶段卡口和人类决策点

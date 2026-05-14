@@ -16,91 +16,72 @@
 
 | 子模块 | 编排器 | 作用 | 何时调用 |
 |--------|--------|------|----------|
-| 需求管理 | requirements-orchestrator | 收集、理解、排序需求，区分真需求与伪需求 | 需要系统化管理需求时 |
 | 创意发散与方案构思 | ideation-orchestrator | 通过HMW、SCAMPER、逆转等方法发散创意并收敛 | 需要生成和筛选产品方案时 |
 | 产品设计与原型 | design-orchestrator | 生成PRD、设计信息架构、用户流程和交互原型 | 需要将方案具象化为设计时 |
 | 方案验证 | validation-orchestrator | 识别关键假设、定义MVP、设计实验、可用性测试 | 需要验证方案可行性时 |
 
 ## Pipeline Skill 清单
 
-### 需求管理（4个）
+### 创意发散与方案构思（1个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
-| requirements-collection | 1 | 收集需求并自动分类，标注置信度 | 上游战略输出、用户反馈 | requirements-collection.json |
-| requirements-understanding | 2 | 深度理解需求，填充理解模板5项（场景/动机/期望/约束/优先级） | 需求列表 | requirements-understanding.json |
-| requirements-prioritization | 3 | 基于RICE评分给出MoSCoW建议 | 需求理解结果、资源约束 | requirements-prioritization.json |
-| requirements-srs | 4 | 需求规格说明书（SRS）：补充非功能需求、接口约束、数据约束和边界条件 | PRD、API契约、数据模型 | requirements-srs.json |
+| ideation-workshop | 4 | HMW问题重构、SCAMPER创意发散、逆转分析、收敛Top5方案 | 问题陈述、需求理解 | ideation-workshop.json |
 
-### 创意发散与方案构思（4个）
+### 产品设计与原型（6个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
-| ideation-hmw | 4 | How Might We 问题重构，通过质量检查 | 问题陈述、需求理解 | hmw.json |
-| ideation-scamper | 5 | SCAMPER创意发散，生成大量候选方案 | HMW问题、约束条件 | scamper.json |
-| ideation-inversion | 6 | 逆转分析，从反面推导设计约束 | HMW问题、竞品分析 | inversion.json |
-| ideation-convergence | 7 | 收敛Top5方案，深化细节和可行性 | SCAMPER方案、逆转约束 | convergence.json |
-
-### 产品设计与原型（5个）
-
-| Skill | Pipeline | 作用 | 输入 | 输出 |
-|-------|----------|------|------|------|
-| design-prd | 8 | PRD自动生成与管理，支持L/S/X三级分层，4道质量门禁 | 需求管理输出、创意发散输出 | PRD文档、质量门禁报告 |
-| design-ia | 9 | 生成信息架构（IA）候选方案 | PRD文档、收敛方案 | ia.json |
-| design-userflow | 10 | 设计用户流程，消除死胡同 | PRD文档、IA方案 | userflow.json |
-| design-prototype | 11 | 生成交互原型，检查设计规范一致性 | 用户流程、设计规范 | prototype.json |
-| design-handoff-spec | 12 | 设计交接文档：整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单 | 原型规格、设计令牌、IA、用户流程 | design-handoff-spec.json |
+| design-prd | 5 | PRD自动生成与管理，支持L/S/X三级分层，4道质量门禁 | 创意发散输出 | PRD文档、质量门禁报告 |
+| design-ia | 6 | 生成信息架构（IA）候选方案 | PRD文档、收敛方案 | ia.json |
+| design-userflow | 7 | 设计用户流程，消除死胡同 | PRD文档、IA方案 | userflow.json |
+| design-prototype | 8 | 生成交互原型，检查设计规范一致性 | 用户流程、设计规范 | prototype.json |
+| design-handoff-spec | 9 | 设计交接文档：整合原型规格、设计令牌、交互规则和响应式断点，产出面向开发的设计交接清单 | 原型规格、设计令牌、IA、用户流程 | design-handoff-spec.json |
+| change-impact-analysis | 9 | 变更影响分析：评估PRD变更对下游设计（IA/用户流程/原型）的波及范围，生成影响矩阵与重做清单 | PRD变更、当前IA/用户流程/原型 | change-impact-analysis.json |
 
 ### 方案验证（4个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
-| validation-assumption-map | 12 | 识别和映射关键假设，定位最大风险假设 | 产品方案、商业模式 | assumption-map.json |
-| validation-mvp | 13 | 定义MVP范围，确保占比<60% | 假设地图、需求优先级 | mvp.json |
-| validation-experiment | 14 | 设计验证实验方案 | MVP范围、假设地图 | experiment.json |
-| validation-usability | 15 | 可用性测试，问题严重程度分级 | 原型、实验方案 | usability.json |
+| validation-assumption-map | 10 | 识别和映射关键假设，定位最大风险假设 | 产品方案、商业模式 | assumption-map.json |
+| validation-mvp | 11 | 定义MVP范围，确保占比<60% | 假设地图、需求优先级 | mvp.json |
+| validation-experiment | 12 | 设计验证实验方案 | MVP范围、假设地图 | experiment.json |
+| validation-usability | 13 | 可用性测试，问题严重程度分级 | 原型、实验方案 | usability.json |
 
 ### 交互（1个）
 
 | Skill | Pipeline | 作用 | 输入 | 输出 |
 |-------|----------|------|------|------|
-| interaction-spec | 16 | 交互设计规范：包含交互状态机、动画规范、手势操作、反馈机制、无障碍交互和异常状态处理 | 用户流程、原型规格、设计交接文档 | interaction-spec.json |
+| interaction-spec | 14 | 交互设计规范：包含交互状态机、动画规范、手势操作、反馈机制、无障碍交互和异常状态处理 | 用户流程、原型规格、设计交接文档 | interaction-spec.json |
 
 ## 执行顺序
 
 ```
 阶段1            阶段2              阶段3                阶段4
 ┌──────────┐  ┌──────────────┐  ┌──────────────────┐  ┌──────────┐
-│ 需求管理  │→│ 创意发散与    │→│ 产品设计与原型    │→│ 方案验证  │
-│          │  │ 方案构思      │  │ PRD→IA→流程→原型  │  │          │
+│ 创意发散  │→│ 产品设计与    │→│ 方案验证          │→│ 交互规范  │
+│ 与方案构思│  │ 原型          │  │                   │  │          │
 └──────────┘  └──────────────┘  └──────────────────┘  └──────────┘
- Pipeline 1-3     Pipeline 4-7     Pipeline 8-11      Pipeline 12-15
+ Pipeline 4     Pipeline 5-9     Pipeline 10-13      Pipeline 14
 ```
 
-- 需求管理是起点，为创意发散提供输入
-- 创意发散与方案构思依赖需求管理的输出
-- PRD生成（Pipeline 8）基于需求和创意方案生成标准化需求文档，是产品设计与原型的第一步
-- 产品设计（Pipeline 9-11）依赖PRD进行IA、流程和原型设计
+- 创意发散与方案构思是起点，为产品设计提供输入
+- PRD生成（Pipeline 5）基于创意方案生成标准化需求文档，是产品设计与原型的第一步
+- 产品设计（Pipeline 6-9）依赖PRD进行IA、流程和原型设计
 - 方案验证依赖原型和假设地图
-- 验证结果可能回溯到需求管理或创意阶段进行迭代
+- 验证结果可能回溯到创意阶段进行迭代
 
 ## 输出路径
 
 ```
 output/pm-design/
-├── requirements-collection/
-├── requirements-understanding/
-├── requirements-prioritization/
-├── requirements-srs/
-├── ideation-hmw/
-├── ideation-scamper/
-├── ideation-inversion/
-├── ideation-convergence/
+├── ideation-workshop/
 ├── design-prd/
 ├── design-ia/
 ├── design-userflow/
 ├── design-prototype/
 ├── design-handoff-spec/
+├── change-impact-analysis/
 ├── validation-assumption-map/
 ├── validation-mvp/
 ├── validation-experiment/
@@ -111,12 +92,7 @@ output/pm-design/
 ## 阶段卡口
 
 ### 进入产品设计与原型前需满足：
-- 收集完成：需求分类置信度已标注
-- 理解完成：理解模板5项已填充
-- 排序完成：MoSCoW人类已确认
-- HMW完成：HMW通过质量检查
 - 方案生成完成：至少10个候选方案
-- 逆转分析完成：设计约束已生成
 - 收敛完成：Top5方案已深化
 
 ### 进入方案设计（IA/流程/原型）前需满足：
@@ -137,8 +113,6 @@ output/pm-design/
 
 | 决策点 | 说明 |
 |--------|------|
-| 需求分类判定 | AI自动分类并标注置信度，低置信度需求由人类判定分类 |
-| MoSCoW定级 | AI基于RICE评分给出MoSCoW建议，人类确认最终定级 |
 | 方案最终选择 | AI生成对比矩阵和推荐，人类做最终方案选择 |
 | PRD分级确认 | AI自动判断PRD层级（L/S/X），置信度<0.7时强制人类确认 |
 | IA方案选择 | AI生成2-3个IA候选方案，人类选择最终方案 |
@@ -149,7 +123,7 @@ output/pm-design/
 
 ## 核心信念
 
-- 需求≠问题，用户描述的是解决方案不是问题本身
+- 需求≠问题，用户描述的是解决方案不是问题本身（已由 design-prd 内建覆盖）
 - 创意质量与数量正相关，早期判断是创意的敌人
 - PRD是设计的起点，没有PRD就没有可执行的设计
 - 设计是取舍不是堆砌，核心路径必须极致流畅

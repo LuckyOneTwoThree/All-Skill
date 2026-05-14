@@ -31,13 +31,13 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 商业画布 | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 9宫格商业模型 |
-| SWOT分析 | JSON | ○ | output/pm-strategy/planning-swot/swot.json | 优势/劣势/机会/威胁 |
+| SWOT分析 | JSON | ○ | output/pm-strategy/strategic-analysis/strategic-analysis.json | 优势/劣势/机会/威胁 |
 | OKR | JSON | ○ | output/pm-strategy/planning-okr/okr.json | 目标与关键结果 |
 | 路线图 | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | 产品路线图 |
-| 定位陈述 | JSON | ○ | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位 |
-| 价值曲线 | JSON | ○ | output/pm-strategy/positioning-value-curve/value-curve.json | 竞争价值曲线 |
-| 差异化评估 | JSON | ○ | output/pm-strategy/positioning-differentiation/differentiation-assessment.json | 差异化程度 |
-| 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-map/stakeholder-map.json | 利益相关者地图 |
+| 定位策略 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 产品定位 |
+| 价值曲线 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 竞争价值曲线 |
+| 差异化评估 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 差异化程度 |
+| 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json | 利益相关者地图 |
 | 定价策略 | JSON | ○ | output/pm-strategy/business-pricing/pricing_strategy.json | 定价方案 |
 | 北极星指标 | JSON | ○ | output/pm-strategy/planning-north-star/north_star.json | 核心指标定义 |
 | 产品/业务信息 | string | 是 | 用户提供 | 产品名称、业务模式、当前阶段 |
@@ -248,7 +248,7 @@ metadata:
   "strategic_directions": [
     {
       "name": "方向名称",
-      "ansoff_position": "",
+      "strategic_position": "",
       "rationale": "",
       "target_market": "",
       "differentiation": "",
@@ -307,7 +307,7 @@ metadata:
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | bmc.json商业模式变更 | 战略态势内部能力评估、执行路径商业模型 | 重新评估内部能力，更新执行路径中的商业模型部分 |
-| swot.json SWOT更新 | 战略态势评估、战略方向推演 | 重新执行Step 1和Step 2，更新态势矩阵和方向推荐 |
+| strategic-analysis.json战略分析更新 | 战略态势评估、战略方向推演 | 重新执行Step 1和Step 2，更新态势矩阵和方向推荐 |
 | okr.json OKR调整 | 执行路径OKR对齐 | 重新执行Step 3，更新OKR体系和路线图映射 |
 | roadmap.json路线图变更 | 执行路径里程碑 | 重新执行Step 3路线图映射部分 |
 | positioning定位变更 | 战略方向差异化策略 | 重新评估战略方向的差异化逻辑 |
@@ -316,7 +316,7 @@ metadata:
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| 战略方向调整 | stakeholder-strategy-doc、stakeholder-brief | 输出文件版本号+变更摘要 |
+| 战略方向调整 | stakeholder-analysis | 输出文件版本号+变更摘要 |
 | OKR变更 | planning-roadmap | 输出文件版本号+变更摘要 |
-| 风险预案更新 | stakeholder-brief | 输出文件版本号+变更摘要 |
-| 态势评估变更 | planning-ansoff | 输出文件版本号+变更摘要 |
+| 风险预案更新 | stakeholder-analysis | 输出文件版本号+变更摘要 |
+| 态势评估变更 | strategic-analysis | 输出文件版本号+变更摘要 |

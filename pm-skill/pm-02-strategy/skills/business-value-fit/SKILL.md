@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# ��价值主张匹配度自动评估
+# 价值主张匹配度自动评估
 
 ## 核心原则
 
@@ -82,7 +82,7 @@ metadata:
       }
     ]
   },
-  "opportunity_brief": {
+  "opportunity_definition": {
     "opportunity_description": "企业培训数字化渗透率仅28%，AI个性化学习需求年增长45%",
     "evidence": ["艾瑞咨询2024企业培训市场报告", "国务院职业教育改革实施方案"]
   }
@@ -395,7 +395,7 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| 匹配度评分变更 | business-pricing、positioning-statement | 输出文件版本号+变更摘要 |
+| 匹配度评分变更 | business-pricing、positioning-strategy | 输出文件版本号+变更摘要 |
 | 痛点覆盖率变更 | business-model-canvas | 输出文件版本号+变更摘要 |
 | 改进建议新增 | business-model-canvas | 输出文件版本号+变更摘要 |
 | 警告触发/解除 | business-pricing | 输出文件版本号+变更摘要 |
