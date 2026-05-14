@@ -217,7 +217,7 @@ Skill: page-builder
 ```
 Skill: api-integration
 输入:
-  API契约: output/backend-api-design/api-design/（可选）
+  API契约: output/backend-api-design/api-design-spec/（可选）
   页面数据流: output/ui-frontend/page-builder/pages.json
   目标框架: 项目信息收集阶段确定
   目标语言: 项目信息收集阶段确定

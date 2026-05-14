@@ -53,8 +53,8 @@ metadata:
 | 版本号 | string | 是 | 用户提供 | 验收的版本号 |
 | 验收范围 | string | 是 | 用户提供 | 本次验收的功能范围 |
 | 验收方 | string | ○ | 用户提供 | 验收负责人/团队 |
-| 后端审查报告 | JSON | ○ | output/backend-architecture/backend-architecture/review_report.json | 后端架构审查结果，作为验收参考 |
-| API覆盖报告 | JSON | ○ | output/backend-api-design/api-design/api-coverage.json | PRD/前端对齐覆盖报告 |
+| 后端审查报告 | JSON | ○ | output/backend-architecture/backend-architecture-spec/review_report.json | 后端架构审查结果 |
+| API覆盖报告 | JSON | ○ | output/backend-api-design/api-design-spec/api-coverage.json | PRD/前端对齐覆盖报告 |
 
 ### Story验收标准结构示例
 
@@ -734,11 +734,11 @@ Must需求通过率：{X}%
 
 | 验收变更类型 | 通知范围 | 通知方式 |
 |-------------|----------|----------|
-| 门禁结果变更 | release-orchestrator | 标记门禁变更，触发发布决策更新 |
+| 门禁结果变更 | iteration-orchestrator | 标记门禁变更，触发发布决策更新 |
 | P0/P1检查失败 | change-impact-analysis | 标记失败项，触发影响评估 |
-| 需人工验证项 | release-orchestrator | 标记待验证项，触发人工验收流程 |
-| P0/P1失败 | release-orchestrator | 标记阻断项，阻止发布流程 |
-| 签收状态变更 | release-orchestrator | 标记签收状态，触发发布决策 |
+| 需人工验证项 | iteration-orchestrator | 标记待验证项，触发人工验收流程 |
+| P0/P1失败 | iteration-orchestrator | 标记阻断项，阻止发布流程 |
+| 签收状态变更 | iteration-orchestrator | 标记签收状态，触发发布决策 |
 
 ---
 

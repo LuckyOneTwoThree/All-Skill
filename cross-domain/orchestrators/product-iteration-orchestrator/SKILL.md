@@ -288,7 +288,7 @@ Skill: iteration-orchestrator
 | PRD变更确认 | design-orchestrator完成 | 确认PRD变更可分发到受影响领域 |
 | 影响范围确认 | 影响分析完成 | 确认哪些领域需要变更，是否有遗漏 |
 | 集成就绪确认 | ui-orchestrator完成 | 确认前后端联调通过 |
-| 发布决策 | release-orchestrator完成 | 确认是否发布 |
+| 发布决策 | iteration-orchestrator完成 | 确认是否发布 |
 
 ## 异常处理
 

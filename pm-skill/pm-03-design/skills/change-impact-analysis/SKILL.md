@@ -37,8 +37,8 @@ metadata:
 | 当前PRD | JSON | 是 | PRD管理系统 | 当前生效的PRD版本 |
 | 当前技术方案 | JSON | 是 | 技术方案库 | 已评审的技术方案 |
 | 开发进度 | JSON | 是 | 开发跟踪系统 | 当前各任务的开发状态 |
-| API契约 | YAML/JSON | ○ | output/backend-api-design/api-design/openapi.yaml | 后端API设计，评估变更对后端接口的影响 |
-| 后端审查报告 | JSON | ○ | output/backend-architecture/backend-architecture/review_report.json | 后端架构审查结果，评估变更对后端架构的影响 |
+| API契约 | YAML/JSON | ○ | output/backend-api-design/api-design-spec/openapi.yaml | 后端API设计，评估变更对后端接口的影响 |
+| 后端审查报告 | JSON | ○ | output/backend-architecture/backend-architecture-spec/review_report.json | 后端架构审查结果，评估变更对后端架构的影响 |
 
 ### 变更请求结构示例
 

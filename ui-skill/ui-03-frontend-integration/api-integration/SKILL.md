@@ -31,7 +31,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| API契约 | JSON/YAML | ○ | output/backend-api-design/api-design/ | OpenAPI/Swagger规范（缺失时基于页面数据流推断） |
+| API契约 | JSON/YAML | ○ | output/backend-api-design/api-design-spec/ | OpenAPI/Swagger规范（缺失时基于页面数据流推断） |
 | 页面数据流 | JSON | 是 | output/ui-frontend/page-builder/pages.json | 页面数据获取需求 |
 | 目标框架 | string | 是 | 上游编排器传递 | React/Vue/Svelte |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响Mock数据和错误提示语言 |

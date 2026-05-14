@@ -37,7 +37,7 @@
 .trae/skills/
 ├── insight-orchestrator/SKILL.md
 ├── insight-analysis/SKILL.md
-├── api-contract/SKILL.md
+├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
 ├── ...（121个Skill扁平平铺）
 └── production-ready/SKILL.md
@@ -77,7 +77,7 @@
 /insight-orchestrator
 /market-competitor-analysis
 /design-prd
-/api-contract
+/api-design-spec
 ```
 
 **3. 编排器调度**
@@ -343,7 +343,7 @@ All-Skill/
 |-------|------|----------|
 | project-init | 项目初始化 + 设计系统建立：框架选型、目录结构、依赖安装、从品牌规范推导设计令牌、视觉风格定义、生成 PRODUCT.md/DESIGN.md | **输入**：pm PRD + positioning-strategy + 品牌规范 → **必调** ext-frontend-design → **输出**：`{project_dir}/` 可运行项目骨架 + 设计令牌 + PRODUCT.md/DESIGN.md |
 | page-builder | 组件生成 + 页面组装 + UI审查：基于设计系统生成前端组件，组装为完整页面，自动审查视觉/无障碍/交互/响应式 | **输入**：project-init + pm PRD/原型/IA + pm tracking-plan → 审查闭环，P0阻塞发布 |
-| api-integration | 前后端联调桥梁：基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-contract ← 核心跨领域契约 |
+| api-integration | 前后端联调桥梁：基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-design-spec ← 核心跨领域契约 |
 | production-ready | 生产就绪保障：构建配置+CI/CD+CDN + 性能优化 + 自动测试（组件/视觉/E2E/无障碍） | LCP≤2.5s + 首屏JS≤200KB + 核心流程E2E 100%通过 为上线卡口 |
 
 > **Skill 合并映射**：`project-scaffold` + `design-system` → `project-init`；`ui-component-gen` + `page-assembly` + `ui-review` → `page-builder`；`api-contract-consume` → `api-integration`；`frontend-build-deploy` + `frontend-performance` + `frontend-test` → `production-ready`

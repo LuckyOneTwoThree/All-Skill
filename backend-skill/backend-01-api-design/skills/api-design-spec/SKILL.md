@@ -36,7 +36,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
-| 数据模型 | JSON | ○ | output/backend-data-architecture/data-architecture/er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
+| 数据模型 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
 | 业务流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户流程定义 |
 | 安全等级 | string | 是 | 用户提供 | 标准 / 高安全（金融/医疗） |
 | 合规要求 | string | ○ | 用户提供 | GDPR / 等保 / PCI-DSS |
