@@ -60,6 +60,8 @@ output/ui-frontend-integration/
 └── frontend-performance/
 ```
 
+> 💡 **project_dir 双输出模式**：当 `project_dir` 参数指定时，API请求层代码直接写入 `{project_dir}/src/api/`，构建配置直接写入 `{project_dir}/`，元数据仍写入 `output/` 目录供下游 Skill 消费。
+
 ## 阶段卡口
 
 ### 进入构建部署前需满足：
@@ -84,6 +86,8 @@ output/ui-frontend-integration/
 ## 外部 Skill 扩展
 
 > **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+
+> **调用格式优化**：ext- 外部 Skill 调用已从描述性表格改为指令性调用块格式（`Skill: ext-xxx`），包含输入/输出/验证条件；脚本路径使用 `{SKILL_DIR}` 占位符，部署后由 Agent 框架解析为实际路径。
 
 | 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
 |----------------|---------|---------|------|------|

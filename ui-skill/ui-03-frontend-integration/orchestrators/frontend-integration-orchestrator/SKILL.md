@@ -89,8 +89,9 @@ Skill: api-contract-consume
   页面数据需求: output/ui-frontend/page-assembly/
   目标框架: 用户提供
   设计令牌: output/ui-design-system/design-system/tokens.json（可选）
+  project_dir: output/ui-project-scaffold/scaffold.json
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
-输出: output/ui-frontend-integration/api-contract-consume/
+输出: output/ui-frontend-integration/api-contract-consume/ + 代码写入 {project_dir}/src/api/
 验证: 100%接口有类型定义 + 100%接口有Mock数据 + 错误处理覆盖401/403/500
 模式: 🤖
 ```
@@ -105,8 +106,9 @@ Skill: frontend-build-deploy
   项目信息: 用户提供
   部署目标: 用户提供
   环境配置: 用户提供（可选）
+  project_dir: output/ui-project-scaffold/scaffold.json
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
-输出: output/ui-frontend-integration/frontend-build-deploy/
+输出: output/ui-frontend-integration/frontend-build-deploy/ + 配置文件写入 {project_dir}/
 验证: 构建成功 + CI流水线通过
 模式: 🤖
 ```
@@ -118,8 +120,9 @@ Skill: frontend-build-deploy
 ```
 Skill: frontend-performance
 输入:
-  前端代码: output/ui-frontend/page-assembly/ / output/ui-frontend/ui-component-gen/
+  前端代码: output/ui-frontend/page-assembly/ / output/ui-frontend/ui-component-gen/（同时参考 {project_dir}/src/）
   构建产物: output/ui-frontend-integration/frontend-build-deploy/
+  project_dir: output/ui-project-scaffold/scaffold.json
   性能数据: 用户提供（可选）
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend-integration/frontend-performance/
@@ -175,6 +178,7 @@ Skill: frontend-performance
 
 ## 变更记录
 
+- v6.0: 子Skill增加 project_dir 参数，代码/配置直接写入项目目录；frontend-performance 支持引用项目目录代码
 - v5.0: Pipeline格式对齐pm-skill规范；api-contract-consume与frontend-build-deploy标记为可并行（depends_on: []）；输入路径更新为合并后的design-system路径
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，识别api-contract-consume与frontend-build-deploy可并行执行

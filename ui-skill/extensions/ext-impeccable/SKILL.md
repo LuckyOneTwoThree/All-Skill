@@ -11,6 +11,8 @@ Designs and iterates production-grade frontend interfaces. Real working code, co
 
 ## Setup
 
+**{SKILL_DIR}** 表示 ext-impeccable Skill 所在目录的绝对路径，在执行脚本时替换为实际路径。
+
 Before any design work or file edits:
 
 1. Load context (PRODUCT.md / DESIGN.md) via the loader script.
@@ -29,7 +31,7 @@ Two files, case-insensitive. The loader looks at the project root by default and
 Load both in one call:
 
 ```bash
-node .trae/skills/impeccable/scripts/load-context.mjs
+node {SKILL_DIR}/scripts/load-context.mjs
 ```
 
 Consume the full JSON output. Never pipe through `head`, `tail`, `grep`, or `jq`. The output's `contextDir` field tells you where the files were resolved from.
@@ -161,7 +163,7 @@ If the first word is `craft`, setup still runs first, but [reference/craft.md](r
 **Pin** creates a standalone shortcut so `/<command>` invokes `/impeccable <command>` directly. **Unpin** removes it. The script writes to every harness directory present in the project.
 
 ```bash
-node .trae/skills/impeccable/scripts/pin.mjs <pin|unpin> <command>
+node {SKILL_DIR}/scripts/pin.mjs <pin|unpin> <command>
 ```
 
 Valid `<command>` is any command from the table above. Report the script's result concisely. Confirm the new shortcut on success, relay stderr verbatim on error.

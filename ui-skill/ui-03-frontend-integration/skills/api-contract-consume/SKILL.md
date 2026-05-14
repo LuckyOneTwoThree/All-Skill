@@ -36,6 +36,7 @@ metadata:
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
 | 设计令牌 | JSON | ○ | output/ui-design-system/design-system/tokens.json | 设计变量，用于生成带令牌引用的错误/加载状态UI |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响Mock数据内容和错误提示文案语言 |
+| project_dir | string | 是 | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，API请求层代码直接写入此目录 |
 
 ## 执行步骤
 
@@ -103,11 +104,15 @@ metadata:
 - 开发环境自动启用，生产环境自动禁用
 - 接口就绪后逐个切换为真实接口
 
+**代码写入规则**：生成的HTTP客户端封装写入 `{project_dir}/src/api/client.ts`，类型定义写入 `{project_dir}/src/api/types.ts`，请求Hooks写入 `{project_dir}/src/api/hooks/`，Mock处理器写入 `{project_dir}/src/api/mocks/`。元数据写入 `output/` 目录供下游Skill消费。
+
 ## 输出
 
-**存储路径**：`output/ui-frontend-integration/api-contract-consume/`
+**代码文件输出**：`{project_dir}/src/api/`（HTTP客户端封装、TypeScript类型定义、请求Hooks、Mock数据直接写入项目目录）
 
-**输出文件**：api-client-config.json
+**元数据输出**：`output/ui-frontend-integration/api-contract-consume/`
+
+**元数据文件**：api-client-config.json
 
 **输出Schema**：
 
@@ -118,7 +123,8 @@ metadata:
   "properties": {
     "api_metadata": {"type": "object", "description": "API元信息，包含source/version/total_endpoints/generated_types/generated_hooks"},
     "files": {"type": "array", "description": "生成文件列表，每项含path/type/description"},
-    "endpoint_example": {"type": "object", "description": "典型端点示例，包含method/path/request_type/response_type/hook/mock_available"}
+    "endpoint_example": {"type": "object", "description": "典型端点示例，包含method/path/request_type/response_type/hook/mock_available"},
+    "project_dir": {"type": "string", "description": "项目根目录路径，API请求层代码已写入此目录下的src/api/"}
   }
 }
 ```
@@ -159,6 +165,7 @@ metadata:
 | 页面数据需求缺失 | 为所有API接口生成代码 | 可能生成未使用的接口代码 |
 | 设计令牌缺失 | 错误/加载状态UI使用内联样式+TODO标注 | 错误提示样式硬编码，需后续替换为Token |
 | 目标框架缺失 | 若用户未提供目标框架，提示用户提供或跳过该输入相关步骤 | 默认React + TypeScript |
+| project_dir 缺失 | 仅输出到 output/ 目录的 api-client-config.json 中，不写入项目目录 | API请求层代码需手动复制到项目 |
 
 ## 数据获取说明
 

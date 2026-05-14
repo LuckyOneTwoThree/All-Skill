@@ -36,10 +36,13 @@ metadata:
 | 交互规格 | JSON | ○ | output/ui-frontend/ui-component-gen/ | 交互行为定义（用于E2E场景） |
 | UI审查结果 | JSON | ○ | output/ui-frontend/ui-review | 已知问题清单（优先覆盖） |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响测试断言文案和Mock数据语言 |
+| project_dir | string | ○ | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，测试文件直接写入此目录 |
 
 ## 执行步骤
 
 ### Step 1: 测试策略规划与单元测试生成
+
+**测试文件写入规则**：当 project_dir 存在时，生成的测试文件直接写入 `{project_dir}/tests/` 目录，与项目代码同目录结构，确保测试可直接运行。
 
 测试策略规划：
 
@@ -186,6 +189,7 @@ E2E场景规则：
 | 交互规格缺失 | 仅生成渲染和Props测试，跳过交互测试 | 交互行为覆盖不足 |
 | UI审查结果缺失 | 不针对已知问题生成专项测试 | 可能遗漏已知问题的回归测试 |
 | 页面代码缺失 | 仅生成组件级测试 | 缺少E2E和页面集成测试 |
+| project_dir 缺失 | 测试文件仅输出到 output/ 目录 | 测试文件需手动复制到项目 |
 
 ## 数据获取说明
 

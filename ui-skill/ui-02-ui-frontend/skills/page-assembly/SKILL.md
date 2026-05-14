@@ -36,6 +36,7 @@ metadata:
 | 已生成组件 | JSON | 是 | output/ui-frontend/ui-component-gen/components.json | 已生成的自定义组件 |
 | 设计令牌 | JSON | 是 | output/ui-design-system/design-system/tokens.json | 设计变量 |
 | 目标语言 | string | 是 | 上游编排器传递 / 用户提供（默认zh-CN） | 目标界面语言，影响页面文案/排版方向/i18n框架选择 |
+| project_dir | string | 是 | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，页面代码直接写入此目录 |
 | 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
 | 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 原型定义的页面布局和交互规格 |
 
@@ -67,25 +68,70 @@ metadata:
 
 Step 1 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-ui-ux-pro-max` `--domain landing\|dashboard` | 页面类型含"落地页/营销页/Landing"→landing；含"仪表盘/数据看板/Dashboard"→dashboard | brand:视觉冲击优先；product:转化率/信息密度优先 | 内部管理页面或普通内容页面 |
-| 2 | `ext-impeccable` `layout adapt` | 满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令 | brand/product按子命令分别感知 | 各子命令独立判断不调用条件 |
+#### 1a. ext-ui-ux-pro-max --domain landing|dashboard
+
+**触发条件**：页面类型含"落地页/营销页/Landing"→使用landing域；含"仪表盘/数据看板/Dashboard"→使用dashboard域
+**反模式**：内部管理页面或普通内容页面 → 跳过
+
+```
+Skill: ext-ui-ux-pro-max
+输入:
+  查询: "{页面类型} {行业} {风格关键词}"
+  模式: --domain landing 或 --domain dashboard
+  项目名称: {project_name}
+输出: 页面结构推荐（布局模式/CTA策略/信息架构/反模式）
+验证: 返回了完整的页面结构推荐，包含布局模式和CTA策略
+模式: 🤖
+```
+
+**Register 感知**：brand→视觉冲击优先；product→转化率/信息密度优先
+
+#### 1b. ext-impeccable layout adapt
+
+**触发条件**：满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令
+**反模式**：各子命令独立判断不调用条件
 
 子命令触发条件明细：
 - `layout`：页面区块>5个 或 组件树层级>3 或 间距不一致（反模式：简单单区块页面）
 - `adapt`：目标平台含"跨平台"或"移动端"（反模式：仅桌面端页面）
 
+```
+Skill: ext-impeccable
+输入:
+  子命令: [layout] [adapt]（仅传入命中条件的子命令）
+  目标: 当前页面布局
+  上下文: 页面组件树 + 设计令牌 + 目标平台
+输出: 布局优化方案（间距节奏/视觉层级/响应式适配）
+验证: 布局间距有节奏变化，响应式断点覆盖375px/768px/1024px/1440px
+模式: 🤖
+```
+
+**Register 感知**：brand/product按子命令分别感知
+
 Step 2 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `clarify onboard distill` | 满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令 | brand/product按子命令分别感知 | 各子命令独立判断不调用条件 |
+#### 2a. ext-impeccable clarify onboard distill
+
+**触发条件**：满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令
+**反模式**：各子命令独立判断不调用条件
 
 子命令触发条件明细：
 - `clarify`：页面含表单/空状态/错误状态/确认对话框（反模式：纯数据展示页面无文案）
 - `onboard`：页面为首页/注册页/新手引导页（反模式：非首次访问页面）
 - `distill`：页面组件数>10个 或 操作按钮>5个 或 信息层级>3层（反模式：页面已足够简洁）
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: [clarify] [onboard] [distill]（仅传入命中条件的子命令）
+  目标: 当前页面代码
+  上下文: 页面组件树 + 用户流程 + 设计令牌
+输出: 优化后的页面代码（UX文案/新手引导/精简结构）
+验证: 每个子命令的输出符合其验证标准
+模式: 🤖
+```
+
+**Register 感知**：brand/product按子命令分别感知
 
 ### Step 2: 状态管理与数据流设计
 
@@ -128,11 +174,15 @@ Step 2 外部调用：
 - 路由配置覆盖全部页面
 - 加载状态和错误处理100%覆盖
 
+**代码写入规则**：生成的页面文件直接写入 `{project_dir}/src/pages/` 目录，路由配置写入 `{project_dir}/src/router/`，状态管理写入 `{project_dir}/src/stores/`。元数据写入 `output/` 目录供下游Skill消费。
+
 ## 输出
 
-**存储路径**：`output/ui-frontend/page-assembly/`
+**代码文件输出**：`{project_dir}/src/pages/`（页面组件文件、路由配置、状态管理直接写入项目目录）
 
-**输出文件**：pages.json
+**元数据输出**：`output/ui-frontend/page-assembly/`
+
+**元数据文件**：pages.json
 
 **输出校验规则**：
 
@@ -159,7 +209,8 @@ Step 2 外部调用：
     "component_tree": {"type": "object", "description": "页面组件树，按布局区块组织组件列表"},
     "state_management": {"type": "object", "description": "状态管理方案，按UI状态/共享状态/服务端状态分类"},
     "data_flow": {"type": "object", "description": "数据流设计，定义各触发时机下的数据获取操作"},
-    "files": {"type": "array", "description": "生成的页面文件列表，包含路径和类型"}
+    "files": {"type": "array", "description": "生成的页面文件列表，包含路径和类型"},
+    "project_dir": {"type": "string", "description": "项目根目录路径，页面代码已写入此目录下的src/pages/"}
   }
 }
 ```
@@ -216,6 +267,7 @@ Step 2 外部调用：
 | 组件库缺失 | 使用通用HTML组件占位 | 页面可运行但视觉不统一 |
 | 设计令牌缺失 | 使用默认布局参数 | 间距/字号可能不符合设计规范 |
 | 页面需求缺失 | 若用户未提供页面需求，提示用户提供或跳过该输入相关步骤 | 无法组装页面 |
+| project_dir 缺失 | 仅输出到 output/ 目录的 pages.json 中，不写入项目目录 | 页面代码需手动复制到项目 |
 
 ## 数据获取说明
 - 本Skill需要组件库和页面需求，请通过以下方式之一提供：

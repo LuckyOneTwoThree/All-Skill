@@ -111,9 +111,12 @@ pipeline:
     - action: stage-summary
       output: output/phase-reports/ui/ui-orchestrator.md
   stages:
+    - id: project-scaffold
+      name: 项目脚手架初始化
+      depends_on: []
     - id: design-system
       name: 设计系统一体化生成
-      depends_on: []
+      depends_on: [project-scaffold]
     - id: ui-component-gen
       name: UI组件与页面生成
       depends_on: [design-system]
@@ -127,9 +130,12 @@ pipeline:
     - action: stage-summary
       output: output/phase-reports/ui/ui-orchestrator.md
   stages:
+    - id: project-scaffold
+      name: 项目脚手架初始化
+      depends_on: []
     - id: design-system-orchestrator
       name: 设计系统建立
-      depends_on: []
+      depends_on: [project-scaffold]
     - id: ui-frontend-orchestrator
       name: UI前端生成
       depends_on: [design-system-orchestrator]
@@ -151,7 +157,10 @@ pipeline:
   性能要求: 用户提供
   多端适配需求: 用户提供
   目标语言: 用户提供（zh-CN / en-US / ja-JP / ko-KR / ar-SA 等，默认zh-CN）
-输出: L1 或 L2 模式选择 + 判断依据 + 目标语言
+  project_name: 用户提供
+  project_dir: 用户提供
+  framework: 用户提供（React/Vue/Svelte/Next.js/Nuxt.js）
+输出: L1 或 L2 模式选择 + 判断依据 + 目标语言 + project_dir
 验证: 5项判断维度均有明确结论 + 目标语言已确定
 模式: 🤖→👤
 ```
@@ -159,6 +168,21 @@ pipeline:
 ⏸ **卡口**：人类确认分级结果 → 未确认：补充项目信息后重新评估
 
 ### L1 快速模式
+
+#### 调用 project-scaffold
+
+```
+Skill: project-scaffold
+输入:
+  project_name: 复杂度评估阶段确定
+  project_dir: 复杂度评估阶段确定
+  framework: 复杂度评估阶段确定
+  package_manager: 用户提供（可选，默认pnpm）
+  目标语言: 复杂度评估阶段确定
+输出: output/ui-project-scaffold/ + 代码写入 {project_dir}/
+验证: npm run dev 启动成功 + 目录结构完整
+模式: 🤖
+```
 
 #### 调用 design-system
 
@@ -169,9 +193,10 @@ Skill: design-system
   产品定位: output/pm-strategy/positioning-statement/positioning-statements.json（可选）
   目标平台: 用户提供
   目标语言: 复杂度评估阶段确定
+  project_dir: 复杂度评估阶段确定
   PRD: output/pm-design/design-prd/prd.md（可选）
   现有组件库: 用户提供（可选）
-输出: output/ui-design-system/design-system/
+输出: output/ui-design-system/design-system/ + 代码写入 {project_dir}/
 验证: WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级 + 动画令牌覆盖duration+easing + 组件依赖图无循环 + 100%组件有文档
 模式: 🤖→👤
 ```
@@ -186,9 +211,10 @@ Skill: ui-component-gen
   组件库: output/ui-design-system/design-system/library.json
   目标框架: 用户提供
   目标语言: 复杂度评估阶段确定
+  project_dir: 复杂度评估阶段确定
   PRD: output/pm-design/design-prd/prd.md（可选）
   L1模式: true（标记为L1模式，触发内置质量检查）
-输出: output/ui-frontend/ui-component-gen/
+输出: output/ui-frontend/ui-component-gen/ + 代码写入 {project_dir}/src/
 验证:
   Design Token引用率100% + TypeScript类型定义完整 + 交互组件包含ARIA属性
   + 状态机无死锁 + 动画时长100-500ms
@@ -218,6 +244,21 @@ L1 模式下 `ui-component-gen` 在代码生成后自动执行内建质量检查
 
 ### L2 完整模式
 
+#### 调用 project-scaffold
+
+```
+Skill: project-scaffold
+输入:
+  project_name: 复杂度评估阶段确定
+  project_dir: 复杂度评估阶段确定
+  framework: 复杂度评估阶段确定
+  package_manager: 用户提供（可选，默认pnpm）
+  目标语言: 复杂度评估阶段确定
+输出: output/ui-project-scaffold/ + 代码写入 {project_dir}/
+验证: npm run dev 启动成功 + 目录结构完整
+模式: 🤖
+```
+
 #### 调用 design-system-orchestrator
 
 ```
@@ -227,8 +268,11 @@ Skill: design-system-orchestrator
   产品定位: output/pm-strategy/positioning-statement/positioning-statements.json（可选）
   目标平台: 用户提供
   目标语言: 复杂度评估阶段确定
+  project_name: 复杂度评估阶段确定
+  project_dir: 复杂度评估阶段确定
+  framework: 复杂度评估阶段确定
   PRD: output/pm-design/design-prd/prd.md（可选）
-输出: output/ui-design-system/ + output/phase-reports/ui/design-system-orchestrator.md
+输出: output/ui-design-system/ + output/phase-reports/ui/design-system-orchestrator.md + 代码写入 {project_dir}/
 验证: 子编排器阶段总结已生成 + WCAG AA对比度100%达标
 模式: 🤖→👤
 ```
@@ -243,7 +287,8 @@ Skill: ui-frontend-orchestrator
   页面需求: 用户提供 / output/pm-design/design-prd/prd.md
   目标框架: 用户提供
   目标语言: 复杂度评估阶段确定
-输出: output/ui-frontend/ + output/phase-reports/ui/ui-frontend-orchestrator.md
+  project_dir: 复杂度评估阶段确定
+输出: output/ui-frontend/ + output/phase-reports/ui/ui-frontend-orchestrator.md + 代码写入 {project_dir}/src/
 验证: 子编排器阶段总结已生成 + P0问题=0 + 核心流程E2E测试100%通过
 模式: 🤖→👤
 ```
@@ -258,7 +303,8 @@ Skill: frontend-integration-orchestrator
   项目信息: 用户提供
   部署目标: 用户提供
   目标语言: 复杂度评估阶段确定
-输出: output/ui-frontend-integration/ + output/phase-reports/ui/frontend-integration-orchestrator.md
+  project_dir: 复杂度评估阶段确定
+输出: output/ui-frontend-integration/ + output/phase-reports/ui/frontend-integration-orchestrator.md + 配置文件写入 {project_dir}/
 验证: 子编排器阶段总结已生成 + 构建成功 + LCP≤2.5s
 模式: 🤖→👤
 ```
@@ -326,5 +372,6 @@ L1 执行过程中，若出现以下情况，应建议人类升级到 L2：
 
 ## 变更记录
 
+- v2.0: L1/L2模式均增加 project-scaffold 初始化阶段；所有子Skill/编排器传递 project_dir，代码直接写入项目目录
 - v1.1: 新增目标语言参数全链路传递；sub-module元数据补全；API契约路径修正
 - v1.0: 初始版本，L1/L2分级策略，统一入口自动路由

@@ -272,9 +272,12 @@ Skill: design-system-orchestrator
   品牌规范: 品牌规范资料
   产品定位: output/cross-domain/positioning-orchestrator/
   目标语言: 用户提供（默认zh-CN）
+  project_name: 用户提供
+  project_dir: 用户提供
+  framework: 用户提供（React/Vue/Svelte/Next.js/Nuxt.js）
   PRD: output/cross-domain/design-orchestrator/
-输出: output/cross-domain/design-system-orchestrator/
-验证: 设计令牌人类确认通过
+输出: output/cross-domain/design-system-orchestrator/ + 代码写入 {project_dir}/
+验证: 设计令牌人类确认通过 + 项目可运行（npm run dev成功）
 模式: 🤖→👤
 ```
 
@@ -289,9 +292,10 @@ Skill: ui-frontend-orchestrator
   组件库: output/cross-domain/design-system-orchestrator/
   PRD: output/cross-domain/design-orchestrator/
   原型规格: output/cross-domain/design-orchestrator/
+  project_dir: output/ui-project-scaffold/scaffold.json
   目标语言: 用户提供（默认zh-CN）
-输出: output/cross-domain/ui-frontend-orchestrator/
-验证: 前端代码审查通过
+输出: output/cross-domain/ui-frontend-orchestrator/ + 代码写入 {project_dir}/src/
+验证: 前端代码审查通过 + 项目可运行（npm run dev成功）
 模式: 🤖→👤
 ```
 
@@ -304,9 +308,10 @@ Skill: frontend-integration-orchestrator
 输入:
   API契约: output/cross-domain/api-design-orchestrator/
   前端代码: output/cross-domain/ui-frontend-orchestrator/
+  project_dir: output/ui-project-scaffold/scaffold.json
   目标语言: 用户提供（默认zh-CN）
-输出: output/cross-domain/frontend-integration-orchestrator/
-验证: 前后端联调核心流程100%通过
+输出: output/cross-domain/frontend-integration-orchestrator/ + 配置文件写入 {project_dir}/
+验证: 前后端联调核心流程100%通过 + 项目构建成功（npm run build成功）
 模式: 🤖
 ```
 
@@ -411,6 +416,7 @@ Skill: retrospective-orchestrator
 
 ## 变更记录
 
+- v5.0: UI阶段增加 project_dir 传递，代码直接写入可运行项目目录；design-system-orchestrator 增加 project-scaffold 初始化阶段；集成验证增加项目可运行性校验
 - v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加子编排器调度协议和命令式调度指令

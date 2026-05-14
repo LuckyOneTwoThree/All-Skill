@@ -93,9 +93,10 @@ Skill: ui-component-gen
   组件库: output/ui-design-system/design-system/library.json
   目标框架: 用户提供
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
+  project_dir: output/ui-project-scaffold/scaffold.json
   原型规格: output/pm-design/design-prototype/prototype_spec.json（可选）
   PRD: output/pm-design/design-prd/prd.md（可选）
-输出: output/ui-frontend/ui-component-gen/
+输出: output/ui-frontend/ui-component-gen/ + 代码写入 {project_dir}/src/components/
 验证: Design Token引用率100% + TypeScript类型定义完整 + 交互组件包含ARIA属性 + 状态机无死锁 + 动画时长100-500ms
 模式: 🤖→👤
 ```
@@ -112,8 +113,9 @@ Skill: page-assembly
   已生成组件: output/ui-frontend/ui-component-gen/components.json
   设计令牌: output/ui-design-system/design-system/tokens.json
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
+  project_dir: output/ui-project-scaffold/scaffold.json
   路由结构: output/pm-design/design-ia/ia_proposals.json（可选）
-输出: output/ui-frontend/page-assembly/
+输出: output/ui-frontend/page-assembly/ + 代码写入 {project_dir}/src/pages/
 验证: 组件树层级≤4层 + 100%组件来自组件库或ui-component-gen生成
 模式: 🤖→👤
 ```
@@ -125,9 +127,10 @@ Skill: page-assembly
 ```
 Skill: ui-review
 输入:
-  组件代码: output/ui-frontend/ui-component-gen/
-  页面代码: output/ui-frontend/page-assembly/
+  组件代码: output/ui-frontend/ui-component-gen/（同时参考 {project_dir}/src/components/）
+  页面代码: output/ui-frontend/page-assembly/（同时参考 {project_dir}/src/pages/）
   设计令牌: output/ui-design-system/design-system/tokens.json
+  project_dir: output/ui-project-scaffold/scaffold.json
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
 输出: output/ui-frontend/ui-review/
 验证: P0问题=0
@@ -141,12 +144,13 @@ Skill: ui-review
 ```
 Skill: frontend-test
 输入:
-  组件代码: output/ui-frontend/ui-component-gen/
-  页面代码: output/ui-frontend/page-assembly/
+  组件代码: output/ui-frontend/ui-component-gen/（同时参考 {project_dir}/src/components/）
+  页面代码: output/ui-frontend/page-assembly/（同时参考 {project_dir}/src/pages/）
+  project_dir: output/ui-project-scaffold/scaffold.json
   交互规格: output/ui-frontend/ui-component-gen/（可选）
   UI审查结果: output/ui-frontend/ui-review/（可选）
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
-输出: output/ui-frontend/frontend-test/
+输出: output/ui-frontend/frontend-test/ + 测试文件写入 {project_dir}/tests/
 验证: 核心流程E2E测试100%通过
 模式: 🤖
 ```
@@ -199,6 +203,7 @@ Skill: frontend-test
 
 ## 变更记录
 
+- v6.0: 子Skill增加 project_dir 参数，代码直接写入项目目录；ui-review/frontend-test 支持引用项目目录代码
 - v5.0: 移除 interaction-design 独立阶段（合并到 ui-component-gen）；Pipeline格式对齐pm-skill规范；阶段从5个简化为4个
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析

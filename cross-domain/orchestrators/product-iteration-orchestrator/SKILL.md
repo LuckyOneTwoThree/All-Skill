@@ -224,6 +224,7 @@ Skill: design-system-orchestrator
 输入:
   PRD变更: output/cross-domain/design-orchestrator/
   目标语言: 用户提供（默认zh-CN）
+  project_dir: 用户提供（已有项目目录路径）
 输出: output/cross-domain/design-system-orchestrator/
 验证: 设计令牌变更人类确认通过
 模式: 🤖→👤
@@ -239,6 +240,7 @@ Skill: ui-frontend-orchestrator
   PRD变更: output/cross-domain/design-orchestrator/
   设计令牌变更输出: output/cross-domain/design-system-orchestrator/
   目标语言: 用户提供（默认zh-CN）
+  project_dir: 用户提供（已有项目目录路径）
 输出: output/cross-domain/ui-frontend-orchestrator/
 验证: 前端代码审查通过
 模式: 🤖→👤
@@ -254,6 +256,7 @@ Skill: frontend-integration-orchestrator
   API变更输出: output/cross-domain/api-design-orchestrator/
   前端代码变更输出: output/cross-domain/ui-frontend-orchestrator/
   目标语言: 用户提供（默认zh-CN）
+  project_dir: 用户提供（已有项目目录路径）
 输出: output/cross-domain/frontend-integration-orchestrator/
 验证: 前后端联调通过
 模式: 🤖
@@ -346,6 +349,7 @@ Skill: release-orchestrator
 
 ## 变更记录
 
+- v5.0: UI阶段增加 project_dir 传递，代码直接写入已有项目目录
 - v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加子编排器调度协议和命令式调度指令

@@ -35,10 +35,13 @@ metadata:
 | 构建产物 | JSON | 是 | output/ui-frontend-integration/frontend-build-deploy | 构建配置和产物分析 |
 | 性能数据 | JSON | ○ | 用户提供 | Lighthouse报告 / Web Vitals数据 |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响字体子集化策略和i18n资源优化 |
+| project_dir | string | ○ | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，优先分析项目目录中的实际代码 |
 
 ## 执行步骤
 
 ### Step 1: 性能基线建立
+
+**性能分析数据源优先级**：当 project_dir 存在时，优先分析 `{project_dir}/src/` 中的实际项目代码和 `{project_dir}/` 中的构建配置，而非 output/ 目录中的元数据。项目代码是可运行的最新版本，性能分析结果更准确。
 
 建立性能基线指标：
 
@@ -93,9 +96,23 @@ metadata:
 
 **外部 Skill 调用**：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `optimize` | LCP>2.5s 且瓶颈为UI渲染（非网络/非包体积） | brand:优化视觉表现力；product:优化交互响应 | 性能瓶颈为网络延迟或包体积（非UI渲染问题） |
+#### ext-impeccable optimize
+
+**触发条件**：LCP>2.5s 且瓶颈为UI渲染（非网络/非包体积）
+**反模式**：性能瓶颈为网络延迟或包体积（非UI渲染问题） → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: optimize
+  目标: 性能瓶颈组件/页面代码
+  上下文: 性能分析报告 + 项目目录代码（如project_dir存在）
+输出: UI渲染优化方案（重排优化/重绘减少/合成层优化）
+验证: LCP降至2.5s以下且视觉表现不降级
+模式: 🤖
+```
+
+**Register 感知**：brand→优化视觉表现力；product→优化交互响应
 
 ### Step 5: 性能预算与防退化
 
@@ -163,6 +180,7 @@ metadata:
 | 性能数据缺失 | 基于代码静态分析推断性能问题 | 问题定位可能不够精准 |
 | 构建产物缺失 | 基于代码结构估算包体积 | 体积数据为估算值 |
 | 前端代码缺失 | 仅输出通用优化建议 | 无法提供代码级修复方案 |
+| project_dir 缺失 | 仅分析 output/ 目录中的元数据和代码片段 | 性能分析可能不完整 |
 
 ## 数据获取说明
 

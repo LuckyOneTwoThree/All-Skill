@@ -37,6 +37,7 @@ metadata:
 | 组件库 | JSON | 是 | output/ui-design-system/design-system/library.json | 可复用的组件清单和规格 |
 | 目标框架 | string | 是 | 用户提供 | React / Vue / Svelte |
 | 目标语言 | string | 是 | 上游编排器传递 / 用户提供（默认zh-CN） | 目标界面语言，影响占位文案/aria-label/按钮文案语言 |
+| project_dir | string | 是 | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，组件代码直接写入此目录 |
 | 原型规格 | JSON | ○ | output/pm-design/design-prototype/prototype_spec.json | 原型定义的组件视觉和交互规格 |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求上下文 |
 
@@ -128,17 +129,64 @@ metadata:
 
 Step 1 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `shape` | 组件意图描述含"复杂"/状态数>5/涉及多步骤流程 | brand:探索视觉可能性；product:聚焦用户任务 | 简单展示组件（Badge/Divider/Spacer） |
+#### 1a. ext-impeccable shape
+
+**触发条件**：组件意图描述含"复杂" 或 状态数>5 或 涉及多步骤流程
+**反模式**：简单展示组件（Badge/Divider/Spacer） → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: shape
+  目标: 组件UX/UI规划
+  上下文: 组件意图 + 状态列表 + 用户流程
+输出: 组件UX规划（状态机/交互流程/视觉方向）
+验证: 规划包含完整状态转换图和视觉方向建议
+模式: 🤖
+```
+
+**Register 感知**：brand→探索视觉可能性；product→聚焦用户任务
 
 Step 4 外部调用（严格按顺序，每步依赖前步输出）：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-frontend-design` | 组件视觉描述含"卡片网格"/主色为蓝紫渐变/无明确美学方向 | brand:大胆视觉突破；product:差异化但克制 | 用户要求遵循特定UI库（如shadcn/Ant Design） |
-| 2 | `ext-interaction-design` | 组件有拖拽/手势/页面转换/复杂状态转换 | 均适用 | 纯展示组件无交互 |
-| 3 | `ext-impeccable` `animate bolder|quieter delight` | 满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令 | brand/product按子命令分别感知 | 各子命令独立判断不调用条件 |
+#### 4a. ext-frontend-design
+
+**触发条件**：组件视觉描述含"卡片网格" 或 主色为蓝紫渐变 或 无明确美学方向
+**反模式**：用户要求遵循特定UI库（如shadcn/Ant Design） → 跳过
+
+```
+Skill: ext-frontend-design
+输入:
+  设计需求: 组件视觉描述 + 当前色彩/字体方案
+  上下文: 设计令牌 + 品牌规范
+输出: 反AI同质化的视觉方向建议（布局差异化/色彩替代/字体替代）
+验证: 建议中不包含卡片网格/蓝紫渐变等AI同质化特征
+模式: 🤖
+```
+
+**Register 感知**：brand→大胆视觉突破；product→差异化但克制
+
+#### 4b. ext-interaction-design
+
+**触发条件**：组件有拖拽/手势/页面转换/复杂状态转换
+**反模式**：纯展示组件无交互 → 跳过
+
+```
+Skill: ext-interaction-design
+输入:
+  交互需求: 组件交互模式（拖拽/手势/状态转换）
+  上下文: 组件状态机 + 设计令牌
+输出: 交互设计方案（动画时序/缓动函数/微交互模式/可访问性适配）
+验证: 方案包含完整的时序参数和prefers-reduced-motion适配
+模式: 🤖
+```
+
+**Register 感知**：均适用
+
+#### 4c. ext-impeccable animate bolder|quieter delight
+
+**触发条件**：满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令
+**反模式**：各子命令独立判断不调用条件
 
 子命令触发条件明细：
 - `animate`：组件状态转换>3个 或 有异步操作（反模式：数据密集型仪表盘或医疗/金融场景）
@@ -146,17 +194,44 @@ Step 4 外部调用（严格按顺序，每步依赖前步输出）：
 - `quieter`：品牌色占比>40% 或 组件视觉描述含"花哨/过度/太重" 或 医疗/金融/法律场景（反模式：组件视觉已偏保守）
 - `delight`：组件为核心用户流程节点（反模式：辅助功能组件或后台管理组件）
 
+**bolder vs quieter 决策规则**：同一组件只能调用其中一个，不可同时调用。判断依据：品牌色占比<25%→bolder，>40%→quieter，25%-40%→不调用（已平衡）。
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: [animate] [bolder|quieter] [delight]（仅传入命中条件的子命令）
+  目标: 当前组件代码
+  上下文: 组件状态机 + 设计令牌 + 品牌色占比
+输出: 增强后的组件代码（动画/视觉强度/愉悦感）
+验证: 每个子命令的输出符合其验证标准
+模式: 🤖
+```
+
+**Register 感知**：brand/product按子命令分别感知
+
 Step 5 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `harden polish` | 满足任一子命令触发条件即调用，一次调用传入所有命中的子命令 | brand:高端感打磨；product:专业感打磨 | 各子命令独立判断不调用条件 |
+#### 5a. ext-impeccable harden polish
+
+**触发条件**：满足任一子命令触发条件即调用，一次调用传入所有命中的子命令
+**反模式**：各子命令独立判断不调用条件
 
 子命令触发条件明细：
 - `harden`：组件有表单输入/异步操作/国际化需求（反模式：纯静态展示组件）
 - `polish`：所有Step 4外部调用完成后（反模式：无，polish始终是最后一步）
 
-**bolder vs quieter 决策规则**：同一组件只能调用其中一个，不可同时调用。判断依据：品牌色占比<25%→bolder，>40%→quieter，25%-40%→不调用（已平衡）。
+```
+Skill: ext-impeccable
+输入:
+  子命令: [harden] [polish]（仅传入命中条件的子命令）
+  目标: 当前组件代码
+  上下文: 组件测试结果 + 设计令牌
+输出: 生产级组件代码（错误处理/国际化/边缘情况/最终打磨）
+验证: 组件通过所有质量门禁
+模式: 🤖
+```
+
+**Register 感知**：brand→高端感打磨；product→专业感打磨
 
 ### Step 5: 代码生成与校验
 
@@ -171,6 +246,8 @@ Step 5 外部调用：
 - 动画时长在100-500ms范围内
 - 异步操作>300ms有进度指示
 - 支持prefers-reduced-motion
+
+**代码写入规则**：生成的组件文件直接写入 `{project_dir}/src/components/{ComponentName}/` 目录，包含组件文件、样式文件、类型文件、测试文件和Story文件。元数据写入 `output/` 目录供下游Skill消费。
 
 ### L1 模式说明
 
@@ -197,9 +274,10 @@ Step 5 外部调用：
 
 ## 输出
 
-**存储路径**：`output/ui-frontend/ui-component-gen/`
+**代码文件输出**：`{project_dir}/src/components/`（组件TSX/Vue/Svelte文件、样式文件、类型文件、测试文件、Story文件直接写入项目目录）
 
-**输出文件**：components.json
+**元数据输出**：`output/ui-frontend/ui-component-gen/`
+**元数据文件**：components.json
 
 **输出Schema**：
 
@@ -215,7 +293,8 @@ Step 5 外部调用：
     "token_coverage": {"type": "string", "description": "Design Token引用覆盖率"},
     "reused_components": {"type": "array", "description": "复用的组件库组件名称列表"},
     "accessibility": {"type": "object", "description": "可访问性规格，包含ARIA角色、标签和键盘交互"},
-    "interaction": {"type": "object", "description": "交互规格，包含状态机、动画和反馈机制"}
+    "interaction": {"type": "object", "description": "交互规格，包含状态机、动画和反馈机制"},
+    "project_dir": {"type": "string", "description": "项目根目录路径，组件代码已写入此目录下的src/components/"}
   }
 }
 ```
@@ -268,6 +347,7 @@ Step 5 外部调用：
 | 原型规格缺失 | 基于意图描述推导组件规格 | 组件视觉细节可能不够精准 |
 | 交互场景描述缺失 | 仅生成基础交互（hover/focus/loading） | 缺少复杂交互定义 |
 | 动画令牌缺失 | 使用默认动画时长（200ms/300ms/500ms） | 动画节奏可能不统一 |
+| project_dir 缺失 | 仅输出到 output/ 目录的 components.json 中，不写入项目目录 | 组件代码需手动复制到项目 |
 
 ## 上游变更响应
 

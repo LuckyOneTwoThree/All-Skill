@@ -65,12 +65,32 @@ pipeline:
     - action: stage-summary
       output: output/phase-reports/ui/design-system-orchestrator.md
   stages:
+    - id: project-scaffold
+      name: 项目脚手架初始化
+      depends_on: []
     - id: design-system
       name: 设计系统一体化生成
-      depends_on: []
+      depends_on: [project-scaffold]
 ```
 
 ## 阶段执行计划
+
+### 阶段0：project-scaffold
+
+#### 调用 project-scaffold
+
+```
+Skill: project-scaffold
+输入:
+  project_name: 用户提供
+  project_dir: 用户提供
+  framework: 用户提供（React/Vue/Svelte/Next.js/Nuxt.js）
+  package_manager: 用户提供（可选，默认pnpm）
+  目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
+输出: output/ui-project-scaffold/ + 代码写入 {project_dir}/
+验证: npm run dev 启动成功 + npm run build 构建成功 + 目录结构完整
+模式: 🤖
+```
 
 ### 调用 design-system
 
@@ -81,9 +101,10 @@ Skill: design-system
   产品定位: output/pm-strategy/positioning-statement/positioning-statements.json（可选）
   目标平台: 用户提供
   目标语言: 上游编排器传递 / 用户提供（默认zh-CN）
+  project_dir: output/ui-project-scaffold/scaffold.json
   PRD: output/pm-design/design-prd/prd.md（可选）
   现有组件库: 用户提供（可选）
-输出: output/ui-design-system/design-system/
+输出: output/ui-design-system/design-system/ + 代码写入 {project_dir}/src/styles/
 验证: WCAG AA对比度100%达标 + 色彩体系≥80个令牌 + 间距令牌≥8级 + 动画令牌覆盖duration+easing + 组件依赖图无循环 + 100%组件有文档
 模式: 🤖→👤
 ```
@@ -108,6 +129,7 @@ Skill: design-system
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
+| 项目脚手架初始化完成 | npm run dev 启动成功 + npm run build 构建成功 + 目录结构完整 | 初始化失败则检查Node环境；目录缺失则手动创建 |
 | 设计系统生成完成 | WCAG AA对比度100%达标 + 组件依赖图无循环 + 100%组件有文档 | 对比度不达标自动调整人类确认；循环依赖必须修复；缺失文档标注"待补充" |
 | 阶段总结已生成 | output/phase-reports/ui/design-system-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
@@ -131,6 +153,7 @@ Skill: design-system
 
 ## 变更记录
 
+- v6.0: 新增 project-scaffold 阶段，项目初始化与代码写入项目目录；design-system 增加 project_dir 参数支持双输出模式
 - v5.0: 合并 design-token + component-library + design-system-doc 为单一 design-system Skill；Pipeline格式对齐pm-skill规范；阶段从3个简化为1个
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v3.0: 统一优化为编排协议+Pipeline+调用指令格式，删除调度规则，增加并行阶段分析

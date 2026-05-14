@@ -36,6 +36,7 @@ metadata:
 | 产品定位 | JSON | ○ | output/pm-strategy/positioning-statement/positioning-statements.json | 产品定位陈述，影响视觉风格 |
 | 目标平台 | string | 是 | 用户提供 | Web / Mobile / 跨平台 |
 | 目标语言 | string | 是 | 上游编排器传递 / 用户提供（默认zh-CN） | 目标界面语言，影响字体/字号/行高/间距令牌 |
+| project_dir | string | 是 | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，代码文件直接写入此目录 |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求文档，提取组件需求 |
 | 现有组件库 | JSON | ○ | 用户提供 | 已有组件清单（避免重复） |
 
@@ -74,27 +75,104 @@ metadata:
 - 规则：主色相不变降明度升饱和度、背景反转、文字对比度≥4.5:1、阴影改用深色半透明
 - 输出：`output/ui-design-system/design-system/dark-tokens.json`
 
+**代码写入规则**：生成的设计令牌文件同时写入 `{project_dir}/src/styles/tokens.css` 和 `{project_dir}/src/styles/tokens.json`，确保后续Skill可直接引用。
+
 **外部 Skill 调用**（按执行顺序）：
 
 Step 1 外部调用（合并同Skill子命令为单次调用以节省token）：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-ui-ux-pro-max` `--design-system` | 品牌规范不完整 或 品牌色<3个 或 产品定位描述<50字 | brand:侧重风格独特性；product:侧重可用性准则 | 品牌规范完整且已有明确配色方案 |
-| 2 | `ext-frontend-design` | 品牌色为蓝紫渐变/主字体为Inter或Roboto/视觉风格描述含"简洁现代"（AI同质化特征） | brand:极端美学方向；product:差异化但克制 | 用户明确要求遵循特定设计系统（如Material/Ant Design） |
-| 3 | `ext-impeccable` `colorize` | 品牌色占比<10% 或 中性色占比>70% 或 色彩情绪描述含"安全/保守" | brand:大胆用色；product:功能性色彩增强 | 已通过ext-frontend-design获得色彩方案 |
+#### 1a. ext-ui-ux-pro-max --design-system
+
+**触发条件**：品牌规范不完整 或 品牌色<3个 或 产品定位描述<50字
+**反模式**：品牌规范完整且已有明确配色方案 → 跳过
+
+```
+Skill: ext-ui-ux-pro-max
+输入:
+  查询: "{产品类型} {行业} {风格关键词}"
+  模式: --design-system
+  项目名称: {project_name}
+输出: 设计系统推荐（风格/色彩/字体/效果/反模式）
+验证: 返回了完整的设计系统推荐，包含至少3个色彩方案和2个字体配对
+模式: 🤖
+```
+
+**Register 感知**：brand→侧重风格独特性；product→侧重可用性准则
+
+#### 1b. ext-frontend-design
+
+**触发条件**：品牌色为蓝紫渐变/主字体为Inter或Roboto/视觉风格描述含"简洁现代"（AI同质化特征）
+**反模式**：用户明确要求遵循特定设计系统（如Material/Ant Design） → 跳过
+
+```
+Skill: ext-frontend-design
+输入:
+  设计需求: 当前色彩体系和视觉方向描述
+  上下文: 品牌规范 + 产品定位
+输出: 反AI同质化的美学方向建议（字体替代/色彩替代/布局差异化）
+验证: 建议中不包含Inter/Roboto/蓝紫渐变等AI同质化特征
+模式: 🤖
+```
+
+**Register 感知**：brand→极端美学方向；product→差异化但克制
+
+#### 1c. ext-impeccable colorize
+
+**触发条件**：品牌色占比<10% 或 中性色占比>70% 或 色彩情绪描述含"安全/保守"
+**反模式**：已通过ext-frontend-design获得色彩方案 → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: colorize
+  目标: 当前色彩体系
+  上下文: 品牌规范 + 产品定位 + 设计令牌初稿
+输出: 增强色彩方案（OKLCH色彩、色彩策略建议、功能色增强）
+验证: 品牌色占比提升至15-30%，中性色占比降至50%以下
+模式: 🤖
+```
+
+**Register 感知**：brand→大胆用色；product→功能性色彩增强
 
 Step 2 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `typeset` | 字号层级<6级 或 最大/最小字号比<2 或 字重仅用400+700 | brand:戏剧化排版对比；product:清晰层级 | 目标语言=zh-CN且已配置思源黑体完整字重 |
+#### 2a. ext-impeccable typeset
+
+**触发条件**：字号层级<6级 或 最大/最小字号比<2 或 字重仅用400+700
+**反模式**：目标语言=zh-CN且已配置思源黑体完整字重 → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: typeset
+  目标: 当前排版体系
+  上下文: 品牌规范 + 产品定位 + 字体令牌初稿
+输出: 排版增强方案（字号层级扩展、字重对比增强、行高优化）
+验证: 字号层级≥6级，最大/最小字号比≥2，字重使用≥3种
+模式: 🤖
+```
+
+**Register 感知**：brand→戏剧化排版对比；product→清晰层级
 
 Step 4 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `extract` | 输入包含"现有组件库"或"已有项目" | 均适用 | 全新项目无现有代码 |
+#### 4a. ext-impeccable extract
+
+**触发条件**：输入包含"现有组件库"或"已有项目"
+**反模式**：全新项目无现有代码 → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: extract
+  目标: 现有组件库或已有项目代码
+  上下文: 项目目录路径 + 现有设计令牌
+输出: 可复用的设计令牌和组件模式提取
+验证: 提取结果包含色彩、字体、间距、组件模式
+模式: 🤖
+```
+
+**Register 感知**：均适用
 
 ---
 
@@ -221,7 +299,9 @@ Step 4 外部调用：
 
 ## 输出
 
-**存储路径**：`output/ui-design-system/design-system/`
+**代码文件输出**：`{project_dir}/src/styles/tokens.css`（设计令牌CSS变量）、`{project_dir}/src/styles/tokens.json`（设计令牌JSON）
+
+**元数据输出**：`output/ui-design-system/design-system/`
 
 **输出文件**：design-system.json
 
@@ -244,7 +324,8 @@ Step 4 外部调用：
     "library_metadata": {"type": "object", "description": "组件库元信息"},
     "components": {"type": "array", "description": "组件定义列表"},
     "dependency_graph": {"type": "object", "description": "组件依赖关系图"},
-    "doc_structure": {"type": "object", "description": "文档目录结构"}
+    "doc_structure": {"type": "object", "description": "文档目录结构"},
+    "project_dir": {"type": "string", "description": "项目根目录路径，代码文件已写入此目录"}
   }
 }
 ```
@@ -318,6 +399,7 @@ Step 4 外部调用：
 | 目标平台缺失 | 提示用户提供或默认输出Web格式 | 默认Web格式，标注"待平台确认" |
 | PRD缺失 | 用户提供核心页面列表和功能描述 | 仅生成核心组件，非核心标注"待PRD补充" |
 | 现有组件库信息缺失 | 从零规划，不检查重复 | 可能存在与已有组件重复，标注"需与现有库对齐" |
+| project_dir 缺失 | 仅输出到 output/ 目录，不写入项目目录 | 代码文件需手动复制到项目 |
 
 ---
 

@@ -113,10 +113,10 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 ### 调用流程
 
 ```
-1. 检测：检查 `.trae/skills/ext-xxx/SKILL.md` 是否存在
+1. 检测：检查 ext-xxx/SKILL.md 是否存在
 2. 存在 → 评估客观触发条件是否满足
 3. 满足 → 检查反模式条件是否命中
-4. 未命中 → 调用 `Skill: ext-xxx`，传递输入+Register+目标语言，验证输出
+4. 未命中 → 调用 `Skill: ext-xxx`，核心 Skill 通过指令性调用块调用，包含输入/输出/验证条件，脚本使用 `{SKILL_DIR}/scripts/` 路径
 5. 命中反模式 → 跳过，标注原因
 6. 不存在 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续步骤
 ```
@@ -145,7 +145,7 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 - 作用：提供大胆的美学方向选择，确保设计系统视觉独特性，避免AI同质化
 - 输入：品牌规范+产品定位+目标语言
 - 输出：差异化美学方向建议
-- 调用方式：先检测 `.trae/skills/ext-frontend-design/SKILL.md` 是否存在 → 存在则调用 → 不存在则跳过，标注"视觉差异化待 ext-frontend-design 支持"，不阻塞后续步骤
+- 调用方式：核心 Skill 执行到 ext- 调用点时，按指令性调用块格式调用 `Skill: ext-frontend-design`，包含输入/输出/验证条件 → 不存在则跳过，标注"视觉差异化待 ext-frontend-design 支持"，不阻塞后续步骤
 - 适用场景：需要独特视觉方向时调用
 ```
 
@@ -178,7 +178,7 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 ## 部署方式
 
 1. 从本目录获取外部 Skill 的 `ext-{skill-name}/SKILL.md`
-2. 将 `ext-{skill-name}/` 文件夹复制到 `.trae/skills/` 下，扁平平铺
+2. 将 `ext-{skill-name}/` 文件夹复制到 `.trae/skills/` 下，扁平平铺（含 scripts/、reference/、data/ 子目录）
 3. 核心自建 Skill 中的定向调用点会自动检测并调用
 
 ```
@@ -191,3 +191,7 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 ├── ext-ui-ux-pro-max/SKILL.md          ← 外部扩展
 └── ...
 ```
+
+**{SKILL_DIR} 说明**：ext-impeccable 和 ext-ui-ux-pro-max 的脚本路径使用 `{SKILL_DIR}` 占位符，表示 Skill 所在目录的绝对路径。部署后，Agent 框架在执行脚本时会将 `{SKILL_DIR}` 替换为实际路径。例如：
+- ext-impeccable：`node {SKILL_DIR}/scripts/load-context.mjs` → `node /path/to/.trae/skills/ext-impeccable/scripts/load-context.mjs`
+- ext-ui-ux-pro-max：`python3 {SKILL_DIR}/scripts/search.py` → `python3 /path/to/.trae/skills/ext-ui-ux-pro-max/scripts/search.py`

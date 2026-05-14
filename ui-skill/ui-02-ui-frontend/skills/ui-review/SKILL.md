@@ -35,10 +35,13 @@ metadata:
 | 页面代码 | code | 是 | output/ui-frontend/page-assembly | 待审查的页面代码 |
 | 设计令牌 | JSON | 是 | output/ui-design-system/design-system/tokens.json | 设计规范基准 |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响文案检查和aria-label语言校验 |
+| project_dir | string | ○ | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，优先审查项目目录中的实际代码 |
 
 ## 执行步骤
 
 ### Step 1: 设计规范与无障碍合规检查
+
+**审查数据源优先级**：当 project_dir 存在时，优先审查 `{project_dir}/src/components/` 和 `{project_dir}/src/pages/` 中的实际项目代码，而非 output/ 目录中的元数据。项目代码是可运行的最新版本，审查结果更准确。
 
 设计规范一致性检查：
 
@@ -59,19 +62,47 @@ metadata:
 
 Step 1 外部调用：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `audit critique` | 满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令 | brand/product按子命令分别感知 | 各子命令独立判断不调用条件 |
+#### 1a. ext-impeccable audit critique
+
+**触发条件**：满足任一子命令触发条件即调用该子命令，一次调用传入所有命中的子命令
+**反模式**：各子命令独立判断不调用条件
 
 子命令触发条件明细：
 - `audit`：始终调用（如已部署）（反模式：ext-impeccable未部署时使用内置检查项）
 - `critique`：audit通过率<90% 或 需要设计品味评审（反模式：audit通过率≥95%且无设计争议）
 
+```
+Skill: ext-impeccable
+输入:
+  子命令: audit [critique]（audit始终调用，critique按条件追加）
+  目标: 组件代码 + 页面代码
+  上下文: 设计令牌 + 品牌规范 + 项目目录代码（如project_dir存在）
+输出: 审查报告（a11y/性能/响应式/设计品味评分）
+验证: audit覆盖WCAG AA + 响应式375px/1440px + 性能指标
+模式: 🤖
+```
+
+**Register 感知**：brand/product按子命令分别感知
+
 Step 3 外部调用（反馈闭环）：
 
-| 顺序 | 调用 | 客观触发条件 | Register 感知 | 反模式（不调用条件） |
-|------|------|-------------|--------------|-------------------|
-| 1 | `ext-impeccable` `distill` | P1问题中"复杂/冗余/过度设计"类占比>30% | brand:删减至核心表达；product:渐进式披露 | P1问题主要为a11y/对比度类（非复杂度问题） |
+#### 3a. ext-impeccable distill
+
+**触发条件**：P1问题中"复杂/冗余/过度设计"类占比>30%
+**反模式**：P1问题主要为a11y/对比度类（非复杂度问题） → 跳过
+
+```
+Skill: ext-impeccable
+输入:
+  子命令: distill
+  目标: 审查中标记为"复杂/冗余/过度设计"的组件/页面代码
+  上下文: 审查报告 + 设计令牌
+输出: 精简后的代码（去除冗余/渐进式披露/核心表达）
+验证: 修改后代码行数减少且功能不变
+模式: 🤖
+```
+
+**Register 感知**：brand→删减至核心表达；product→渐进式披露
 
 **反馈闭环规则**：若distill执行后修改了代码，需重新执行Step 1的audit验证修改未引入新问题。最多循环2次，第3次直接输出当前结果。
 
@@ -184,6 +215,7 @@ Step 3 外部调用（反馈闭环）：
 | 设计令牌缺失 | 跳过设计规范一致性检查 | 无法检查硬编码值 |
 | 交互规格缺失 | 跳过交互完整性检查 | 无法检查交互实现完整性 |
 | 页面代码缺失 | 仅审查组件级问题 | 缺少页面级布局和响应式检查 |
+| project_dir 缺失 | 仅审查 output/ 目录中的元数据和代码片段 | 审查范围可能不完整 |
 
 ## 数据获取说明
 

@@ -25,6 +25,12 @@ UI与前端一体化流程的起点。在需要建立设计系统或统一视觉
 |-------|------|------|------|
 | design-system | 从品牌规范推导设计令牌，按原子设计规划组件库，同步生成文档 | 品牌规范、产品定位、目标平台、PRD(可选) | design-system.json |
 
+### 项目脚手架（1个）
+
+| Skill | 作用 | 输入 | 输出 |
+|-------|------|------|------|
+| project-scaffold | 项目脚手架，初始化可运行的前端项目骨架，生成目录结构和基础配置 | 产品定位、目标平台、技术栈偏好 | 项目骨架（目录结构+基础配置） |
+
 > 💡 **合并说明**：v2.0 将原 design-token + component-library + design-system-doc 三个 Skill 合并为 design-system 一个 Skill，减少阶段交接开销。暗色模式推导、Figma同步等能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-ui-ux-pro-max）增强。
 
 ## 执行顺序
@@ -67,6 +73,8 @@ output/ui-design-system/
 ## 外部 Skill 扩展
 
 > **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-frontend-design`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+
+> **调用格式优化**：ext- 外部 Skill 调用已从描述性表格改为指令性调用块格式（`Skill: ext-xxx`），包含输入/输出/验证条件；脚本路径使用 `{SKILL_DIR}` 占位符，部署后由 Agent 框架解析为实际路径。
 
 | 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
 |----------------|---------|---------|------|------|

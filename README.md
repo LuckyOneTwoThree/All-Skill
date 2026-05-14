@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-176-orange.svg)](#四大领域总览)
+[![Skill Count](https://img.shields.io/badge/Skills-177-orange.svg)](#四大领域总览)
 
 > 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现176个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
 
@@ -97,7 +97,7 @@
 | 领域 | 模块数 | 编排器 | Pipeline Skill | 导航 | 核心定位 |
 |------|--------|--------|---------------|------|----------|
 | **pm-skill** 产品方法论 | 10 | 31 | 119 | 1 | 做正确的事：从探索发现到增长运营 |
-| **ui-skill** UI设计与前端 | 3 | 4 | 8 | — | 正确地呈现：设计即实现，令牌驱动 |
+| **ui-skill** UI设计与前端 | 3 | 4 | 9 | — | 正确地呈现：设计即实现，令牌驱动 |
 | **backend-skill** 后端架构 | 3 | 3 | 9 | — | 正确地构建：契约驱动，安全内建 |
 | **cross-domain** 跨领域协调 | — | 2 | — | — | 全局编排：产品迭代与产品启动 |
 
@@ -206,7 +206,7 @@ All-Skill/
 │   │   └── skills/                            design-system
 │   ├── ui-02-ui-frontend/                 模块2：UI前端生成
 │   │   ├── orchestrators/                     ui-frontend-orchestrator
-│   │   └── skills/                            ui-component-gen / page-assembly / ui-review / frontend-test
+│   │   └── skills/                            project-scaffold / ui-component-gen / page-assembly / ui-review / frontend-test
 │   ├── ui-03-frontend-integration/        模块3：前端集成
 │   │   ├── orchestrators/                     frontend-integration-orchestrator
 │   │   └── skills/                            api-contract-consume / frontend-build-deploy / frontend-performance
@@ -342,7 +342,9 @@ All-Skill/
 
 ---
 
-### UI 设计与前端开发（12个Skill）
+### UI 设计与前端开发（13个Skill）
+
+> **双输出模式**：UI Skill 采用双输出模式——代码文件直接写入 `{project_dir}/` 项目目录（可运行），元数据文件写入 `output/` 目录（供下游 Skill 消费）。新增 `project-scaffold` Skill，在 UI 流程开始时初始化可运行的前端项目骨架，确保后续生成的代码有正确的项目结构承接。
 
 #### 模块1：UI设计系统
 
@@ -354,12 +356,15 @@ All-Skill/
 
 **外部扩展**：`ext-frontend-design`（视觉差异化）、`ext-impeccable`（colorize/typeset/extract）、`ext-ui-ux-pro-max`（数据驱动设计推荐）
 
+> **ext- Skill 调用方式**：外部扩展 Skill 已从描述性表格改为指令性调用块格式。编排器通过 `Skill: ext-xxx` 指令块精确调度，而非依赖描述匹配。例如：`Skill: ext-frontend-design`、`Skill: ext-impeccable`。
+
 #### 模块2：UI前端生成
 
 将设计系统转化为可运行的前端代码，实现设计即实现。
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
+| project-scaffold | 在 UI 流程开始时初始化可运行的前端项目骨架（框架选型、目录结构、依赖安装） | **输入**：pm PRD → **输出**：`{project_dir}/` 可运行项目骨架 |
 | ui-component-gen | 基于设计系统生成带样式和交互的前端组件代码 | **输入**：design-system + pm PRD/原型 |
 | page-assembly | 将组件组装为完整页面，配置路由、状态管理和数据流 | **输入**：design-system + pm design-ia + pm tracking-plan |
 | ui-review | 自动审查视觉/无障碍/交互/响应式 | 审查闭环，P0阻塞发布 |
@@ -415,7 +420,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付文档，79 个产出 JSON 数据片段供下游 Skill 消费，1 个产出配置文件。UI/Backend 以代码和配置为交付物。全局共 176 个 Skill（含 40 个编排器 + 119 个 PM Pipeline + 8 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航 - 1 个已删除的 design-prd Reference）。
+PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付文档，79 个产出 JSON 数据片段供下游 Skill 消费，1 个产出配置文件。UI/Backend 以代码和配置为交付物。全局共 177 个 Skill（含 40 个编排器 + 119 个 PM Pipeline + 9 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航 - 1 个已删除的 design-prd Reference）。
 
 ### PM 核心产出文档一览
 
@@ -508,6 +513,8 @@ Skill 执行结果写入**用户项目根目录**的 `output/` 下：
 ```
 
 output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各项目产出互不干扰。
+
+> **UI 双输出模式**：UI Skill 的代码文件（组件、页面、配置等）直接写入 `{project_dir}/` 项目目录，确保生成的前端代码可立即运行；元数据文件（设计令牌 JSON、审查报告等）仍写入 `output/` 目录，供下游 Skill 消费。
 
 ## AI 能力边界
 

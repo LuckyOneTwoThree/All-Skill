@@ -35,6 +35,7 @@ metadata:
 | 部署目标 | string | 是 | 用户提供 | Vercel / AWS / 阿里云 / 自建 |
 | 环境配置 | JSON | ○ | 用户提供 | 各环境API地址、功能开关等 |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响构建时环境变量注入和i18n资源打包 |
+| project_dir | string | 是 | output/ui-project-scaffold/scaffold.json | 项目根目录绝对路径，构建配置文件直接写入此目录 |
 
 ## 执行步骤
 
@@ -112,11 +113,14 @@ metadata:
 | 可用性监控 | Uptime Robot | 可用性<99.9% |
 | 用户行为 | 自建/第三方 | 核心流程转化率下降>10% |
 
+**代码写入规则**：生成的构建配置写入 `{project_dir}/vite.config.ts`，环境变量写入 `{project_dir}/.env.*`，CI/CD配置写入 `{project_dir}/.github/workflows/`，Docker配置写入 `{project_dir}/Dockerfile`。元数据写入 `output/` 目录供下游Skill消费。
+
 ## 输出
 
-**存储路径**：`output/ui-frontend-integration/frontend-build-deploy/`
+**代码文件输出**：`{project_dir}/`（vite.config.ts、.env.*、.github/workflows/、Dockerfile等配置文件直接写入项目根目录）
 
-**输出文件**：build-config.json
+**元数据输出**：`output/ui-frontend-integration/frontend-build-deploy/`
+**元数据文件**：build-config.json
 
 **输出Schema**：
 
@@ -129,7 +133,8 @@ metadata:
     "environments": {"type": "object", "description": "环境配置，包含development/staging/production的api_base和mock_enabled"},
     "cdn": {"type": "object", "description": "CDN配置，包含provider/domain/cache_rules"},
     "ci_cd": {"type": "object", "description": "CI/CD配置，包含platform/pipelines/avg_build_time/rollback_time"},
-    "monitoring": {"type": "object", "description": "监控配置，包含performance/errors/uptime"}
+    "monitoring": {"type": "object", "description": "监控配置，包含performance/errors/uptime"},
+    "project_dir": {"type": "string", "description": "项目根目录路径，构建配置文件已写入此目录"}
   }
 }
 ```
@@ -168,6 +173,7 @@ metadata:
 | 部署目标未指定 | 生成通用配置，不绑定特定云平台 | 需手动适配云平台特定配置 |
 | 环境配置缺失 | 生成开发+生产2个环境的最小配置 | 缺少staging/pre-production环境 |
 | 项目信息缺失 | 默认React+Vite+pnpm | 技术栈可能与实际不符 |
+| project_dir 缺失 | 仅输出到 output/ 目录的 build-config.json 中，不写入项目目录 | 构建配置需手动复制到项目 |
 
 ## 数据获取说明
 

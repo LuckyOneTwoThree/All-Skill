@@ -20,8 +20,8 @@ Skill: ui-orchestrator
 
 | 级别 | 适用场景 | 调用方式 | 流程长度 |
 |------|---------|---------|---------|
-| **L1 快速模式** | 落地页、简单表单、内部工具、原型验证（≤5页，无后端集成） | `ui-orchestrator` 自动路由 | 2 个 Skill |
-| **L2 完整模式** | SaaS产品、电商平台、复杂Dashboard（>5页，需API联调） | `ui-orchestrator` 自动路由 | 3 个子编排器，8 个 Skill |
+| **L1 快速模式** | 落地页、简单表单、内部工具、原型验证（≤5页，无后端集成） | `ui-orchestrator` 自动路由 | 3 个 Skill（含项目脚手架） |
+| **L2 完整模式** | SaaS产品、电商平台、复杂Dashboard（>5页，需API联调） | `ui-orchestrator` 自动路由 | 3 个子编排器，9 个 Skill（含项目脚手架） |
 
 **核心承诺：L1 精简的是流程长度，不是产出质量。** L1 在覆盖范围内（设计系统+组件+页面）的产出质量与 L2 一致。
 
@@ -48,6 +48,7 @@ Skill: ui-orchestrator
 ├── 核心自建 Skill
 │   ├── ui-orchestrator/SKILL.md                  ← 统一入口
 │   ├── design-system-orchestrator/SKILL.md
+│   ├── project-scaffold/SKILL.md
 │   ├── design-system/SKILL.md
 │   ├── ui-frontend-orchestrator/SKILL.md
 │   ├── ui-component-gen/SKILL.md
@@ -85,6 +86,7 @@ ui-skill/
 │   ├── orchestrators/
 │   │   └── design-system-orchestrator/    设计系统建立指挥官
 │   └── skills/
+│       ├── project-scaffold/               项目脚手架（初始化可运行项目骨架）
 │       └── design-system/                 设计系统一体化生成（令牌+组件库+文档）
 ├── ui-02-ui-frontend/              模块2：UI前端生成（设计即实现，实现即设计）
 │   ├── orchestrators/
@@ -110,7 +112,7 @@ ui-skill/
 ### L1 快速模式（2步）
 
 ```
-design-system → ui-component-gen（含页面组装+内置质量检查）
+project-scaffold → design-system → ui-component-gen（含页面组装+内置质量检查）
 ```
 
 ### L2 完整模式（8步）
@@ -122,9 +124,9 @@ UI设计系统 → UI前端生成 → 前端集成
      │             └── 组件先行（含交互），审查闭环，测试保障
      └── 令牌驱动一切，原子到组织，文档同步
 
-design-system
-      ↓
-ui-component-gen → page-assembly → ui-review → frontend-test
+project-scaffold → design-system
+                        ↓
+            ui-component-gen → page-assembly → ui-review → frontend-test
       ↓
 api-contract-consume → frontend-build-deploy → frontend-performance
 ```
@@ -135,7 +137,7 @@ api-contract-consume → frontend-build-deploy → frontend-performance
 |------|------|------|----------|
 | 顶层编排器 | 1 | 统一入口，L1/L2分级自动路由 | `Skill: ui-orchestrator` |
 | 子编排器 | 3 | 调度子 Skill 的执行顺序和阶段卡口 | 按子模块流程使用 |
-| Pipeline Skill | 8 | 单个方法论 Pipeline，可独立执行 | 按需单独调用 |
+| Pipeline Skill | 9 | 单个方法论 Pipeline，可独立执行 | 按需单独调用 |
 | 外部 Extension | 4 | 增强核心 Skill 的专业能力 | 定向调用，未安装自动降级 |
 
 ## 模块详解
@@ -146,6 +148,7 @@ UI与前端一体化流程的起点。在需要建立设计系统或统一视觉
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
+| project-scaffold | 初始化前端项目骨架，生成可运行的项目目录结构 | 项目名称、框架、项目目录 | scaffold.json + 可运行项目 | 🤖 |
 | design-system | 从品牌规范推导设计令牌，按原子设计规划组件库，同步生成文档 | 品牌规范、产品定位、目标平台 | design-system.json | 🤖→👤 |
 
 **阶段卡口**：
@@ -198,11 +201,21 @@ UI与前端一体化的核心模块。将设计系统转化为可运行的前端
 
 ## 输出路径
 
-Skill 执行结果写入**用户项目根目录**的 `output/` 下：
+Skill 执行结果采用**双输出模式**：
+
+1. **代码文件** → 直接写入用户指定的 `{project_dir}/` 项目目录，`npm run dev` 可立即运行
+2. **元数据文件** → 写入 `output/` 目录，供下游 Skill 消费
 
 ```
 用户项目/
-└── output/
+├── src/                              ← 代码文件（可直接运行）
+│   ├── components/                   ← ui-component-gen 写入
+│   ├── pages/                        ← page-assembly 写入
+│   ├── api/                          ← api-contract-consume 写入
+│   ├── styles/tokens.css             ← design-system 写入
+│   └── tests/                        ← frontend-test 写入
+└── output/                           ← 元数据文件（供下游 Skill 消费）
+    ├── ui-project-scaffold/
     ├── ui-design-system/
     │   └── design-system/
     ├── ui-frontend/
@@ -216,7 +229,7 @@ Skill 执行结果写入**用户项目根目录**的 `output/` 下：
         └── frontend-performance/
 ```
 
-output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各项目产出互不干扰。
+output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各项目产出互不干扰。代码文件直接写入项目目录，每个 Skill 执行后 `npm run dev` 可验证最新产出。
 
 ## AI 能力边界
 
@@ -240,6 +253,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 | 前端性能不达标 | `frontend-performance` |
 | UI质量审查 | `ui-review` |
 | 品牌升级，更新设计令牌 | `design-system` |
+| 从零开始，需要初始化项目 | `project-scaffold` |
 
 ## 人类与 AI 分工
 
@@ -273,3 +287,4 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 - **契约驱动联调**：Mock先行，后端未就绪不阻塞前端开发
 - **性能预算卡口**：写入CI，超标自动拦截
 - **核心精简+外部扩展**：核心流程不拉长，专业能力按需接入
+- **代码即产出**：代码直接写入可运行项目，不浪费生成结果
