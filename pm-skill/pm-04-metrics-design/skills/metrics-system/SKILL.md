@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 1: 指标体系自动构建
+# 指标体系自动构建
 
 ## 核心原则
 

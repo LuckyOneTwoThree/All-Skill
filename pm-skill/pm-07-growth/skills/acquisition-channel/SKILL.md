@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 2: 获客渠道自动评估
+# 获客渠道自动评估
 
 ## 核心原则
 

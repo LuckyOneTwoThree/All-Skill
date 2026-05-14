@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 20: 后端架构审查自动执行
+# 后端架构审查自动执行
 
 ## 核心原则
 

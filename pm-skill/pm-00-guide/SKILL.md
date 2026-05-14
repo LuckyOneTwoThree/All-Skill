@@ -121,18 +121,18 @@ product-launch-orchestrator
     design-orchestrator → metrics-orchestrator
   阶段3：并行构建（PRD确认后同时启动）
     ├── api-design-orchestrator → data-architecture-orchestrator → backend-architecture-orchestrator
-    └── design-system-orchestrator → ui-frontend-orchestrator
+    └── ui-orchestrator
   阶段4：集成验证
-    frontend-integration-orchestrator
+    ui-orchestrator
   阶段5：交付上线
     quality-orchestrator → release-orchestrator → retrospective-orchestrator
 ```
 
 关键数据契约：
 - design-orchestrator 输出 PRD → api-design-orchestrator 和 development-orchestrator 消费
-- positioning-orchestrator 输出定位陈述 → design-system-orchestrator 消费（品牌基因）
+- positioning-orchestrator 输出定位陈述 → ui-orchestrator 消费（品牌基因）
 - metrics-orchestrator 输出指标体系 → quality-orchestrator 消费（验收标准）
-- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 design-system-orchestrator → ui-frontend-orchestrator → frontend-integration-orchestrator
+- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 ui-orchestrator
 
 ### 模板2：从0到1做C端/移动端产品
 
@@ -145,19 +145,19 @@ product-launch-orchestrator
   阶段2：战略与设计
     positioning-orchestrator → design-orchestrator → metrics-orchestrator
   阶段3：并行构建
-    ├── design-system-orchestrator（设计系统建立）
+    ├── ui-orchestrator（设计系统建立）
     └── api-design-orchestrator（后端API设计）
   阶段4：前端优先开发
-    ui-frontend-orchestrator → frontend-integration-orchestrator
+    ui-orchestrator
   阶段5：质量与发布
     quality-orchestrator → release-orchestrator → retrospective-orchestrator
 ```
 
 关键数据契约：
-- design-orchestrator 输出 IA/原型 → ui-frontend-orchestrator 消费
-- api-design-orchestrator 输出 OpenAPI契约 → frontend-integration-orchestrator 消费
-- design-system-orchestrator 输出设计令牌 → ui-frontend-orchestrator 消费
-- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 design-system-orchestrator → ui-frontend-orchestrator → frontend-integration-orchestrator
+- design-orchestrator 输出 IA/原型 → ui-orchestrator 消费
+- api-design-orchestrator 输出 OpenAPI契约 → ui-orchestrator 消费
+- ui-orchestrator 内部传递设计令牌
+- 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 ui-orchestrator
 
 ### 模板3：已有产品数据驱动优化
 
@@ -208,10 +208,10 @@ product-iteration-orchestrator
     design-orchestrator（仅变更模块）
   阶段3：影响分析与条件分支执行
     ├── API需变更 → api-design-orchestrator → data-architecture-orchestrator → backend-architecture-orchestrator
-    ├── UI需变更 → design-system-orchestrator → ui-frontend-orchestrator
+    ├── UI需变更 → ui-orchestrator
     └── 无变更 → 跳过
   阶段4：集成与交付
-    frontend-integration-orchestrator（仅API变更时）
+    ui-orchestrator（仅API变更时）
     → quality-orchestrator → release-orchestrator
 ```
 

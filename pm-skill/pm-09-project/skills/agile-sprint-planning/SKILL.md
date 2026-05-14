@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 4: Sprint Planning自动化
+# Sprint Planning自动化
 
 ## 核心原则
 

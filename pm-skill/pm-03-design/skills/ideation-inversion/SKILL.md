@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 6：思维逆转法
+# ��思维逆转法
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 3: Dashboard自动配置
+# Dashboard自动配置
 
 ## 核心原则
 

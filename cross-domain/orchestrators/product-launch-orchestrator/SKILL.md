@@ -5,7 +5,7 @@ metadata:
   module: "跨领域协调"
   sub-module: "产品启动"
   type: "orchestrator"
-  version: "4.1"
+  version: "6.0"
   domain_tags: ["电商", "SaaS", "社交", "金融", "教育", "医疗", "物流", "游戏", "工具", "通用"]
   trigger_examples:
     - "我要做一个交易商城系统"
@@ -108,11 +108,11 @@ pipeline:
     parallel: true
     gate: API契约人类确认通过
 
-  - stage: ui-design
-    skills: [design-system-orchestrator]
-    depends_on: [design]
+  - stage: ui-development
+    skills: [ui-orchestrator]
+    depends_on: [design, backend-api]
     parallel: true
-    gate: 设计令牌人类确认通过
+    gate: UI开发与集成验证通过
 
   - stage: backend-impl
     skills: [data-architecture-orchestrator, backend-architecture-orchestrator]
@@ -120,20 +120,9 @@ pipeline:
     parallel: true
     gate: 后端审查通过（P0=0）
 
-  - stage: ui-impl
-    skills: [ui-frontend-orchestrator]
-    depends_on: [ui-design]
-    parallel: true
-    gate: 前端代码审查通过
-
-  - stage: integration
-    skills: [frontend-integration-orchestrator]
-    depends_on: [backend-api, ui-impl]
-    gate: 前后端联调核心流程100%通过
-
   - stage: delivery
     skills: [quality-orchestrator, release-orchestrator, retrospective-orchestrator]
-    depends_on: [integration, metrics]
+    depends_on: [ui-development, metrics]
     gate: P0问题=0，P1问题≤3 → 灰度发布通过 → 复盘结论确认
 ```
 
@@ -262,12 +251,12 @@ Skill: backend-architecture-orchestrator
 模式: 🤖→👤
 ```
 
-### 阶段8a：设计系统（并行分支-UI）
+### 阶段8：UI开发与集成（并行分支-UI）
 
-#### 调用 design-system-orchestrator
+#### 调用 ui-orchestrator
 
 ```
-Skill: design-system-orchestrator
+Skill: ui-orchestrator
 输入:
   品牌规范: 品牌规范资料
   产品定位: output/cross-domain/positioning-orchestrator/
@@ -276,53 +265,20 @@ Skill: design-system-orchestrator
   project_dir: 用户提供
   framework: 用户提供（React/Vue/Svelte/Next.js/Nuxt.js）
   PRD: output/cross-domain/design-orchestrator/
-输出: output/cross-domain/design-system-orchestrator/ + 代码写入 {project_dir}/
-验证: 设计令牌人类确认通过 + 项目可运行（npm run dev成功）
-模式: 🤖→👤
-```
-
-### 阶段8b：UI前端生成（并行分支-UI）
-
-#### 调用 ui-frontend-orchestrator
-
-```
-Skill: ui-frontend-orchestrator
-输入:
-  设计令牌: output/cross-domain/design-system-orchestrator/
-  组件库: output/cross-domain/design-system-orchestrator/
-  PRD: output/cross-domain/design-orchestrator/
-  原型规格: output/cross-domain/design-orchestrator/
-  project_dir: output/ui-project-scaffold/scaffold.json
-  目标语言: 用户提供（默认zh-CN）
-输出: output/cross-domain/ui-frontend-orchestrator/ + 代码写入 {project_dir}/src/
-验证: 前端代码审查通过 + 项目可运行（npm run dev成功）
-模式: 🤖→👤
-```
-
-### 阶段9：前端集成
-
-#### 调用 frontend-integration-orchestrator
-
-```
-Skill: frontend-integration-orchestrator
-输入:
   API契约: output/cross-domain/api-design-orchestrator/
-  前端代码: output/cross-domain/ui-frontend-orchestrator/
-  project_dir: output/ui-project-scaffold/scaffold.json
-  目标语言: 用户提供（默认zh-CN）
-输出: output/cross-domain/frontend-integration-orchestrator/ + 配置文件写入 {project_dir}/
-验证: 前后端联调核心流程100%通过 + 项目构建成功（npm run build成功）
-模式: 🤖
+输出: output/cross-domain/ui-orchestrator/ + 代码写入 {project_dir}/
+验证: UI开发与集成验证通过 + 项目可运行（npm run dev成功）+ 项目构建成功（npm run build成功）
+模式: 🤖→👤
 ```
 
-### 阶段10：质量→发布→复盘
+### 阶段9：质量→发布→复盘
 
 #### 调用 quality-orchestrator
 
 ```
 Skill: quality-orchestrator
 输入:
-  集成输出: output/cross-domain/frontend-integration-orchestrator/
+  集成输出: output/cross-domain/ui-orchestrator/
   指标体系: output/cross-domain/metrics-orchestrator/
 输出: output/cross-domain/quality-orchestrator/
 验证: P0问题=0，P1问题≤3
@@ -335,7 +291,7 @@ Skill: quality-orchestrator
 Skill: release-orchestrator
 输入:
   质量报告: output/cross-domain/quality-orchestrator/
-  集成输出: output/cross-domain/frontend-integration-orchestrator/
+  集成输出: output/cross-domain/ui-orchestrator/
 输出: output/cross-domain/release-orchestrator/
 验证: 灰度发布通过
 模式: 🤖→👤
@@ -383,9 +339,8 @@ Skill: retrospective-orchestrator
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | PM设计完成 | PRD已生成且人类确认通过 | 补充产品方向或需求信息 |
-| 并行构建就绪 | API契约人类确认 + 设计令牌人类确认 | 延迟启动受影响的分支 |
-| 前后端均就绪 | 后端审查通过 + 前端代码审查通过 | 等待滞后方完成 |
-| 集成测试通过 | 前后端联调核心流程100%通过 | 修复联调问题后重新集成 |
+| 并行构建就绪 | API契约人类确认 + UI开发确认通过 | 延迟启动受影响的分支 |
+| 后端与UI均就绪 | 后端审查通过 + UI开发与集成验证通过 | 等待滞后方完成 |
 | 质量门禁通过 | P0问题=0，P1问题≤3 | 修复阻断问题后重新验证 |
 | 阶段总结已生成 | output/phase-reports/cross-domain/product-launch-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
@@ -395,9 +350,8 @@ Skill: retrospective-orchestrator
 |--------|----------|----------|
 | PRD确认 | design-orchestrator完成 | 确认PRD可分发到Backend和UI |
 | API契约确认 | api-design-orchestrator完成 | 确认API契约可交付前端 |
-| 设计令牌确认 | design-system-orchestrator完成 | 确认设计令牌可交付前端 |
+| UI开发确认 | ui-orchestrator完成 | 确认UI开发与集成验证通过 |
 | 前后端冲突裁决 | API契约与前端需求冲突 | 决策API侧改还是前端侧改 |
-| 集成就绪确认 | frontend-integration-orchestrator完成 | 确认前后端联调通过 |
 | 发布决策 | release-orchestrator灰度完成 | 确认是否全量发布 |
 | 复盘确认 | retrospective-orchestrator完成 | 确认复盘结论和行动项 |
 
@@ -416,6 +370,7 @@ Skill: retrospective-orchestrator
 
 ## 变更记录
 
+- v6.0: UI阶段合并——将design-system-orchestrator、ui-frontend-orchestrator、frontend-integration-orchestrator三个UI子编排器合并为ui-orchestrator；Pipeline从3个UI阶段（ui-design/ui-impl/integration）合并为1个ui-development阶段；输出路径统一为output/cross-domain/ui-orchestrator/；project scaffold路径更新为output/ui-project-init/project-init.json；阶段卡口和人类决策点同步更新
 - v5.0: UI阶段增加 project_dir 传递，代码直接写入可运行项目目录；design-system-orchestrator 增加 project-scaffold 初始化阶段；集成验证增加项目可运行性校验
 - v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

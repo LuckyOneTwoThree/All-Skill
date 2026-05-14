@@ -2,9 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-177-orange.svg)](#四大领域总览)
+[![Skill Count](https://img.shields.io/badge/Skills-172-orange.svg)](#四大领域总览)
 
-> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现176个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
+> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现171个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
 
 > ## ⚠ 声明：AI 是杠杆，不是替代
 >
@@ -20,7 +20,7 @@
 
 ## 这是什么
 
-将软件产品从0到1的全生命周期方法论，提取为 **176 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
+将软件产品从0到1的全生命周期方法论，提取为 **171 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
 
 每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。四大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
 
@@ -38,9 +38,9 @@
 ├── insight-orchestrator/SKILL.md
 ├── insight-jtbd/SKILL.md
 ├── api-contract/SKILL.md
-├── design-system/SKILL.md
-├── ...（176个Skill扁平平铺）
-└── frontend-performance/SKILL.md
+├── project-init/SKILL.md
+├── ...（171个Skill扁平平铺）
+└── production-ready/SKILL.md
 ```
 
 ### 部署步骤
@@ -97,7 +97,7 @@
 | 领域 | 模块数 | 编排器 | Pipeline Skill | 导航 | 核心定位 |
 |------|--------|--------|---------------|------|----------|
 | **pm-skill** 产品方法论 | 10 | 31 | 119 | 1 | 做正确的事：从探索发现到增长运营 |
-| **ui-skill** UI设计与前端 | 3 | 4 | 9 | — | 正确地呈现：设计即实现，令牌驱动 |
+| **ui-skill** UI设计与前端 | 1 | 1 | 4 | — | 正确地呈现：设计即实现，令牌驱动 |
 | **backend-skill** 后端架构 | 3 | 3 | 9 | — | 正确地构建：契约驱动，安全内建 |
 | **cross-domain** 跨领域协调 | — | 2 | — | — | 全局编排：产品迭代与产品启动 |
 
@@ -120,15 +120,14 @@
 ┌──────────────────────────────┐  ┌──────────────────────────────────────┐
 │  UI 设计与前端（正确地呈现）    │  │  后端架构与开发（正确地构建）          │
 │                              │  │                                      │
-│  设计系统 → UI前端生成 → 集成  │  │  API设计 → 数据架构 → 后端架构        │
-│                              │  │                                      │
-│  design-system               │  │  api-contract                        │
-│  page-assembly               │  │  api-security                        │
-│  ui-component-gen            │  │  auth-design                         │
-│  ui-review                   │  │  data-model                          │
-│  frontend-build-deploy       │  │  service-design                      │
-│  frontend-performance        │  │  backend-review                      │
-│                              │  │                                      │
+│  项目初始化 → 页面构建 →      │  │  API设计 → 数据架构 → 后端架构        │
+│  API集成 → 生产就绪          │  │                                      │
+│                              │  │  api-contract                        │
+│  project-init                │  │  api-security                        │
+│  page-builder                │  │  auth-design                         │
+│  api-integration             │  │  data-model                          │
+│  production-ready            │  │  service-design                      │
+│                              │  │  backend-review                      │
 └──────────────────────────────┘  └──────────────────────────────────────┘
 ```
 
@@ -138,18 +137,18 @@
 
 | 数据契约 | 生产方 | 消费方 | 作用 |
 |----------|--------|--------|------|
-| **PRD** | pm design-prd | ui page-assembly / backend api-contract | 产品需求是UI和后端设计的共同输入 |
-| **定位陈述** | pm positioning-statement | ui design-system | 产品定位决定品牌基因和视觉风格 |
-| **品牌规范** | pm positioning + 用户提供 | ui design-system | 品牌色彩/字体推导设计令牌 |
-| **IA/路由结构** | pm design-ia | ui page-assembly | 信息架构决定页面路由和导航 |
-| **用户流程** | pm design-userflow | ui ui-component-gen | 用户流程定义交互状态机 |
-| **原型** | pm design-prototype | ui ui-component-gen / ui page-assembly | 原型指导组件生成和页面组装 |
-| **设计令牌** | ui design-system | ui api-contract-consume / pm design-prototype | 令牌驱动错误样式和一致性检查 |
-| **目标语言** | 用户指定（默认zh-CN） | ui design-system-orchestrator + ui-frontend-orchestrator + frontend-integration-orchestrator | 全链路传递，影响字体/排版/文案/i18n |
-| **OpenAPI契约** | backend api-contract | ui api-contract-consume | API契约是前后端联调的桥梁 |
+| **PRD** | pm design-prd | ui page-builder / backend api-contract | 产品需求是UI和后端设计的共同输入 |
+| **定位陈述** | pm positioning-statement | ui project-init | 产品定位决定品牌基因和视觉风格 |
+| **品牌规范** | pm positioning + 用户提供 | ui project-init | 品牌色彩/字体推导设计令牌 |
+| **IA/路由结构** | pm design-ia | ui page-builder | 信息架构决定页面路由和导航 |
+| **用户流程** | pm design-userflow | ui page-builder | 用户流程定义交互状态机 |
+| **原型** | pm design-prototype | ui page-builder | 原型指导组件生成和页面组装 |
+| **设计令牌** | ui project-init | ui api-integration / pm design-prototype | 令牌驱动错误样式和一致性检查 |
+| **目标语言** | 用户指定（默认zh-CN） | ui ui-orchestrator | 全链路传递，影响字体/排版/文案/i18n |
+| **OpenAPI契约** | backend api-contract | ui api-integration | API契约是前后端联调的桥梁 |
 | **数据模型** | backend data-model | backend api-contract(可选) / cache-strategy | 数据模型是API和缓存设计的基础 |
 | **指标体系** | pm metrics-system | pm analysis / monitoring | 度量体系驱动数据分析和监控 |
-| **埋点方案** | pm tracking-plan | ui page-assembly | 埋点方案指导前端数据采集 |
+| **埋点方案** | pm tracking-plan | ui page-builder | 埋点方案指导前端数据采集 |
 | **验收标准** | pm quality-auto-acceptance | backend backend-review | 验收标准是质量保障的基准 |
 
 ## 目录结构
@@ -201,15 +200,8 @@ All-Skill/
 │   └── docs/                              可视化文档站
 │
 ├── ui-skill/                         ✅ Skill 文件 —— UI设计与前端开发
-│   ├── ui-01-design-system/               模块1：UI设计系统
-│   │   ├── orchestrators/                     design-system-orchestrator
-│   │   └── skills/                            design-system
-│   ├── ui-02-ui-frontend/                 模块2：UI前端生成
-│   │   ├── orchestrators/                     ui-frontend-orchestrator
-│   │   └── skills/                            project-scaffold / ui-component-gen / page-assembly / ui-review / frontend-test
-│   ├── ui-03-frontend-integration/        模块3：前端集成
-│   │   ├── orchestrators/                     frontend-integration-orchestrator
-│   │   └── skills/                            api-contract-consume / frontend-build-deploy / frontend-performance
+│   ├── orchestrators/                     ui-orchestrator
+│   ├── skills/                            project-init / page-builder / api-integration / production-ready
 │   └── extensions/                        外部 Skill（ext-frontend-design / ext-impeccable / ext-interaction-design / ext-ui-ux-pro-max）
 │
 ├── backend-skill/                     ✅ Skill 文件 —— 后端架构与开发
@@ -252,7 +244,7 @@ All-Skill/
 |--------|--------|---------------|----------|
 | 商业模式 | business-orchestrator | business-model-canvas / business-value-fit / business-pricing / business-strategy-report | 商业战略规划报告 |
 | 战略规划 | planning-orchestrator | product-proposal / planning-swot / planning-porter-five-forces / planning-okr / planning-north-star / planning-roadmap / planning-ansoff | 产品提案+OKR+路线图 |
-| 产品定位 | positioning-orchestrator | positioning-statement / positioning-value-curve / positioning-differentiation / positioning-exclusion | 定位陈述 → **消费方：ui design-system** |
+| 产品定位 | positioning-orchestrator | positioning-statement / positioning-value-curve / positioning-differentiation / positioning-exclusion | 定位陈述 → **消费方：ui project-init** |
 | Stakeholder | stakeholder-orchestrator | stakeholder-map / stakeholder-strategy-doc / stakeholder-brief | 战略简报 |
 
 #### 模块3：产品构思与设计
@@ -263,7 +255,7 @@ All-Skill/
 |--------|--------|---------------|----------|
 | 创意发散 | ideation-orchestrator | ideation-hmw / ideation-scamper / ideation-inversion / ideation-convergence | Top5方案 |
 | 需求管理 | requirements-orchestrator | requirements-collection / requirements-understanding / requirements-prioritization | MoSCoW排序 |
-| 产品设计与原型 | design-orchestrator | design-prd / requirements-srs / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec | PRD+SRS+原型+交互规范+设计交接 → **消费方：ui page-assembly / ui-component-gen / backend api-contract** |
+| 产品设计与原型 | design-orchestrator | design-prd / requirements-srs / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec | PRD+SRS+原型+交互规范+设计交接 → **消费方：ui page-builder / backend api-contract** |
 | 方案验证 | validation-orchestrator | validation-assumption-map / validation-mvp / validation-experiment / validation-usability | MVP范围 |
 
 **关键衔接**：design-prd（PRD生成）是PM与UI/后端的核心契约，PRD同时驱动UI前端生成和后端API设计。
@@ -274,7 +266,7 @@ All-Skill/
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
-| 度量设计 | metrics-orchestrator | metrics-system / tracking-plan / metrics-dashboard | 指标体系+埋点方案 → **消费方：ui page-assembly（埋点）** |
+| 度量设计 | metrics-orchestrator | metrics-system / tracking-plan / metrics-dashboard | 指标体系+埋点方案 → **消费方：ui page-builder（埋点）** |
 
 #### 模块5：产品开发与上线
 
@@ -337,52 +329,44 @@ All-Skill/
 
 | 编排器 | 作用 | 调度的子编排器 |
 |--------|------|--------------|
-| product-iteration-orchestrator | 产品迭代总指挥，根据需求变更影响范围调度各领域编排器 | requirements / design / api-design / data-architecture / backend-architecture / design-system / ui-frontend / frontend-integration / quality / release |
-| product-launch-orchestrator | 产品启动总指挥，协调从0到1的全流程并行构建 | insight / market / business / positioning / design / metrics / api-design / data-architecture / backend-architecture / design-system / ui-frontend / frontend-integration / quality / release / retrospective |
+| product-iteration-orchestrator | 产品迭代总指挥，根据需求变更影响范围调度各领域编排器 | requirements / design / api-design / data-architecture / backend-architecture / ui / quality / release |
+| product-launch-orchestrator | 产品启动总指挥，协调从0到1的全流程并行构建 | insight / market / business / positioning / design / metrics / api-design / data-architecture / backend-architecture / ui / quality / release / retrospective |
 
 ---
 
-### UI 设计与前端开发（13个Skill）
+### UI 设计与前端开发（9个Skill）
 
-> **双输出模式**：UI Skill 采用双输出模式——代码文件直接写入 `{project_dir}/` 项目目录（可运行），元数据文件写入 `output/` 目录（供下游 Skill 消费）。新增 `project-scaffold` Skill，在 UI 流程开始时初始化可运行的前端项目骨架，确保后续生成的代码有正确的项目结构承接。
+> **统一编排 + 按需跳过**：UI 模块由单一编排器 `ui-orchestrator` 统一调度，采用按需跳过策略——已完成或不需要的阶段可直接跳过，不再使用 L1/L2 分级路由。9个Skill = 1编排器 + 4 Pipeline + 4 外部扩展。
+>
+> **双输出模式**：UI Skill 采用双输出模式——代码文件直接写入 `{project_dir}/` 项目目录（可运行），元数据文件写入 `output/` 目录（供下游 Skill 消费）。
 
-#### 模块1：UI设计系统
+#### 编排器
 
-从品牌基因推导设计变量，建立令牌驱动的组件化设计系统。
+| 编排器 | 作用 | 调度策略 |
+|--------|------|----------|
+| ui-orchestrator | UI 全流程统一编排，按序调度 project-init → page-builder → api-integration → production-ready | 按需跳过：已完成或不需要的阶段可直接跳过，无需强制执行 |
+
+#### Pipeline Skill
 
 | Skill | 作用 | 关键衔接 |
 |-------|------|----------|
-| design-system | 从品牌规范推导设计令牌，按原子设计规划组件库，同步生成文档 | **输入**：pm positioning-statement（定位陈述）+ 品牌规范 |
+| project-init | 项目初始化 + 设计系统建立：框架选型、目录结构、依赖安装、从品牌规范推导设计令牌、视觉风格定义、生成 PRODUCT.md/DESIGN.md | **输入**：pm PRD + positioning-statement + 品牌规范 → **必调** ext-frontend-design → **输出**：`{project_dir}/` 可运行项目骨架 + 设计令牌 + PRODUCT.md/DESIGN.md |
+| page-builder | 组件生成 + 页面组装 + UI审查：基于设计系统生成前端组件，组装为完整页面，自动审查视觉/无障碍/交互/响应式 | **输入**：project-init + pm PRD/原型/IA + pm tracking-plan → 审查闭环，P0阻塞发布 |
+| api-integration | 前后端联调桥梁：基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-contract ← 核心跨领域契约 |
+| production-ready | 生产就绪保障：构建配置+CI/CD+CDN + 性能优化 + 自动测试（组件/视觉/E2E/无障碍） | LCP≤2.5s + 首屏JS≤200KB + 核心流程E2E 100%通过 为上线卡口 |
 
-**外部扩展**：`ext-frontend-design`（视觉差异化）、`ext-impeccable`（colorize/typeset/extract）、`ext-ui-ux-pro-max`（数据驱动设计推荐）
+> **Skill 合并映射**：`project-scaffold` + `design-system` → `project-init`；`ui-component-gen` + `page-assembly` + `ui-review` → `page-builder`；`api-contract-consume` → `api-integration`；`frontend-build-deploy` + `frontend-performance` + `frontend-test` → `production-ready`
+
+#### 外部扩展
+
+| 扩展 Skill | 作用 | 调用方 |
+|------------|------|--------|
+| ext-frontend-design | 视觉差异化设计 | project-init **必调** |
+| ext-impeccable | colorize/typeset/extract/shape/animate/bolder/quieter/delight/harden/polish/layout/adapt/clarify/onboard/distill/audit/critique/optimize | page-builder / production-ready |
+| ext-interaction-design | 交互动效模式 | page-builder |
+| ext-ui-ux-pro-max | 数据驱动设计推荐 | page-builder |
 
 > **ext- Skill 调用方式**：外部扩展 Skill 已从描述性表格改为指令性调用块格式。编排器通过 `Skill: ext-xxx` 指令块精确调度，而非依赖描述匹配。例如：`Skill: ext-frontend-design`、`Skill: ext-impeccable`。
-
-#### 模块2：UI前端生成
-
-将设计系统转化为可运行的前端代码，实现设计即实现。
-
-| Skill | 作用 | 关键衔接 |
-|-------|------|----------|
-| project-scaffold | 在 UI 流程开始时初始化可运行的前端项目骨架（框架选型、目录结构、依赖安装） | **输入**：pm PRD → **输出**：`{project_dir}/` 可运行项目骨架 |
-| ui-component-gen | 基于设计系统生成带样式和交互的前端组件代码 | **输入**：design-system + pm PRD/原型 |
-| page-assembly | 将组件组装为完整页面，配置路由、状态管理和数据流 | **输入**：design-system + pm design-ia + pm tracking-plan |
-| ui-review | 自动审查视觉/无障碍/交互/响应式 | 审查闭环，P0阻塞发布 |
-| frontend-test | 自动生成组件/视觉/E2E/无障碍测试 | 核心流程E2E必须100%通过 |
-
-**外部扩展**：`ext-interaction-design`（交互动效模式）、`ext-impeccable`（shape/animate/bolder/quieter/delight/harden/polish/layout/adapt/clarify/onboard/distill/audit/critique）
-
-#### 模块3：前端集成
-
-前后端联调与上线的桥梁，契约驱动联调。
-
-| Skill | 作用 | 关键衔接 |
-|-------|------|----------|
-| api-contract-consume | 基于OpenAPI生成前端请求层+类型+Mock | **输入**：backend api-contract ← 核心跨领域契约 |
-| frontend-build-deploy | 生成构建配置+CI/CD+CDN | 构建可复现，回滚秒级 |
-| frontend-performance | 分析性能瓶颈，生成优化方案 | LCP≤2.5s + 首屏JS≤200KB 为上线卡口 |
-
-**外部扩展**：`ext-impeccable`（optimize）
 
 ---
 
@@ -420,7 +404,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付文档，79 个产出 JSON 数据片段供下游 Skill 消费，1 个产出配置文件。UI/Backend 以代码和配置为交付物。全局共 177 个 Skill（含 40 个编排器 + 119 个 PM Pipeline + 9 个 UI Pipeline + 9 个 Backend Pipeline + 1 个导航 - 1 个已删除的 design-prd Reference）。
+PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付文档，79 个产出 JSON 数据片段供下游 Skill 消费，1 个产出配置文件。UI/Backend 以代码和配置为交付物。全局共 172 个 Skill（含 37 个编排器 + 119 个 PM Pipeline + 4 个 UI Pipeline + 9 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航 - 1 个已删除的 design-prd Reference）。
 
 ### PM 核心产出文档一览
 
@@ -456,16 +440,16 @@ PM 领域的 119 个 Pipeline Skill 中，39 个产出包含 Markdown 可交付�
 ### 路径1：从0到1做新产品
 
 ```
-PM探索发现 → PM商业战略 → PM构思设计(PRD) ──┬── UI设计系统 → UI前端生成 → 前端集成
-                                              │                              ↑
+PM探索发现 → PM商业战略 → PM构思设计(PRD) ──┬── UI项目初始化 → UI页面构建 → UI API集成 → UI生产就绪
+                                              │                                         ↑
                                               └── API设计 → 数据架构 → 后端架构
                                                        ↑
                                                  PRD+数据模型(可选)
 
 跨领域数据流：
-  positioning-statement → UI设计系统(design-system)
-  IA/原型/令牌 → UI前端生成(ui-component-gen)
-  openapi.yaml → 前端集成(api-contract-consume)
+  positioning-statement → UI项目初始化(project-init)
+  IA/原型/令牌 → UI页面构建(page-builder)
+  openapi.yaml → UI API集成(api-integration)
 ```
 
 ### 路径2：已有产品需要优化
@@ -483,9 +467,8 @@ PM增长与运营(获客→激活→留存→变现) → PM度量运营(实验�
 ### 路径4：前后端联调
 
 ```
-Backend api-contract(openapi.yaml) → UI api-contract-consume(类型+Mock+Hook)
-                                  → UI frontend-build-deploy(CI/CD)
-                                  → UI frontend-performance(性能卡口)
+Backend api-contract(openapi.yaml) → UI api-integration(类型+Mock+Hook)
+                                  → UI production-ready(CI/CD+性能卡口+测试)
 ```
 
 ## 输出路径
@@ -504,9 +487,7 @@ Skill 执行结果写入**用户项目根目录**的 `output/` 下：
     ├── pm-growth/                  ← PM增长运营
     ├── pm-monitoring/              ← PM监控迭代
     ├── pm-project/                 ← PM项目管理
-    ├── ui-design-system/           ← UI设计系统
-    ├── ui-frontend/                ← UI前端生成
-    ├── ui-frontend-integration/    ← 前端集成
+    ├── ui/                           ← UI设计与前端（统一输出）
     ├── backend-api-design/         ← 后端API设计
     ├── backend-data-architecture/  ← 后端数据架构
     └── backend-architecture/       ← 后端架构
@@ -537,9 +518,9 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 | 产品定位 | PM模块2 positioning-orchestrator |
 | 需要写PRD | PM模块3 design-prd |
 | 需要A/B测试 | PM模块6 experiment-orchestrator |
-| 需要建立设计系统 | UI模块1 design-system-orchestrator |
-| 需要生成前端代码 | UI模块2 ui-frontend-orchestrator |
-| 需要与后端联调 | UI模块3 api-contract-consume ← Backend api-contract |
+| 需要建立设计系统 | UI project-init（含设计系统建立） |
+| 需要生成前端代码 | UI ui-orchestrator（统一编排） |
+| 需要与后端联调 | UI api-integration ← Backend api-contract |
 | 需要设计API | Backend模块1 api-design-orchestrator |
 | 需要设计数据库 | Backend模块2 data-architecture-orchestrator |
 | 需要确定架构模式 | Backend模块3 architecture-pattern |

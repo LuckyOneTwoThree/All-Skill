@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 3: 产品健康度自动诊断 🤖
+# 产品健康度自动诊断 🤖
 
 ## 核心原则
 

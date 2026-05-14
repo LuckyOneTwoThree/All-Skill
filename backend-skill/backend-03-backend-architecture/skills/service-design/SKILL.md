@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 19: 服务设计自动生成
+# 服务设计自动生成
 
 ## 核心原则
 

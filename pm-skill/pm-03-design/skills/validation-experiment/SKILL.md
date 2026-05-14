@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 14: 验证实验自动设计
+# 验证实验自动设计
 
 ## 核心原则
 

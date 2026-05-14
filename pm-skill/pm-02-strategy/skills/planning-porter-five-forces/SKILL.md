@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 8: 波特五力自动评估
+# 波特五力自动评估
 
 ## 核心原则
 

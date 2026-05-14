@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 2：价值主张匹配度自动评估
+# ��价值主张匹配度自动评估
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 5: Daily Sync自动化
+# Daily Sync自动化
 
 ## 核心原则
 

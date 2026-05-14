@@ -9,7 +9,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 1: 增长模式自动诊断
+# 增长模式自动诊断
 
 ## 核心原则
 

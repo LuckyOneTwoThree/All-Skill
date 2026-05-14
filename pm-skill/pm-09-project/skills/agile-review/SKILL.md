@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 6: Sprint Review与Retro自动化
+# Sprint Review与Retro自动化
 
 ## 核心原则
 

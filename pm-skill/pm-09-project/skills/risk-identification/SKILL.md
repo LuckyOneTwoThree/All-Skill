@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 7: 风险自动识别与评估
+# 风险自动识别与评估
 
 ## 核心原则
 

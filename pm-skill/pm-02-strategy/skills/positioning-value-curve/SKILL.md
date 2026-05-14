@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 4: 价值曲线自动绘制
+# 价值曲线自动绘制
 
 ## 核心原则
 

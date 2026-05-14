@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 11：DACE循环自动化
+# ��DACE循环自动化
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 7: 上线Checklist自动生成与追踪
+# 上线Checklist自动生成与追踪
 
 ## 核心原则
 

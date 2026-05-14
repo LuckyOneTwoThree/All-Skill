@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 10: 升级转化自动化
+# 升级转化自动化
 
 ## 核心原则
 

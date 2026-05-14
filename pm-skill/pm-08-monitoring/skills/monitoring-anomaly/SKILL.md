@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 2: 告警自动分析与归因 🤖 (7×24)
+# 告警自动分析与归因 🤖 (7×24)
 
 ## 核心原则
 

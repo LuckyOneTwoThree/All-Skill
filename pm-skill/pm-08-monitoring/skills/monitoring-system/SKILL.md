@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 1: 监控预警体系自动构建 🤖
+# 监控预警体系自动构建 🤖
 
 ## 核心原则
 

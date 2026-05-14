@@ -11,68 +11,67 @@
 - 需要配置前端构建、部署和CI/CD流水线
 - 需要优化前端性能，确保上线质量
 
-## 子模块与编排器
-
-| 子模块 | 编排器 | 作用 | 何时调用 |
-|--------|--------|------|----------|
-| 前端集成 | frontend-integration-orchestrator | 协调API消费、构建部署和性能优化 | 需要前后端联调集成和上线时 |
-
 ## Pipeline Skill 清单
 
-### API契约消费（1个）
+### API集成自动生成（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| api-contract-consume | 基于OpenAPI生成前端请求层、类型定义、Mock数据和Hook | API契约文档、页面数据需求 | 请求代码+类型+Mock |
+| api-integration | 基于API契约自动生成前端请求层代码，包含类型安全的API客户端、拦截器、错误处理和Mock数据 | API契约、页面数据流、目标框架、project_dir | api-integration.json（含endpoints/types/mock_data）+ API客户端代码 |
 
-### 构建部署（1个）
+> 💡 **变更说明**：v2.0 将原 api-contract-consume 更名为 api-integration，输入来源更新为 page-builder 输出的页面数据流，强化与上游模块的衔接。
 
-| Skill | 作用 | 输入 | 输出 |
-|-------|------|------|------|
-| frontend-build-deploy | 生成构建配置、环境管理、CDN策略和CI/CD流水线 | 项目信息、部署目标 | 构建配置+CI/CD |
-
-### 性能优化（1个）
+### 生产就绪一体化（1个）
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| frontend-performance | 分析性能瓶颈，生成包体积/加载/渲染优化方案 | 前端代码、构建产物、性能数据 | 优化方案+性能预算 |
+| production-ready | 集成构建配置、测试生成和性能优化，确保前端项目可部署、可测试、高性能 | 前端代码、API集成、目标框架、部署目标、project_dir | production-ready.json（含build_config/test_report/performance_report/performance_budget）+ 构建配置 + 测试代码 + CI配置 |
+
+> 💡 **合并说明**：v2.0 将原 frontend-build-deploy + frontend-performance + frontend-test 合并为 production-ready 一个 Skill，构建+测试+性能一体化，消除阶段交接开销。
 
 ## 执行顺序
 
 ```
-阶段1            阶段2              阶段3
-┌──────────┐  ┌──────────────┐  ┌──────────────┐
-│ API消费   │→│ 构建部署      │→│ 性能优化      │
-│ 请求层+Mock│  │ CI/CD+CDN    │  │ 包体积+加载   │
-└──────────┘  └──────────────┘  └──────────────┘
+┌────────────────────────────┐     ┌──────────────────────────────────────────────┐
+│   api-integration          │     │   production-ready                           │
+│  Step1: API客户端代码生成   │     │  Step1: 构建配置与优化                        │
+│  Step2: Mock数据+并行开发   │ ──→ │  Step2: 测试生成(单元+集成+E2E+无障碍)        │
+│  Step3: 数据流对接          │     │  Step3: 性能优化                              │
+└────────────────────────────┘     │  Step4: 性能预算与CI配置                      │
+                                   └──────────────────────────────────────────────┘
 ```
 
-- API消费先行，Mock数据支持前后端并行开发
-- 构建部署配置CI/CD自动化流水线
-- 性能优化确保上线质量达标
+- API集成先行，Mock数据支持前后端并行开发
+- 生产就绪一体化：构建即验证，测试内建，性能预算写入CI
+- 渐进优化：先解决最大瓶颈，再逐步优化
 
 ## 输出路径
 
 ```
 output/ui-frontend-integration/
-├── api-contract-consume/
-├── frontend-build-deploy/
-└── frontend-performance/
+├── api-integration/
+└── production-ready/
+
+{project_dir}/
+├── src/api/
+└── (构建配置+测试文件+CI配置)
 ```
 
-> 💡 **project_dir 双输出模式**：当 `project_dir` 参数指定时，API请求层代码直接写入 `{project_dir}/src/api/`，构建配置直接写入 `{project_dir}/`，元数据仍写入 `output/` 目录供下游 Skill 消费。
+> 💡 **project_dir 双输出模式**：API请求层代码直接写入 `{project_dir}/src/api/`，构建配置和测试文件直接写入 `{project_dir}/`，元数据写入 `output/` 目录供下游 Skill 消费。
 
 ## 阶段卡口
 
-### 进入构建部署前需满足：
+### 进入 production-ready 前需满足：
 - 100%接口有类型定义+Mock数据
 
-### 进入性能优化前需满足：
-- 构建成功+CI流水线通过
-
 ### 上线前需满足：
+- 构建成功，无TypeScript错误
+- 组件单元测试覆盖率≥80%
+- 核心用户流程E2E测试100%通过
+- 无障碍测试覆盖WCAG 2.1 AA
 - LCP≤2.5s
 - 首屏JS≤200KB
+- CLS≤0.1
 - P0性能问题=0
 
 ## 人类决策点
@@ -87,15 +86,14 @@ output/ui-frontend-integration/
 
 > **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
 
-> **调用格式优化**：ext- 外部 Skill 调用已从描述性表格改为指令性调用块格式（`Skill: ext-xxx`），包含输入/输出/验证条件；脚本路径使用 `{SKILL_DIR}` 占位符，部署后由 Agent 框架解析为实际路径。
-
 | 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
 |----------------|---------|---------|------|------|
-| `ext-impeccable` `optimize` | UI渲染性能专项诊断和修复 | frontend-performance Step 3 | LCP数据+渲染瓶颈 | 优化后的渲染代码 |
+| `ext-impeccable` `optimize` | UI渲染性能专项诊断和修复 | production-ready Step 3 | LCP数据+渲染瓶颈 | 优化后的渲染代码 |
 
 ## 核心信念
 
 - 前后端通过契约解耦，集成通过自动化保障
 - Mock先行，后端未就绪不阻塞前端开发
+- 构建即验证，测试内建不是事后补充
 - 性能预算写入CI，超标自动拦截
 - 构建可复现，回滚秒级

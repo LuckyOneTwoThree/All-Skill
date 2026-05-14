@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 7：方案收敛与深化
+# ��方案收敛与深化
 
 ## 核心原则
 

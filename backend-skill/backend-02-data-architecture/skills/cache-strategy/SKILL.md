@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 17: 缓存策略自动设计
+# 缓存策略自动设计
 
 ## 核心原则
 

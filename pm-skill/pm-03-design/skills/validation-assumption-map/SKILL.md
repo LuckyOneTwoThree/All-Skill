@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 12: 假设地图自动生成
+# 假设地图自动生成
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 4: Aha Moment自动工程化
+# Aha Moment自动工程化
 
 ## 核心原则
 

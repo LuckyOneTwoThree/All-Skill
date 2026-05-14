@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 5: 产品 Backlog 自动优化 🤖
+# 产品 Backlog 自动优化 🤖
 
 ## 核心原则
 

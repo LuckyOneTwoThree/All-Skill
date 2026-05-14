@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 8: 风险监控与预警自动化
+# 风险监控与预警自动化
 
 ## 核心原则
 

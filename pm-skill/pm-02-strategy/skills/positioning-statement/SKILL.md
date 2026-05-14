@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 5: 定位陈述自动生成
+# 定位陈述自动生成
 
 ## 核心原则
 

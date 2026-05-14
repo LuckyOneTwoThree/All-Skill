@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 5: 自动化验收执行
+# 自动化验收执行
 
 ## 核心原则
 

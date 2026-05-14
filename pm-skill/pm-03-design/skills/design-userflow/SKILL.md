@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 10: 用户流程自动设计
+# 用户流程自动设计
 
 ## 核心原则
 

@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "human_ai_collaborate"
 ---
 
-# Pipeline 6b: 目标用户排他决策
+# 目标用户排他决策
 
 ## 核心原则
 

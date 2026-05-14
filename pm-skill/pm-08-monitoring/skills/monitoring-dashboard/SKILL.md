@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 8: 监控 Dashboard 自动配置 🤖
+# 监控 Dashboard 自动配置 🤖
 
 ## 核心原则
 

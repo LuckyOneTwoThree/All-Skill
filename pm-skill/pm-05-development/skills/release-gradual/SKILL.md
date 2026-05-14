@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 6: 灰度发布自动执行
+# 灰度发布自动执行
 
 ## 核心原则
 

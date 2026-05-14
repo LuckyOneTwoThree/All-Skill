@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 1: 项目宪章自动生成
+# 项目宪章自动生成
 
 ## 核心原则
 

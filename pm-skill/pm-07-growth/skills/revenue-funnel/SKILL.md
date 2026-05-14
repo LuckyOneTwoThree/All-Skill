@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 8: 付费漏斗自动分析
+# 付费漏斗自动分析
 
 ## 核心原则
 

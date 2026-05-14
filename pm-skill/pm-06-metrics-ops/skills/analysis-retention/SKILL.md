@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 6：留存自动分析
+# ��留存自动分析
 
 ## 核心原则
 

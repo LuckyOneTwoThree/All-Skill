@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 4：自动化数据分析引擎
+# ��自动化数据分析引擎
 
 ## 核心原则
 

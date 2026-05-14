@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 8: 上线复盘自动化
+# 上线复盘自动化
 
 ## 核心原则
 

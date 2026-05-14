@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 2: 资源需求自动规划
+# 资源需求自动规划
 
 ## 核心原则
 

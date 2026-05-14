@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 12：数据洞察自动转化
+# ��数据洞察自动转化
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 5: Onboarding自动优化
+# Onboarding自动优化
 
 ## 核心原则
 

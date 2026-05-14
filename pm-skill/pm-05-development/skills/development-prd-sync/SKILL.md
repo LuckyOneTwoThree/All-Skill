@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 3: PRD双向同步自动化
+# PRD双向同步自动化
 
 ## 核心原则
 

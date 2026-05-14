@@ -5,7 +5,7 @@ metadata:
   module: "跨领域协调"
   sub-module: "产品迭代"
   type: "orchestrator"
-  version: "4.1"
+  version: "6.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "给现有产品加一个支付功能"
@@ -93,12 +93,12 @@ pipeline:
     conditional: 影响范围含API变更
     gate: API变更人类确认通过
 
-  - stage: design-system-update
-    skills: [design-system-orchestrator]
-    depends_on: [design]
+  - stage: ui-development
+    skills: [ui-orchestrator]
+    depends_on: [design, api-update]
     parallel: true
-    conditional: 影响范围含设计令牌变更
-    gate: 设计令牌变更人类确认通过
+    conditional: 影响范围含UI变更或设计令牌变更，或API发生变更
+    gate: 前端代码审查通过，前后端联调通过
 
   - stage: data-update
     skills: [data-architecture-orchestrator]
@@ -107,28 +107,15 @@ pipeline:
     conditional: 影响范围含数据模型变更
     gate: 数据架构变更审查通过
 
-  - stage: ui-update
-    skills: [ui-frontend-orchestrator]
-    depends_on: [design-system-update]
-    parallel: true
-    conditional: 影响范围含UI变更
-    gate: 前端代码审查通过
-
   - stage: backend-update
     skills: [backend-architecture-orchestrator]
     depends_on: [api-update, data-update]
     conditional: 影响范围含后端逻辑变更
     gate: 后端审查通过（P0=0）
 
-  - stage: integration
-    skills: [frontend-integration-orchestrator]
-    depends_on: [api-update, ui-update]
-    conditional: API发生变更
-    gate: 前后端联调通过
-
   - stage: delivery
     skills: [quality-orchestrator, release-orchestrator]
-    depends_on: [backend-update, ui-update, integration]
+    depends_on: [backend-update, ui-development]
     gate: P0问题=0，回归测试通过
 ```
 
@@ -215,54 +202,23 @@ Skill: backend-architecture-orchestrator
 模式: 🤖→👤
 ```
 
-### 阶段4d：设计系统增量更新（条件执行）
+### 阶段4d：UI开发与集成（条件执行）
 
-#### 调用 design-system-orchestrator
+#### 调用 ui-orchestrator
 
 ```
-Skill: design-system-orchestrator
+Skill: ui-orchestrator
 输入:
   PRD变更: output/cross-domain/design-orchestrator/
-  目标语言: 用户提供（默认zh-CN）
-  project_dir: 用户提供（已有项目目录路径）
-输出: output/cross-domain/design-system-orchestrator/
-验证: 设计令牌变更人类确认通过
-模式: 🤖→👤
-```
-
-### 阶段4e：前端增量更新（条件执行）
-
-#### 调用 ui-frontend-orchestrator
-
-```
-Skill: ui-frontend-orchestrator
-输入:
-  PRD变更: output/cross-domain/design-orchestrator/
-  设计令牌变更输出: output/cross-domain/design-system-orchestrator/
-  目标语言: 用户提供（默认zh-CN）
-  project_dir: 用户提供（已有项目目录路径）
-输出: output/cross-domain/ui-frontend-orchestrator/
-验证: 前端代码审查通过
-模式: 🤖→👤
-```
-
-### 阶段5：前端联调更新（条件执行）
-
-#### 调用 frontend-integration-orchestrator
-
-```
-Skill: frontend-integration-orchestrator
-输入:
   API变更输出: output/cross-domain/api-design-orchestrator/
-  前端代码变更输出: output/cross-domain/ui-frontend-orchestrator/
   目标语言: 用户提供（默认zh-CN）
   project_dir: 用户提供（已有项目目录路径）
-输出: output/cross-domain/frontend-integration-orchestrator/
-验证: 前后端联调通过
-模式: 🤖
+输出: output/cross-domain/ui-orchestrator/
+验证: 前端代码审查通过，前后端联调通过
+模式: 🤖→👤
 ```
 
-### 阶段6：质量验证与发布
+### 阶段5：质量验证与发布
 
 #### 调用 quality-orchestrator
 
@@ -270,7 +226,7 @@ Skill: frontend-integration-orchestrator
 Skill: quality-orchestrator
 输入:
   变更部分输出: output/cross-domain/
-  集成输出: output/cross-domain/frontend-integration-orchestrator/
+  集成输出: output/cross-domain/ui-orchestrator/
 输出: output/cross-domain/quality-orchestrator/
 验证: P0问题=0，回归测试通过
 模式: 🤖→👤
@@ -331,7 +287,7 @@ Skill: release-orchestrator
 | 需求确认 | requirements-orchestrator完成 | 确认需求范围和优先级 |
 | PRD变更确认 | design-orchestrator完成 | 确认PRD变更可分发到受影响领域 |
 | 影响范围确认 | 影响分析完成 | 确认哪些领域需要变更，是否有遗漏 |
-| 集成就绪确认 | frontend-integration-orchestrator完成 | 确认前后端联调通过 |
+| 集成就绪确认 | ui-orchestrator完成 | 确认前后端联调通过 |
 | 发布决策 | release-orchestrator完成 | 确认是否发布 |
 
 ## 异常处理
@@ -343,12 +299,13 @@ Skill: release-orchestrator
 | API向后不兼容 | 标注破坏性变更，必须提供兼容方案或版本升级策略 |
 | 回归测试失败 | 回退到变更前的代码版本，标注"迭代阻塞" |
 | 变更范围超出预期 | 暂停执行，人类决策是否拆分为多期迭代 |
-| 纯UI变更但设计令牌需调整 | 优先执行design-system-orchestrator更新令牌，再执行ui-frontend-orchestrator |
+| 纯UI变更但设计令牌需调整 | 由ui-orchestrator统一处理设计令牌更新与前端开发 |
 | 纯后端变更但影响已有API | 必须执行api-design-orchestrator评估API兼容性 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
 
+- v6.0: UI子编排器合并——将design-system-orchestrator、ui-frontend-orchestrator、frontend-integration-orchestrator三个阶段合并为ui-development阶段，统一调用ui-orchestrator；更新Pipeline、阶段执行计划、输出路径、人类决策点、异常处理
 - v5.0: UI阶段增加 project_dir 传递，代码直接写入已有项目目录
 - v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
 - v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略

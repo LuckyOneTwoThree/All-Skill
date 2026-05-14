@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 9: NRR自动追踪与预警
+# NRR自动追踪与预警
 
 ## 核心原则
 

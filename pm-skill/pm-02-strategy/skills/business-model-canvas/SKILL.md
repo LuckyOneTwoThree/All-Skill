@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 1：商业模式画布自动生成
+# ��商业模式画布自动生成
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 8: PRD生成器
+# PRD生成器
 
 本Skill负责将上游阶段的产出（需求管理、创意发散）自动转化为符合质量标准的PRD文档，为后续产品设计（IA、流程、原型）提供结构化输入。支持PRD-L/S/X三级分层，自动进行4道质量门禁检查，确保文档完整性、一致性、歧义消除和可追溯性。
 

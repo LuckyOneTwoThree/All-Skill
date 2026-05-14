@@ -9,7 +9,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 16: 数据迁移方案自动设计
+# 数据迁移方案自动设计
 
 ## 核心原则
 

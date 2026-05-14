@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 6: 迭代优先级自动调整 🤖
+# 迭代优先级自动调整 🤖
 
 ## 核心原则
 

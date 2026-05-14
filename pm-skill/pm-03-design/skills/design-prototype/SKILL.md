@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 11: 原型自动生成
+# 原型自动生成
 
 ## 核心原则
 

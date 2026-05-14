@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 15: 可用性测试辅助
+# 可用性测试辅助
 
 ## 核心原则
 

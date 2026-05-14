@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 3: 获客漏斗自动优化
+# 获客漏斗自动优化
 
 ## 核心原则
 

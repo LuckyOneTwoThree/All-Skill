@@ -15,7 +15,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 2：需求自动理解与拆解
+# ��需求自动理解与拆解
 
 ## 核心原则
 

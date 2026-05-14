@@ -15,7 +15,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 3：需求自动评估与排序
+# ��需求自动评估与排序
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 13：数据文化自动化
+# ��数据文化自动化
 
 ## 核心原则
 

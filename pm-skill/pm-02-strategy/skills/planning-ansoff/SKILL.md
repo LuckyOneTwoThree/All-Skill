@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 11: Ansoff矩阵自动定位
+# Ansoff矩阵自动定位
 
 ## 核心原则
 

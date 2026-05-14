@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 13: MVP范围自动界定
+# MVP范围自动界定
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 9: 风险升级与问题升级自动化
+# 风险升级与问题升级自动化
 
 ## 核心原则
 

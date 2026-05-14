@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 1: PRD任务分解消费与开发深化
+# PRD任务分解消费与开发深化
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 8：A/B测试自动设计
+# ��A/B测试自动设计
 
 ## 核心原则
 

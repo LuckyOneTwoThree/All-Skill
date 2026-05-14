@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 2: 埋点方案自动生成
+# 埋点方案自动生成
 
 ## 核心原则
 

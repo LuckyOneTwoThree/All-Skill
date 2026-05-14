@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 2: 需求变更影响分析自动化
+# 需求变更影响分析自动化
 
 ## 核心原则
 

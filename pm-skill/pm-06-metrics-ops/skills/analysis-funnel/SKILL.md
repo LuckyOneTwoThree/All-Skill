@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 5：漏斗自动分析
+# ��漏斗自动分析
 
 ## 核心原则
 

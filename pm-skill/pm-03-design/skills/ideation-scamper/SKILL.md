@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 5：SCAMPER结构化方案生成
+# ��SCAMPER结构化方案生成
 
 ## 核心原则
 

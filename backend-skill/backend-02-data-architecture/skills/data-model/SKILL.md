@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 15: 数据模型自动设计
+# 数据模型自动设计
 
 ## 核心原则
 

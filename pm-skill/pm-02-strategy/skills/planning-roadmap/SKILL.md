@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 10: 路线图自动规划
+# 路线图自动规划
 
 ## 核心原则
 

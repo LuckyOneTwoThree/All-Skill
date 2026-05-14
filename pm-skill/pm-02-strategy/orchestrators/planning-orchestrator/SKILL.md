@@ -66,17 +66,17 @@ post_pipeline:
     output: output/phase-reports/pm-strategy/planning-orchestrator.md
 
 stages:
-  - id: phase-0
+  - id: phase-1
     name: "产品提案"
     skills: [product-proposal]
     gate:
       condition: "提案书人类已签批"
       fail_action: "补充数据后重新提交"
 
-  - id: phase-1
+  - id: phase-2
     name: "战略分析"
     parallel: true
-    depends_on: [phase-0]
+    depends_on: [phase-1]
     skills:
       - planning-swot
       - planning-porter-five-forces
@@ -84,10 +84,10 @@ stages:
       condition: "SWOT战略方向人类已选择 + 波特五力评分完成"
       fail_action: "置信度<0.6的项目升级人类校准"
 
-  - id: phase-2
+  - id: phase-3
     name: "目标设定"
     parallel: true
-    depends_on: [phase-1]
+    depends_on: [phase-2]
     skills:
       - planning-okr
       - planning-north-star
@@ -95,10 +95,10 @@ stages:
       condition: "OKR人类已确认 + 北极星指标人类已选择"
       fail_action: "达成概率<0.3升级调整"
 
-  - id: phase-3
+  - id: phase-4
     name: "路线图与增长"
     parallel: true
-    depends_on: [phase-2]
+    depends_on: [phase-3]
     skills:
       - planning-roadmap
       - planning-ansoff
@@ -109,7 +109,7 @@ stages:
 
 ## 阶段执行计划
 
-### 阶段0：product-proposal
+### 阶段1：product-proposal
 
 - **Skill**: product-proposal
 - **输入**:
@@ -126,7 +126,7 @@ stages:
 - **执行模式**: 🤖→👤 AI建议，人类审批
 - **卡口**: 提案书人类已签批 → 未通过：补充数据后重新提交
 
-### 阶段1：planning-swot
+### 阶段2：planning-swot
 
 - **Skill**: planning-swot
 - **输入**:
@@ -139,7 +139,7 @@ stages:
 - **执行模式**: 🤖→👤 AI建议，人类审批
 - **卡口**: SWOT战略方向人类已选择 → 未通过：置信度<0.6的项目升级人类校准
 
-### 阶段2：planning-porter-five-forces
+### 阶段3：planning-porter-five-forces
 
 - **Skill**: planning-porter-five-forces
 - **输入**:
@@ -151,12 +151,12 @@ stages:
 - **执行模式**: 🤖→👤 AI建议，人类审批
 - **卡口**: 波特五力评分完成 → 未通过：各力量评分需人类校准确认
 
-### 阶段3：planning-okr
+### 阶段4：planning-okr
 
 - **Skill**: planning-okr
 - **输入**:
-  - swot_strategy: SWOT战略方向（来自阶段1 `output/pm-strategy/planning-swot/swot.json`）
-  - north_star: 北极星指标（来自阶段4 `output/pm-strategy/planning-north-star/north_star.json`，若已执行）
+  - swot_strategy: SWOT战略方向（来自阶段2 `output/pm-strategy/planning-swot/swot.json`）
+  - north_star: 北极星指标（来自阶段5 `output/pm-strategy/planning-north-star/north_star.json`，若已执行）
   - bmc: BMC商业模式画布（可选，来自 output/pm-strategy/business-model-canvas/bmc.json）
   - business_status: 业务现状数据（可选，用户提供）
 - **输出**: `output/pm-strategy/planning-okr/`（okr.json）
@@ -164,7 +164,7 @@ stages:
 - **执行模式**: 🤖→👤 AI建议，人类审批
 - **卡口**: OKR人类已确认 → 未通过：达成概率<0.3升级调整，>0.9升级增加挑战
 
-### 阶段4：planning-north-star
+### 阶段5：planning-north-star
 
 - **Skill**: planning-north-star
 - **输入**:
@@ -176,12 +176,12 @@ stages:
 - **执行模式**: 👤→🤖 人类执行，AI辅助
 - **卡口**: 北极星指标人类已选择 → 未通过：必须人类决策，AI只提供分析支撑
 
-### 阶段5：planning-roadmap
+### 阶段6：planning-roadmap
 
 - **Skill**: planning-roadmap
 - **输入**:
-  - okr: OKR目标与关键结果（来自阶段3 `output/pm-strategy/planning-okr/okr.json`）
-  - swot_strategy: SWOT战略方向（来自阶段1 `output/pm-strategy/planning-swot/swot.json`）
+  - okr: OKR目标与关键结果（来自阶段4 `output/pm-strategy/planning-okr/okr.json`）
+  - swot_strategy: SWOT战略方向（来自阶段2 `output/pm-strategy/planning-swot/swot.json`）
   - priority_score: 需求优先级评分（可选，来自 requirements-prioritization）
   - resource_constraints: 资源约束条件（可选，用户提供）
 - **输出**: `output/pm-strategy/planning-roadmap/`（roadmap.json）
@@ -189,14 +189,14 @@ stages:
 - **执行模式**: 🤖→👤 AI建议，人类审批
 - **卡口**: 路线图资源人类已审批 → 未通过：优先级和资源分配必须人类决策
 
-### 阶段6：planning-ansoff
+### 阶段7：planning-ansoff
 
 - **Skill**: planning-ansoff
 - **输入**:
   - product_definition: 当前产品定义（用户提供）
   - market_definition: 当前市场定义（用户提供）
-  - growth_goal: 增长目标（可选，来自阶段3 `output/pm-strategy/planning-okr/okr.json`）
-  - swot_result: SWOT分析结果（可选，来自阶段1 `output/pm-strategy/planning-swot/swot.json`）
+  - growth_goal: 增长目标（可选，来自阶段4 `output/pm-strategy/planning-okr/okr.json`）
+  - swot_result: SWOT分析结果（可选，来自阶段2 `output/pm-strategy/planning-swot/swot.json`）
 - **输出**: `output/pm-strategy/planning-ansoff/`（ansoff.json）
 - **验证**: Ansoff增长路径已选择
 - **执行模式**: 🤖→👤 AI建议，人类审批
@@ -245,10 +245,10 @@ stages:
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 产品立项审批 | 阶段0 product-proposal 生成产品提案书 | 人类决定是否立项 |
-| 战略方向选择 | 阶段1 planning-swot 生成SO/ST/WO/WT四种战略方向 | 人类选择最终战略方向 |
-| OKR确认 | 阶段3 planning-okr 生成OKR候选 | 人类确认最终OKR |
-| 路线图优先级 | 阶段5 planning-roadmap 计算RICE评分并排序 | 人类决定最终优先级和资源分配 |
+| 产品立项审批 | 阶段1 product-proposal 生成产品提案书 | 人类决定是否立项 |
+| 战略方向选择 | 阶段2 planning-swot 生成SO/ST/WO/WT四种战略方向 | 人类选择最终战略方向 |
+| OKR确认 | 阶段4 planning-okr 生成OKR候选 | 人类确认最终OKR |
+| 路线图优先级 | 阶段6 planning-roadmap 计算RICE评分并排序 | 人类决定最终优先级和资源分配 |
 
 ## 变更记录
 

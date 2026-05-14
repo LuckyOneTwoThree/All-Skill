@@ -15,7 +15,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 1：需求自动收集与分类
+# ��需求自动收集与分类
 
 ## 核心原则
 

@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "human_ai_collaborate"
 ---
 
-# Pipeline 9b: 北极星指标选择
+# 北极星指标选择
 
 ## 核心原则
 

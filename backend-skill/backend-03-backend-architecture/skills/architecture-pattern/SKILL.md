@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 18: 架构模式自动选择与设计
+# 架构模式自动选择与设计
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 9: 告警升级与 On-Call 自动化 🤖
+# 告警升级与 On-Call 自动化 🤖
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 14: 认证鉴权自动设计
+# 认证鉴权自动设计
 
 ## 核心原则
 

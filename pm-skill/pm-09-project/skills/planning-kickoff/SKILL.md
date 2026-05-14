@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "human_ai_collaborate"
 ---
 
-# Pipeline 3: Kickoff会议自动化
+# Kickoff会议自动化
 
 ## 核心原则
 

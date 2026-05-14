@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 4：HMW批量生成
+# ��HMW批量生成
 
 ## 核心原则
 

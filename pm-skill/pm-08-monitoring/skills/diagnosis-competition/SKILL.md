@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 4: 竞品动态追踪与应对 🤖
+# 竞品动态追踪与应对 🤖
 
 ## 核心原则
 

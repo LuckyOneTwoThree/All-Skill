@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 4: 测试用例自动生成与追踪
+# 测试用例自动生成与追踪
 
 ## 核心原则
 

@@ -14,7 +14,7 @@ metadata:
   interaction_mode: "ai_auto"
 ---
 
-# Pipeline 9：A/B测试自动执行与分析
+# ��A/B测试自动执行与分析
 
 ## 核心原则
 

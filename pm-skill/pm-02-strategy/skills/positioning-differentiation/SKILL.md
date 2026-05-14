@@ -13,7 +13,7 @@ metadata:
   interaction_mode: "ai_suggest_human_approve"
 ---
 
-# Pipeline 6: 差异化来源自动评估
+# 差异化来源自动评估
 
 ## 核心原则
 
