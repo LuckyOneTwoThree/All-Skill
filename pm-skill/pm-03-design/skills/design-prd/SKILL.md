@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "3.1"
+  version: "3.2"
   domain_tags: ["互联网", "软件", "通用"]
   trigger_examples:
     - "帮我写PRD文档"
@@ -244,18 +244,18 @@ metadata:
 检测缺失 → 判断等级 → 应用策略 → 输出结果
 
 L0处理：
-1. 标记为[AI补充，待确认]
+1. 标注"AI补充，待确认"
 2. 提供置信度评分
 3. 生成确认问题清单
 
 L1处理：
-1. 标记为[待补充]
+1. 标注"待补充"
 2. 使用默认值或模板填充
 3. 阻塞相关下游生成
 4. 生成补充清单
 
 L2处理：
-1. 标记为[缺少核心输入]
+1. 标注"缺少核心输入"
 2. 输出中断报告
 3. 指定缺失字段
 4. 要求重新输入
@@ -299,15 +299,15 @@ L2处理：
 
 ### 6.2 下游驱动
 
-| 下游方 | 驱动内容 | 交付物 |
-|--------|----------|--------|
-| **UI前端** | 交互逻辑、状态设计、页面规格、数据模型 | 组件意图描述 + 页面数据需求 |
-| **后端架构** | 功能规格、接口定义、数据实体、边界条件 | API契约输入 + 数据模型输入 |
-| **开发** | 功能规格、接口定义、边界条件 | 技术设计文档 |
-| **设计** | 交互逻辑、状态设计、页面规格 | 设计规范文档 |
-| **测试** | 验收标准、测试用例、环境要求 | 测试计划 |
-| **运营** | 发布策略、运营准备、效果评估 | 运营方案 |
-| **监控** | 可观测性要求、埋点方案 | 监控仪表盘 |
+| 下游方 | 驱动内容 | 交付物 | 消费来源 |
+|--------|----------|--------|----------|
+| **UI前端** | 交互逻辑、状态设计、页面规格、数据模型 | 组件意图描述 + 页面数据需求 | prd.json.pages[] + prd.json.user_flows[] |
+| **后端架构** | 功能规格、接口定义、数据实体、边界条件 | API契约输入 + 数据模型输入 | prd.json.features[] + prd.json.entities[] |
+| **开发** | 功能规格、接口定义、边界条件 | 技术设计文档 | prd.md + prd.json |
+| **设计** | 交互逻辑、状态设计、页面规格 | 设计规范文档 | prd.md + prd.json.pages[] |
+| **测试** | 验收标准、测试用例、环境要求 | 测试计划 | prd.json.features[].acceptance_criteria[] |
+| **运营** | 发布策略、运营准备、效果评估 | 运营方案 | prd.md |
+| **监控** | 可观测性要求、埋点方案 | 监控仪表盘 | prd.json.non_functional_requirements |
 
 ### 6.3 数据流向图
 
@@ -348,10 +348,173 @@ L2处理：
 | 输出项 | 格式 | 路径 |
 |--------|------|------|
 | PRD文档 | Markdown | `output/pm-design/design-prd/prd.md` |
+| PRD结构化数据 | JSON | `output/pm-design/design-prd/prd.json` |
 | 质量门禁检查报告 | JSON | `output/pm-design/design-prd/{PRD-ID}_quality_report_{timestamp}.json` |
 | 需人类确认清单 | Markdown | `output/pm-design/design-prd/{PRD-ID}_human_review_required.md` |
 
 **完整输出数据结构与模板**：详见 [Reference/output-schema.md](Reference/output-schema.md)
+
+### prd.json 结构定义
+
+prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程式消费，确保功能点、页面、实体、用户流程等核心信息可被自动解析和对齐。
+
+```json
+{
+  "prd_id": "string",
+  "version": "string",
+  "level": "L | S | X",
+  "status": "draft | in_review | approved | released",
+  "meta": {
+    "title": "string",
+    "owner": "string",
+    "created_at": "ISO8601",
+    "updated_at": "ISO8601"
+  },
+  "goals": [
+    {
+      "goal_id": "string",
+      "description": "string",
+      "okr_alignment": "string",
+      "success_metrics": [
+        {
+          "metric_name": "string",
+          "target_value": "string",
+          "current_value": "string | null",
+          "unit": "string"
+        }
+      ]
+    }
+  ],
+  "features": [
+    {
+      "feature_id": "string",
+      "name": "string",
+      "description": "string",
+      "priority": "must | should | could | wont",
+      "status": "planned | in_progress | completed | cancelled",
+      "goal_id": "string",
+      "acceptance_criteria": [
+        {
+          "criterion_id": "string",
+          "given": "string",
+          "when": "string",
+          "then": "string"
+        }
+      ],
+      "dependencies": ["feature_id"],
+      "related_pages": ["page_id"],
+      "related_entities": ["entity_id"]
+    }
+  ],
+  "pages": [
+    {
+      "page_id": "string",
+      "name": "string",
+      "route": "string",
+      "description": "string",
+      "data_requirements": [
+        {
+          "data_name": "string",
+          "source": "api | local | cache",
+          "api_endpoint": "string | null",
+          "fields": ["string"]
+        }
+      ],
+      "ui_components": ["string"],
+      "user_flows": ["flow_id"],
+      "states": [
+        {
+          "state_name": "string",
+          "description": "string",
+          "triggers": ["string"]
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "entity_id": "string",
+      "name": "string",
+      "description": "string",
+      "fields": [
+        {
+          "field_name": "string",
+          "type": "string",
+          "required": "boolean",
+          "description": "string",
+          "constraints": "string | null"
+        }
+      ],
+      "relationships": [
+        {
+          "target_entity_id": "string",
+          "type": "one_to_one | one_to_many | many_to_many",
+          "description": "string"
+        }
+      ],
+      "api_endpoints": [
+        {
+          "method": "GET | POST | PUT | PATCH | DELETE",
+          "path": "string",
+          "description": "string"
+        }
+      ]
+    }
+  ],
+  "user_flows": [
+    {
+      "flow_id": "string",
+      "name": "string",
+      "description": "string",
+      "entry_page": "page_id",
+      "steps": [
+        {
+          "step_id": "string",
+          "action": "string",
+          "page_id": "string",
+          "expected_outcome": "string",
+          "error_handling": "string | null"
+        }
+      ],
+      "alternative_paths": [
+        {
+          "condition": "string",
+          "steps": ["step_id"]
+        }
+      ]
+    }
+  ],
+  "non_functional_requirements": {
+    "performance": [
+      {
+        "requirement": "string",
+        "metric": "string",
+        "target": "string"
+      }
+    ],
+    "availability": [],
+    "security": [],
+    "observability": []
+  },
+  "traceability": [
+    {
+      "feature_id": "string",
+      "goal_id": "string",
+      "upstream_source": "string",
+      "upstream_artifact_id": "string"
+    }
+  ]
+}
+```
+
+### prd.json 与 prd.md 的关系
+
+| 维度 | prd.md | prd.json |
+|------|--------|----------|
+| 消费者 | 人类（PM、设计师、开发） | 机器（Backend Skill、UI Skill） |
+| 内容 | 完整9节叙述+表格+图表 | 结构化核心数据（功能/页面/实体/流程） |
+| 生成顺序 | 先生成 prd.md | 从 prd.md 提取结构化数据生成 prd.json |
+| 一致性 | prd.json 必须与 prd.md 内容一致，冲突时以 prd.md 为准 | |
 
 ### 输出校验规则
 
@@ -359,6 +522,10 @@ L2处理：
 - [ ] 追溯链贯通：从OKR到验收标准的追溯链完整
 - [ ] 门禁通过：4道质量门禁全部通过
 - [ ] 无歧义残留：无模糊量词和悬空引用
+- [ ] prd.json 完整性：features/pages/entities/user_flows 四个数组均非空
+- [ ] prd.json 引用一致性：feature.related_pages 中的 page_id 在 pages[] 中存在，feature.related_entities 中的 entity_id 在 entities[] 中存在
+- [ ] prd.json 追溯链完整：每个 feature 都有对应的 traceability 条目
+- [ ] prd.json 与 prd.md 一致：prd.json 中的功能点名称、优先级、验收标准与 prd.md 一致
 
 ## 决策规则（详细）
 
@@ -506,3 +673,4 @@ L2处理：
 
 - v3.0: 将PRD完整9节结构、输入Schema、输出Schema拆分到Reference文件夹，SKILL.md保留核心逻辑和概览表格
 - v3.1: 需求管理内建——输入新增insight_analysis和opportunity_definition引用（替代原requirements-collection/understanding/prioritization输入）；标注需求收集、理解和优先级排序已内建于Step 1-3；上游消费新增洞察分析和机会定义；降级策略新增insight_analysis/opportunity_definition缺失方案；数据流向图更新
+- v3.2: 新增prd.json结构化输出——包含features[]/pages[]/entities[]/user_flows[]/goals[]/traceability[]，供Backend/UI编程式消费；下游驱动表新增消费来源列；输出校验规则新增prd.json完整性和引用一致性检查

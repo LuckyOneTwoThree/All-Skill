@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "设计评审"
   type: "pipeline"
-  version: "2.0"
+  version: "2.1"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "需求改了，看看影响范围"
@@ -422,22 +422,33 @@ metadata:
 
 | 字段路径 | 类型 | 必填 | 说明 |
 |----------|------|------|------|
-| review_result | object | 是 | 审查结果根对象 |
-| review_result.summary | object | 是 | 审查摘要 |
-| review_result.summary.total_files | number | 是 | 审查文件总数 |
-| review_result.summary.issues_found | number | 是 | 发现问题总数 |
-| review_result.summary.critical_count | number | 是 | 严重问题数 |
-| review_result.files | array | 是 | 文件审查列表 |
-| review_result.files[].path | string | 是 | 文件路径 |
-| review_result.files[].issues | array | 是 | 问题列表 |
-| review_result.files[].issues[].severity | string | 是 | 严重级别，枚举值：critical/major/minor/info |
-| review_result.files[].issues[].rule | string | 是 | 违反规则ID |
-| review_result.files[].issues[].description | string | 是 | 问题描述 |
-| review_result.files[].issues[].suggestion | string | 是 | 修复建议 |
-| review_result.prd_coverage | object | 是 | PRD覆盖度校验 |
-| review_result.prd_coverage.covered_requirements | number | 是 | 已覆盖需求数 |
-| review_result.prd_coverage.total_requirements | number | 是 | 总需求数 |
-| review_result.prd_coverage.gap_items | array | 否 | 未覆盖需求列表 |
+| output_id | string | 是 | 输出唯一标识 |
+| change_id | string | 是 | 变更请求ID，须与输入change_id一致 |
+| generated_at | string | 是 | 生成时间，ISO 8601格式 |
+| classification | object | 是 | 变更分类 |
+| classification.level | string | 是 | 变更级别，枚举值：L1/L2/L3/L4 |
+| classification.level_description | string | 是 | 级别描述 |
+| classification.reasons | array | 是 | 分级原因列表，不可为空 |
+| classification.confidence | number | 是 | 分配置信度，范围0.0-1.0 |
+| impact_analysis | object | 是 | 影响分析 |
+| impact_analysis.functional | object | 是 | 功能影响分析，含directly_affected/indirectly_affected/dependent_features |
+| impact_analysis.functional.directly_affected | array | 是 | 直接受影响功能列表，每项含feature_id/feature_name/impact_type |
+| impact_analysis.technical | object | 是 | 技术影响分析，含code_changes/database_changes/api_changes/external_dependencies |
+| impact_analysis.technical.api_changes | array | 是 | API变更列表，每项含endpoint/method/change_type |
+| impact_analysis.test | object | 是 | 测试影响分析，含regression_cases/new_cases_needed/test_environment |
+| impact_analysis.operation | object | 是 | 运营影响分析，含config_changes/data_tracking/customer_service |
+| review_needed | boolean | 是 | 是否需要重评审 |
+| review_decision | object | 否 | 评审决策（review_needed为true时必填），含level/review_scope/review_content/review_deadline |
+| review_decision.level | string | 否 | 评审级别，枚举值：L1_optional/L2_suggested/L3_mandatory/L4_strategic |
+| review_decision.review_scope | array | 否 | 评审角色列表，每项含role/reason |
+| version_updates | object | 否 | 版本联动更新建议，含prd/code/test_cases |
+| version_updates.prd | object | 否 | PRD版本更新建议，含current_version/new_version/sections_to_update |
+| version_updates.code | object | 否 | 代码版本规划，含target_release/branch_strategy/sprint_plan |
+| version_updates.test_cases | object | 否 | 测试用例版本更新，含cases_to_add/cases_to_modify/cases_to_delete |
+| summary | object | 是 | 变更影响摘要 |
+| summary.impact_scope | string | 是 | 影响范围描述 |
+| summary.estimated_effort_days | number | 是 | 预估影响人天，须≥0 |
+| summary.risk_level | string | 是 | 风险等级，枚举值：low/medium/high/critical |
 
 ## 上游变更响应
 
@@ -445,18 +456,19 @@ metadata:
 
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
-| PRD需求变更 | PRD覆盖度校验规则 | 更新PRD覆盖度校验基准，重新评估未覆盖需求 |
-| 代码变更 | 审查范围和问题列表 | 增量审查变更文件，更新问题列表 |
-| ADR决策变更 | 审查规则 | 更新审查规则以匹配新决策，标记需人类确认 |
-| 安全需求变更 | 安全审查规则 | 更新安全审查规则，重新评估安全问题 |
+| PRD需求变更 | 功能影响分析、版本联动 | 更新功能影响矩阵，重新评估变更级别和重评审必要性 |
+| API契约变更 | 技术影响分析 | 更新API变更列表，重新评估技术影响范围 |
+| 后端架构审查结果变更 | 技术影响分析 | 更新技术影响评估，重新评估架构风险 |
+| 开发进度变更 | 测试影响分析 | 更新回归测试范围，调整版本规划 |
 
-当审查结果自身变更时，对下游的通知机制：
+当变更影响分析结果自身变更时，对下游的通知机制：
 
-| 审查变更类型 | 通知范围 | 通知方式 |
-|-------------|----------|----------|
-| 严重问题新增 | agile-review | 标记严重问题，触发复盘评估 |
-| PRD覆盖度变化 | design-prd | 标记覆盖度变化，触发PRD更新评估 |
-| 审查规则变更 | quality-acceptance | 标记规则变更，触发验收标准更新 |
+| 变更影响分析变更类型 | 通知范围 | 通知方式 |
+|---------------------|----------|----------|
+| 变更级别升级 | agile-review | 标记变更级别变化，触发复盘评估 |
+| 影响范围扩大 | design-prd | 标记影响范围变化，触发PRD更新评估 |
+| 重评审必要性变化 | quality-acceptance | 标记评审需求变化，触发验收标准更新 |
+| 版本规划调整 | agile-sprint-planning | 标记版本规划变化，触发Sprint计划调整 |
 
 ---
 
@@ -535,3 +547,8 @@ metadata:
   "quality_checks_passed": true
 }
 ```
+
+## 变更记录
+
+- v2.0: 初始版本
+- v2.1: 修复输出校验规则——替换与实际Schema不匹配的review_result字段，对齐output_id/change_id/classification/impact_analysis/review_needed/review_decision/version_updates/summary；修复上游变更响应——对齐变更影响分析场景而非代码审查场景；修复下游通知机制——对齐实际通知场景并新增版本规划调整通知

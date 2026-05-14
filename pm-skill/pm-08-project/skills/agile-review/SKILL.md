@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
   domain_tags: ["互联网", "SaaS", "通用"]
   trigger_examples:
     - "sprint结束了要评审"
@@ -1063,6 +1063,38 @@ Step 3在发布完成后（建议T+2周）执行，自动收集多源数据，�
 | 上线复盘指标异常 | 深度分析触发 | 更新release-retro-{release_id}.json，触发深度分析 |
 | 上线复盘报告变更 | 下一发布规划、团队改进计划 | 更新release-retro-{release_id}.json，通知相关团队 |
 
+### 复盘反馈回传机制
+
+复盘的核心价值在于驱动持续改进闭环。以下定义了复盘结论回传上游 Skill 的规则，确保改进建议和行动项不仅停留在报告层面，而是能实际影响上游决策。
+
+#### Sprint复盘反馈回传
+
+| 复盘结论类型 | 回传目标 | 回传内容 | 回传方式 |
+|-------------|----------|----------|----------|
+| 速率预测变更 | agile-sprint-planning | velocity_range、capacity_adjustment | 写入 output/pm-project/agile-review/sprint-retro-S{NN}.json 的 next_sprint_recommendation，agile-sprint-planning 消费该字段作为下一Sprint容量规划输入 |
+| 溢出根因模式 | agile-sprint-planning | spill_reasons 中的 recurring/persistent 类型 | 写入 sprint_retro.json 的 problems_identified，agile-sprint-planning 在规划阶段检查历史溢出根因 |
+| 跨团队依赖阻塞 | agile-sprint-planning | collaboration 类型的 persistent 问题 | 写入 sprint_retro.json 的 problems_identified，agile-sprint-planning 在依赖确认环节引用 |
+| 需求变更频繁 | design-prd、change-impact-analysis | 需求变更导致的溢出统计 | 写入 sprint_retro.json 的 problems_identified，标记 category=process，design-prd 在需求收集阶段参考历史变更频率 |
+| 质量问题模式 | quality-acceptance | defect_density 趋势、rework_rate | 写入 sprint_retro.json 的 metrics，quality-acceptance 在验收标准制定时参考历史质量数据 |
+| 改进实验结果 | agile-sprint-planning | 上一Sprint experiments 的执行结果 | 写入 sprint-retro-S{NN}.json 的 action_items.try，agile-sprint-planning 在下一Sprint规划时验证实验是否有效 |
+
+#### 上线复盘反馈回传
+
+| 复盘结论类型 | 回传目标 | 回传内容 | 回传方式 |
+|-------------|----------|----------|----------|
+| 目标未达成 | design-prd | goal_vs_actual 中 not_achieved 项 | 写入 release-retro-{release_id}.json 的 effectiveness，design-prd 在下次PRD生成时参考历史目标达成率 |
+| Bug泄漏率上升 | quality-acceptance | leakage_rate 趋势和 root_cause_patterns | 写入 release-retro-{release_id}.json 的 quality，quality-acceptance 在测试策略制定时参考 |
+| 技术债务增加 | Backend Skill（backend-architecture-spec） | tech_debt_analysis 中的 debt_items | 写入 release-retro-{release_id}.json 的 quality，backend-architecture-spec 在架构设计时参考技术债务清单 |
+| 协作瓶颈 | agile-sprint-planning | bottlenecks_identified | 写入 release-retro-{release_id}.json 的 process，agile-sprint-planning 在Sprint规划时规避已知瓶颈 |
+| 发布流程问题 | monitoring-pipeline | issue_discovery_timing 中的 needs_improvement/critical 项 | 写入 release-retro-{release_id}.json 的 process，monitoring-pipeline 在监控策略制定时参考 |
+
+#### 反馈回传执行规则
+
+1. **自动回传**：复盘报告生成后，自动将回传内容写入对应输出文件，下游 Skill 在执行时消费
+2. **回传标注**：所有回传内容须标注来源（`source: "agile-review", sprint_id/release_id`），便于追溯
+3. **回传验证**：回传内容须经过质量检查（数据完整、结论有证据支撑），不达标的回传内容标注"待验证"
+4. **闭环检查**：下一Sprint复盘时，检查上一Sprint回传的改进实验是否被执行，未执行的升级为团队讨论项
+
 ---
 
 ## 版本历史
@@ -1070,3 +1102,4 @@ Step 3在发布完成后（建议T+2周）执行，自动收集多源数据，�
 - v1.0: 初始版本（agile-review）
 - v2.0: 合并 agile-review + sprint-retrospective-report，新增Step 2复盘报告生成（Sprint目标达成分析、交付质量评估、团队速率趋势、改进行动项、下一Sprint建议）
 - v3.0: 合并 retrospective-auto，新增Step 3上线复盘（效果复盘、工程质量复盘、过程复盘、改进行动项生成），扩展输入/输出/校验规则/通知机制
+- v3.1: 新增复盘反馈回传机制——Sprint复盘反馈回传（6类：速率预测/溢出根因/跨团队依赖/需求变更/质量问题/改进实验）和上线复盘反馈回传（5类：目标未达成/Bug泄漏/技术债务/协作瓶颈/发布流程），定义回传执行规则（自动回传/回传标注/回传验证/闭环检查）

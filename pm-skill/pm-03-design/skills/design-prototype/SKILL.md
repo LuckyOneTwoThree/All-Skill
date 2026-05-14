@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "3.0"
+  version: "3.1"
   domain_tags: ["互联网", "软件", "通用"]
   trigger_examples:
     - "帮我生成原型"
@@ -78,7 +78,14 @@ metadata:
 
 **存储路径**：`output/pm-design/design-prototype/`
 
-**输出文件**：`prototype_spec.json`
+**输出文件**：
+
+| 文件 | 路径 | 说明 |
+|------|------|------|
+| 原型规格 | prototype_spec.json | 页面布局、功能区域、交互意图、启发式评估 |
+| 组件清单 | component_catalog.json | 供 UI Skill 消费的组件清单，包含组件类型、属性、数据绑定 |
+
+### prototype_spec.json
 
 ```json
 {
@@ -111,6 +118,75 @@ metadata:
 }
 ```
 
+### component_catalog.json
+
+component_catalog.json 是原型设计的机器可消费组件清单，供 UI Skill 编程式消费，确保组件生成与原型设计对齐。
+
+```json
+{
+  "catalog_id": "string",
+  "generated_at": "ISO8601",
+  "source_prototype": "prototype_spec.json",
+  "components": [
+    {
+      "component_id": "string",
+      "name": "string",
+      "type": "layout | navigation | data_display | form | feedback | media | composite",
+      "description": "string",
+      "props": [
+        {
+          "prop_name": "string",
+          "type": "string | number | boolean | array | object",
+          "required": "boolean",
+          "default_value": "string | null",
+          "description": "string"
+        }
+      ],
+      "data_binding": {
+        "data_source": "api | local | cache",
+        "api_endpoint": "string | null",
+        "fields": ["string"],
+        "loading_state": "string",
+        "error_state": "string",
+        "empty_state": "string"
+      },
+      "pages_used_in": ["page_name"],
+      "sub_components": ["component_id"],
+      "variants": [
+        {
+          "variant_name": "string",
+          "description": "string",
+          "prop_overrides": {}
+        }
+      ]
+    }
+  ],
+  "shared_components": [
+    {
+      "component_id": "string",
+      "name": "string",
+      "usage_count": "number",
+      "pages": ["page_name"]
+    }
+  ],
+  "component_dependencies": [
+    {
+      "component_id": "string",
+      "depends_on": ["component_id"]
+    }
+  ]
+}
+```
+
+### component_catalog.json 与 prototype_spec.json 的关系
+
+| 维度 | prototype_spec.json | component_catalog.json |
+|------|---------------------|------------------------|
+| 消费者 | 人类（设计师、PM） | 机器（UI Skill） |
+| 内容 | 页面布局+交互意图+评估 | 组件类型+属性+数据绑定+依赖 |
+| 生成顺序 | 先生成 prototype_spec.json | 从 prototype_spec.json 提取组件清单 |
+| 一致性 | component_catalog.json 中的组件必须覆盖 prototype_spec.json 中所有页面的 functional_areas 和 data_display_needs | |
+
 **输出校验规则**：详见下方输出校验规则章节
 
 ## 决策规则
@@ -126,6 +202,8 @@ metadata:
 | 弱项改进建议 | 评分<3的弱项均有具体改进建议 | 标注"建议缺失"，补充改进方案后重新评估 |
 | 核心页面覆盖 | 所有核心页面已覆盖 | 标注"覆盖不全"，列出未覆盖页面并补充 |
 | 功能区域覆盖 | 每个页面的功能区域与PRD对齐 | 标注"功能区域不完整"，补充缺失的功能区域 |
+| 组件清单覆盖 | component_catalog 覆盖所有页面的 functional_areas 和 data_display_needs | 标注"组件清单不完整"，补充缺失组件 |
+| 组件页面引用一致性 | component_catalog.components[].pages_used_in 中的页面名在 prototype.pages[] 中存在 | 标注"引用不一致"，修正页面引用 |
 
 ---
 
@@ -154,6 +232,17 @@ metadata:
 | prototype.heuristic_evaluation | object | 是 | 启发式评估 |
 | prototype.heuristic_evaluation.overall_score | number | 是 | 整体评分（0-10） |
 | prototype.heuristic_evaluation.weak_areas | array | 是 | 弱项列表 |
+| component_catalog | object | 是 | 组件清单数据 |
+| component_catalog.catalog_id | string | 是 | 清单唯一标识 |
+| component_catalog.components | array | 是 | 组件列表，不可为空 |
+| component_catalog.components[].component_id | string | 是 | 组件唯一标识 |
+| component_catalog.components[].name | string | 是 | 组件名称 |
+| component_catalog.components[].type | string | 是 | 组件类型，枚举值：layout/navigation/data_display/form/feedback/media/composite |
+| component_catalog.components[].props | array | 是 | 组件属性列表 |
+| component_catalog.components[].data_binding | object | 是 | 数据绑定，含data_source/fields/loading_state/error_state/empty_state |
+| component_catalog.components[].pages_used_in | array | 是 | 使用该组件的页面列表，须与prototype.pages[].name对应 |
+| component_catalog.shared_components | array | 是 | 跨页面共享组件列表 |
+| component_catalog.component_dependencies | array | 是 | 组件依赖关系列表 |
 
 ## 上游变更响应
 
@@ -172,6 +261,8 @@ metadata:
 | 页面增删 | interaction-spec、design-handoff-spec | 标记页面变更，触发交互规范和交接文档更新 |
 | 功能区域变更 | design-handoff-spec | 标记功能区域变更，触发交接文档更新 |
 | 交互意图变更 | interaction-spec | 标记交互意图变更，触发交互规范更新 |
+| 组件清单变更 | UI Skill（ui-01-component-design） | 标记组件增删/属性变更，触发组件生成更新 |
+| 共享组件变更 | UI Skill（ui-01-component-design） | 标记共享组件变更，触发跨页面组件更新 |
 
 ## 数据获取说明`n本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：
   1. 直接描述功能、页面结构和交互流程
