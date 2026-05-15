@@ -96,6 +96,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/features[]，供页面构建编程式消费 |
 | 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
 | 交互规范 | markdown | ○ | output/pm-design/interaction-spec/interaction-spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
+| 交互规范(结构化) | JSON | ○ | output/pm-design/interaction-spec/interaction-spec.json | 交互状态机/动画意图/手势意图的结构化数据，供编程式消费 |
 
 ## 执行步骤
 

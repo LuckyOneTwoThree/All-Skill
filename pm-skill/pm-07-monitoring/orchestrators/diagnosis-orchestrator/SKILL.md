@@ -69,6 +69,7 @@ stages:
 
   - id: phase-4
     name: "产品下线方案"
+    depends_on: [phase-1]
     skills: [product-sunset-plan]
     trigger: 产品下线需求
     gate:

@@ -126,7 +126,7 @@ stages:
 
   - id: phase-10
     name: "交付上线"
-    depends_on: [phase-8, phase-6]
+    depends_on: [phase-8, phase-9, phase-6]
     skills: [release-orchestrator, monitoring-orchestrator, iteration-orchestrator, agile-orchestrator]
     gate:
       condition: "P0问题=0，P1问题≤3，灰度发布通过，复盘结论确认"
@@ -280,6 +280,19 @@ Skill: ui-orchestrator
 
 ### 阶段9：质量→发布→复盘
 
+#### 调用 release-orchestrator
+
+```
+Skill: release-orchestrator
+输入:
+  后端输出: output/cross-domain/backend-architecture-orchestrator/
+  UI输出: output/cross-domain/ui-orchestrator/
+  指标体系: output/cross-domain/metrics-orchestrator/
+输出: output/cross-domain/release-orchestrator/
+验证: P0问题=0，灰度发布通过
+模式: 🤖→👤
+```
+
 #### 调用 monitoring-orchestrator
 
 ```
@@ -336,6 +349,19 @@ Skill: agile-orchestrator
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/cross-domain/product-launch-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: product-iteration-orchestrator
+    reason: 产品上线后进入迭代优化循环，基于监控数据和用户反馈持续改进
+    input_mapping:
+      launch_output: "output/cross-domain/ → product-iteration-orchestrator输入"
+  alternatives:
+    - target: growth-orchestrator
+      reason: 产品上线后启动增长策略，驱动用户获取和变现
+      condition: 产品已验证PMF，需要规模化增长时
+    - target: monitoring-orchestrator
+      reason: 持续监控产品运行指标和异常告警
+      condition: 需要独立建立长期监控体系时
 模式: 🤖
 ```
 

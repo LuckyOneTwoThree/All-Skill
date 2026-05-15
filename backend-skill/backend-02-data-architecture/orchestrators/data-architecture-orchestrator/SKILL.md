@@ -111,6 +111,17 @@ Skill: data-architecture-impl
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/backend/data-architecture-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: backend-architecture-orchestrator
+    reason: 数据架构完成后，进入后端架构设计，基于数据模型和API契约设计服务架构
+    input_mapping:
+      data_model: "output/backend-data-architecture/data-architecture-spec/ → backend-architecture-spec输入"
+      cache_strategy: "output/backend-data-architecture/data-architecture-spec/cache_strategy.json → backend-architecture-spec输入"
+  alternatives:
+    - target: api-design-orchestrator
+      reason: 数据模型变更需要反向更新API契约
+      condition: 数据架构设计发现API契约需要调整时
 模式: 🤖
 ```
 

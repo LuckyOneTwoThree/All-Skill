@@ -32,12 +32,14 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| API契约 | JSON/YAML | ○ | output/backend-api-design/api-design-spec/ | OpenAPI/Swagger规范（缺失时基于页面数据流推断） |
+| API契约 | YAML/JSON | ○ | output/backend-api-design/api-design-spec/openapi.yaml | OpenAPI 3.0规范（缺失时基于页面数据流推断） |
+| 认证鉴权方案 | JSON | ○ | output/backend-api-design/api-design-spec/auth-scheme.json | 后端API认证鉴权设计（JWT/OAuth2/SSO方案、权限模型、会话管理），优先于PRD非功能需求 |
+| 安全策略 | JSON | ○ | output/backend-api-design/api-design-spec/security-policy.json | 后端API安全策略（限流规则、CORS策略、数据脱敏规则），用于前端错误处理和安全策略对齐 |
 | 页面数据流 | JSON | 是 | output/ui-frontend/page-builder/pages.json | 页面数据获取需求 |
 | 目标框架 | string | 是 | 上游编排器传递 | React/Vue/Svelte |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言，影响Mock数据和错误提示语言 |
 | project_dir | string | 是 | 上游编排器传递 | 项目根目录绝对路径 |
-| 认证方案 | string | ○ | PRD非功能需求 / 用户提供 | JWT/OAuth2/Cookie/ApiKey（默认JWT） |
+| 认证方案 | string | ○ | PRD非功能需求 / 用户提供 | JWT/OAuth2/Cookie/ApiKey（默认JWT），当auth-scheme.json不可用时使用 |
 
 ## 执行步骤
 

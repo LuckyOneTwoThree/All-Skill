@@ -52,6 +52,7 @@ stages:
 
   - id: phase-2
     name: "用户反馈闭环"
+    depends_on: [phase-1]
     skills: [user-feedback-loop-report]
     trigger: 用户反馈闭环需求
     gate:

@@ -29,9 +29,10 @@ metadata:
 
 1. **需求与设计**：调用design-orchestrator完成需求分析和PRD增量更新
 2. **变更影响分析**：识别变更影响范围，判断API/UI/后端是否需变更
-3. **后端变更**：条件执行API设计、数据架构、后端架构编排器
-4. **UI变更**：条件执行UI编排器，与后端变更可并行
-5. **交付上线**：调用release-orchestrator完成质量验收→发布检查→灰度发布→发布说明
+3. **API设计**：条件执行API设计编排器，产出API契约供后端和UI并行消费
+4. **后端实现**：条件执行数据架构、后端架构编排器，与UI变更可并行
+5. **UI变更**：条件执行UI编排器，基于API契约与后端实现并行
+6. **交付上线**：调用release-orchestrator+monitoring-orchestrator完成质量验收→发布检查→灰度发布→监控建立
 
 ## 编排协议
 
@@ -65,28 +66,38 @@ stages:
       fail_action: "补充缺失的下游影响项"
 
   - id: phase-3
-    name: "后端变更"
+    name: "API设计"
     depends_on: [phase-2]
     trigger: API需变更
-    skills: [api-design-orchestrator, data-architecture-orchestrator, backend-architecture-orchestrator]
+    skills: [api-design-orchestrator]
+    gate:
+      condition: "API变更人类确认通过"
+      fail_action: "调整API设计"
+
+  - id: phase-4
+    name: "后端实现"
+    depends_on: [phase-3]
+    parallel_with: [phase-5]
+    trigger: 数据/后端需变更
+    skills: [data-architecture-orchestrator, backend-architecture-orchestrator]
     gate:
       condition: "后端审查通过（P0=0）"
       fail_action: "修复P0问题"
 
-  - id: phase-4
+  - id: phase-5
     name: "UI变更"
-    depends_on: [phase-2]
-    parallel_with: [phase-3]
+    depends_on: [phase-3]
+    parallel_with: [phase-4]
     trigger: UI需变更
     skills: [ui-orchestrator]
     gate:
       condition: "UI开发与集成验证通过"
       fail_action: "修复集成问题"
 
-  - id: phase-5
+  - id: phase-6
     name: "交付上线"
-    depends_on: [phase-3, phase-4]
-    skills: [release-orchestrator]
+    depends_on: [phase-4, phase-5]
+    skills: [release-orchestrator, monitoring-orchestrator]
     gate:
       condition: "P0问题=0，灰度发布通过"
       fail_action: "修复阻断问题后重新验证"
@@ -122,7 +133,7 @@ Skill: change-impact-analysis
 模式: 🤖
 ```
 
-### 阶段3：后端变更（条件执行）
+### 阶段3：API设计（条件执行）
 
 #### 调用 api-design-orchestrator
 
@@ -134,6 +145,8 @@ Skill: api-design-orchestrator
 验证: API变更人类确认通过
 模式: 🤖→👤
 ```
+
+### 阶段4：后端实现（条件执行，与阶段5并行）
 
 #### 调用 data-architecture-orchestrator
 
@@ -160,7 +173,7 @@ Skill: backend-architecture-orchestrator
 模式: 🤖→👤
 ```
 
-### 阶段4：UI变更（条件执行）
+### 阶段5：UI变更（条件执行，与阶段4并行）
 
 #### 调用 ui-orchestrator
 
@@ -176,7 +189,7 @@ Skill: ui-orchestrator
 模式: 🤖→👤
 ```
 
-### 阶段5：交付上线
+### 阶段6：交付上线
 
 #### 调用 release-orchestrator
 
@@ -187,6 +200,18 @@ Skill: release-orchestrator
   集成输出: output/cross-domain/ui-orchestrator/
 输出: output/cross-domain/release-orchestrator/
 验证: P0问题=0，灰度发布通过
+模式: 🤖→👤
+```
+
+#### 调用 monitoring-orchestrator
+
+```
+Skill: monitoring-orchestrator
+输入:
+  发布产物: output/cross-domain/release-orchestrator/
+  指标体系: output/cross-domain/metrics-orchestrator/（可选）
+输出: output/cross-domain/monitoring-orchestrator/
+验证: 监控预警体系已建立
 模式: 🤖→👤
 ```
 
@@ -210,6 +235,22 @@ Skill: release-orchestrator
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/cross-domain/product-iteration-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: monitoring-orchestrator
+    reason: 迭代发布后进入持续监控，跟踪指标变化和异常告警
+    input_mapping:
+      iteration_output: "output/cross-domain/ → monitoring-orchestrator输入"
+  alternatives:
+    - target: product-iteration-orchestrator
+      reason: 继续下一轮迭代，基于监控数据和用户反馈
+      condition: 有新的迭代需求时
+    - target: growth-orchestrator
+      reason: 迭代涉及增长功能时，启动增长策略
+      condition: 迭代包含获客/激活/留存/变现相关功能时
+    - target: agile-orchestrator
+      reason: 进入下一Sprint规划
+      condition: 采用敏捷开发模式时
 模式: 🤖
 ```
 
@@ -221,6 +262,7 @@ Skill: release-orchestrator
 |------|------|------------|
 | PRD确认 | PRD人类确认通过 | 补充需求细节 |
 | 影响范围确认 | change-impact输出文件已生成且非空 | 补充缺失的下游影响项 |
+| API变更确认 | api-design-orchestrator输出文件已生成且非空 | 调整API设计 |
 | 后端审查通过 | backend-review输出文件已生成且非空 | 修复P0问题 |
 | UI集成验证 | ui-integration输出文件已生成且非空 | 修复集成问题 |
 | 交付上线 | release输出文件已生成且非空 | 修复阻断问题后重新验证 |

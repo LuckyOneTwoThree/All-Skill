@@ -36,6 +36,7 @@ metadata:
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务领域和流程 |
 | PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，供架构审查对齐检查 |
 | 数据模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系 |
+| 业务数据字典 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/data_dictionary.json | 业务数据标准和实体定义，供服务拆分和限界上下文划分参考 |
 | API契约 | YAML/JSON | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 接口定义 |
 | 业务规模 | JSON | 是 | 用户提供 | 用户量、QPS、数据量、团队规模 |
 | 技术约束 | JSON | ○ | 用户提供 | 技术栈、运维能力、预算 |

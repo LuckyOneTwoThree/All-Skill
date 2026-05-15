@@ -306,6 +306,19 @@ stages:
 输入: 所有子Skill输出 + 执行计划 + 人类决策记录 + ext增强记录
 输出: output/phase-reports/ui/ui-orchestrator.md
 验证: 阶段总结文档已生成，6项结构均非空
+下游衔接:
+  primary:
+    target: release-orchestrator
+    reason: UI开发完成后，进入质量验收和发布流程
+    input_mapping:
+      ui_output: "output/ui-frontend/ → release-orchestrator输入"
+  alternatives:
+    - target: api-integration
+      reason: 后端API已就绪，需要前后端联调集成
+      condition: 有后端API但尚未集成时
+    - target: monitoring-orchestrator
+      reason: UI上线后建立前端性能和用户体验监控
+      condition: 前端已部署需要持续监控时
 
 ## 人类决策点
 

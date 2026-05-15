@@ -114,6 +114,19 @@ Skill: backend-architecture-impl
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/backend/backend-architecture-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: release-orchestrator
+    reason: 后端架构实现完成后，进入质量验收和发布流程
+    input_mapping:
+      backend_output: "output/backend-architecture/ → release-orchestrator输入"
+  alternatives:
+    - target: ui-orchestrator
+      reason: 后端就绪后启动UI前端开发与集成
+      condition: 前端尚未开发，需要后端API支撑时
+    - target: monitoring-orchestrator
+      reason: 后端上线后建立监控预警体系
+      condition: 后端已部署需要持续监控时
 模式: 🤖
 ```
 

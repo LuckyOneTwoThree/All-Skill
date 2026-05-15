@@ -90,7 +90,7 @@ stages:
 
   - id: phase-6
     name: "增长策略报告"
-    depends_on: [phase-1]
+    depends_on: [phase-1, phase-2, phase-3, phase-4, phase-5]
     skills: [growth-strategy-report]
     gate:
       condition: "增长策略报告经人类确认"
@@ -98,6 +98,7 @@ stages:
 
   - id: phase-7
     name: "GTM策略"
+    depends_on: [phase-1]
     skills: [gtm-strategy]
     trigger: 新产品上市/市场拓展
     gate:
@@ -106,6 +107,7 @@ stages:
 
   - id: phase-8
     name: "运营手册"
+    depends_on: [phase-1]
     skills: [product-operations-manual]
     trigger: 运营手册制定需求
     gate:

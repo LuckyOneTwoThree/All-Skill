@@ -113,6 +113,16 @@ Skill: api-design-impl
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/backend/api-design-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: data-architecture-orchestrator
+    reason: API契约完成后，进入数据架构设计，基于API数据需求设计ER模型和表结构
+    input_mapping:
+      api_contract: "output/backend-api-design/api-design-spec/ → data-architecture-spec输入"
+  alternatives:
+    - target: ui-orchestrator
+      reason: API契约可供UI前端并行开发消费
+      condition: 前后端并行开发模式下
 模式: 🤖
 ```
 
