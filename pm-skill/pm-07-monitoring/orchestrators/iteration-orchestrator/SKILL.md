@@ -1,11 +1,11 @@
 ---
 name: iteration-orchestrator
-description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-decision 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分、迭代管理。
+description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-decision 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分、迭代管理。本编排器为透传编排器，仅调度1个子Skill(iteration-decision)，上层编排器也可直接调用iteration-decision。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "orchestrator"
-  version: "9.0"
+  version: "10.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "规划下一个迭代"
@@ -29,39 +29,15 @@ metadata:
 
 ## 编排协议
 
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
+编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
 
-### 调用规则
-
-1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
-2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
-
-### 上下文管理
-
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入对应模块的 `output/pm-monitoring/{skill-name}/` 目录
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
-
-### 阶段总结
-
-所有子Skill执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/pm-monitoring/iteration-orchestrator.md`，包含以下结构：
-
-1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
-2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
-3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
-4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
-5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
-6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+本编排器为透传编排器，职责是提供统一入口、阶段总结和异常处理。上层编排器可直接调用iteration-decision子Skill，无需经过本编排器。
 
 ## Pipeline
 
 ```yaml
 pipeline: iteration-orchestrator
-version: 9.0
+version: 10.0
 
 post_pipeline:
   - action: stage-summary
@@ -73,8 +49,8 @@ stages:
     depends_on: []
     skills: [iteration-decision]
     gate:
-      condition: "迭代决策全流程完成（Backlog已优化，优先级调整方案已生成，迭代复盘完成且改进建议经人类确认）"
-      fail_action: "补充需求分析、影响分析数据或修改改进建议"
+      condition: "iteration-decision输出文件已生成"
+      fail_action: "按子Skill失败原因处理，必要时升级人类"
 ```
 
 ## 阶段执行计划
@@ -97,7 +73,7 @@ Skill: iteration-decision
   team_feedback: Retro工具（可选）
   monitoring_data: monitoring-pipeline（可选）
 输出: output/pm-monitoring/iteration-decision/
-验证: 优先级评分覆盖率100%；关联关系识别完整；技术债务影响评估准确；重组建议可执行；变更影响评估覆盖率100%；调整方案数量≥2；数据收集完整率≥95%；分析覆盖所有四个维度；问题识别准确率≥80%；建议可执行率≥75%
+验证: 输出文件已生成且内容完整
 模式: 🤖→👤
 ```
 
@@ -121,8 +97,7 @@ Skill: iteration-decision
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 迭代决策全流程完成 | Backlog已优化，优先级调整方案已生成，迭代复盘完成且改进建议经人类确认 | 补充需求分析、影响分析数据或修改改进建议 |
-| 发布与验收 | 如需发布，转交 monitoring-orchestrator 执行 release-gradual → release-auto-checklist → release-notes | — |
+| 输出文件已生成 | iteration-decision输出已生成 | 按子Skill失败原因处理，必要时升级人类 |
 | 阶段总结已生成 | output/phase-reports/pm-monitoring/iteration-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 下游衔接
@@ -133,17 +108,14 @@ Skill: iteration-decision
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
-| 迭代计划调整确认 | 优先级调整方案生成完成 | 确认调整方案、资源重新分配和风险接受 |
+| 迭代计划调整确认 | iteration-decision 优先级调整方案生成完成 | 确认调整方案、资源重新分配和风险接受 |
 
 ## 异常处理
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| Backlog数据严重缺失（需求项<5） | 暂停Backlog优化，要求用户补充核心需求列表后再继续 |
-| 优先级调整触发事件不明确 | 标注"触发原因待确认"，由人类决策是否执行调整 |
-| 复盘数据不完整（完整率<70%） | 仅输出可用维度的复盘，缺失维度标注"数据不足"，建议人工补充 |
-| 子Skill输出校验未通过 | 回退至当前阶段重新执行，最多重试1次；仍失败则标记异常并上报人类 |
-| 上下游数据格式不兼容 | 按下游子Skill输入Schema做字段映射和默认值填充，记录映射关系 |
+| 子Skill执行失败 | 回退至当前阶段重新执行，最多重试1次；仍失败则标记异常并上报人类 |
+| 上游数据缺失 | 标注缺失数据项，使用合理假设填充，继续执行并在输出中高亮标注 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
@@ -157,3 +129,4 @@ Skill: iteration-decision
 - v7.0: 合并 iteration-backlog + iteration-prioritization + iteration-retrospective → iteration-decision；3阶段Pipeline简化为1阶段；更新所有引用和输出路径
 - v8.0: 新增 release-gradual、release-auto-checklist、release-notes——从pm-05迁移；Pipeline新增3个触发阶段；阶段执行计划新增3个子Skill调用；阶段卡口新增3项；人类决策点新增灰度发布策略确认
 - v9.0: 移除 release-gradual、release-auto-checklist、release-notes——统一归属 monitoring-orchestrator，消除跨编排器重复调度；Pipeline移除3个触发阶段；阶段执行计划移除3个子Skill调用；阶段卡口新增发布与验收转交说明；新增下游衔接推荐
+- v10.0: 透传编排器改造——description标注透传编排器；Pipeline阶段卡口精简为"输出文件已生成"和"阶段总结已生成"；人类决策点保持1个；异常处理精简；编排协议后增加透传说明

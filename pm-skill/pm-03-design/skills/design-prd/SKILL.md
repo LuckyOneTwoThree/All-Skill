@@ -420,7 +420,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
           "fields": ["string"]
         }
       ],
-      "ui_components": ["string"],
+      "functional_areas": ["string"],
       "user_flows": ["flow_id"],
       "states": [
         {

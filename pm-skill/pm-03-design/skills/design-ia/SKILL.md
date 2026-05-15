@@ -50,14 +50,19 @@ metadata:
 
 ### Step 2: 自动分类
 
-使用语义聚类算法对内容进行分类：
+基于语义相似度生成分类建议：
+
+AI基于功能名称和描述的语义相似度进行分类建议：
+1. 提取每个功能点的核心关键词
+2. 按关键词语义相近度分组
+3. 检查每组数量是否符合3-7项约束
+4. 超出约束的组建议拆分或合并
+5. 标注分类置信度，低置信度分组标注needs_human_validation
 
 - **约束条件**：
   - 已有分类优先保留
   - 每类包含3-7项
   - 层级不超过3层
-- 语义相似度计算
-- 聚类结果生成
 
 ### Step 3: 导航需求定义
 
@@ -70,13 +75,15 @@ metadata:
 | 功能导向 | 核心功能入口需常驻可见 |
 | 内容丰富 | 需支持浏览+搜索组合 |
 
-### Step 4: 卡片分类模拟
+### Step 4: 卡片分类建议
 
-AI模拟开放式卡片分类测试：
+AI基于分类结果生成卡片分类建议：
 
-- 生成假设的分类结构
-- 标注**需用户验证**的关键节点
-- 识别潜在的分类歧义点
+1. 将Step 2的分类结果转化为卡片分组
+2. 识别跨组归属模糊的功能点（可能属于多个分组）
+3. 对模糊归属点生成2-3个候选分组
+4. 标注需用户验证的关键分类决策点
+5. 输出分类建议而非测试结论
 
 ### Step 5: IA方案生成
 
@@ -158,7 +165,7 @@ AI模拟开放式卡片分类测试：
 | ia_proposals[].structure | object | 是 | 层级结构定义 |
 | ia_proposals[].navigation_needs | string | 是 | 导航需求描述（不定义具体导航模式） |
 | ia_proposals[].routes | array | 是 | 路由列表 |
-| ia_proposals[].routes[].path | string | 是 | 路由路径 |
+| ia_proposals[].routes[].path | string | 是 | 路由路径（须与prd.json.pages[].route一致） |
 | ia_proposals[].routes[].page | string | 是 | 页面名称 |
 | ia_proposals[].routes[].depth | integer | 是 | 层级深度 |
 | ia_proposals[].avg_clicks_to_core | number | 是 | 核心功能平均点击次数 |
@@ -184,6 +191,14 @@ AI模拟开放式卡片分类测试：
 | 导航需求变更 | design-prototype、interaction-spec | 标记导航需求变更，触发原型和交互规范更新 |
 | 层级深度变更 | design-userflow、design-handoff-spec | 标记层级变更，触发流程和交接文档更新 |
 | 分类节点变更 | design-userflow、design-prototype | 标记分类变更，触发流程和原型更新 |
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| ia_proposals[].routes[].path | prd.json.pages[].route | 路由路径必须一致，IA方案确认后prd.json同步更新 |
+| ia_proposals[].routes[].page | prd.json.pages[].name | 页面名称必须一致 |
+| ia_proposals[].structure | prd.json.pages[]层级关系 | IA层级结构决定pages的父子关系 |
 
 ## 数据获取说明`n本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：
   1. 直接描述功能列表和用户需求

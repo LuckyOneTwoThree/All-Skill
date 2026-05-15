@@ -1,4 +1,4 @@
-﻿---
+---
 name: business-model-canvas
 description: 当需要设计或评估产品商业模式时触发。商业模式画布自动生成，将产品探索阶段洞察转化为9格商业画布。关键词：商业模式画布、BMC、价值主张、收入模式、成本结构、怎么赚钱、商业模式梳理。
 metadata:
@@ -376,35 +376,91 @@ metadata:
 
 | 字段路径 | 类型 | 必填 | 说明 |
 |----------|------|------|------|
-| business_model_canvas.customer_segments | array | 是 | 至少包含2个客户细分群体 |
-| business_model_canvas.value_propositions | array | 是 | 每个细分群体至少1个价值主张 |
-| business_model_canvas.channels | array | 是 | 覆盖客户旅程全阶段 |
-| business_model_canvas.customer_relationships | array | 是 | 每个细分群体有对应关系类型 |
-| business_model_canvas.revenue_streams | array | 是 | 至少2个收入模式选项 |
-| business_model_canvas.key_resources | array | 是 | 覆盖实体/知识产权/人力/财务 |
-| business_model_canvas.key_activities | array | 是 | 覆盖价值创造全流程 |
-| business_model_canvas.key_partners | array | 是 | 含供应商/战略联盟/合资伙伴 |
-| business_model_canvas.cost_structure | object | 是 | 含固定成本、可变成本、单位经济 |
+| bmc.customer_segments | array | 是 | 客户细分列表，至少2个 |
+| bmc.value_propositions | array | 是 | 价值主张列表，至少1个 |
+| bmc.channels | array | 是 | 覆盖客户旅程全阶段 |
+| bmc.customer_relationships | array | 是 | 每个细分群体有对应关系类型 |
+| bmc.revenue_streams | array | 是 | 收入来源列表，至少1个 |
+| bmc.key_resources | array | 是 | 覆盖实体/知识产权/人力/财务 |
+| bmc.key_activities | array | 是 | 覆盖价值创造全流程 |
+| bmc.key_partnerships | array | 是 | 含供应商/战略联盟/合资伙伴 |
+| bmc.cost_structure | array | 是 | 成本结构列表，至少1个 |
 | metadata.confidence | number | 是 | 0-1之间，整体置信度 |
 | metadata.requires_human_review | boolean | 是 | 是否需要人类审核 |
 | assumptions[].assumption_id | string | 是 | 假设唯一标识 |
-| assumptions[].risk_level | string | 是 | low/medium/high |
-| assumptions[].verification_status | string | 是 | verified/pending/not_verifiable |
+| assumptions[].related_bmc_element | string | 是 | 关联画布要素路径 |
+| assumptions[].priority | string | 是 | critical/high/medium/low |
+| assumptions[].confidence | number | 是 | 0-1之间，假设置信度 |
 
 ### 完整商业画布JSON
 
 ```json
 {
-  "business_model_canvas": {
-    "customer_segments": {...},
-    "value_propositions": {...},
-    "channels": {...},
-    "customer_relationships": {...},
-    "revenue_streams": {...},
-    "key_resources": {...},
-    "key_activities": {...},
-    "key_partners": {...},
-    "cost_structure": {...}
+  "bmc": {
+    "customer_segments": [
+      {
+        "segment_name": "string - 客户群体名称",
+        "description": "string - 群体描述",
+        "characteristics": ["string - 群体特征"]
+      }
+    ],
+    "value_propositions": [
+      {
+        "proposition": "string - 价值主张",
+        "target_segment": "string - 对应客户群体",
+        "pain_addressed": "string - 解决的痛点",
+        "gain_created": "string - 创造的收益"
+      }
+    ],
+    "channels": [
+      {
+        "channel_name": "string - 渠道名称",
+        "type": "direct|indirect|partner",
+        "phase": "awareness|evaluation|purchase|delivery|after_sales"
+      }
+    ],
+    "customer_relationships": [
+      {
+        "type": "personal|automated|community|self_service",
+        "segment": "string - 对应客户群体",
+        "description": "string - 关系描述"
+      }
+    ],
+    "revenue_streams": [
+      {
+        "stream_name": "string - 收入来源名称",
+        "pricing_model": "subscription|transaction|freemium|advertising|licensing",
+        "estimated_amount": "string - 预估金额区间",
+        "target_segment": "string - 对应客户群体"
+      }
+    ],
+    "key_resources": [
+      {
+        "resource": "string - 核心资源",
+        "type": "physical|intellectual|human|financial"
+      }
+    ],
+    "key_activities": [
+      {
+        "activity": "string - 核心活动",
+        "type": "production|problem_solving|platform|network"
+      }
+    ],
+    "key_partnerships": [
+      {
+        "partner": "string - 合作伙伴",
+        "type": "strategic_alliance|joint_venture|buyer_supplier",
+        "purpose": "string - 合作目的"
+      }
+    ],
+    "cost_structure": [
+      {
+        "cost_item": "string - 成本项",
+        "type": "fixed|variable",
+        "estimated_range": "string - 预估成本区间",
+        "category": "infrastructure|marketing|operations|personnel"
+      }
+    ]
   },
   "metadata": {
     "generated_at": "2024-06-15T10:30:00Z",
@@ -420,13 +476,12 @@ metadata:
 {
   "assumptions": [
     {
-      "assumption_id": "a-1",
-      "description": "企业客户愿为AI个性化学习功能支付30%溢价",
-      "category": "market/product/customer/operation",
-      "risk_level": "low/medium/high",
-      "verification_status": "verified/pending/not_verifiable",
-      "verification_method": "对20家试点企业进行付费意愿调研，观察转化率",
-      "impact_if_wrong": "收入预期下调25%，需调整定价策略为平价模式"
+      "assumption_id": "string - 假设ID",
+      "description": "string - 假设描述",
+      "related_bmc_element": "string - 关联的画布要素（如customer_segments.0）",
+      "validation_method": "string - 验证方法",
+      "priority": "critical|high|medium|low",
+      "confidence": 0.0
     }
   ]
 }
@@ -472,10 +527,10 @@ metadata:
 
 ### 输出质量标准
 
-1. **完整性**：9格画布无缺失
-2. **一致性**：各要素之间逻辑连贯
-3. **可追溯性**：数据来源清晰
-4. **可验证性**：假设可测试
+1. **完整性**：9格画布每格至少1条内容，且value_propositions与customer_segments有对应关系
+2. **可追溯性**：每格内容标注data_source(上游skill/用户描述/AI推断)
+3. **假设完整性**：assumptions列表≥3条，每条包含assumption+validation_method+priority
+4. **收入可验证性**：revenue_streams包含≥1个具体收入来源且定价策略有数字区间
 
 ---
 
@@ -485,9 +540,9 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| persona.json / opportunity-definition.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，置信度降低 |
-| exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块置信度降低，假设条目增多 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度显著降低，大部分内容为假设推断 |
+| persona.json / opportunity-definition.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，整体置信度从0.8降至0.5，相关画布格置信度≤0.4，标注needs_human_validation: true |
+| exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块整体置信度从0.8降至0.5，假设条目增多，相关画布格置信度≤0.3，标注auto_filled: true |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度从0.8降至0.3，大部分内容为假设推断，相关画布格置信度≤0.3，标注auto_filled: true |
 
 ## 数据获取说明`n本Skill需要探索阶段输出数据（Persona、机会简报等），请通过以下方式之一提供：
   1. 直接描述产品概念、目标用户和价值主张

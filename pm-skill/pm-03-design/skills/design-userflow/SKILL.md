@@ -1,4 +1,4 @@
-﻿---
+---
 name: design-userflow
 description: 当需要设计用户流程和任务流程时使用。用户流程自动设计，从PRD和IA方案自动生成Task Flow和User Flow，包含条件分支、异常路径、质量检查和优化建议。适用于核心用户路径梳理和流程优化。关键词：用户流程、User Flow、Task Flow、流程设计、路径优化、用户路径、操作流程。
 metadata:
@@ -91,14 +91,22 @@ metadata:
     "steps": [
       {
         "step": 1,
+        "step_id": "UF-S001",
         "action": "用户操作",
+        "page_id": "page-dashboard",
         "system_response": "系统反馈",
+        "expected_outcome": "预期结果",
+        "error_handling": "异常处理",
         "branch": null
       },
       {
         "step": 2,
+        "step_id": "UF-S002",
         "action": "用户操作",
+        "page_id": "page-courses",
         "system_response": "系统反馈",
+        "expected_outcome": "预期结果",
+        "error_handling": "异常处理",
         "branch": {
           "condition": "条件描述",
           "if_true": {...},
@@ -162,8 +170,12 @@ metadata:
 | user_flow.flow_type | string | 是 | 流程类型（task_flow/user_flow） |
 | user_flow.steps | array | 是 | 流程步骤列表，不可为空 |
 | user_flow.steps[].step | integer | 是 | 步骤序号 |
+| user_flow.steps[].step_id | string | 是 | 步骤唯一标识（与prd.json.user_flows.steps.step_id对齐） |
 | user_flow.steps[].action | string | 是 | 用户操作 |
+| user_flow.steps[].page_id | string | 是 | 关联页面ID（与prd.json.pages.page_id对齐） |
 | user_flow.steps[].system_response | string | 是 | 系统反馈 |
+| user_flow.steps[].expected_outcome | string | 是 | 预期结果（与prd.json.user_flows.steps.expected_outcome对齐） |
+| user_flow.steps[].error_handling | string | 否 | 异常处理（与prd.json.user_flows.steps.error_handling对齐） |
 | user_flow.quality_check | object | 是 | 质量检查结果 |
 | user_flow.quality_check.shortest_path_steps | integer | 是 | 最短路径步骤数 |
 | user_flow.quality_check.exception_coverage | number | 是 | 异常路径覆盖率（0-1） |
@@ -189,6 +201,15 @@ metadata:
 | 条件分支变更 | design-prototype、interaction-spec | 标记分支变更，触发原型和交互规范更新 |
 | 异常路径变更 | design-prototype、interaction-spec | 标记异常路径变更，触发原型和交互规范更新 |
 | 死胡同修复 | design-prototype | 标记修复内容，触发原型更新 |
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| user_flow.task | prd.json.user_flows[].name | task名称与user_flow name保持一致 |
+| user_flow.steps[].step_id | prd.json.user_flows[].steps[].step_id | 步骤ID必须一致 |
+| user_flow.steps[].page_id | prd.json.pages[].page_id | page_id必须在prd.json.pages中存在 |
+| user_flow.steps[].expected_outcome | prd.json.user_flows[].steps[].expected_outcome | 预期结果描述一致 |
 
 ## 数据获取说明`n本Skill需要PRD和IA方案数据，请通过以下方式之一提供：
   1. 直接描述功能流程和用户任务

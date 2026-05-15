@@ -39,16 +39,7 @@ project-init → page-builder → [api-integration] → [production-ready]
 
 ## 编排协议
 
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行内部逻辑。严格遵循以下协议：
-
-### 调用规则
-
-1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
-2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
-3. **契约驱动**：只关注输入契约、输出契约和验证条件，不关注内部实现
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作
+编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
 
 ### 断点续执行
 
@@ -100,24 +91,6 @@ project-init → page-builder → [api-integration] → [production-ready]
 5. 全部阶段完成后，检查点文件保留作为执行记录
 
 **手动恢复**：用户可通过删除检查点文件重新全量执行，或手动修改 `pending_stages` 指定从某个阶段恢复。
-
-### 上下文管理
-
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入各子Skill对应的 `output/` 子目录（output/ui-project-init/、output/ui-frontend/、output/ui-frontend-integration/）
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的名称
-
-### 阶段总结
-
-所有阶段执行完成后，编排器必须生成一份阶段总结文档，写入 `output/phase-reports/ui/ui-orchestrator.md`，包含以下结构：
-
-1. **执行概览**：编排器名称与版本、执行时间、执行的阶段列表及状态（成功/失败/跳过/降级）
-2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨阶段交叉洞察
-3. **决策记录**：按需跳过决策及依据、人类决策点及决策结果
-4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估
-5. **风险与待办**：未通过验证的项、跳过的阶段及影响、建议后续跟进的事项
-6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
-
 ## Pipeline
 
 ```yaml
@@ -263,10 +236,10 @@ Skill: production-ready
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 项目信息收集完成 | 必选信息已收集 + 人类确认执行计划 | 补充信息后重新收集 |
-| project-init 完成 | visual_direction 10维度有定义 + ext-frontend-design输出已写入visual_bans + WCAG达标 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + 项目可运行 | 调整视觉方向或修复令牌 |
-| page-builder 完成 | P0问题=0 + Token引用率100% + WCAG达标 + 美学验证通过 + audit评分≥75分 | P0问题必须修复；美学不达标触发critique闭环 |
-| api-integration 完成 | 100%端点有请求函数 + 类型完整 | 补充缺失端点 |
-| production-ready 完成 | 构建成功 + LCP≤2.5s | 构建失败修复重试；性能不达标优化重测 |
+| project-init 完成 | ui-project-init输出文件已生成且非空 | 调整视觉方向或修复令牌 |
+| page-builder 完成 | ui-frontend/page-builder输出文件已生成且非空 | P0问题必须修复；美学不达标触发critique闭环 |
+| api-integration 完成 | ui-frontend-integration/api-integration输出文件已生成且非空 | 补充缺失端点 |
+| production-ready 完成 | ui-frontend-integration/production-ready输出文件已生成且非空 | 构建失败修复重试；性能不达标优化重测 |
 | 阶段总结已生成 | 6项结构均非空 | 补充缺失项后重新生成 |
 
 ## 人类决策点

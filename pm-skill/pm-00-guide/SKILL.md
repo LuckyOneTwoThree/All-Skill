@@ -34,7 +34,7 @@ metadata:
 | 4 | 产品度量设计 | metrics-orchestrator | 开发前，需要设计指标体系和埋点方案 |
 | 5 | 产品度量运营 | analysis-orchestrator / experiment-orchestrator / decision-orchestrator | 上线后，需要数据分析和实验验证 |
 | 6 | 产品增长与运营 | acquisition-orchestrator / activation-orchestrator / retention-orchestrator / revenue-orchestrator | 需要获取用户、提升留存、商业化 |
-| 7 | 产品监控与迭代（含验收发布） | monitoring-orchestrator / diagnosis-orchestrator / iteration-orchestrator | 需要监控预警、问题诊断、迭代优化、验收发布 |
+| 7 | 产品监控与迭代（含验收发布） | monitoring-orchestrator / release-orchestrator / diagnosis-orchestrator / iteration-orchestrator | 需要监控预警、问题诊断、迭代优化、验收发布 |
 | 8 | 项目管理与执行 | project-planning-orchestrator / agile-orchestrator / risk-orchestrator | 贯穿全程的项目管理 |
 
 ## 意图路由
@@ -56,8 +56,8 @@ metadata:
 | 定位 / 差异化 / 竞争优势 | positioning-orchestrator | 中 |
 | 需求分析 / 需求洞察 / KANO / JTBD | insight-orchestrator | 高 |
 | 实验 / A/B测试 / 效果验证 | experiment-orchestrator | 高 |
-| 质量保障 / 测试 / 验收 | quality-acceptance | 中 |
-| 发布 / 上线 / 灰度 | release-gradual / release-auto-checklist / release-notes | 中 |
+| 质量保障 / 测试 / 验收 | quality-acceptance / release-orchestrator | 中 |
+| 发布 / 上线 / 灰度 | release-orchestrator | 高 |
 
 ## 业务场景映射
 
@@ -124,13 +124,13 @@ product-launch-orchestrator
   阶段4：集成验证
     ui-orchestrator
   阶段5：验收与发布
-    quality-acceptance → release-gradual / release-auto-checklist / release-notes
+    release-orchestrator
 ```
 
 关键数据契约：
 - design-orchestrator 输出 PRD → api-design-orchestrator 消费
 - positioning-orchestrator 输出定位陈述 → ui-orchestrator 消费（品牌基因）
-- metrics-orchestrator 输出指标体系 → quality-acceptance 消费（验收标准）
+- metrics-orchestrator 输出指标体系 → release-orchestrator 消费（验收标准）
 - 目标语言：用户在启动时指定（默认zh-CN），全链路传递至 ui-orchestrator
 
 ### 模板2：从0到1做C端/移动端产品
@@ -149,7 +149,7 @@ product-launch-orchestrator
   阶段4：前端优先开发
     ui-orchestrator
   阶段5：验收与发布
-    quality-acceptance → release-gradual / release-auto-checklist / release-notes
+    release-orchestrator
 ```
 
 关键数据契约：
@@ -168,7 +168,7 @@ product-launch-orchestrator
   design-orchestrator（仅更新变更部分）→ metrics-orchestrator（补充新指标）
 
 阶段3：验证与发布
-  quality-acceptance → release-gradual / release-auto-checklist / release-notes
+  release-orchestrator
 
 阶段4：效果验证
   experiment-orchestrator → analysis-orchestrator（对比前后数据）
@@ -188,7 +188,7 @@ product-launch-orchestrator
   experiment-orchestrator
 
 阶段3：规模化
-  release-gradual / release-notes（全量发布增长方案）
+  release-orchestrator（全量发布增长方案）
 ```
 
 关键数据契约：
@@ -211,7 +211,7 @@ product-iteration-orchestrator
     └── 无变更 → 跳过
   阶段4：集成与交付
     ui-orchestrator（仅API变更时）
-    → quality-acceptance → release-gradual / release-auto-checklist / release-notes
+    → release-orchestrator
 ```
 
 关键数据契约：
@@ -262,7 +262,7 @@ ALL/
 │   ├── orchestrators/（5个编排器）
 │   └── skills/（11个Pipeline）
 ├── pm-07-monitoring/                   ← 模块7：产品监控与迭代（含验收发布）
-│   ├── orchestrators/（3个编排器）
+│   ├── orchestrators/（4个编排器）
 │   └── skills/（11个Pipeline，含quality-acceptance、release-gradual、release-auto-checklist、release-notes）
 └── pm-08-project/                      ← 模块8：项目管理与执行
     ├── orchestrators/（3个编排器）

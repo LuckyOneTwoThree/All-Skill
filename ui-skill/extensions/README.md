@@ -93,7 +93,7 @@
 | 调用时机 | 调用方 Skill | 作用 |
 |----------|-------------|------|
 | project-init Step 1 | `project-init` | 配色/字体/风格数据推荐（`--design-system`） |
-| page-builder Step 1 | `page-builder` | 落地页/仪表盘结构推荐（`--domain landing/dashboard`） |
+| page-builder Step 1 | `page-builder` | 页面结构推荐（`--domain` 自动检测页面类型） |
 
 ## 调用机制
 
@@ -132,21 +132,31 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 
 ### 调用流程
 
+ext skill 是专业设计能力，核心 Skill 必须经过 ext skill 审视，上层传递的输入仅作为意图参考。
+
 ```
 1. 检测：检查 ext-xxx/SKILL.md 是否存在
-2. 存在 → 评估客观触发条件是否满足
-3. 满足 → 检查反模式条件是否命中
-4. 未命中 → 调用 `Skill: ext-xxx`，核心 Skill 通过指令性调用块调用，包含输入/输出/验证条件，脚本使用 `{SKILL_DIR}/scripts/` 路径
-5. 命中反模式 → 跳过，标注原因
-6. 不存在 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续步骤
+2. 存在 → 必调（除非满足明确跳过条件）
+3. 调用 `Skill: ext-xxx`，核心 Skill 通过指令性调用块调用，包含输入/输出/验证条件，脚本使用 `{SKILL_DIR}/scripts/` 路径
+4. 上层输入作为"已有方案"传入（参考，不作为约束），ext skill 独立审视并可能挑战现有方案
+5. 不存在 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续步骤
 ```
+
+**跳过条件**（仅限以下场景）：
+- ext-impeccable extract：全新项目无现有代码
+- ext-impeccable shape：纯静态展示原子组件（Badge/Divider/Spacer/Icon）
+- ext-interaction-design：纯静态无交互组件（纯文本/纯图片展示）
+- ext-impeccable clarify/onboard/distill：三项子命令均不满足页面特征时
+- ext-impeccable optimize：性能瓶颈明确为网络延迟或包体积（非UI渲染）
+- ext-impeccable animate：数据密集型仪表盘或医疗/金融场景
+- ext-impeccable delight：辅助功能组件
 
 ### 执行顺序规则
 
 1. **同一步骤内多个外部调用按表格顺序执行**，前者输出作为后者输入
 2. **同 Skill 多子命令合并调用**：同一步骤内同一外部 Skill 的多个子命令合并为单次调用（如 `ext-impeccable animate bolder delight`），避免重复加载 SKILL.md 浪费 token
 3. **polish 始终是最后一步**，不可在其他外部调用之前执行
-4. **bolder 和 quieter 互斥**，同一组件只能调用其中一个（品牌色占比<25%→bolder，>40%→quieter，25%-40%→不调用）
+4. **bolder 和 quieter 选择规则**，同一组件只能调用其中一个（品牌色占比<25%→bolder，>40%→quieter，25%-40%→视场景选择：品牌场景倾向bolder，产品场景倾向不调用）
 5. **audit 后可触发反馈闭环**：若 critique 执行后修改了代码，需重新 audit 验证，最多循环2次
 
 ### 冲突解决规则
@@ -161,26 +171,26 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 ### 调用格式（写入核心 Skill 的 SKILL.md）
 
 ```
-**定向调用**：`Skill: ext-frontend-design`
-- 作用：提供大胆的美学方向选择，确保设计系统视觉独特性，避免AI同质化
-- 输入：品牌规范+产品定位+目标语言
+**必调**：`Skill: ext-frontend-design`
+- 作用：提供差异化美学方向审视，确保设计系统视觉独特性，避免AI同质化
+- 输入：品牌规范+产品定位+目标语言+已有方案（作为参考，不作为约束）
 - 输出：差异化美学方向建议
 - 调用方式：核心 Skill 执行到 ext- 调用点时，按指令性调用块格式调用 `Skill: ext-frontend-design`，包含输入/输出/验证条件 → 不存在则跳过，标注"视觉差异化待 ext-frontend-design 支持"，不阻塞后续步骤
-- 适用场景：需要独特视觉方向时调用
+- 设计原则：上层传递的输入仅作为意图参考，ext-frontend-design 独立审视并可能挑战现有方案
 ```
 
 ### 降级策略分类
 
 | 降级类型 | 适用场景 | 示例 |
 |----------|---------|------|
-| 跳过+标注 | 该能力完全由外部 Skill 提供，核心无法替代 | `ext-frontend-design`、`ext-ui-ux-pro-max`、`ext-interaction-design` |
+| 跳过+标注 | 外部 Skill 未部署或调用失败 | `ext-frontend-design`、`ext-ui-ux-pro-max`、`ext-interaction-design` |
 | 内置替代 | 核心有基础能力，外部 Skill 提供增强版 | `ext-impeccable` 各子命令（核心有默认输出作为降级） |
 
 ### 三种场景的具体行为
 
 | 场景 | 行为 |
 |------|------|
-| 外部 Skill 已部署 | 检测到 `ext-xxx/SKILL.md` 存在 → 调用 `Skill: ext-xxx`，传递输入，验证输出 |
+| 外部 Skill 已部署 | 检测到 `ext-xxx/SKILL.md` 存在 → 必调 `Skill: ext-xxx`，传递输入（含已有方案作为参考），验证输出 |
 | 外部 Skill 未部署 | 检测到 `ext-xxx/SKILL.md` 不存在 → 执行降级策略（跳过+标注 或 内置替代），不阻塞流程 |
 | 外部 Skill 调用失败 | 记录失败原因 → 执行降级策略 → 不阻塞后续阶段 |
 

@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将完整的产品方法论闭环提取为 102 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
+将完整的产品方法论闭环提取为 103 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
 
 ## 快速开始
 
@@ -24,7 +24,7 @@ ALL/pm-01-discovery/skills/user-research-voice-analysis/SKILL.md
 ├── user-research-voice-analysis/SKILL.md
 ├── insight-orchestrator/SKILL.md
 ├── insight-analysis/SKILL.md
-├── ...（101个Skill扁平平铺）
+├── ...（102个Skill扁平平铺）
 └── risk-management/SKILL.md
 ```
 
@@ -143,15 +143,14 @@ ALL/
 
 ### 模块8：产品监控与迭代
 
-通过监控预警、问题诊断、迭代优化、质量验收、发布管理形成持续改进闭环。
+通过监控预警、问题诊断、迭代优化、发布交付形成持续改进闭环。
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
 | 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | 监控体系+异常归因+反馈闭环 |
 | 问题诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
 | 迭代优化 | iteration-orchestrator | iteration-decision | Backlog优化+迭代复盘 |
-| 质量验收 | — | quality-acceptance | 验收报告 |
-| 发布管理 | — | release-gradual / release-auto-checklist / release-notes | 灰度发布+检查清单+发布说明 |
+| 发布交付 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 验收报告+灰度发布+检查清单+发布说明 |
 
 ### 模块9：项目管理与执行
 
@@ -167,7 +166,7 @@ ALL/
 
 | 类型 | 数量 | 作用 | 使用方式 |
 |------|------|------|----------|
-| 编排器 Orchestrator | 26 | 调度子 Skill 的执行顺序和阶段卡口 | 按子模块流程使用 |
+| 编排器 Orchestrator | 27 | 调度子 Skill 的执行顺序和阶段卡口 | 按子模块流程使用 |
 | Pipeline Skill | 74 | 单个方法论 Pipeline，可独立执行 | 按需单独调用 |
 | 导航 Guide | 1 | 全流程导航，根据场景推荐模块 | 入口指引 |
 

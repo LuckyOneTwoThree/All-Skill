@@ -183,10 +183,55 @@ metadata:
 | executive_summary.market_opportunity | string | 是 | 市场机会 |
 | executive_summary.key_risks | array | 是 | Top3风险 |
 | executive_summary.decision_requests | array | 是 | 需审批事项 |
-| product_definition | object | 是 | 产品定义 |
-| business_analysis | object | 是 | 商业分析 |
-| execution_plan | object | 是 | 执行计划 |
-| risk_assessment | object | 是 | 风险评估 |
+| product_definition.vision | string | 是 | 产品愿景 |
+| product_definition.target_users | array | 是 | 目标用户群体列表 |
+| product_definition.target_users[].segment_name | string | 是 | 用户群体名称 |
+| product_definition.target_users[].description | string | 是 | 群体描述 |
+| product_definition.target_users[].core_needs | array | 是 | 核心需求列表 |
+| product_definition.target_users[].scenarios | array | 是 | 使用场景列表 |
+| product_definition.core_value_proposition | string | 是 | 核心价值主张 |
+| product_definition.feature_scope | object | 是 | 功能范围 |
+| product_definition.feature_scope.mvp_features | array | 是 | MVP功能列表 |
+| product_definition.feature_scope.mvp_features[].name | string | 是 | 功能名称 |
+| product_definition.feature_scope.mvp_features[].priority | string | 是 | 优先级：must/should/could |
+| product_definition.feature_scope.mvp_features[].description | string | 是 | 功能描述 |
+| product_definition.feature_scope.v2_features | array | 是 | V2.0功能规划列表 |
+| business_analysis.market_analysis | object | 是 | 市场分析 |
+| business_analysis.market_analysis.tam | string | 是 | 总可达市场 |
+| business_analysis.market_analysis.sam | string | 是 | 可服务市场 |
+| business_analysis.market_analysis.som | string | 是 | 可获得市场 |
+| business_analysis.market_analysis.growth_trend | string | 是 | 增长趋势 |
+| business_analysis.business_model | object | 是 | 商业模式 |
+| business_analysis.business_model.revenue_model | string | 是 | 收入模式 |
+| business_analysis.business_model.pricing_strategy | string | 是 | 定价策略概述 |
+| business_analysis.business_model.cost_structure | array | 是 | 主要成本项列表 |
+| business_analysis.business_model.unit_economics | string | 是 | 单位经济 |
+| business_analysis.competitive_analysis | object | 是 | 竞争分析 |
+| business_analysis.competitive_analysis.key_competitors | array | 是 | 核心竞品列表 |
+| business_analysis.competitive_analysis.differentiation | string | 是 | 差异化优势 |
+| business_analysis.competitive_analysis.competitive_moat | string | 是 | 竞争壁垒 |
+| execution_plan.okr | object | 是 | 目标与关键结果 |
+| execution_plan.okr.objective | string | 是 | 年度目标 |
+| execution_plan.okr.key_results | array | 是 | 关键结果列表 |
+| execution_plan.okr.key_results[].kr | string | 是 | 关键结果 |
+| execution_plan.okr.key_results[].metric | string | 是 | 衡量指标 |
+| execution_plan.okr.key_results[].target | string | 是 | 目标值 |
+| execution_plan.roadmap | object | 是 | 产品路线图 |
+| execution_plan.roadmap.now | array | 是 | 当前阶段事项 |
+| execution_plan.roadmap.next | array | 是 | 下一阶段事项 |
+| execution_plan.roadmap.later | array | 是 | 远期规划事项 |
+| execution_plan.resource_needs | object | 是 | 资源需求 |
+| execution_plan.resource_needs.team | string | 是 | 团队配置 |
+| execution_plan.resource_needs.budget | string | 是 | 预算需求 |
+| execution_plan.resource_needs.timeline | string | 是 | 时间规划 |
+| execution_plan.dependencies | array | 是 | 关键依赖列表 |
+| risk_assessment.risks | array | 是 | 风险列表 |
+| risk_assessment.risks[].category | string | 是 | 风险类别：market/technology/resource/execution |
+| risk_assessment.risks[].description | string | 是 | 风险描述 |
+| risk_assessment.risks[].severity | string | 是 | 严重程度：high/medium/low |
+| risk_assessment.risks[].probability | string | 是 | 发生概率：high/medium/low |
+| risk_assessment.risks[].mitigation | string | 是 | 缓解措施 |
+| risk_assessment.risk_matrix_summary | string | 是 | 风险矩阵概述 |
 | decision_requests | array | 是 | 决策请求 |
 
 ```json
@@ -209,10 +254,74 @@ metadata:
     "key_risks": [],
     "decision_requests": []
   },
-  "product_definition": {},
-  "business_analysis": {},
-  "execution_plan": {},
-  "risk_assessment": {},
+  "product_definition": {
+    "vision": "产品愿景",
+    "target_users": [
+      {
+        "segment_name": "用户群体名称",
+        "description": "群体描述",
+        "core_needs": ["核心需求"],
+        "scenarios": ["使用场景"]
+      }
+    ],
+    "core_value_proposition": "核心价值主张",
+    "feature_scope": {
+      "mvp_features": [
+        {"name": "功能名称", "priority": "must|should|could", "description": "功能描述"}
+      ],
+      "v2_features": ["V2.0功能规划"]
+    }
+  },
+  "business_analysis": {
+    "market_analysis": {
+      "tam": "总可达市场",
+      "sam": "可服务市场",
+      "som": "可获得市场",
+      "growth_trend": "增长趋势"
+    },
+    "business_model": {
+      "revenue_model": "收入模式",
+      "pricing_strategy": "定价策略概述",
+      "cost_structure": ["主要成本项"],
+      "unit_economics": "单位经济"
+    },
+    "competitive_analysis": {
+      "key_competitors": ["核心竞品"],
+      "differentiation": "差异化优势",
+      "competitive_moat": "竞争壁垒"
+    }
+  },
+  "execution_plan": {
+    "okr": {
+      "objective": "年度目标",
+      "key_results": [
+        {"kr": "关键结果", "metric": "衡量指标", "target": "目标值"}
+      ]
+    },
+    "roadmap": {
+      "now": ["当前阶段"],
+      "next": ["下一阶段"],
+      "later": ["远期规划"]
+    },
+    "resource_needs": {
+      "team": "团队配置",
+      "budget": "预算需求",
+      "timeline": "时间规划"
+    },
+    "dependencies": ["关键依赖"]
+  },
+  "risk_assessment": {
+    "risks": [
+      {
+        "category": "market|technology|resource|execution",
+        "description": "风险描述",
+        "severity": "high|medium|low",
+        "probability": "high|medium|low",
+        "mitigation": "缓解措施"
+      }
+    ],
+    "risk_matrix_summary": "风险矩阵概述"
+  },
   "decision_requests": []
 }
 ```
@@ -228,13 +337,13 @@ metadata:
 
 ## 质量检查
 
-- [ ] 执行摘要一页纸可读完
-- [ ] 产品定义清晰完整
-- [ ] 商业分析有数据支撑
-- [ ] 执行计划可落地
-- [ ] 风险评估覆盖4类风险
-- [ ] 决策请求明确
-- [ ] 数据来源可追溯
+- [ ] executive_summary字段≤500字
+- [ ] product_definition包含≥1个target_user且feature_scope.mvp_features≥3个
+- [ ] business_analysis.market_analysis包含TAM/SAM/SOM且business_model.revenue_model非空
+- [ ] execution_plan.okr包含≥2个key_results且roadmap.now非空
+- [ ] risk_assessment.risks覆盖≥3个category
+- [ ] decision_requests包含≥1个具体审批事项
+- [ ] proposal_metadata.data_sources包含≥1个来源
 
 ---
 

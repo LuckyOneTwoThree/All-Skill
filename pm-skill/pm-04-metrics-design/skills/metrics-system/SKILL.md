@@ -713,3 +713,12 @@ THEN 标记为「不可操作」虚荣指标
 ---
 
 ## 变更记录
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| north_star.metric_name | prd.json.goals[].success_metrics[].metric_name | 北极星指标名称与PRD主指标一致 |
+| l1_metrics[].name | prd.json.goals[].success_metrics[].metric_name | L1指标覆盖PRD所有success_metrics |
+| actionable_metrics[].events | prd.json非功能需求.observability.Metrics | 可执行指标的事件与PRD可观测性要求对齐 |
+| vanity_alerts | prd.json.goals[].success_metrics | 虚荣指标告警中不得包含PRD定义的成功指标 |

@@ -55,6 +55,8 @@ metadata:
 
 ## 输入
 
+**PM 输入自由度原则**：PM 层输出（品牌规范、产品定位、PRD）定义"需要什么"（意图），本 Skill 决定"怎么做"（实现）。PM 输入仅作为意图参考，不限制设计决策。当 PM 输入与本 Skill 的设计判断冲突时，以设计判断为准，但需在输出中标注偏离原因。
+
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 品牌规范 | JSON/markdown | 是 | 用户提供 / output/pm-strategy/positioning-strategy/positioning-strategy.json | 品牌色彩、字体、风格指南 |
@@ -111,8 +113,7 @@ metadata:
 
 #### 1a. ext-ui-ux-pro-max --design-system
 
-**触发条件**：品牌规范不完整 或 品牌色<3个 或 产品定位描述<50字
-**反模式**：品牌规范完整且已有明确配色方案 → 跳过
+**必调**：数据驱动推荐提供独立视角，即使品牌规范完整也应审视现有方案是否最优
 
 ```
 Skill: ext-ui-ux-pro-max
@@ -120,6 +121,7 @@ Skill: ext-ui-ux-pro-max
   查询: "{产品类型} {行业} {风格关键词}"
   模式: --design-system
   项目名称: {project_name}
+  已有方案: {品牌规范输入，若有}（作为参考，不作为约束）
 输出: 设计系统推荐（风格/色彩/字体/效果/反模式）
 验证: 返回了完整的设计系统推荐，包含至少3个色彩方案和2个字体配对
 模式: 🤖
@@ -127,8 +129,7 @@ Skill: ext-ui-ux-pro-max
 
 #### 1b. ext-impeccable colorize
 
-**触发条件**：品牌色占比<10% 或 中性色占比>70%
-**反模式**：已通过ext-frontend-design获得色彩方案 → 跳过
+**必调**：colorize 专注执行层色彩增强（战略性色彩布局），与 ext-frontend-design 的方向定义互补，不互斥
 
 ```
 Skill: ext-impeccable
@@ -188,10 +189,9 @@ Skill: ext-frontend-design
 
 **Register 感知**：brand→极端美学方向；product→差异化但克制
 
-**ext-impeccable typeset**（条件触发）：
+**ext-impeccable typeset**：
 
-**触发条件**：字号层级<6级 或 最大/最小字号比<2 或 字重仅用400+700
-**反模式**：目标语言=zh-CN且已配置思源黑体完整字重 → 跳过
+**必调**：排版层级增强是视觉品质的基础保障，即使当前排版已达标也应审视优化空间
 
 ```
 Skill: ext-impeccable
@@ -238,10 +238,9 @@ else:
 
 组件复用决策：复用度≥3页面→高优先级，1-2页面→中优先级，仅1页面→页面私有。
 
-**ext-impeccable extract**（条件触发）：
+**ext-impeccable extract**：
 
-**触发条件**：输入包含"现有组件库"或"已有项目"
-**反模式**：全新项目无现有代码 → 跳过
+**条件调用**：仅当项目包含现有代码时调用（全新项目无内容可提取，跳过）
 
 ```
 Skill: ext-impeccable
@@ -381,6 +380,9 @@ Skill: ext-impeccable
 
 - [ ] visual_direction 所有10个维度均有明确定义
 - [ ] ext-frontend-design 已调用且输出不含AI同质化特征
+- [ ] ext-ui-ux-pro-max 已调用且设计推荐已被审视
+- [ ] ext-impeccable colorize 已调用且色彩增强已应用
+- [ ] ext-impeccable typeset 已调用且排版增强已应用
 - [ ] ext-frontend-design 的视觉禁忌和字体替代已追加到 visual_bans
 - [ ] PRODUCT.md 和 DESIGN.md 已生成且内容非占位符
 - [ ] 色彩体系覆盖品牌色+功能色+中性色+语义色4类

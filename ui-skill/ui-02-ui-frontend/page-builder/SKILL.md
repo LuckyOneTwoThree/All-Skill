@@ -84,6 +84,12 @@ page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须�
 
 ## 输入
 
+**PM 输入自由度原则**：PM 层输出（PRD、IA、Interaction-Spec）定义"需要什么"（意图），本 Skill 决定"怎么做"（实现）。PM 输入仅作为意图参考，不限制设计决策。具体而言：
+- PRD 的 functional_areas 定义必须覆盖的功能清单，但区域布局方式、视觉层次、组件选型由本 Skill 决定
+- IA 的路由结构定义页面间导航关系，但页面内部布局和导航模式由本 Skill 决定
+- Interaction-Spec 的状态机和动画意图定义必须覆盖的交互完整性，但视觉表现、过渡效果、反馈组件由本 Skill + ext-interaction-design 决定
+- 当 PM 输入与本 Skill 的设计判断冲突时，以设计判断为准，但需在输出中标注偏离原因
+
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 页面需求 | string/markdown | 是 | 用户提供 / output/pm-design/design-prd/prd.md | 页面功能描述和布局需求 |
@@ -138,17 +144,17 @@ page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须�
 
 > **ext-impeccable 首次调用前必须执行 Setup**：见 [extensions/README.md → ext-impeccable Setup](../../extensions/README.md)
 
-#### 1a. ext-ui-ux-pro-max --domain landing|dashboard
+#### 1a. ext-ui-ux-pro-max --domain
 
-**触发条件**：页面类型含"落地页/营销页/Landing"→landing域；含"仪表盘/数据看板/Dashboard"→dashboard域
-**反模式**：内部管理页面或普通内容页面 → 跳过
+**必调**：数据驱动的页面结构推荐提供独立视角，自动检测页面类型匹配对应域
 
 ```
 Skill: ext-ui-ux-pro-max
 输入:
   查询: "{页面类型} {行业} {风格关键词}"
-  模式: --domain landing 或 --domain dashboard
+  模式: --domain {自动检测：落地页/营销页→landing，仪表盘/数据看板→dashboard，其他→通用}
   项目名称: {project_name}
+  已有方案: {当前页面布局规划}（作为参考，不作为约束）
 输出: 页面结构推荐（布局模式/CTA策略/信息架构/反模式）
 验证: 返回了完整的页面结构推荐
 模式: 🤖
@@ -156,12 +162,9 @@ Skill: ext-ui-ux-pro-max
 
 #### 1b. ext-impeccable layout adapt
 
-**触发条件**：满足任一子命令触发条件即调用
-**反模式**：简单单区块页面且仅桌面端 → 跳过
-
-子命令触发条件：
-- layout：页面区块>5个 或 组件树层级>3
-- adapt：目标平台含"跨平台"或"移动端"
+**必调**：布局优化和响应式适配是页面品质的基础保障
+- layout：优化间距节奏和视觉层级
+- adapt：确保跨平台适配策略完整
 
 ```
 Skill: ext-impeccable
@@ -221,8 +224,8 @@ Skill: ext-impeccable
 
 #### 2a. ext-impeccable shape
 
-**触发条件**：组件意图描述含"复杂" 或 状态数>5 或 涉及多步骤流程
-**反模式**：简单展示组件（Badge/Divider/Spacer） → 跳过
+**必调**：shape 为组件提供编码前设计规划，确保组件有完整的状态机和交互流程
+**跳过条件**：仅对纯静态展示原子组件（Badge/Divider/Spacer/Icon）可跳过
 
 ```
 Skill: ext-impeccable
@@ -237,8 +240,7 @@ Skill: ext-impeccable
 
 #### 2b. ext-frontend-design
 
-**触发条件**：组件视觉描述含"标准/默认/普通/安全" 或 组件方案与visual_direction的aesthetic_direction偏离 或 品牌色占比<15%
-**反模式**：已通过ext-impeccable bolder获得足够视觉差异化 → 跳过
+**必调**：ext-frontend-design 确保每个组件都经过差异化审视，避免 AI 同质化。与 bolder 职责不同：frontend-design 管方向定义，bolder 管执行层增强，不互斥
 
 ```
 Skill: ext-frontend-design
@@ -262,8 +264,8 @@ Skill: ext-frontend-design
 
 #### 2c. ext-interaction-design
 
-**触发条件**：组件有拖拽/手势/页面转换/复杂状态转换
-**反模式**：纯展示组件无交互 → 跳过
+**必调**：交互设计为组件提供动效模式和反馈策略，确保交互体验一致性
+**跳过条件**：仅对纯静态无交互组件（纯文本/纯图片展示）可跳过
 
 ```
 Skill: ext-interaction-design
@@ -281,13 +283,13 @@ Skill: ext-interaction-design
 
 #### 2d. ext-impeccable animate bolder|quieter delight
 
-**触发条件**：满足任一子命令触发条件即调用该子命令
+**必调**：视觉增强是组件品质的核心保障，根据组件特征选择对应子命令
 
-子命令触发条件：
-- animate：组件状态转换>3个 或 有异步操作（反模式：数据密集型仪表盘或医疗/金融场景）
-- bolder：品牌色占比<15% 或 组件视觉描述含"安全/标准/普通" 或 视觉自评"该组件缺乏记忆点"（反模式：已调用ext-frontend-design(2b)且方向足够大胆）
-- quieter：品牌色占比>40% 或 医疗/金融/法律场景（反模式：组件视觉已偏保守）
-- delight：组件为核心用户流程节点 或 visual_direction.tension_level为bold/extreme且组件为视觉焦点（反模式：辅助功能组件）
+子命令选择规则：
+- animate：组件有状态转换或异步操作时调用（数据密集型仪表盘或医疗/金融场景可跳过动效）
+- bolder：品牌色占比<25%时调用（与 ext-frontend-design 不互斥：frontend-design 定义方向，bolder 执行增强）
+- quieter：品牌色占比>40% 或 医疗/金融/法律场景时调用
+- delight：组件为核心用户流程节点时调用（辅助功能组件可跳过）
 
 **视觉自评规则**：组件生成后，AI需自评"这个组件是否有视觉记忆点？"。评估维度：
 - 与visual_direction.aesthetic_direction的一致性：组件是否体现了定义的美学方向？
@@ -296,7 +298,7 @@ Skill: ext-interaction-design
 
 若自评不通过（组件缺乏记忆点 或 与tension_level不匹配），即使客观指标在正常范围，也触发bolder或delight。
 
-bolder vs quieter 互斥规则：品牌色占比<25%→bolder，>40%→quieter，25%-40%→不调用。
+bolder vs quieter 选择规则：品牌色占比<25%→bolder，>40%→quieter，25%-40%→视场景选择（品牌场景倾向bolder，产品场景倾向不调用）。
 
 ```
 Skill: ext-impeccable
@@ -349,12 +351,13 @@ Skill: ext-impeccable
 
 #### 3a. ext-impeccable clarify onboard distill
 
-**触发条件**：满足任一子命令触发条件即调用
+**必调**：UX文案优化和页面精简是交付品质的保障
 
-子命令触发条件：
-- clarify：页面含表单/空状态/错误状态/确认对话框
-- onboard：页面为首页/注册页/新手引导页
-- distill：页面组件数>10个 或 操作按钮>5个
+子命令选择规则：
+- clarify：页面含表单/空状态/错误状态时调用
+- onboard：页面为首页/注册页/新手引导页时调用
+- distill：页面组件数>10个 或 操作按钮>5个时调用
+- 以上子命令均不满足时跳过（非所有页面都需要这三项优化）
 
 ```
 Skill: ext-impeccable
@@ -457,11 +460,11 @@ Skill: ext-impeccable
 
 **ext-impeccable harden polish**（最终打磨）：
 
-**触发条件**：满足任一子命令触发条件即调用
+**必调**：生产就绪化是代码交付的最终保障
 
-子命令触发条件：
-- harden：组件有表单输入/异步操作/国际化需求
-- polish：所有Step 2-3外部调用完成后（polish始终是最后一步）
+子命令选择规则：
+- harden：组件有表单输入/异步操作/国际化需求时调用
+- polish：始终调用（polish 始终是最后一步）
 
 ```
 Skill: ext-impeccable
@@ -548,6 +551,10 @@ Skill: ext-impeccable
 - [ ] 组件视觉风格与visual_direction.aesthetic_direction一致
 - [ ] 页面间距有节奏感（非均匀分布，至少3种间距值）
 - [ ] audit设计品味评分≥75分
+- [ ] ext-ui-ux-pro-max 已调用且页面结构推荐已被审视
+- [ ] ext-frontend-design 已调用且差异化建议已应用
+- [ ] ext-interaction-design 已调用（非纯静态组件时）
+- [ ] ext-impeccable 各子命令按规则调用且输出已应用
 
 ## 降级策略
 

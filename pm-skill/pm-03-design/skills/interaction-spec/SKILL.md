@@ -51,7 +51,7 @@ metadata:
 为每个核心组件和页面定义交互状态机：
 
 1. **状态枚举**：Default / Hover / Active / Focus / Disabled / Loading / Error / Empty / Success
-2. **状态转换表**：触发条件、转换动作、过渡效果、持续时间
+2. **状态转换表**：触发条件、转换动作、过渡意图
 3. **状态优先级**：多状态叠加时的优先级规则（如 Disabled + Error）
 4. **状态持久性**：瞬时状态 vs 持续状态的保持规则
 
@@ -66,7 +66,7 @@ metadata:
    - 频繁切换：应干脆利落，不拖泥带水
 2. **动画意图标准**（不定义具体毫秒数）：
    - 微交互（按钮反馈、开关切换）：应即时可感知
-   - 小型过渡（下拉展开、Toast出现）：应快速完成
+   - 小型过渡（下拉展开、轻量反馈）：应快速完成
    - 大型过渡（页面切换、模态框）：应有节奏感
    - 复杂动画（数据可视化、3D变换）：应有叙事感
 3. **动画性能**：仅使用 transform 和 opacity，避免 layout 和 paint 触发
@@ -96,29 +96,30 @@ metadata:
 
 定义用户操作的反馈标准：
 
-1. **即时反馈**（0-100ms）：
+1. **即时反馈**：
+   - 用户操作后需立即感知系统已接收
    - 按钮按下态、链接悬停态
    - 输入框聚焦态、开关切换态
-2. **过程反馈**（100ms-2s）：
-   - 加载指示器（Spinner/Skeleton/Progress）
-   - 上传/下载进度条
-   - 骨架屏占位规范
+2. **过程反馈**：
+   - 长时间操作需提供进度感知
+   - 加载状态需有视觉占位，避免页面跳动
+   - 上传/下载等可量化操作需提供进度指示
 3. **结果反馈**（操作完成后）：
-   - 成功：Toast / Inline Message（绿色系，3s自动消失）
-   - 警告：Toast / Banner（黄色系，需手动关闭或5s消失）
-   - 错误：Inline Message / Modal（红色系，需手动关闭）
-   - 信息：Toast / Tooltip（蓝色系，3s自动消失）
+   - 成功：操作结果需明确反馈给用户，成功状态需可区分
+   - 警告：需引起用户注意但不阻断操作，用户需能主动确认或等待自动消退
+   - 错误：错误状态需明确区分于正常状态，用户需能快速识别并理解错误原因
+   - 信息：需提供补充说明但不干扰主流程
 4. **无反馈场景**：明确列出不需要反馈的操作及理由
 
 ### Step 5：异常状态交互
 
 定义异常场景的交互处理：
 
-1. **网络异常**：离线提示、重试机制、本地缓存策略
-2. **数据为空**：空状态插图、引导操作、推荐内容
-3. **权限不足**：权限说明、申请入口、替代操作
-4. **数据超限**：截断规则、展开交互、分页加载
-5. **并发冲突**：冲突检测、合并策略、用户选择
+1. **网络异常**：需明确告知用户当前网络不可用，提供重试机会和本地可用内容
+2. **数据为空**：需避免空白页面，提供引导用户产生内容的途径
+3. **权限不足**：需解释权限限制原因，提供申请或替代操作途径
+4. **数据超限**：需合理展示截断内容，提供查看完整内容的方式
+5. **并发冲突**：需检测并告知冲突，提供用户决策的途径
 
 ### Step 6：无障碍交互规范
 
@@ -172,8 +173,8 @@ metadata:
 - 键盘操作规范
 
 ## 4. 反馈机制规范
-- 即时反馈（0-100ms）
-- 过程反馈（100ms-2s）
+- 即时反馈
+- 过程反馈
 - 结果反馈（成功/警告/错误/信息）
 - 无反馈场景
 
@@ -203,7 +204,15 @@ metadata:
   "report_date": "",
   "state_machines": {
     "states": [],
-    "transitions": [],
+    "transitions": [
+      {
+        "from": "",
+        "to": "",
+        "trigger": "",
+        "transition_intent": "",
+        "completeness_check": ""
+      }
+    ],
     "priority_rules": [],
     "persistence_rules": []
   },
@@ -220,17 +229,50 @@ metadata:
     "keyboard": {}
   },
   "feedback": {
-    "immediate": [],
-    "progress": [],
-    "result": [],
+    "immediate": [
+      {
+        "trigger": "",
+        "intent": "",
+        "completeness_check": ""
+      }
+    ],
+    "progress": [
+      {
+        "trigger": "",
+        "intent": "",
+        "completeness_check": ""
+      }
+    ],
+    "result": [
+      {
+        "trigger": "",
+        "intent": "",
+        "completeness_check": ""
+      }
+    ],
     "no_feedback_scenarios": []
   },
   "error_states": {
-    "network_error": {},
-    "empty_state": {},
-    "permission_denied": {},
-    "data_overflow": {},
-    "concurrent_conflict": {}
+    "network_error": {
+      "intent": "",
+      "completeness_check": ""
+    },
+    "empty_state": {
+      "intent": "",
+      "completeness_check": ""
+    },
+    "permission_denied": {
+      "intent": "",
+      "completeness_check": ""
+    },
+    "data_overflow": {
+      "intent": "",
+      "completeness_check": ""
+    },
+    "concurrent_conflict": {
+      "intent": "",
+      "completeness_check": ""
+    }
   },
   "accessibility": {
     "wcag_compliance": [],
@@ -258,15 +300,15 @@ metadata:
 | report_date | string | 是 | 报告日期（ISO8601） |
 | state_machines | object | 是 | 交互状态机 |
 | state_machines.states | array | 是 | 状态枚举，至少8种 |
-| state_machines.transitions | array | 是 | 状态转换表 |
+| state_machines.transitions | array | 是 | 状态转换表，每项包含 from/to/trigger/transition_intent/completeness_check |
 | state_machines.priority_rules | array | 是 | 状态优先级规则 |
 | animation | object | 是 | 动画与过渡意图 |
 | animation.transition_intents | array | 是 | 过渡意图列表 |
 | animation.duration_intents | array | 是 | 动画时长意图列表 |
 | gestures | object | 是 | 手势与操作意图 |
 | feedback | object | 是 | 反馈机制规范 |
-| feedback.immediate | array | 是 | 即时反馈列表 |
-| feedback.result | array | 是 | 结果反馈列表 |
+| feedback.immediate | array | 是 | 即时反馈列表，每项包含 trigger/intent/completeness_check |
+| feedback.result | array | 是 | 结果反馈列表，每项包含 trigger/intent/completeness_check |
 | error_states | object | 是 | 异常状态交互 |
 | accessibility | object | 是 | 无障碍交互规范 |
 | accessibility.wcag_compliance | array | 是 | WCAG合规检查项 |
@@ -304,3 +346,11 @@ metadata:
 | 动画规范变更 | design-handoff-spec | 标记动画变更，触发交接文档交互规则更新 |
 | 手势规范变更 | design-handoff-spec | 标记手势变更，触发交接文档更新 |
 | 无障碍规范变更 | design-handoff-spec | 标记无障碍变更，触发交接文档更新 |
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| state_machines[].name | prd.json.pages[].name | 状态机名称与PRD页面名称对应 |
+| state_machines[].states[] | prd.json.pages[].states[] | 状态机状态必须覆盖PRD定义的5种特殊状态（空/加载/错误/部分/权限） |
+| state_machines[].states[].triggers | prd.json.pages[].states[].triggers | 状态触发条件与PRD定义一致 |

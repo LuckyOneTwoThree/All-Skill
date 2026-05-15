@@ -68,18 +68,26 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: Must Have 识别
+### Step 1: 核心假设提取与 Must Have 识别
 
 **定义**: 与最大风险假设直接相关的功能 = 必须包含
 
 **判断逻辑**:
 1. 找出所有 is_max_risk = true 的假设
-2. 识别与这些假设关联的功能
-3. 标记为 Must Have
+2. 提取核心假设列表
+3. 识别与这些假设关联的功能
+4. 标记为 Must Have
 
 **输出格式**:
 ```json
 {
+  "core_hypothesis": [
+    {
+      "id": "A001",
+      "description": "假设描述",
+      "risk_score": 20
+    }
+  ],
   "must_have": [
     {
       "feature": "功能名称",
@@ -91,7 +99,7 @@ metadata:
 }
 ```
 
-### Step 2: Must Not 识别
+### Step 2: 裁剪功能识别
 
 **定义**: 干扰核心假设验证的功能 = 排除
 
@@ -106,7 +114,7 @@ metadata:
 **输出格式**:
 ```json
 {
-  "must_not": [
+  "cut_features": [
     {
       "feature": "功能名称",
       "rationale": "排除的理由（干扰核心假设验证）"
@@ -117,7 +125,7 @@ metadata:
 
 ### Step 3: Nice to Have 归类
 
-**定义**: 既非Must Have也非Must Not的功能
+**定义**: 既非Must Have也非裁剪功能的功能
 
 **优先级规则**:
 1. 关联高风险假设但非直接相关的功能 → P1
@@ -155,6 +163,123 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 | 40-60% | ⚠️ 可接受 | 审视Nice to Have是否可精简 |
 | > 60% | 🚨 需评审 | 升级人类判断，确认是否调整 |
 
+### Step 5: 时间规划
+
+**定义**: 基于MVP功能工作量与资源约束，制定时间规划
+
+**规划逻辑**:
+1. 汇总 Must Have 功能工作量
+2. 结合资源约束中的 timeline_weeks 和 team_size
+3. 确保总周数 ≤ 2（MVP时间红线）
+4. 拆分里程碑节点
+
+**输出格式**:
+```json
+{
+  "timeline": {
+    "total_weeks": 2,
+    "milestones": [
+      {
+        "name": "里程碑名称",
+        "week": 1,
+        "deliverables": ["交付物1", "交付物2"]
+      }
+    ]
+  }
+}
+```
+
+### Step 6: 资源估算
+
+**定义**: 基于MVP功能工作量与时间规划，估算所需资源
+
+**估算逻辑**:
+1. 根据 Must Have 功能工作量计算人力需求
+2. 结合 timeline.total_weeks 推算团队配置
+3. 评估是否需要外部资源支持
+
+**输出格式**:
+```json
+{
+  "resource_estimate": {
+    "team_size": 3,
+    "roles": [
+      {
+        "role": "角色名称",
+        "count": 1,
+        "rationale": "配置理由"
+      }
+    ],
+    "external_dependencies": []
+  }
+}
+```
+
+### Step 7: 成功标准与风险缓解
+
+**定义**: 定义MVP验证的成功标准，并识别风险及缓解措施
+
+**成功标准逻辑**:
+1. 将核心假设转化为可量化的验证指标
+2. 每个核心假设至少对应1个成功标准
+3. 成功标准必须可量化（含具体数值或阈值）
+
+**风险缓解逻辑**:
+1. 识别MVP执行过程中的关键风险
+2. 为每个风险制定缓解措施
+3. 评估风险影响等级
+
+**输出格式**:
+```json
+{
+  "success_criteria": [
+    {
+      "criterion": "成功标准描述",
+      "metric": "量化指标",
+      "target_value": "目标值",
+      "linked_hypothesis": "关联假设ID"
+    }
+  ],
+  "risk_mitigation": [
+    {
+      "risk": "风险描述",
+      "impact": "high/medium/low",
+      "mitigation": "缓解措施"
+    }
+  ]
+}
+```
+
+### Step 8: Go/No-Go决策框架
+
+**定义**: 基于成功标准构建Go/No-Go决策框架，metrics直接引用success_criteria中的量化指标
+
+**决策逻辑**:
+1. 从 success_criteria 中提取关键决策指标（每个核心假设选取1个主指标）
+2. 为每个指标定义 Go/No-Go 阈值（基于success_criteria.target_value上下浮动）
+3. 至少包含2个 metrics 和对应 thresholds
+4. metrics 不重复定义指标，通过 linked_criterion 引用 success_criteria
+
+**输出格式**:
+```json
+{
+  "go_no_go": {
+    "metrics": [
+      {
+        "name": "指标名称",
+        "linked_criterion": "关联的success_criteria索引",
+        "description": "指标描述"
+      }
+    ],
+    "thresholds": {
+      "go": "Go条件描述",
+      "no_go": "No-Go条件描述",
+      "needs_more_data": "需更多数据条件描述"
+    }
+  }
+}
+```
+
 ## 输出
 
 **存储路径**：`output/pm-design/validation-mvp/`
@@ -163,18 +288,19 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 ```json
 {
   "mvp_scope": {
+    "core_hypothesis": [
+      {
+        "id": "A001",
+        "description": "用户认为推荐内容与兴趣匹配",
+        "risk_score": 20
+      }
+    ],
     "must_have": [
       {
         "feature": "功能名称",
         "linked_assumption": "关联假设ID",
         "effort_estimate": 8,
         "rationale": "必须包含的理由"
-      }
-    ],
-    "must_not": [
-      {
-        "feature": "功能名称",
-        "rationale": "排除理由"
       }
     ],
     "nice_to_have": [
@@ -184,10 +310,66 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
         "target_version": "v2.0"
       }
     ],
+    "cut_features": [
+      {
+        "feature": "功能名称",
+        "rationale": "排除理由"
+      }
+    ],
+    "timeline": {
+      "total_weeks": 2,
+      "milestones": [
+        {
+          "name": "里程碑名称",
+          "week": 1,
+          "deliverables": ["交付物1", "交付物2"]
+        }
+      ]
+    },
+    "resource_estimate": {
+      "team_size": 3,
+      "roles": [
+        {
+          "role": "角色名称",
+          "count": 1,
+          "rationale": "配置理由"
+        }
+      ],
+      "external_dependencies": []
+    },
+    "success_criteria": [
+      {
+        "criterion": "成功标准描述",
+        "metric": "量化指标",
+        "target_value": "目标值",
+        "linked_hypothesis": "关联假设ID"
+      }
+    ],
+    "risk_mitigation": [
+      {
+        "risk": "风险描述",
+        "impact": "high/medium/low",
+        "mitigation": "缓解措施"
+      }
+    ],
     "effort_summary": {
       "mvp_total": 24,
       "full_solution_total": 60,
       "mvp_ratio": "40%"
+    },
+    "go_no_go": {
+      "metrics": [
+        {
+          "name": "指标名称",
+          "linked_criterion": "success_criteria[0]",
+          "description": "指标描述"
+        }
+      ],
+      "thresholds": {
+        "go": "Go条件描述",
+        "no_go": "No-Go条件描述",
+        "needs_more_data": "需更多数据条件描述"
+      }
     }
   },
   "approval_status": "pending|approved|needs_discussion",
@@ -203,16 +385,20 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 |------|------|------|
 | 人工审批触发 | MVP占比 > 60% | 升级人类判断 |
 | 审批触发 | Must Have无假设关联 | 需补充说明 |
-| 审批触发 | Must Not理由不充分 | 需补充排除依据 |
+| 审批触发 | cut_features理由不充分 | 需补充排除依据 |
 
 ## 质量检查
 
 | 检查项 | 通过条件 | 检查结果 |
 |--------|----------|----------|
+| 核心假设 | core_hypothesis非空且与must_have关联 | pass/fail |
 | 假设关联 | Must Have功能都有假设关联 | pass/fail |
-| 排除理由 | Must Not功能都有充分理由 | pass/fail |
+| 排除理由 | cut_features功能都有充分理由 | pass/fail |
 | 占比计算 | MVP占比已计算 | pass/fail |
 | 优先级完整 | Nice to Have都有优先级 | pass/fail |
+| 时间红线 | timeline.total_weeks ≤ 2 | pass/fail |
+| 成功标准可量化 | success_criteria包含量化指标和目标值 | pass/fail |
+| Go/No-Go完整 | go_no_go包含至少2个metrics和对应thresholds | pass/fail |
 
 ---
 
@@ -239,6 +425,10 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 | mvp_scope.timeline.total_weeks | number | 是 | 总周数（≤2） |
 | mvp_scope.timeline.milestones | array | 是 | 里程碑列表 |
 | mvp_scope.resource_estimate | object | 是 | 资源估算 |
+| mvp_scope.effort_summary | object | 是 | 工作量汇总 |
+| mvp_scope.effort_summary.mvp_total | number | 是 | MVP总工作量 |
+| mvp_scope.effort_summary.full_solution_total | number | 是 | 完整方案总工作量 |
+| mvp_scope.effort_summary.mvp_ratio | string | 是 | MVP占比 |
 | mvp_scope.success_criteria | array | 是 | 成功标准 |
 | mvp_scope.risk_mitigation | array | 是 | 风险缓解措施 |
 | mvp_scope.go_no_go | object | 是 | Go/No-Go决策框架 |
@@ -281,16 +471,36 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 
 **AI分析**:
 ```
+核心假设:
+- A001: 用户认为推荐内容与兴趣匹配（风险分数: 20）
+
 Must Have:
 - F001 智能推荐算法（直接验证A001）
 - F002 推荐结果展示（验证A001必需）
 
-Must Not:
+裁剪功能:
 - F005 高保真动效（干扰核心验证，非MVP必要）
 
 Nice to Have:
 - F003 收藏功能（P2，v2.0）
 - F004 分享功能（P3，v3.0）
+
+时间规划:
+- 总计2周，第1周完成核心算法，第2周完成展示与验证
+
+资源估算:
+- 3人：1后端+1前端+1数据
+
+成功标准:
+- 推荐匹配度 ≥ 60%（关联A001）
+
+风险缓解:
+- 算法精度不足（high）→ 降级为规则推荐
+
+Go/No-Go:
+- metrics: 推荐匹配度、用户点击率
+- Go: 匹配度≥60%且点击率≥30%
+- No-Go: 匹配度<40%或点击率<15%
 
 MVP占比: 40% ✅ 理想
 ```

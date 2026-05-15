@@ -66,6 +66,18 @@ KR模板：
 KR: [时间] [数量/百分比] [做什么] 达到 [目标值]
 ```
 
+**KR达成概率估算规则**：
+
+| 场景 | 估算方法 | 置信度 |
+|------|----------|--------|
+| 有历史数据 | 基于历史趋势外推，target/baseline比值与历史增速对比 | 高(≥0.7) |
+| 有行业基准 | 参考同行业同阶段公司的KR达成率 | 中(0.4-0.7) |
+| 无参考数据 | 基于德尔菲法——AI提供3档概率(乐观0.8/中性0.5/保守0.2)，人类选择 | 低(<0.4) |
+
+达成概率 < 0.3 的 KR 标注 needs_human_validation: true，建议调整 target 或拆分为多个渐进式KR。
+
+**北极星指标消费**：从输入的北极星指标中提取核心指标和下钻指标，确保至少1个KR的metric与北极星指标直接关联，标注 north_star_alignment: true。
+
 ### Step 3: KR可行性评估
 
 对每个KR进行可行性评估：
@@ -80,6 +92,24 @@ kr_assessment:
   confidence_level: 置信度
 ```
 
+**achievability 计算方法**：
+
+```
+achievability_score = w1 × resource_fit + w2 × historical_trend + w3 × dependency_risk
+
+- resource_fit: 团队当前资源/预估所需资源（0-1），基于团队规模动态校准：
+  - 1-3人: 0.3（资源紧张）
+  - 4-6人: 0.5（资源适中）
+  - 7-10人: 0.7（资源充裕）
+  - >10人: 0.8（资源丰富）
+  - 若团队规模未知，默认0.4（偏保守）
+- historical_trend: 基于历史数据时为达成概率，无历史数据时为0.5
+- dependency_risk: 1 - (外部依赖数量 × 0.15)，最低0.1
+- w1=0.4, w2=0.35, w3=0.25
+
+achievability_score < 0.4 标注为高风险KR，needs_human_validation: true
+```
+
 ### Step 4: OKR对齐检查
 
 检查OKR之间的对齐关系：
@@ -87,6 +117,16 @@ kr_assessment:
 - O与KR逻辑一致
 - KR之间相互支撑
 - 时间线合理
+
+**对齐检查执行规则**：
+
+| 检查维度 | 检查方法 | 通过条件 | 不通过处理 |
+|----------|----------|----------|-----------|
+| O-KR一致性 | 每个KR必须直接贡献对应O的达成 | 所有KR与O有直接因果关系 | 标注不一致KR，建议重新定义 |
+| KR间独立性 | KR之间不应有包含或因果关系 | KR两两之间无逻辑依赖 | 合并依赖KR或拆分为独立KR |
+| 北极星对齐 | 至少1个KR的指标与北极星指标直接关联 | north_star_alignment=true的KR≥1 | 标注北极星对齐缺失，建议增加关联KR |
+| 量化可验证 | 每个KR包含数字目标值和截止时间 | 所有KR包含metric+target+deadline | 标注不可验证KR，建议补充量化指标 |
+| 资源可行性 | achievability_score ≥ 0.4 | 所有KR的achievability ≥ 0.4 | 标注高风险KR，建议调整target或增加资源 |
 
 ## 输出
 
@@ -107,6 +147,7 @@ kr_assessment:
 | okr_candidates[].key_results[].growth_needed | string | 是 | 需增长率 |
 | okr_candidates[].key_results[].achievability | number | 是 | 达成概率0-1 |
 | okr_candidates[].key_results[].confidence_level | number | 是 | 置信度0-1 |
+| okr_candidates[].key_results[].deadline | string | 是 | KR截止日期（ISO8601格式） |
 | okr_candidates[].alignment_check.strategic_alignment | boolean | 是 | 战略对齐检查 |
 | okr_candidates[].alignment_check.kr_coherence | boolean | 是 | KR一致性检查 |
 | okr_candidates[].alignment_check.timeline_feasibility | boolean | 是 | 时间线可行性 |
@@ -122,6 +163,7 @@ okr_candidates:
         achievability: 0.65
         dimension: "数量"
         confidence_level: 0.85
+        deadline: "2026-06-30"
       - kr: "KR2: 用户次留率达到45%"
         baseline: 35%
         target: 45%
@@ -129,6 +171,7 @@ okr_candidates:
         achievability: 0.70
         dimension: "质量"
         confidence_level: 0.80
+        deadline: "2026-06-30"
       - kr: "KR3: 核心功能使用率达到60%"
         baseline: 40%
         target: 60%
@@ -136,6 +179,7 @@ okr_candidates:
         achievability: 0.55
         dimension: "质量"
         confidence_level: 0.75
+        deadline: "2026-06-30"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -150,6 +194,7 @@ okr_candidates:
         achievability: 0.60
         dimension: "成本"
         confidence_level: 0.75
+        deadline: "2026-06-30"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -167,11 +212,11 @@ okr_candidates:
 
 ## 质量检查
 
-- [ ] 每个Objective有3-5个KR
-- [ ] KR可量化且有明确指标
-- [ ] KR有截止时间
-- [ ] 对齐检查通过
-- [ ] 可行性评估已完成
+- [ ] 每个O包含1句话描述且≤30字
+- [ ] 每个KR包含≥1个数字目标值(metric+target)
+- [ ] 每个KR包含deadline字段(ISO8601格式)
+- [ ] north_star_alignment=true的KR≥1，O-KR一致性检查100%通过
+- [ ] 所有KR的achievability_score已计算且≥0.4的KR占比≥60%
 - [ ] 战略一致性已验证
 
 ---
@@ -214,3 +259,12 @@ okr_candidates:
 | Objective调整 | planning-roadmap、business-strategy-report | 输出文件版本号+变更摘要 |
 | KR目标值变更 | planning-roadmap | 输出文件版本号+变更摘要 |
 | 对齐检查结果变更 | planning-roadmap | 输出文件版本号+变更摘要 |
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| objectives[].description | prd.json.goals[].description | O描述与PRD目标描述一致 |
+| key_results[].description | prd.json.goals[].success_metrics[].metric_name | KR描述包含PRD成功指标名称 |
+| key_results[].target | prd.json.goals[].success_metrics[].target_value | KR目标值与PRD指标目标值一致 |
+| key_results[].baseline | prd.json.goals[].success_metrics[].current_value | KR基线与PRD指标当前值一致 |
