@@ -213,6 +213,7 @@ stages:
 | 品牌规范/产品定位/目标平台/目标语言/project_name/project_dir/framework/组件库偏好 | 项目信息收集阶段确定 |
 | package_manager | 用户提供（默认pnpm） |
 | PRD | output/pm-design/design-prd/prd.md（可选） |
+| PRD结构化数据 | output/pm-design/design-prd/prd.json（可选） |
 
 输出: output/ui-project-init/ + 代码写入 {project_dir}/ + PRODUCT.md + DESIGN.md
 验证: visual_direction 10维度定义 + WCAG AA达标 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + npm run dev启动成功
@@ -237,6 +238,7 @@ stages:
 | 视觉方向/设计令牌/组件库 | output/ui-project-init/project-init.json |
 | 目标框架/目标语言/project_dir | 项目信息收集阶段确定 |
 | PRD | output/pm-design/design-prd/prd.md（可选） |
+| PRD结构化数据 | output/pm-design/design-prd/prd.json（可选） |
 | 路由结构 | output/pm-design/design-ia/ia_proposals.json（可选） |
 | 交互规范 | output/pm-design/interaction-spec/interaction-spec.md（可选） |
 

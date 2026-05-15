@@ -93,7 +93,7 @@ stages:
 Skill: validation-assumption-map
 输入:
   design_output: output/pm-design/design-prototype/prototype_spec.json（或output/pm-design/design-userflow/userflow.json）
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
 输出: output/pm-design/validation-assumption-map/assumption_map.json
 验证: 最大风险假设已识别，每个功能点至少1个假设
 模式: 🤖

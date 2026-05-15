@@ -93,6 +93,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 目标语言 | string | 是 | 上游编排器传递 / 用户提供（默认zh-CN） | 目标界面语言 |
 | project_dir | string | 是 | output/ui-project-init/project-init.json → project_dir | 项目根目录绝对路径 |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求上下文（含功能区域和组件需求） |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/features[]，供页面构建编程式消费 |
 | 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
 | 交互规范 | markdown | ○ | output/pm-design/interaction-spec/interaction-spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
 

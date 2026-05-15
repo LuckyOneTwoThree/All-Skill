@@ -39,6 +39,7 @@ metadata:
 | 认证鉴权方案 | JSON | 是 | output/backend-api-design/api-design-spec/auth-scheme.json | 认证和权限方案 |
 | 合规检查清单 | JSON | ○ | output/backend-api-design/api-design-spec/compliance-checklist.json | 合规要求 |
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 用于PRD对齐检查 |
+| PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，供代码生成对齐检查 |
 | 前端页面数据需求 | JSON | ○ | output/ui-frontend/page-builder/pages.json | 用于前端对齐检查 |
 | project_dir | string | 是 | 用户提供 | 项目根目录绝对路径 |
 | tech_stack | string | 是 | 用户提供 | 后端技术栈 |

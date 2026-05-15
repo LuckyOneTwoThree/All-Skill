@@ -55,6 +55,7 @@ pipeline:
 Skill: data-architecture-spec
 输入:
   PRD: output/pm-design/design-prd/prd.md
+  PRD结构化数据: output/pm-design/design-prd/prd.json
   API契约: output/backend-api-design/api-design-spec/openapi.yaml
   database_type: 用户提供
   数据量预估: 用户提供（可选）

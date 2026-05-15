@@ -36,6 +36,7 @@ metadata:
 | IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
 | User Flow | JSON | 是 | output/pm-design/design-userflow/userflow.json | Pipeline 10输出的用户流程 |
 | PRD文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求参考 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/features[]，供原型设计对齐 |
 
 ## 执行步骤
 

@@ -155,8 +155,8 @@ Skill: product-sunset-plan
     - target: monitoring-orchestrator
       reason: 如需验收，推荐进入监控预警阶段
       condition: 诊断结论为需质量验收时
-    - target: product-sunset-plan
-      reason: 如诊断结论为产品应下线
+    - target: diagnosis-orchestrator
+      reason: 如诊断结论为产品应下线，进入产品下线阶段（diagnosis-orchestrator内部phase-4）
       condition: 健康度评分极低且无改善空间时
 模式: 🤖
 ```

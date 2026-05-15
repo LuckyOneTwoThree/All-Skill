@@ -259,8 +259,8 @@ Skill: product-operations-manual
     - target: release-orchestrator
       reason: 如增长方案已验证，直接全量发布
       condition: 增长方案已有充分数据支撑，无需实验验证时
-    - target: gtm-strategy
-      reason: 如是新产品上市，进入GTM策略
+    - target: growth-orchestrator
+      reason: 如是新产品上市，进入GTM策略阶段（growth-orchestrator内部phase-7）
       condition: 增长诊断结论为新产品需上市时
 模式: 🤖
 ```

@@ -42,6 +42,7 @@ metadata:
 |--------|------|------|------|------|
 | 方案设计输出 | JSON | 是 | output/pm-design/design-prototype / output/pm-design/design-userflow | 功能列表、用户旅程、交互设计说明 |
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 问题陈述、目标用户、核心价值主张 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含features[]，供假设提取对齐 |
 
 ### 输入格式
 ```json

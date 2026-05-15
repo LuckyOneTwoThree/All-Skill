@@ -126,7 +126,7 @@ Skill: agile-review
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
 下游衔接:
   primary:
-    target: agile-orchestrator（下一Sprint）
+    target: agile-orchestrator
     reason: Sprint完成，建议进入下一Sprint规划，持续迭代
     input_mapping:
       retro_output: "output/pm-project/agile-review/sprint-retro-S{NN}.json → agile-sprint-planning输入"

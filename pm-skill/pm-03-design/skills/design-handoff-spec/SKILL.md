@@ -33,6 +33,7 @@ metadata:
 |--------|------|------|------|------|
 | IA信息架构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 页面路由和导航需求 |
 | PRD文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求参考 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，供交接文档对齐 |
 | 交互规范 | Markdown | ○ | output/pm-design/design-interaction-spec/interaction_spec.md | 交互意图和无障碍要求 |
 
 ## 执行步骤

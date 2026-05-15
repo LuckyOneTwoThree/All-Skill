@@ -55,6 +55,7 @@ pipeline:
 Skill: api-design-spec
 输入:
   PRD: output/pm-design/design-prd/prd.md
+  PRD结构化数据: output/pm-design/design-prd/prd.json
   数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json（可选）
   业务流程: output/pm-design/design-userflow/userflow.json（可选）
   安全等级: 用户提供
@@ -86,6 +87,7 @@ Skill: api-design-impl
   认证鉴权方案: output/backend-api-design/api-design-spec/auth-scheme.json
   合规检查清单: output/backend-api-design/api-design-spec/compliance-checklist.json（可选）
   PRD: output/pm-design/design-prd/prd.md
+  PRD结构化数据: output/pm-design/design-prd/prd.json
   前端页面数据需求: output/ui-frontend/page-builder/pages.json（可选）
   project_dir: 用户提供
   tech_stack: 用户提供

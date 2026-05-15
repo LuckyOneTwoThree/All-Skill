@@ -34,6 +34,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]，供IA设计对齐页面路由 |
 | 现有产品IA | JSON | ○ | 用户提供 | 现有信息架构（如有） |
 | 用户研究数据 | JSON | ○ | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | 用户行为模式、内容偏好 |
 

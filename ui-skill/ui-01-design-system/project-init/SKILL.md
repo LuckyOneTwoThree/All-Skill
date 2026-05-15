@@ -69,6 +69,7 @@ metadata:
 | package_manager | string | ○ | 用户提供 | npm/pnpm/yarn（默认pnpm） |
 | 组件库偏好 | string | ○ | 用户提供 | shadcn/Ant Design/MUI/Element Plus/自定义（默认根据framework推荐） |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求文档（含功能区域和组件需求） |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/user_flows[]，供项目初始化编程式消费 |
 
 ## 执行步骤
 

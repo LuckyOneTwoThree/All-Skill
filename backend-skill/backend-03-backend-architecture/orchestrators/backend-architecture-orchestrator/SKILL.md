@@ -55,6 +55,7 @@ pipeline:
 Skill: backend-architecture-spec
 输入:
   PRD: output/pm-design/design-prd/prd.md
+  PRD结构化数据: output/pm-design/design-prd/prd.json
   数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
   API契约: output/backend-api-design/api-design-spec/openapi.yaml
   业务规模: 用户提供

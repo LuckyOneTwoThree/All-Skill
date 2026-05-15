@@ -132,7 +132,7 @@ Skill: design-prd
 ```
 Skill: design-ia
 输入:
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   existing_ia: 可选
   user_research: 可选
 输出: output/pm-design/design-ia/ia_proposals.json
@@ -145,7 +145,7 @@ Skill: design-ia
 ```
 Skill: design-userflow
 输入:
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   ia_proposals: output/pm-design/design-ia/ia_proposals.json
   user_research: 可选
 输出: output/pm-design/design-userflow/userflow.json
@@ -190,7 +190,7 @@ Skill: design-handoff-spec
   design_tokens: 可选
   ia_proposals: output/pm-design/design-ia/ia_proposals.json
   userflow: output/pm-design/design-userflow/userflow.json
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   component_library: 可选
 输出: output/pm-design/design-handoff-spec/
 验证: 交接文档待确认项=0
@@ -230,8 +230,8 @@ Skill: change-impact-analysis
       prd_output: "output/pm-design/design-prd/prd.json → metrics-system输入"
       prototype_output: "output/pm-design/design-prototype/component_catalog.json → UI Skill消费"
   alternatives:
-    - target: api-design-orchestrator（Backend）
-      reason: PRD完成后直接启动后端API设计
+    - target: api-design-orchestrator
+      reason: PRD完成后直接启动后端API设计（跨模块：Backend）
       condition: 产品从0到1流程中，PRD确认后需并行启动Backend开发时
 模式: 🤖
 ```

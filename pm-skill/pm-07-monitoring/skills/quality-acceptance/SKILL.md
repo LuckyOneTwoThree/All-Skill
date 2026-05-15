@@ -49,7 +49,7 @@ metadata:
 | 测试环境配置 | JSON | 是 | 测试系统 | 环境参数和Mock配置建议 |
 | 构建产物 | 文件/引用 | 是 | CI/CD | 待验收的构建版本 |
 | 测试结果 | JSON | ○ | CI/CD | 自动化测试执行结果 |
-| SRS文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 需求规格（含验收标准，已由 design-prd 覆盖） |
+| SRS文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 需求规格（含验收标准，已由 design-prd 覆盖） |
 | 版本号 | string | 是 | 用户提供 | 验收的版本号 |
 | 验收范围 | string | 是 | 用户提供 | 本次验收的功能范围 |
 | 验收方 | string | ○ | 用户提供 | 验收负责人/团队 |

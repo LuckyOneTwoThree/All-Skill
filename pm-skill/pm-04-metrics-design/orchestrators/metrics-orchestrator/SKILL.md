@@ -120,8 +120,8 @@ Skill: metrics-dashboard
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
 下游衔接:
   primary:
-    target: 人类决策——进入开发阶段
-    reason: 度量设计完成，需人类确认是否进入开发阶段，启动Backend和UI并行构建
+    target: monitoring-orchestrator
+    reason: 度量设计完成，建议进入监控预警阶段，将指标体系和埋点方案落地为监控配置
     input_mapping:
       metrics_output: "output/pm-metrics-design/metrics-system/ → monitoring-pipeline输入"
       tracking_output: "output/pm-metrics-design/tracking-plan/ → 开发阶段埋点实现"

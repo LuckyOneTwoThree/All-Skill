@@ -34,6 +34,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含user_flows[]/pages[]，供流程设计对齐 |
 | IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
 | 用户研究数据 | JSON | ○ | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | 用户行为模式、任务偏好 |
 

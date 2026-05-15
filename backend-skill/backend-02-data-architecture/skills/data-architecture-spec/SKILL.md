@@ -35,6 +35,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务实体和关系需求 |
+| PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含entities[]/features[]，供数据模型设计编程式消费 |
 | API契约 | YAML/JSON | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 接口数据结构定义 |
 | database_type | string | 是 | 用户提供 | 数据库类型（PostgreSQL/MySQL/MongoDB/SQLite） |
 | 数据量预估 | JSON | ○ | 用户提供 | 核心表数据量级和增长速度 |

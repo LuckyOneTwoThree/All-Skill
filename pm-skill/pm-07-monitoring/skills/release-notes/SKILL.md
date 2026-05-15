@@ -32,8 +32,8 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 需求变更记录 | Markdown/JSON | ○ | output/pm-monitoring/release-auto-checklist/change_log.md | 本版本的需求变更 |
-| PRD文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 产品需求参考 |
-| SRS文档 | Markdown | ○ | output/pm-design/design-prd/PRD-{产品名}.md | 需求规格参考（已由 design-prd 覆盖） |
+| PRD文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求参考 |
+| SRS文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 需求规格参考（已由 design-prd 覆盖） |
 | 版本号 | string | 是 | 用户提供 | 如 v2.3.0 |
 | 发布日期 | string | 是 | 用户提供 | 如 2025-03-15 |
 | 发布类型 | string | 是 | 用户提供 | major / minor / patch / hotfix |
