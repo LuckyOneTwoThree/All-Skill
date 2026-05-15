@@ -5,7 +5,7 @@ metadata:
   module: "跨领域协调"
   sub-module: "产品迭代"
   type: "orchestrator"
-  version: "7.0"
+  version: "9.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "给现有产品加一个支付功能"

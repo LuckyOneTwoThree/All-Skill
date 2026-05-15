@@ -97,7 +97,7 @@
 
 ## 调用机制
 
-核心 Skill 通过 `Skill: ext-xxx` 定向调用外部 Skill。调用前必须先检测外部 Skill 是否已部署，避免调用不存在的能力导致流程中断。
+ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度，不在 Pipeline Skill 内部调用。核心 Skill 中不再包含 `Skill: ext-xxx` 调用块，所有 ext 调用由编排器按阶段执行。
 
 ### ext-impeccable Setup（统一规范）
 
@@ -132,15 +132,23 @@ ext-impeccable 和 ext-frontend-design 区分两种设计寄存器，决定设�
 
 ### 调用流程
 
-ext skill 是专业设计能力，核心 Skill 必须经过 ext skill 审视，上层传递的输入仅作为意图参考。
+ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度，不在 Pipeline Skill 内部调用。
 
 ```
-1. 检测：检查 ext-xxx/SKILL.md 是否存在
-2. 存在 → 必调（除非满足明确跳过条件）
-3. 调用 `Skill: ext-xxx`，核心 Skill 通过指令性调用块调用，包含输入/输出/验证条件，脚本使用 `{SKILL_DIR}/scripts/` 路径
-4. 上层输入作为"已有方案"传入（参考，不作为约束），ext skill 独立审视并可能挑战现有方案
-5. 不存在 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续步骤
+1. 编排器按阶段调度：核心阶段（Pipeline Skill）→ ext增强阶段（ext Skill）交替执行
+2. ext增强阶段：编排器使用 Skill 工具调用 ext-xxx，传递核心阶段产出作为输入
+3. 上层输入作为"已有方案"传入（参考，不作为约束），ext skill 独立审视并可能挑战现有方案
+4. ext skill 不存在或调用失败 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续阶段
 ```
+
+**编排器 ext 调用阶段**：
+
+| 阶段 | 名称 | 调用的 ext skill | 说明 |
+|------|------|-----------------|------|
+| stage-2 | 设计系统增强 | ext-ui-ux-pro-max, ext-impeccable(colorize/typeset), ext-frontend-design | 审视 project-init 产出 |
+| stage-4 | 页面组件增强 | ext-ui-ux-pro-max, ext-impeccable(layout/adapt/shape/animate/bolder\|quieter/delight/clarify/onboard/distill), ext-frontend-design, ext-interaction-design | 审视 page-builder 产出 |
+| stage-5 | 质量审计 | ext-impeccable(audit/critique) | 质量审计与修复闭环 |
+| stage-8 | 生产优化 | ext-impeccable(harden/polish/optimize) | 审视 production-ready 产出 |
 
 **跳过条件**（仅限以下场景）：
 - ext-impeccable extract：全新项目无现有代码
@@ -153,11 +161,12 @@ ext skill 是专业设计能力，核心 Skill 必须经过 ext skill 审视，�
 
 ### 执行顺序规则
 
-1. **同一步骤内多个外部调用按表格顺序执行**，前者输出作为后者输入
-2. **同 Skill 多子命令合并调用**：同一步骤内同一外部 Skill 的多个子命令合并为单次调用（如 `ext-impeccable animate bolder delight`），避免重复加载 SKILL.md 浪费 token
-3. **polish 始终是最后一步**，不可在其他外部调用之前执行
-4. **bolder 和 quieter 选择规则**，同一组件只能调用其中一个（品牌色占比<25%→bolder，>40%→quieter，25%-40%→视场景选择：品牌场景倾向bolder，产品场景倾向不调用）
-5. **audit 后可触发反馈闭环**：若 critique 执行后修改了代码，需重新 audit 验证，最多循环2次
+1. **编排器按阶段顺序执行**：核心阶段→ext增强阶段→核心阶段→ext增强阶段，交替进行
+2. **同一 ext 阶段内多个调用按编排器定义顺序执行**，前者输出作为后者输入
+3. **同 Skill 多子命令合并调用**：同一 ext 阶段内同一外部 Skill 的多个子命令合并为单次调用（如 `ext-impeccable animate bolder delight`），避免重复加载 SKILL.md 浪费 token
+4. **polish 始终是最后一步**，不可在其他外部调用之前执行
+5. **bolder 和 quieter 选择规则**，同一组件只能调用其中一个（品牌色占比<25%→bolder，>40%→quieter，25%-40%→视场景选择：品牌场景倾向bolder，产品场景倾向不调用）
+6. **audit 后可触发反馈闭环**：若 critique 执行后修改了代码，需重新 audit 验证，最多循环2次
 
 ### 冲突解决规则
 
@@ -200,15 +209,17 @@ ext skill 是专业设计能力，核心 Skill 必须经过 ext skill 审视，�
 4. 子命令输出与 visual_direction 冲突时，以 visual_direction 为准（visual_direction 是全局约束）
 5. distill 输出优先级高于 bolder/delight（简化优先于增强）
 
-### 调用格式（写入核心 Skill 的 SKILL.md）
+### 调用格式（编排器调度）
+
+编排器按阶段调度 ext skill，核心 Skill 中不再包含 ext 调用块。编排器调用 ext skill 时传递核心阶段产出作为输入，ext skill 独立审视并可能挑战现有方案。
 
 ```
-**必调**：`Skill: ext-frontend-design`
-- 作用：提供差异化美学方向审视，确保设计系统视觉独特性，避免AI同质化
-- 输入：品牌规范+产品定位+目标语言+已有方案（作为参考，不作为约束）
-- 输出：差异化美学方向建议
-- 调用方式：核心 Skill 执行到 ext- 调用点时，按指令性调用块格式调用 `Skill: ext-frontend-design`，包含输入/输出/验证条件 → 不存在则跳过，标注"视觉差异化待 ext-frontend-design 支持"，不阻塞后续步骤
-- 设计原则：上层传递的输入仅作为意图参考，ext-frontend-design 独立审视并可能挑战现有方案
+编排器调度示例（stage-2 设计系统增强）：
+1. 编排器调用 ext-ui-ux-pro-max --design-system，传递 project-init 产出的品牌规范+visual_direction
+2. 编排器调用 ext-impeccable colorize，传递色彩体系+品牌规范
+3. 编排器调用 ext-frontend-design，传递 visual_direction+品牌规范+产品定位
+4. 编排器调用 ext-impeccable typeset，传递排版体系+visual_direction
+5. ext skill 不存在或调用失败 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续阶段
 ```
 
 ### 降级策略分类

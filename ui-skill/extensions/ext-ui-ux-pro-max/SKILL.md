@@ -37,14 +37,14 @@ winget install Python.Python.3.12
 
 ## Input Contract
 
-When called by core Skills (project-init / page-builder), accept the following structured input:
+When called by ui-orchestrator (on behalf of project-init / page-builder), accept the following structured input:
 
 | Input Field | Type | Required | Description |
 |-------------|------|----------|-------------|
 | query | string | yes | Search query: "{product_type} {industry} {style_keywords}" |
 | mode | string | yes | "--design-system" (project-init) or "--domain {landing/dashboard/general}" (page-builder) |
 | project_name | string | no | Project name for persistence (-p flag) |
-| existing_plan | object | no | Current design plan from core Skill (as reference, not constraint) |
+| existing_plan | string \| object | no | Current design plan from core Skill (as reference, not constraint) |
 
 When invoked directly by users (not via core Skill), the input is free-form: describe what you need.
 
@@ -131,6 +131,26 @@ When called by core Skills, MUST return structured output in the following schem
   }
 }
 ```
+
+## Consumer Mapping
+
+### --design-system 模式输出消费映射
+
+| 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
+|---------|-------------|---------|---------|
+| style_recommendations.color_palettes | project-init | visual_direction.color_strategy | 参考采纳，不覆盖品牌色推导结果 |
+| style_recommendations.typography | project-init | visual_direction.typography_strategy | 参考采纳，不覆盖已选字体 |
+| style_recommendations.effects | project-init | visual_direction.aesthetic_direction | 参考采纳，补充效果描述 |
+| anti_patterns | project-init | visual_direction.visual_bans | 追加到visual_bans数组 |
+
+### --domain 模式输出消费映射
+
+| 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
+|---------|-------------|---------|---------|
+| layout_recommendations | page-builder | Step 1 页面结构规划 | 参考采纳，不覆盖PRD功能区域定义 |
+| cta_strategies | page-builder | Step 2 组件视觉节奏 | 参考采纳 |
+| information_architecture | page-builder | Step 1 视觉节奏设计 | 参考采纳 |
+| anti_patterns | page-builder | visual_direction.visual_bans | 追加到visual_bans数组 |
 
 ## Verification Criteria
 

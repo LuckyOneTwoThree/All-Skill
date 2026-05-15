@@ -28,7 +28,7 @@ metadata:
 
 ## 上下文预算管理
 
-page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须主动管理上下文窗口防止信息丢失。
+page-builder 单次执行可能生成大量组件代码，必须主动管理上下文窗口防止信息丢失。
 
 ### 步骤检查点
 
@@ -64,13 +64,6 @@ page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须�
 | P1（尽量保留） | 已完成步骤的输出文件路径和关键结论摘要 | 供后续步骤引用 |
 | P2（可丢弃） | 已完成步骤的详细代码和中间产物 | 可从 output/ 目录重新读取 |
 
-### 外部调用优化策略
-
-1. **同 Skill 多子命令合并**：同一步骤内同一外部 Skill 的多个子命令合并为单次调用（如 `ext-impeccable animate bolder delight`），避免重复加载 SKILL.md
-2. **摘要替代原文**：外部 Skill 返回结果后，只保留关键结论摘要和输出文件路径，详细内容写入 output/ 目录
-3. **组件代码分页管理**：多组件项目按组件分批处理，每批完成后将代码写入文件，上下文中只保留当前批次的组件代码
-4. **audit/critique 闭环提前退出**：若首轮 audit 评分≥75分，不再触发 critique 闭环（避免为5分增量消耗大量上下文）；仅当评分<75分时才执行 critique + re-audit
-
 ### 多页面项目策略
 
 页面数>3时，采用分页处理：
@@ -101,7 +94,7 @@ page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须�
 | project_dir | string | 是 | output/ui-project-init/project-init.json → project_dir | 项目根目录绝对路径 |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求上下文（含功能区域和组件需求） |
 | 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
-| 交互规范 | markdown | ○ | output/pm-design/design-interaction-spec/interaction_spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
+| 交互规范 | markdown | ○ | output/pm-design/interaction-spec/interaction-spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
 
 ## 执行步骤
 
@@ -140,42 +133,7 @@ page-builder 单次执行可能触发最多 11 次外部 Skill 调用，必须�
 
 组件映射：遍历页面功能需求，逐项匹配组件库中的组件，标注组件间数据依赖和交互通信方式。
 
-**外部 Skill 调用**：
-
-> **ext-impeccable 首次调用前必须执行 Setup**：见 [extensions/README.md → ext-impeccable Setup](../../extensions/README.md)
-
-#### 1a. ext-ui-ux-pro-max --domain
-
-**必调**：数据驱动的页面结构推荐提供独立视角，自动检测页面类型匹配对应域
-
-```
-Skill: ext-ui-ux-pro-max
-输入:
-  查询: "{页面类型} {行业} {风格关键词}"
-  模式: --domain {自动检测：落地页/营销页→landing，仪表盘/数据看板→dashboard，其他→通用}
-  项目名称: {project_name}
-  已有方案: {当前页面布局规划}（作为参考，不作为约束）
-输出: 页面结构推荐（布局模式/CTA策略/信息架构/反模式）
-验证: 返回了完整的页面结构推荐
-模式: 🤖
-```
-
-#### 1b. ext-impeccable layout adapt
-
-**必调**：布局优化和响应式适配是页面品质的基础保障
-- layout：优化间距节奏和视觉层级
-- adapt：确保跨平台适配策略完整
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: [layout] [adapt]
-  目标: 当前页面布局
-  上下文: 页面组件树 + 设计令牌 + 目标平台 + visual_direction
-输出: 布局优化方案（间距节奏/视觉层级/响应式适配）
-验证: 布局间距有节奏变化，响应式断点覆盖375px/768px/1024px/1440px
-模式: 🤖
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 2: 组件生成（在页面上下文中）
 
@@ -220,96 +178,7 @@ Skill: ext-impeccable
 
 若 interaction-spec 未定义动画意图，使用 page-builder 内建默认动画规范表。interaction-spec 中的具体动画数值（缓动函数/时长/阈值）仅供参考，page-builder 有权基于 visual_direction 调整。
 
-**外部 Skill 调用**：
-
-#### 2a. ext-impeccable shape
-
-**必调**：shape 为组件提供编码前设计规划，确保组件有完整的状态机和交互流程
-**跳过条件**：仅对纯静态展示原子组件（Badge/Divider/Spacer/Icon）可跳过
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: shape
-  目标: 组件UX/UI规划
-  上下文: 组件意图 + 状态列表 + 用户流程 + visual_direction
-输出: 组件UX规划（状态机/交互流程/视觉方向）
-验证: 规划包含完整状态转换图和视觉方向建议
-模式: 🤖
-```
-
-#### 2b. ext-frontend-design
-
-**必调**：ext-frontend-design 确保每个组件都经过差异化审视，避免 AI 同质化。与 bolder 职责不同：frontend-design 管方向定义，bolder 管执行层增强，不互斥
-
-```
-Skill: ext-frontend-design
-输入:
-  design_brief: 组件意图 + 当前组件视觉方案
-  register: {brand/product，判断规则同 extensions/README.md → Register 感知}
-  brand_spec: 品牌规范
-  product_positioning: 产品定位
-  visual_direction: 当前visual_direction（aesthetic_direction/color_strategy/mood_keywords/tension_level/visual_narrative/visual_bans）
-  design_tokens: 设计令牌
-  target_language: {目标语言}
-  target_framework: {目标框架}
-输出: 结构化差异化建议（aesthetic_direction/font_substitutions/color_substitutions/layout_differentiation/visual_bans/differentiation_summary）
-验证: font_substitutions不含Inter/Roboto/Arial推荐 + color_substitutions不含蓝紫渐变推荐 + visual_bans≥3项 + register对齐 + 与visual_direction一致
-模式: 🤖
-```
-
-**输出消费**：同 project-init 约束力提升映射规则，font_substitutions/color_substitutions/visual_bans 追加到 visual_direction.visual_bans，layout_differentiation 追加到 aesthetic_direction。
-
-**Register 感知**：brand→极端美学方向；product→差异化但克制
-
-#### 2c. ext-interaction-design
-
-**必调**：交互设计为组件提供动效模式和反馈策略，确保交互体验一致性
-**跳过条件**：仅对纯静态无交互组件（纯文本/纯图片展示）可跳过
-
-```
-Skill: ext-interaction-design
-输入:
-  interaction_needs: 组件交互模式（拖拽/手势/复杂状态转换）
-  register: {brand/product}
-  component_state_machine: 组件状态机
-  visual_direction: 当前visual_direction（tension_level/mood_keywords/aesthetic_direction）
-  design_tokens: 动画令牌（duration-instant/fast/normal/slow, easing-default/decelerate/accelerate）
-  target_framework: {目标框架}
-输出: 结构化交互方案（patterns/animation_tokens/accessibility_adaptation）
-验证: 所有时长和缓动引用设计令牌 + 框架API正确 + reduced_motion_strategy已定义 + register对齐
-模式: 🤖
-```
-
-#### 2d. ext-impeccable animate bolder|quieter delight
-
-**必调**：视觉增强是组件品质的核心保障，根据组件特征选择对应子命令
-
-子命令选择规则：
-- animate：组件有状态转换或异步操作时调用（数据密集型仪表盘或医疗/金融场景可跳过动效）
-- bolder：品牌色占比<25%时调用（与 ext-frontend-design 不互斥：frontend-design 定义方向，bolder 执行增强）
-- quieter：品牌色占比>40% 或 医疗/金融/法律场景时调用
-- delight：组件为核心用户流程节点时调用（辅助功能组件可跳过）
-
-**视觉自评规则**：组件生成后，AI需自评"这个组件是否有视觉记忆点？"。评估维度：
-- 与visual_direction.aesthetic_direction的一致性：组件是否体现了定义的美学方向？
-- 设计张力匹配：组件的视觉大胆程度是否与tension_level匹配？（tension_level=bold/extreme时组件不应保守）
-- 差异化程度：组件是否避免了AI同质化特征（Inter/Roboto/蓝紫渐变/均匀卡片网格）？
-
-若自评不通过（组件缺乏记忆点 或 与tension_level不匹配），即使客观指标在正常范围，也触发bolder或delight。
-
-bolder vs quieter 选择规则：品牌色占比<25%→bolder，>40%→quieter，25%-40%→视场景选择（品牌场景倾向bolder，产品场景倾向不调用）。
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: [animate] [bolder|quieter] [delight]
-  目标: 当前组件代码
-  上下文: 组件状态机 + 设计令牌 + 品牌色占比 + visual_direction
-输出: 增强后的组件代码
-验证: 每个子命令的输出符合其验证标准
-模式: 🤖
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 3: 页面组装与状态管理
 
@@ -347,28 +216,7 @@ Skill: ext-impeccable
 
 **与 api-integration 的衔接**：若后续 api-integration 执行，其生成的代码将覆盖 fallback 文件（api-integration 负责清理 fallback 标记并替换为真实 API 调用）。api-integration 应保留 fallback 中的类型定义（`types.ts`），仅替换数据获取函数和 Mock 数据。
 
-**外部 Skill 调用**：
-
-#### 3a. ext-impeccable clarify onboard distill
-
-**必调**：UX文案优化和页面精简是交付品质的保障
-
-子命令选择规则：
-- clarify：页面含表单/空状态/错误状态时调用
-- onboard：页面为首页/注册页/新手引导页时调用
-- distill：页面组件数>10个 或 操作按钮>5个时调用
-- 以上子命令均不满足时跳过（非所有页面都需要这三项优化）
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: [clarify] [onboard] [distill]
-  目标: 当前页面代码
-  上下文: 页面组件树 + 用户流程 + 设计令牌 + visual_direction
-输出: 优化后的页面代码
-验证: 每个子命令的输出符合其验证标准
-模式: 🤖
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 4: 内建质量门禁
 
@@ -430,25 +278,7 @@ Skill: ext-impeccable
 
 **问题处理规则**：P0问题必须修复后才能输出，P1问题标注"待修复"。
 
-**必经审查**（ext-impeccable audit critique）：
-
-audit 为必经步骤，每个页面生成后必须执行设计品味审查，确保"功能正确"不等于"设计好看"。
-
-**触发条件**：始终执行（audit 必经）
-**critique 触发条件**：audit 设计品味评分<75分
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: audit [critique]
-  目标: 组件代码 + 页面代码
-  上下文: 设计令牌 + 品牌规范 + visual_direction
-输出: 审查报告（a11y/性能/响应式/设计品味评分）
-验证: audit覆盖WCAG AA + 响应式375px/1440px + 设计品味评分≥75分
-模式: 🤖
-```
-
-**审查闭环**：若 critique 执行后修改了代码，需重新 audit 验证，最多循环2次。退出条件：audit 设计品味评分≥75分 或 已循环2次。2次后设计品味评分仍<75分，标注"待人类确认"后输出。
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 5: 代码输出与最终打磨
 
@@ -458,24 +288,7 @@ Skill: ext-impeccable
 - 路由配置 → {project_dir}/src/router/
 - 状态管理 → {project_dir}/src/stores/
 
-**ext-impeccable harden polish**（最终打磨）：
-
-**必调**：生产就绪化是代码交付的最终保障
-
-子命令选择规则：
-- harden：组件有表单输入/异步操作/国际化需求时调用
-- polish：始终调用（polish 始终是最后一步）
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: [harden] [polish]
-  目标: 当前组件+页面代码
-  上下文: 质量检查结果 + 设计令牌 + visual_direction
-输出: 生产级代码（错误处理/国际化/边缘情况/最终打磨）
-验证: 代码通过所有质量门禁
-模式: 🤖
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ## 输出
 
@@ -534,27 +347,35 @@ Skill: ext-impeccable
 
 ## 质量检查
 
+P0（必须通过，不通过则阻断输出）：
 - [ ] visual_direction 的视觉禁忌100%未被违反
 - [ ] Design Token引用率100%，无硬编码样式值
-- [ ] TypeScript类型定义完整，无any类型
+- [ ] 色值引用100%使用Token变量
+- [ ] 色彩对比度正文≥4.5:1，大文本≥3:1
 - [ ] 交互组件100%包含ARIA属性和键盘导航
-- [ ] 状态机无死锁状态
-- [ ] WCAG AA对比度100%达标
-- [ ] 响应式覆盖375px/768px/1024px
-- [ ] 组件树层级≤4层
+- [ ] 状态覆盖 default/hover/focus/active/disabled
+- [ ] 异步操作有loading指示
+- [ ] 响应式375px宽度下内容不溢出
 - [ ] 100%组件来自组件库或本次生成
+- [ ] visual_direction一致性（组件风格与aesthetic_direction一致）
+- [ ] 视觉节奏6维度已在页面中体现
+
+P1（建议通过，不通过则标注"待修复"）：
+- [ ] TypeScript类型定义完整，无any类型
+- [ ] 状态机无死锁状态
+- [ ] 间距引用100%使用Token变量
+- [ ] 响应式覆盖768px/1024px
+- [ ] 组件树层级≤4层
 - [ ] 异步操作>300ms有进度指示
 - [ ] 支持prefers-reduced-motion
-- [ ] 视觉节奏6维度（视觉重心/密度分布/色彩节奏/层次感/设计张力/视觉叙事）已在页面中体现
 - [ ] 品牌色占比在color_strategy对应区间内
 - [ ] 排版层级有足够跳跃感（字号比≥1.25，字重差≥100）
-- [ ] 组件视觉风格与visual_direction.aesthetic_direction一致
 - [ ] 页面间距有节奏感（非均匀分布，至少3种间距值）
 - [ ] audit设计品味评分≥75分
-- [ ] ext-ui-ux-pro-max 已调用且页面结构推荐已被审视
-- [ ] ext-frontend-design 已调用且差异化建议已应用
-- [ ] ext-interaction-design 已调用（非纯静态组件时）
-- [ ] ext-impeccable 各子命令按规则调用且输出已应用
+- [ ] 页面结构推荐已被数据驱动审视（由编排器调用ext-ui-ux-pro-max）
+- [ ] 差异化建议已应用（由编排器调用ext-frontend-design）
+- [ ] 交互设计已应用（由编排器调用ext-interaction-design，非纯静态组件时）
+- [ ] ext-impeccable 各子命令增强已应用（由编排器调用）
 
 ## 降级策略
 

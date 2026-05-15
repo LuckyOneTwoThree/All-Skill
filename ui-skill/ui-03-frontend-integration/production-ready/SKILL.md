@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.2"
+  version: "1.3"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "准备上线"
@@ -32,8 +32,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 前端代码 | code | 是 | output/ui-frontend/page-builder/ | 页面和组件代码 |
-| API集成 | JSON | ○ | output/ui-frontend-integration/api-integration/ | API客户端代码 |
+| 前端代码 | code | 是 | {project_dir}/src/ | 页面和组件代码（代码在项目src目录，元数据在output路径） |
+| API集成 | JSON | ○ | output/ui-frontend-integration/api-integration/ | API集成元数据（代码在{project_dir}/src/api/） |
 | 目标框架 | string | 是 | 上游编排器传递 | React/Vue/Svelte |
 | 部署目标 | string | ○ | 用户提供 | Vercel/Netlify/自建/CDN |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言 |
@@ -93,29 +93,23 @@ E2E测试：核心用户流程100%覆盖，使用Playwright/Cypress。
 
 渲染性能优化：虚拟列表+React.memo/useMemo+防抖节流。
 
-**外部 Skill 调用**：
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
-> **ext-impeccable Setup 前置检查**：production-ready 调用 ext-impeccable 前，必须确认 Setup 已完成。检查规则：
-> 1. 检查 {project_dir}/PRODUCT.md 是否存在且内容≥200字符且不含[TODO]标记
-> 2. 若 PRODUCT.md 不存在或为占位符 → 执行完整 Setup：`node {SKILL_DIR}/scripts/load-context.mjs`，若 PRODUCT.md 缺失则先基于项目代码和上游输入生成 PRODUCT.md/DESIGN.md
-> 3. 若 PRODUCT.md 已就绪 → 跳过 Setup，直接调用子命令
-> 4. 此检查替代 project-init Step 5 的 Setup 确认，确保即使 production-ready 被单独调用也能正常工作
+### Step 3b: 安全审计
 
-#### ext-impeccable optimize
+**安全检查清单**：
 
-**必调**：UI渲染性能专项诊断是生产就绪的关键保障，即使当前性能达标也应审视优化空间
-**跳过条件**：性能瓶颈明确为网络延迟或包体积（非UI渲染问题）时可跳过
+| 检查项 | 实现方式 | 阻断级别 |
+|--------|---------|---------|
+| CSP配置 | 生成Content-Security-Policy头，限制script-src/style-src/img-src | P1 |
+| XSS防护 | 确保所有用户输入经过转义，React默认转义+DOMPurify | P0 |
+| CSRF防护 | SameSite Cookie + CSRF Token（若使用Cookie认证） | P1 |
+| SRI | 外部CDN资源添加integrity属性 | P1 |
+| 敏感信息泄露 | 检查代码中无硬编码密钥/token/密码 | P0 |
+| 依赖漏洞 | npm audit / pnpm audit，高危漏洞必须修复 | P0 |
+| HTTPS强制 | 生产环境强制HTTPS，HSTS头配置 | P1 |
 
-```
-Skill: ext-impeccable
-输入:
-  子命令: optimize
-  目标: 性能瓶颈组件/页面代码
-  上下文: 性能分析报告 + project_dir代码
-输出: UI渲染优化方案
-验证: LCP降至2.5s以下且视觉表现不降级
-模式: 🤖
-```
+P0级别不通过则阻断输出。
 
 ### Step 4: 性能预算与CI配置
 
@@ -146,10 +140,51 @@ CI配置写入 {project_dir}/。
   "type": "object",
   "required": ["build_config", "test_report", "performance_report", "performance_budget", "project_dir"],
   "properties": {
-    "build_config": {"type": "object", "description": "构建配置信息"},
-    "test_report": {"type": "object", "description": "测试报告，含覆盖率/通过率/E2E结果"},
-    "performance_report": {"type": "object", "description": "性能报告，含基线/瓶颈/优化方案"},
-    "performance_budget": {"type": "object", "description": "性能预算阈值"},
+    "build_config": {
+      "type": "object",
+      "description": "构建配置信息",
+      "properties": {
+        "bundler": {"type": "string", "description": "构建工具（Vite/Webpack/Next.js）"},
+        "code_splitting": {"type": "boolean", "description": "是否启用代码分割"},
+        "chunk_count": {"type": "number", "description": "代码分割chunk数量"},
+        "env_configs": {"type": "array", "description": "环境配置列表（dev/staging/prod）"}
+      }
+    },
+    "test_report": {
+      "type": "object",
+      "description": "测试报告",
+      "properties": {
+        "unit_coverage": {"type": "number", "description": "单元测试覆盖率(%)"},
+        "integration_coverage": {"type": "number", "description": "集成测试覆盖率(%)"},
+        "e2e_pass_rate": {"type": "number", "description": "E2E测试通过率(%)"},
+        "a11y_pass": {"type": "boolean", "description": "无障碍测试是否通过"},
+        "total_tests": {"type": "number", "description": "测试用例总数"},
+        "failed_tests": {"type": "number", "description": "失败用例数"}
+      }
+    },
+    "performance_report": {
+      "type": "object",
+      "description": "性能报告",
+      "properties": {
+        "lcp": {"type": "number", "description": "LCP时间(s)"},
+        "fid": {"type": "number", "description": "FID时间(ms)"},
+        "cls": {"type": "number", "description": "CLS分数"},
+        "first_screen_js_kb": {"type": "number", "description": "首屏JS体积(KB)"},
+        "first_screen_css_kb": {"type": "number", "description": "首屏CSS体积(KB)"},
+        "bottlenecks": {"type": "array", "description": "性能瓶颈列表"}
+      }
+    },
+    "performance_budget": {
+      "type": "object",
+      "description": "性能预算阈值",
+      "properties": {
+        "max_lcp": {"type": "number", "description": "LCP阈值(s)"},
+        "max_cls": {"type": "number", "description": "CLS阈值"},
+        "max_first_screen_js_kb": {"type": "number", "description": "首屏JS阈值(KB)"},
+        "max_first_screen_css_kb": {"type": "number", "description": "首屏CSS阈值(KB)"},
+        "ci_blocking": {"type": "boolean", "description": "CI是否阻断超标"}
+      }
+    },
     "project_dir": {"type": "string", "description": "项目根目录路径"}
   }
 }
@@ -177,6 +212,9 @@ CI配置写入 {project_dir}/。
 - [ ] CLS≤0.1
 - [ ] 首屏JS≤200KB
 - [ ] 性能预算写入CI配置
+- [ ] 无硬编码密钥/token/密码（P0）
+- [ ] npm audit无高危漏洞（P0）
+- [ ] CSP配置已生成（P1）
 
 ## 降级策略
 
@@ -208,6 +246,7 @@ CI配置写入 {project_dir}/。
 
 ## 变更记录
 
+- v1.3: 修复输入路径混淆（代码路径vs元数据路径）；输出Schema细化；新增安全审计步骤；质量检查增加安全项
 - v1.2: ext-impeccable调用增加Setup前置检查（确保单独调用production-ready时也能正常工作）
 - v1.1: 补充上游变更响应和向上游反馈机制；ext-impeccable Setup统一引用
 - v1.0: 合并 frontend-build-deploy + frontend-performance + frontend-test；构建+测试+性能一体化

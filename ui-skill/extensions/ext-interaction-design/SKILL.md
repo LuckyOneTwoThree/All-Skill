@@ -18,7 +18,7 @@ Create engaging, intuitive interactions through motion, feedback, and thoughtful
 
 ## Input Contract
 
-When called by core Skills (page-builder), accept the following structured input:
+When called by ui-orchestrator (on behalf of page-builder), accept the following structured input:
 
 | Input Field | Type | Required | Description |
 |-------------|------|----------|-------------|
@@ -31,7 +31,7 @@ When called by core Skills (page-builder), accept the following structured input
 
 ## Output Contract
 
-When called by core Skills, MUST return structured output:
+When called by ui-orchestrator, MUST return structured output:
 
 ```json
 {
@@ -74,6 +74,15 @@ When called by core Skills, MUST return structured output:
   }
 }
 ```
+
+## Consumer Mapping
+
+| 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
+|---------|-------------|---------|---------|
+| patterns[].code | page-builder | 组件交互代码 | 直接插入组件代码中 |
+| patterns[].css | page-builder | 组件样式代码 | 直接插入组件样式 |
+| animation_tokens | page-builder | design_tokens.animation | 合并到现有design tokens |
+| accessibility_adaptation | page-builder | 组件无障碍属性 | 追加ARIA属性和键盘导航 |
 
 ## Verification Criteria
 

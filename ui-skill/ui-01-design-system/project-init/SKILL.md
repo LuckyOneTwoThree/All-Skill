@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "pipeline"
-  version: "1.4"
+  version: "1.5"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "初始化前端项目"
@@ -93,57 +93,9 @@ metadata:
 
 暗色模式推导（内建能力）：主色相不变降明度升饱和度、背景反转、文字对比度≥4.5:1。
 
-**外部 Skill 调用**：
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
-> **ext-impeccable 两阶段调用策略**（解决 PRODUCT.md/DESIGN.md 尚未生成的循环依赖）：
->
-> **阶段一（Step 1-2）**：PRODUCT.md/DESIGN.md 尚未生成，跳过 `load-context.mjs`，由本 Skill 直接将品牌规范+产品定位+当前步骤产出作为**内联上下文**传递给 ext-impeccable 子命令。内联上下文格式：
-> ```
-> 内联上下文（替代 Setup）:
->   register: {brand/product，判断规则同 extensions/README.md → Register 感知}
->   产品名称: {project_name}
->   产品定位: {产品定位输入，若无则基于品牌规范推断}
->   品牌规范: {品牌规范输入}
->   当前步骤产出: {Step 1 色彩体系 / Step 2 视觉方向}
->   目标语言: {目标语言}
-> ```
-> 调用 ext-impeccable 时，在输入中显式声明 `跳过 Setup，使用内联上下文`，ext-impeccable 应直接消费内联上下文执行子命令，不触发 teach 或 load-context。
->
-> **阶段二（Step 5 完成后）**：PRODUCT.md/DESIGN.md 已生成，执行完整 Setup（`node {SKILL_DIR}/scripts/load-context.mjs`），为后续 page-builder 的 ext-impeccable 调用做好准备。若 Setup 检测到 PRODUCT.md 内容为占位符（<200字符或含[TODO]标记），则补充完善后再确认 Setup 成功。
-
-#### 1a. ext-ui-ux-pro-max --design-system
-
-**必调**：数据驱动推荐提供独立视角，即使品牌规范完整也应审视现有方案是否最优
-
-```
-Skill: ext-ui-ux-pro-max
-输入:
-  查询: "{产品类型} {行业} {风格关键词}"
-  模式: --design-system
-  项目名称: {project_name}
-  已有方案: {品牌规范输入，若有}（作为参考，不作为约束）
-输出: 设计系统推荐（风格/色彩/字体/效果/反模式）
-验证: 返回了完整的设计系统推荐，包含至少3个色彩方案和2个字体配对
-模式: 🤖
-```
-
-#### 1b. ext-impeccable colorize
-
-**必调**：colorize 专注执行层色彩增强（战略性色彩布局），与 ext-frontend-design 的方向定义互补，不互斥
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: colorize
-  目标: 当前色彩体系
-  上下文: 品牌规范 + 产品定位 + 设计令牌初稿
-  内联上下文: 跳过 Setup，使用内联上下文（register={brand/product} + 产品名称 + 产品定位 + 品牌规范 + Step 1 色彩体系 + 目标语言）
-输出: 增强色彩方案
-验证: 品牌色占比提升至15-30%，中性色占比降至50%以下
-模式: 🤖
-```
-
-### Step 2: 视觉风格定义（必调 ext-frontend-design）
+### Step 2: 视觉风格定义
 
 **这是最关键的步骤**——定义"这个产品应该长什么样"，而非只输出令牌数值。
 
@@ -162,48 +114,7 @@ Skill: ext-impeccable
 | 设计张力 | 大胆vs克制的程度（conservative/balanced/bold/extreme），决定设计是"安全但无聊"还是"有记忆点" | tension_level |
 | 视觉叙事 | 页面如何引导用户视线流动（如"Z型阅读→聚焦CTA→渐进展示细节"），定义信息呈现的叙事节奏 | visual_narrative |
 
-**必调 ext-frontend-design**（每个项目都必须经过美学方向审视）：
-
-```
-Skill: ext-frontend-design
-输入:
-  design_brief: 品牌基因 + 产品定位 + 行业特征 + 色彩体系初稿
-  register: {brand/product，判断规则同 extensions/README.md → Register 感知}
-  brand_spec: 品牌规范
-  product_positioning: 产品定位
-  visual_direction: 当前视觉方向初稿（aesthetic_direction/color_strategy/mood_keywords/tension_level/visual_narrative/visual_bans）
-  design_tokens: 色彩体系初稿
-  target_language: {目标语言}
-  inline_context: 跳过 Setup，使用内联上下文（register + 产品名称 + 产品定位 + 品牌规范 + Step 2 视觉方向 + 目标语言）
-输出: 结构化差异化建议（aesthetic_direction/font_substitutions/color_substitutions/layout_differentiation/visual_bans/differentiation_summary）
-验证: font_substitutions不含Inter/Roboto/Arial推荐 + color_substitutions不含蓝紫渐变推荐 + visual_bans≥3项 + register对齐
-模式: 🤖
-```
-
-**约束力提升**：ext-frontend-design 结构化输出必须自动映射到 `visual_direction`，使下游 page-builder Step 4 的"视觉禁忌"检查项可验证。映射规则：
-- `font_substitutions[*].avoid` → 追加"禁止使用{font}"到 visual_bans 数组
-- `color_substitutions[*].avoid` → 追加被替代的色彩模式到 visual_bans 数组
-- `layout_differentiation` → 追加到 aesthetic_direction，作为视觉风格补充描述
-- `visual_bans[*]` → 直接追加到 visual_bans 数组
-- `aesthetic_direction` → 覆盖 visual_direction.aesthetic_direction
-
-**Register 感知**：brand→极端美学方向；product→差异化但克制
-
-**ext-impeccable typeset**：
-
-**必调**：排版层级增强是视觉品质的基础保障，即使当前排版已达标也应审视优化空间
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: typeset
-  目标: 当前排版体系
-  上下文: 品牌规范 + 产品定位 + 字体令牌初稿
-  内联上下文: 跳过 Setup，使用内联上下文（register={brand/product} + 产品名称 + 产品定位 + 品牌规范 + Step 2 视觉方向 + 目标语言）
-输出: 排版增强方案
-验证: 字号层级≥6级，最大/最小字号比≥2，字重使用≥3种
-模式: 🤖
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 3: 组件库选择与主题定制
 
@@ -238,20 +149,7 @@ else:
 
 组件复用决策：复用度≥3页面→高优先级，1-2页面→中优先级，仅1页面→页面私有。
 
-**ext-impeccable extract**：
-
-**条件调用**：仅当项目包含现有代码时调用（全新项目无内容可提取，跳过）
-
-```
-Skill: ext-impeccable
-输入:
-  子命令: extract
-  目标: 现有组件库或已有项目代码
-  上下文: 项目目录路径 + 现有设计令牌
-输出: 可复用的设计令牌和组件模式提取
-验证: 提取结果包含色彩、字体、间距、组件模式
-模式: 🤖
-```
+> ext-impeccable extract 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑。仅当项目包含现有代码时编排器会调用 extract（全新项目无内容可提取，跳过）
 
 ### Step 4: 项目脚手架初始化
 
@@ -308,14 +206,7 @@ Skill: ext-impeccable
 | ko-KR | Noto Sans KR | 14-16px | 1.6-1.8 | 偏大 |
 | ar-SA | Noto Sans Arabic | 14-16px | 1.6-1.8 | 偏大（RTL） |
 
-**阶段二 Setup 确认**：PRODUCT.md/DESIGN.md 生成后，执行完整 Setup 为下游 Skill 准备上下文：
-
-```
-动作: ext-impeccable Setup 确认
-执行: node {SKILL_DIR}/scripts/load-context.mjs
-验证: hasProduct=true 且 PRODUCT.md 内容≥200字符且不含[TODO]标记
-失败处理: 补充完善 PRODUCT.md/DESIGN.md 内容后重新执行
-```
+> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ## 输出
 
@@ -378,20 +269,23 @@ Skill: ext-impeccable
 
 ## 质量检查
 
-- [ ] visual_direction 所有10个维度均有明确定义
-- [ ] ext-frontend-design 已调用且输出不含AI同质化特征
-- [ ] ext-ui-ux-pro-max 已调用且设计推荐已被审视
-- [ ] ext-impeccable colorize 已调用且色彩增强已应用
-- [ ] ext-impeccable typeset 已调用且排版增强已应用
-- [ ] ext-frontend-design 的视觉禁忌和字体替代已追加到 visual_bans
-- [ ] PRODUCT.md 和 DESIGN.md 已生成且内容非占位符
-- [ ] 色彩体系覆盖品牌色+功能色+中性色+语义色4类
-- [ ] 正文色与背景色对比度≥4.5:1（WCAG AA）
+P0（必须通过，不通过则阻断输出）：
+- [ ] WCAG AA对比度100%达标（正文≥4.5:1，大文本≥3:1）
+- [ ] 视觉方向不含AI同质化特征（由编排器调用ext-frontend-design审视）
+- [ ] 设计系统推荐已被数据驱动审视（由编排器调用ext-ui-ux-pro-max）
+- [ ] npm run dev启动成功
+
+P1（建议通过，不通过则标注"待修复"）：
+- [ ] 色彩体系完整（品牌色+功能色+中性色+语义色）
 - [ ] 字号层级≥6级
 - [ ] 间距令牌≥8级
-- [ ] npm run dev 启动成功
-- [ ] 令牌文件已写入 {project_dir}/src/styles/
-- [ ] 若有 PRD 输入：组件清单已包含 PRD 中列出的所有功能区域对应的组件（或已提供合理替代方案并标注替代理由）
+- [ ] visual_direction 10个维度均有定义
+- [ ] 色彩增强已应用（由编排器调用ext-impeccable colorize）
+- [ ] 排版增强已应用（由编排器调用ext-impeccable typeset）
+- [ ] 暗色模式推导完成
+- [ ] 组件库主题定制完成
+- [ ] 项目骨架文件完整（package.json/tsconfig/路由/布局组件）
+- [ ] PRODUCT.md和DESIGN.md已生成
 
 ## 降级策略
 
@@ -403,6 +297,7 @@ Skill: ext-impeccable
 | package_manager缺失 | 默认使用pnpm | 包管理器可能与团队习惯不一致 |
 | PRD缺失 | 不规划自定义组件，仅配置组件库主题 | 组件需求待PRD补充 |
 | project_dir 缺失 | 仅输出到 output/ 目录 | 代码文件需手动复制 |
+| ext skill 未部署 | 由编排器负责调用，若编排器未调用则执行内置降级 | ext增强效果缺失，核心功能不受影响 |
 
 ## 上游变更响应
 
@@ -424,6 +319,7 @@ Skill: ext-impeccable
 
 ## 变更记录
 
+- v1.5: 质量检查P0/P1分级，P0不通过阻断输出
 - v1.4: 移除handoff-spec输入（PM不应定义UI决策）；PRD消费规则替代handoff-spec消费规则；PRD说明增加"含功能区域和组件需求"
 - v1.3: ext-impeccable两阶段调用策略（解决PRODUCT.md/DESIGN.md循环依赖）；Step 1-2使用内联上下文替代Setup；Step 5完成后执行完整Setup确认；colorize/typeset调用块增加内联上下文指令
 - v1.2: handoff-spec消费规则从"约束"改为"意图约束"；组件需求从"必须包含"改为"必须包含或提供合理替代方案"；令牌覆盖从"所有变量"改为"所有变量意图"

@@ -34,7 +34,7 @@ Every design task operates in one of two registers, which fundamentally changes 
 
 ## Input Contract
 
-When called by core Skills (project-init / page-builder), accept the following structured input:
+When called by ui-orchestrator (on behalf of project-init / page-builder), accept the following structured input:
 
 | Input Field | Type | Required | Description |
 |-------------|------|----------|-------------|
@@ -52,7 +52,7 @@ When invoked directly by users (not via core Skill), the input is free-form: des
 
 ## Output Contract
 
-When called by core Skills, MUST return structured output in the following schema:
+When called by ui-orchestrator, MUST return structured output in the following schema:
 
 ```json
 {
@@ -102,7 +102,7 @@ When called by core Skills, MUST return structured output in the following schem
 }
 ```
 
-**Consumer mapping** (how core Skills consume this output):
+**Consumer mapping** (how core Skills consume this output, dispatched by ui-orchestrator):
 
 | Output Field | Consumer | Mapping |
 |---|---|---|
@@ -114,7 +114,7 @@ When called by core Skills, MUST return structured output in the following schem
 
 ## Verification Criteria
 
-Core Skills verify ext-frontend-design output against these criteria:
+Core Skills verify ext-frontend-design output against these criteria (dispatched by ui-orchestrator):
 
 | Criterion | Check |
 |-----------|-------|
