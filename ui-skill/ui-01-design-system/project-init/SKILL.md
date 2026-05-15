@@ -115,6 +115,45 @@ metadata:
 | 设计张力 | 大胆vs克制的程度（conservative/balanced/bold/extreme），决定设计是"安全但无聊"还是"有记忆点" | tension_level |
 | 视觉叙事 | 页面如何引导用户视线流动（如"Z型阅读→聚焦CTA→渐进展示细节"），定义信息呈现的叙事节奏 | visual_narrative |
 
+**视觉锚点定义**（防止文字描述导致AI理解模糊）：
+
+纯文字的视觉方向（如"温暖有机"）对AI模型而言有100种视觉解释，必须补充具体的视觉锚点，将模糊意图转化为可执行的视觉参数。
+
+| 锚点维度 | 定义内容 | 输出字段 | 示例 |
+|---------|---------|---------|------|
+| 圆角策略 | 全局圆角半径级别 | border_radius_level | sharp(0-2px)/subtle(4-8px)/medium(12-16px)/round(20-24px)/pill(999px) |
+| 阴影策略 | 阴影层级和风格 | shadow_style | none/flat(纯偏移)/subtle(微扩散)/elevated(多层扩散)/dramatic(大范围投影) |
+| 间距节奏 | 间距基数和节奏模式 | spacing_rhythm | tight(4px基数)/standard(8px基数)/relaxed(16px基数) + 规律(均匀)/jazz(跳跃)/symphonic(多层级) |
+| 字号跳跃 | 标题与正文的字号对比度 | type_scale | modest(1.2x)/standard(1.333x)/strong(1.5x)/dramatic(2x+) |
+| 品牌色使用方式 | 品牌色在页面中的分布模式 | brand_color_usage | accent(仅按钮/链接)/spotlight(关键区域背景)/flood(大面积背景+渐变) |
+| 图像风格 | 图片/插画的视觉处理方式 | image_treatment | none/photography/illustration/3d/abstract/minimal-icon |
+| 动效风格 | 交互动效的力度和节奏 | motion_style | none/subtle(微反馈)/moderate(平滑过渡)/expressive(弹性+编排)/theatrical(戏剧性编排) |
+| 网格密度 | 内容区域的信息密度 | grid_density | sparse(宽松+大量留白)/balanced(标准间距)/dense(紧凑+信息密集) |
+
+**视觉参考图生成**：
+
+基于视觉方向和锚点定义，生成2张Moodboard参考图，为后续页面构建提供视觉锚点：
+
+```
+动作: 生成视觉参考图
+输入:
+  aesthetic_direction: Step 2定义的美学方向
+  mood_keywords: 情绪关键词
+  reference_style: 参考风格
+  border_radius_level/shadow_style/spacing_rhythm/type_scale/brand_color_usage/image_treatment/motion_style/grid_density: 8个锚点维度
+输出:
+  moodboard_light: 参考图URL（亮色模式Moodboard，展示整体视觉氛围+布局节奏+色彩分布）
+  moodboard_dark: 参考图URL（暗色模式Moodboard，如有暗色需求）
+prompt构建规则:
+  - 包含aesthetic_direction关键词
+  - 包含mood_keywords
+  - 包含reference_style参考
+  - 包含锚点维度的具体参数（如"round border radius"、"dramatic type scale"）
+  - 包含"web UI dashboard/landing page"确保产出是界面而非纯艺术
+  - 包含"no AI generic style, no blue-purple gradient, no Inter font"排除同质化
+  - image_size: landscape_16_9
+```
+
 > ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
 
 ### Step 3: 组件库选择与主题定制
@@ -242,7 +281,17 @@ else:
         "mood_keywords": {"type": "array", "items": {"type": "string"}, "minItems": 3, "maxItems": 5, "description": "3-5个核心情绪词"},
         "reference_style": {"type": "string", "minLength": 5, "description": "1-2个可参考的产品/设计风格"},
         "tension_level": {"type": "string", "enum": ["conservative", "balanced", "bold", "extreme"]},
-        "visual_narrative": {"type": "string", "minLength": 10, "description": "页面视线流动路径描述，如'Z型阅读→聚焦CTA→渐进展示细节'"}
+        "visual_narrative": {"type": "string", "minLength": 10, "description": "页面视线流动路径描述，如'Z型阅读→聚焦CTA→渐进展示细节'"},
+        "border_radius_level": {"type": "string", "enum": ["sharp", "subtle", "medium", "round", "pill"], "description": "全局圆角半径级别"},
+        "shadow_style": {"type": "string", "enum": ["none", "flat", "subtle", "elevated", "dramatic"], "description": "阴影层级和风格"},
+        "spacing_rhythm": {"type": "string", "description": "间距基数+节奏模式，如'standard+jazz'"},
+        "type_scale": {"type": "string", "enum": ["modest", "standard", "strong", "dramatic"], "description": "标题与正文的字号对比度"},
+        "brand_color_usage": {"type": "string", "enum": ["accent", "spotlight", "flood"], "description": "品牌色在页面中的分布模式"},
+        "image_treatment": {"type": "string", "enum": ["none", "photography", "illustration", "3d", "abstract", "minimal-icon"], "description": "图片/插画的视觉处理方式"},
+        "motion_style": {"type": "string", "enum": ["none", "subtle", "moderate", "expressive", "theatrical"], "description": "交互动效的力度和节奏"},
+        "grid_density": {"type": "string", "enum": ["sparse", "balanced", "dense"], "description": "内容区域的信息密度"},
+        "moodboard_light": {"type": "string", "description": "亮色模式Moodboard参考图URL"},
+        "moodboard_dark": {"type": "string", "description": "暗色模式Moodboard参考图URL（可选）"}
       }
     },
     "tokens": {

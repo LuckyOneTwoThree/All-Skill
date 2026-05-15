@@ -228,7 +228,37 @@ stages:
 | 2.3 | ext-frontend-design | visual_direction+品牌规范+产品定位 (stage-1) | 美学方向审视 | 不含AI同质化特征 |
 | 2.4 | ext-impeccable typeset | 排版体系+visual_direction (stage-1) | 排版层级增强 | 排版增强建议已生成 |
 
-⏸ 人类确认设计系统增强结果
+**强制回写步骤**（2.1-2.4全部完成后必须执行）：
+
+ext Skill 产出的增强建议必须**强制回写**到 project-init.json，否则 stage-3 的 page-builder 仍消费 stage-1 的原始令牌，增强效果断裂。
+
+| 回写来源 | 回写目标 | 回写规则 |
+|---------|---------|---------|
+| ext-ui-ux-pro-max colors[].palette | tokens.colors.brand | 取推荐排名第1的色彩方案替换品牌色色阶 |
+| ext-ui-ux-pro-max typography[].heading/body | tokens.typography.font_families | 取推荐排名第1的字体配对替换标题和正文字体 |
+| ext-impeccable colorize | tokens.colors + visual_direction.color_strategy | 色彩增强建议合并到令牌，策略有变更时同步更新 |
+| ext-impeccable typeset | tokens.typography | 排版增强建议合并到排版令牌（字号/字重/行高） |
+| ext-frontend-design font_substitutions | tokens.typography.font_families | 逐项替换：avoid字体→use_instead字体 |
+| ext-frontend-design color_substitutions | tokens.colors | 逐项替换：avoid配色→use_instead配色 |
+| ext-frontend-design visual_bans | visual_direction.visual_bans | 追加到视觉禁忌列表（不覆盖原有项） |
+| ext-frontend-design aesthetic_direction | visual_direction.aesthetic_direction | 替换美学方向描述 |
+| ext-frontend-design layout_differentiation | visual_direction.visual_narrative | 追加布局差异化策略到视觉叙事 |
+
+回写执行指令：
+```
+动作: ext增强结果强制回写
+输入:
+  ext-ui-ux-pro-max输出: 设计系统推荐（色彩方案+字体配对）
+  ext-impeccable colorize输出: 色彩增强建议
+  ext-impeccable typeset输出: 排版增强建议
+  ext-frontend-design输出: 美学方向审视（字体替换+配色替换+visual_bans+aesthetic_direction+layout_differentiation）
+  project-init.json: output/ui-project-init/project-init.json
+输出: 更新后的 output/ui-project-init/project-init.json + 更新后的 {project_dir}/src/styles/tokens.css + 更新后的 {project_dir}/src/styles/tokens.json + 更新后的 {project_dir}/DESIGN.md
+验证: project-init.json的tokens和visual_direction已包含ext增强结果，tokens.css/tokens.json已同步更新，DESIGN.md已同步更新
+模式: 🤖
+```
+
+⏸ 人类确认设计系统增强结果（含回写后的最终令牌和视觉方向）
 
 ### Stage 3: 页面与组件构建
 

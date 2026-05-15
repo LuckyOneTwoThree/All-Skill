@@ -128,6 +128,32 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 设计张力 | 视觉大胆程度：conservative→安全克制，balanced→平衡，bold→有冲击力，extreme→极致实验 | tension_level |
 | 视觉叙事 | 页面视线流动路径（如"Z型阅读→聚焦CTA→渐进展示细节"） | visual_narrative |
 
+**视觉锚点消费**（消费visual-direction的8个锚点维度）：
+
+visual_direction 中的锚点维度将模糊的视觉意图转化为具体的视觉参数，page-builder 必须严格遵循：
+
+| 锚点维度 | 消费规则 | 违反判定 |
+|---------|---------|---------|
+| border_radius_level | 所有圆角值必须与级别对应：sharp→0-2px, subtle→4-8px, medium→12-16px, round→20-24px, pill→999px | 出现不符合级别的圆角值 |
+| shadow_style | 阴影风格必须一致：none→无阴影, flat→仅偏移无模糊, subtle→微扩散, elevated→多层扩散, dramatic→大范围投影 | 阴影风格与定义不一致 |
+| spacing_rhythm | 间距必须遵循节奏模式：tight→4px基数, standard→8px基数, relaxed→16px基数；规律→均匀递增, jazz→跳跃式(4/8/24/8), symphonic→多层级(4/8/16/32/48) | 间距不符合节奏模式 |
+| type_scale | 字号跳跃必须达到级别：modest→1.2x, standard→1.333x, strong→1.5x, dramatic→2x+ | h1与body字号比低于级别要求 |
+| brand_color_usage | 品牌色分布必须匹配：accent→仅按钮/链接/图标, spotlight→关键区域背景+CTA, flood→大面积背景+渐变+Hero区域 | 品牌色分布与定义不符 |
+| image_treatment | 图片处理方式必须一致：none→纯文字, photography→真实照片, illustration→插画, 3d→3D渲染, abstract→抽象图形, minimal-icon→极简图标 | 图片风格与定义不一致 |
+| motion_style | 动效力度必须匹配：none→无动效, subtle→微反馈(色变/微移), moderate→平滑过渡(滑入/淡入), expressive→弹性+编排(交错/弹簧), theatrical→戏剧性编排(全屏转场/粒子) | 动效力度与定义不符 |
+| grid_density | 信息密度必须匹配：sparse→宽松+大量留白(每屏≤3个内容块), balanced→标准间距(每屏4-6个内容块), dense→紧凑+信息密集(每屏≥7个内容块) | 内容块数量与密度定义不符 |
+
+**tension_level 视觉模式库**：
+
+tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉实现策略：
+
+| 张力级别 | 布局策略 | 色彩策略 | 排版策略 | 间距策略 | 品牌色策略 |
+|---------|---------|---------|---------|---------|-----------|
+| conservative | 对称布局，标准网格，居中对齐 | 中性色为主(≥70%)，品牌色点缀(≤10%) | 标准字号跳跃(1.333x)，常规字重(400/600) | 均匀间距，标准8px基数 | 仅按钮和链接使用品牌色 |
+| balanced | 适度不对称，1-2个视觉焦点 | 中性色为主(50-60%)，品牌色辅助(20-30%) | 适度跳跃(1.333-1.5x)，标题加粗(700) | 有节奏的间距变化，8px基数+jazz节奏 | 关键区域背景使用品牌色淡色变体 |
+| bold | 不对称布局，大面积视觉区域，打破网格 | 品牌色显著(30-50%)，强对比色块 | 大跳跃(1.5x+)，超大标题(48px+)，极端字重对比(900/300) | 大幅跳跃间距，16px基数+symphonic节奏 | Hero区域品牌色大面积使用，渐变背景 |
+| extreme | 实验性布局，全屏视觉，重叠元素，非传统网格 | 品牌色主导(>50%)，撞色，高饱和度 | 极端跳跃(2x+)，文字叠加图片，非常规排版 | 极端间距对比(4px↔64px)，留白与密集交替 | 品牌色flood模式，全屏渐变+文字叠加 |
+
 布局规则：
 - 桌面端：Header+Sidebar(240px)+Main+Footer
 - 平板端：Header+可折叠Sidebar+Main+Footer
@@ -240,9 +266,12 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 |--------|---------|------|
 | 视觉节奏遵循 | 页面实现与Step 1视觉节奏设计一致（视觉重心/密度分布/色彩节奏/层次感/设计张力/视觉叙事6维度均已体现） | P0 |
 | 品牌色占比 | 品牌色占比在visual_direction.color_strategy对应区间（Restrained:5-15%/Committed:30-60%/Full palette:15-40%/Drenched:>60%） | P1 |
-| 排版层级跳跃 | h1/h2/h3/h4/body之间字号比≥1.25，字重差≥100 | P1 |
+| 排版层级跳跃 | h1/h2/h3/h4/body之间字号比≥type_scale对应倍率，字重差≥100 | P0 |
 | visual_direction一致性 | 组件视觉风格与aesthetic_direction描述一致，不出现aesthetic_direction中未提及的风格特征 | P0 |
 | 留白节奏 | 页面间距非均匀分布，至少3种不同间距值形成节奏感 | P1 |
+| 视觉锚点遵循 | 8个锚点维度(border_radius_level/shadow_style/spacing_rhythm/type_scale/brand_color_usage/image_treatment/motion_style/grid_density)的实现与visual_direction定义一致 | P0 |
+| AI同质化特征检测 | 不包含以下AI同质化特征：Inter/Roboto/Arial作为主字体、蓝紫渐变+白底配色、均匀卡片网格布局、所有间距相同、无视觉焦点 | P0 |
+| 视觉无聊度检测 | 不满足以下任一条件即为"视觉无聊"：①品牌色占比<5% ②所有字号跳跃<1.25x ③所有间距值相同 ④无视觉焦点区域 ⑤无任何阴影或深度层次 | P1 |
 
 **无障碍检查**：
 
@@ -387,6 +416,9 @@ P0（必须通过，不通过则阻断输出）：
 - [ ] 100%组件来自组件库或本次生成
 - [ ] visual_direction一致性（组件风格与aesthetic_direction一致）
 - [ ] 视觉节奏6维度已在页面中体现
+- [ ] 视觉锚点8维度实现与visual_direction定义一致
+- [ ] 排版层级跳跃≥type_scale对应倍率
+- [ ] 不包含AI同质化特征（Inter/Roboto主字体、蓝紫渐变+白底、均匀卡片网格、相同间距、无视觉焦点）
 
 P1（建议通过，不通过则标注"待修复"）：
 - [ ] TypeScript类型定义完整，无any类型
@@ -399,6 +431,7 @@ P1（建议通过，不通过则标注"待修复"）：
 - [ ] 品牌色占比在color_strategy对应区间内
 - [ ] 排版层级有足够跳跃感（字号比≥1.25，字重差≥100）
 - [ ] 页面间距有节奏感（非均匀分布，至少3种间距值）
+- [ ] 视觉无聊度检测通过（品牌色占比≥5%、字号跳跃≥1.25x、间距有变化、有视觉焦点、有深度层次）
 - [ ] audit设计品味评分≥75分
 - [ ] 页面结构推荐已被数据驱动审视（由编排器调用ext-ui-ux-pro-max）
 - [ ] 差异化建议已应用（由编排器调用ext-frontend-design）
