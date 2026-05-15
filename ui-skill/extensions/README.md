@@ -168,6 +168,38 @@ ext skill 是专业设计能力，核心 Skill 必须经过 ext skill 审视，�
 | animate 与 ext-interaction-design 功能重叠 | animate 管策略（评估哪里需要动画），interaction-design 管实现（提供代码模式），先策略后实现 |
 | distill 删减了 bolder/delight 增强的内容 | 以 distill 为准（简化优先于增强） |
 
+### ext-impeccable 子命令输出消费规则
+
+核心 Skill 调用 ext-impeccable 子命令后，必须按以下规则消费输出：
+
+| 子命令 | 输出类型 | 消费规则 | 消费方 |
+|--------|---------|---------|--------|
+| colorize | 增强色彩方案 | 品牌色占比调整至15-30%，中性色占比降至50%以下；新增色彩追加到 design tokens | project-init |
+| typeset | 排版增强方案 | 字号层级扩展至≥6级，字重使用≥3种；更新 typography tokens | project-init |
+| extract | 可复用设计令牌和组件模式 | 提取的色彩/字体/间距/组件模式合并到现有令牌体系，避免重复定义 | project-init |
+| shape | 组件UX规划 | 状态机覆盖所有状态转换，视觉方向建议映射到组件实现 | page-builder |
+| layout | 布局优化方案 | 间距节奏和视觉层级应用到页面布局代码 | page-builder |
+| adapt | 响应式适配策略 | 断点覆盖375px/768px/1024px/1440px，适配策略应用到响应式代码 | page-builder |
+| animate | 动效策略评估 | 评估结果决定哪些状态转换需要动画，动效参数映射到动画令牌 | page-builder |
+| bolder | 视觉增强代码 | 品牌色占比提升，视觉表现力增强；直接替换原组件代码 | page-builder |
+| quieter | 视觉收敛代码 | 品牌色占比收敛，视觉强度降低；直接替换原组件代码 | page-builder |
+| delight | 愉悦感微细节代码 | 微交互和视觉细节追加到组件代码 | page-builder |
+| clarify | UX文案优化代码 | 表单/空状态/错误状态文案替换到页面代码 | page-builder |
+| onboard | 新手引导设计代码 | 引导流程代码追加到页面组件 | page-builder |
+| distill | 简化后代码 | 以 distill 输出为准，替换原页面代码（简化优先于增强） | page-builder |
+| audit | 审查报告 | 评分<75分触发 critique 闭环；评分≥75分通过审查 | page-builder |
+| critique | UX设计评审+代码修改 | 修改后的代码替换原代码，触发 re-audit 验证（最多2次循环） | page-builder |
+| harden | 生产就绪化代码 | 错误处理/i18n/边缘情况代码合并到组件代码 | page-builder |
+| polish | 最终打磨代码 | 直接替换原组件代码（polish 始终最后执行） | page-builder |
+| optimize | UI渲染优化方案 | 优化方案应用到性能瓶颈组件，LCP目标≤2.5s | production-ready |
+
+**通用消费规则**：
+1. 子命令输出为代码时，直接替换目标代码（非追加）
+2. 子命令输出为方案/策略时，由核心 Skill 决定如何映射到代码实现
+3. 多个子命令合并调用时（如 `animate bolder delight`），按子命令顺序依次消费，后者在前者输出基础上修改
+4. 子命令输出与 visual_direction 冲突时，以 visual_direction 为准（visual_direction 是全局约束）
+5. distill 输出优先级高于 bolder/delight（简化优先于增强）
+
 ### 调用格式（写入核心 Skill 的 SKILL.md）
 
 ```

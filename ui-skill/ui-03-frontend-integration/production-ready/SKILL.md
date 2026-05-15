@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "前端集成"
   type: "pipeline"
-  version: "1.1"
+  version: "1.2"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "准备上线"
@@ -95,7 +95,11 @@ E2E测试：核心用户流程100%覆盖，使用Playwright/Cypress。
 
 **外部 Skill 调用**：
 
-> **ext-impeccable 首次调用前必须执行 Setup**：见 [extensions/README.md → ext-impeccable Setup](../../extensions/README.md)
+> **ext-impeccable Setup 前置检查**：production-ready 调用 ext-impeccable 前，必须确认 Setup 已完成。检查规则：
+> 1. 检查 {project_dir}/PRODUCT.md 是否存在且内容≥200字符且不含[TODO]标记
+> 2. 若 PRODUCT.md 不存在或为占位符 → 执行完整 Setup：`node {SKILL_DIR}/scripts/load-context.mjs`，若 PRODUCT.md 缺失则先基于项目代码和上游输入生成 PRODUCT.md/DESIGN.md
+> 3. 若 PRODUCT.md 已就绪 → 跳过 Setup，直接调用子命令
+> 4. 此检查替代 project-init Step 5 的 Setup 确认，确保即使 production-ready 被单独调用也能正常工作
 
 #### ext-impeccable optimize
 
@@ -204,5 +208,6 @@ CI配置写入 {project_dir}/。
 
 ## 变更记录
 
+- v1.2: ext-impeccable调用增加Setup前置检查（确保单独调用production-ready时也能正常工作）
 - v1.1: 补充上游变更响应和向上游反馈机制；ext-impeccable Setup统一引用
 - v1.0: 合并 frontend-build-deploy + frontend-performance + frontend-test；构建+测试+性能一体化

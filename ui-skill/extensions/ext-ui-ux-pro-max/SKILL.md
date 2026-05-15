@@ -35,6 +35,112 @@ winget install Python.Python.3.12
 
 **{SKILL_DIR}** 表示 ext-ui-ux-pro-max Skill 所在目录的绝对路径，在执行脚本时替换为实际路径。
 
+## Input Contract
+
+When called by core Skills (project-init / page-builder), accept the following structured input:
+
+| Input Field | Type | Required | Description |
+|-------------|------|----------|-------------|
+| query | string | yes | Search query: "{product_type} {industry} {style_keywords}" |
+| mode | string | yes | "--design-system" (project-init) or "--domain {landing/dashboard/general}" (page-builder) |
+| project_name | string | no | Project name for persistence (-p flag) |
+| existing_plan | object | no | Current design plan from core Skill (as reference, not constraint) |
+
+When invoked directly by users (not via core Skill), the input is free-form: describe what you need.
+
+## Output Contract
+
+When called by core Skills, MUST return structured output in the following schema:
+
+**--design-system mode** (for project-init):
+
+```json
+{
+  "type": "object",
+  "required": ["style", "colors", "typography", "effects", "anti_patterns"],
+  "properties": {
+    "style": {
+      "type": "object",
+      "description": "Recommended style with reasoning",
+      "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "reasoning": {"type": "string"}
+      }
+    },
+    "colors": {
+      "type": "array",
+      "description": "At least 3 color scheme recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "palette": {"type": "array", "items": {"type": "string"}},
+          "use_case": {"type": "string"}
+        }
+      }
+    },
+    "typography": {
+      "type": "array",
+      "description": "At least 2 font pairing recommendations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "heading": {"type": "string"},
+          "body": {"type": "string"},
+          "reasoning": {"type": "string"}
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Recommended visual effects (shadows, borders, gradients, etc.)"
+    },
+    "anti_patterns": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Patterns to avoid for this project type"
+    }
+  }
+}
+```
+
+**--domain mode** (for page-builder):
+
+```json
+{
+  "type": "object",
+  "required": ["layout_pattern", "cta_strategy", "information_architecture", "anti_patterns"],
+  "properties": {
+    "layout_pattern": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "sections": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "cta_strategy": {"type": "string", "description": "Call-to-action placement and style recommendation"},
+    "information_architecture": {"type": "string", "description": "Content hierarchy recommendation"},
+    "anti_patterns": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Patterns to avoid for this page type"
+    }
+  }
+}
+```
+
+## Verification Criteria
+
+| Criterion | Check |
+|-----------|-------|
+| --design-system output completeness | Contains at least 3 color schemes and 2 font pairings |
+| --domain output completeness | Contains layout pattern, CTA strategy, and anti-patterns |
+| Anti-patterns present | At least 1 anti-pattern listed |
+| Reasoning provided | Each recommendation includes reasoning |
+
 ## How to Use This Skill
 
 When user requests UI/UX work (design, build, create, implement, review, fix, improve), follow this workflow:
