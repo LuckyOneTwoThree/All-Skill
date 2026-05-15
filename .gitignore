@@ -4,6 +4,7 @@
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+*.lnk
 
 # Editor / IDE
 .idea/
