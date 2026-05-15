@@ -1,0 +1,348 @@
+---
+name: data-analysis-report
+description: 当需要产出完整的数据分析报告时使用。数据洞察报告自动生成，整合漏斗分析、留存分析、异常检测和决策洞察数据，补充趋势解读和行动建议，输出结构化Markdown报告。关键词：数据分析报告、数据洞察报告、运营报告、数据报告、分析报告、出个数据报告、帮我写运营分析、总结下数据情况。
+metadata:
+  module: "度量运营与决策"
+  sub-module: "数据分析"
+  type: "pipeline"
+  version: "2.1"
+  domain_tags: ["通用"]
+  trigger_examples:
+    - "帮我出一份本月的数据分析报告"
+    - "把最近的数据情况汇总一下"
+    - "生成运营周报"
+  interaction_mode: "ai_suggest_human_approve"
+---
+
+# 数据洞察报告自动生成
+
+## 核心原则
+
+1. **数据说话，洞察驱动**——数据是起点，洞察是终点，行动是目的
+2. **异常优先**——异常比常态更值得关注，异常是改进的信号
+3. **归因深挖**——不只说"是什么"，更要回答"为什么"
+4. **可执行结论**——每条洞察必须对应一个可执行的行动
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
+
+## 输入
+
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| 漏斗分析 | JSON | ○ | output/pm-metrics-ops/analysis-funnel/funnel-analysis.json | 漏斗健康度、转化率、流失点 |
+| 留存分析 | JSON | ○ | output/pm-metrics-ops/analysis-retention/retention-analysis.json | 留存曲线、流失预警、 cohorts |
+| 异常检测 | JSON | ○ | output/pm-metrics-ops/analysis-anomaly/anomaly-analysis.json | 异常指标、归因、影响范围 |
+| 决策洞察 | JSON | ○ | output/pm-metrics-ops/decision-dace/decision_insight.json | 数据驱动的决策建议 |
+| 度量体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metrics_system.json | 指标定义和基线 |
+| 分析时间范围 | string | 是 | 用户提供 | 如"2025年Q1""最近30天" |
+| 产品/业务信息 | string | ○ | 用户提供 | 产品名称、核心业务指标 |
+
+## 执行步骤
+
+### Step 1: 数据概览与核心指标
+
+整合度量体系和分析数据，生成数据概览：
+
+**核心指标仪表盘**：
+
+| 指标 | 当前值 | 环比变化 | 同比变化 | 趋势 | 状态 |
+|------|--------|---------|---------|------|------|
+| 北极星指标 | | | | ↑↓→ | 🟢🟡🔴 |
+| 核心转化率 | | | | | |
+| 留存率(D7/D30) | | | | | |
+| DAU/MAU | | | | | |
+| ARPU | | | | | |
+
+**数据质量声明**：
+- 数据覆盖范围
+- 数据完整性评估
+- 已知的数据偏差
+
+### Step 2: 漏斗健康度分析
+
+整合漏斗数据，生成漏斗分析章节：
+
+**全链路漏斗**：
+```
+曝光 → 点击 → 注册 → 激活 → 首次付费 → 复购
+  ↓      ↓      ↓      ↓       ↓         ↓
+ 95%   45%   32%   68%    25%      40%
+```
+
+**关键发现**：
+- 最大流失环节（流失率最高的步骤）
+- 最大提升空间（转化率提升对整体影响最大的步骤）
+- 环比变化最大的环节
+- 异常波动点
+
+**每个关键发现包含**：
+- 数据事实（精确数字）
+- 环比/同比对比
+- 可能原因（至少2个假设）
+- 验证建议
+
+### Step 3: 留存与生命周期分析
+
+整合留存数据，生成留存分析章节：
+
+**留存曲线描述**：
+- 次日/7日/30日留存率
+- 留存曲线形态（L型/下降型/稳定型）
+- cohorts对比（不同批次用户的留存差异）
+
+**生命周期阶段划分**：
+
+| 阶段 | 定义 | 占比 | 特征 |
+|------|------|------|------|
+| 新手期 | 注册后0-3天 | | 高活跃、高流失风险 |
+| 成长期 | 4-14天 | | 功能探索、习惯形成 |
+| 成熟期 | 15-90天 | | 稳定使用、价值感知 |
+| 衰退期 | 90天+活跃下降 | | 使用频率降低 |
+| 流失期 | 连续N天未活跃 | | 需召回策略 |
+
+**流失预警**：
+- 高风险用户特征
+- 流失前行为信号
+- 召回窗口期
+
+### Step 4: 异常归因分析
+
+整合异常检测数据，生成异常分析章节：
+
+**异常事件清单**：
+
+| 时间 | 指标 | 异常类型 | 偏离程度 | 影响范围 | 归因 | 置信度 |
+|------|------|---------|---------|---------|------|--------|
+| | | 突增/突降/趋势偏移 | ±X% | 用户量/收入 | 内因/外因 | 高/中/低 |
+
+**归因分析框架**：
+- 内因：产品变更、技术故障、运营活动
+- 外因：市场变化、竞品动作、季节因素
+- 数据因：统计偏差、数据缺失、口径变更
+
+### Step 5: 洞察与行动建议
+
+整合所有分析数据，提炼洞察和行动建议：
+
+**洞察提炼规则**：
+- 每条洞察 = 数据事实 + 业务含义 + 行动方向
+- 洞察按业务影响排序
+
+**行动建议模板**：
+
+| 优先级 | 建议 | 目标指标 | 预期提升 | 实施难度 | 验证方式 |
+|--------|------|---------|---------|---------|---------|
+| P0 | | | | 低/中/高 | A/B测试/前后对比 |
+| P1 | | | | | |
+| P2 | | | | | |
+
+**建议分类**：
+- 速赢（Quick Win）：低难度、高影响
+- 核心优化：中难度、高影响
+- 长期投入：高难度、高影响
+- 观察项：需更多数据验证
+
+### Step 6: 报告组装
+
+**报告结构**：
+
+```
+# {产品名}数据分析报告（{时间范围}）
+
+## 执行摘要
+- 核心指标一览
+- 3条关键发现
+- Top1行动建议
+
+## 1. 数据概览
+### 1.1 核心指标仪表盘
+### 1.2 数据质量声明
+
+## 2. 漏斗分析
+### 2.1 全链路漏斗
+### 2.2 关键流失点
+### 2.3 提升机会
+
+## 3. 留存分析
+### 3.1 留存曲线
+### 3.2 生命周期阶段
+### 3.3 流失预警
+
+## 4. 异常分析
+### 4.1 异常事件清单
+### 4.2 归因分析
+
+## 5. 洞察与行动建议
+### 5.1 核心洞察
+### 5.2 行动建议（按优先级）
+
+## 附录
+- 数据来源与口径
+- 指标定义
+- 统计方法说明
+```
+
+## 输出
+
+**存储路径**：`output/pm-metrics-ops/data-analysis-report/`
+
+**输出文件**：
+
+| 文件 | 格式 | 说明 |
+|------|------|------|
+| data-analysis-report.md | Markdown | 完整数据分析报告 |
+| data-analysis-report.json | JSON | 结构化数据（供下游Skill引用） |
+
+**输出Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["report_metadata", "executive_summary", "insights", "recommendations"],
+  "properties": {
+    "report_metadata": {"type": "object", "description": "报告元数据，包含产品名、时间范围和数据来源"},
+    "executive_summary": {"type": "object", "description": "执行摘要，包含关键指标、发现和首要建议"},
+    "funnel_analysis": {"type": "object", "description": "漏斗分析，包含完整漏斗、最大流失和机会点"},
+    "retention_analysis": {"type": "object", "description": "留存分析，包含关键节点和生命周期阶段"},
+    "anomaly_analysis": {"type": "object", "description": "异常分析，包含事件和归因"},
+    "insights": {"type": "array", "description": "洞察列表，包含数据事实、业务含义和行动方向"},
+    "recommendations": {"type": "array", "description": "建议列表，包含优先级、预期提升和验证方式"}
+  }
+}
+```
+
+**data-analysis-report.json 结构**：
+
+```json
+{
+  "report_metadata": {
+    "product": "产品名",
+    "time_range": "分析时间范围",
+    "generated_at": "时间戳",
+    "data_sources": [],
+    "data_quality": ""
+  },
+  "executive_summary": {
+    "key_metrics": [],
+    "key_findings": [],
+    "top_recommendation": ""
+  },
+  "funnel_analysis": {
+    "full_funnel": [],
+    "biggest_drop": {},
+    "biggest_opportunity": {},
+    "key_findings": []
+  },
+  "retention_analysis": {
+    "d1": 0, "d7": 0, "d30": 0,
+    "curve_shape": "",
+    "lifecycle_stages": [],
+    "churn_warnings": []
+  },
+  "anomaly_analysis": {
+    "events": [],
+    "attributions": []
+  },
+  "insights": [
+    {
+      "id": "INS-001",
+      "fact": "数据事实",
+      "implication": "业务含义",
+      "action_direction": "行动方向"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "description": "建议描述",
+      "target_metric": "目标指标",
+      "expected_lift": "预期提升",
+      "difficulty": "低/中/高",
+      "category": "速赢/核心优化/长期投入/观察项",
+      "priority": "P0/P1/P2",
+      "validation_method": "验证方式"
+    }
+  ]
+}
+```
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| report_metadata | object | 是 | 报告元数据 |
+| report_metadata.product | string | 是 | 产品名称 |
+| report_metadata.time_range | string | 是 | 分析时间范围 |
+| report_metadata.data_sources | array | 是 | 数据来源列表 |
+| report_metadata.data_quality | string | 是 | 数据质量声明 |
+| executive_summary | object | 是 | 执行摘要 |
+| executive_summary.key_findings | array | 是 | 关键发现列表，至少3条 |
+| executive_summary.top_recommendation | string | 是 | 首要建议 |
+| funnel_analysis | object | 否 | 漏斗分析章节 |
+| retention_analysis | object | 否 | 留存分析章节 |
+| anomaly_analysis | object | 否 | 异常分析章节 |
+| insights | array | 是 | 洞察列表，至少1条 |
+| insights[].id | string | 是 | 洞察编号 |
+| insights[].fact | string | 是 | 数据事实 |
+| insights[].implication | string | 是 | 业务含义 |
+| insights[].action_direction | string | 是 | 行动方向 |
+| recommendations | array | 是 | 建议列表，至少3条 |
+| recommendations[].id | string | 是 | 建议编号 |
+| recommendations[].priority | string | 是 | 优先级，枚举值：P0/P1/P2 |
+| recommendations[].validation_method | string | 是 | 验证方式 |
+
+## 上游变更响应
+
+当上游输入发生变更时，本Skill的响应策略：
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| 漏斗分析数据更新 | 漏斗分析章节 | 更新漏斗数据，重新评估流失点和提升机会 |
+| 留存分析数据更新 | 留存分析章节 | 更新留存数据，重新评估生命周期和流失预警 |
+| 异常检测数据更新 | 异常分析章节 | 更新异常事件和归因，重新评估洞察 |
+| 决策洞察更新 | 洞察和建议章节 | 更新洞察和建议，标记需人类确认 |
+| 度量体系变更 | 核心指标仪表盘 | 更新指标定义和基线，重新评估数据概览 |
+
+当分析报告自身变更时，对下游的通知机制：
+
+| 报告变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| P0建议新增 | decision-dace | 标记P0建议，触发DACE Conclude |
+| 关键发现变更 | decision-culture | 标记发现变更，触发报告推送 |
+| 数据质量声明变更 | 全部下游 | 标记质量变更，触发数据源检查 |
+
+---
+
+## 决策规则
+
+| 条件 | 决策 |
+|------|------|
+| 仅有漏斗数据 | 聚焦漏斗分析，留存和异常章节标注"缺乏数据" |
+| 仅有留存数据 | 聚焦留存和生命周期，漏斗章节标注"缺乏数据" |
+| 无异常数据 | 跳过异常分析章节，标注"无异常检测数据" |
+| 所有分析数据均缺失 | 基于产品信息和AI知识生成框架性报告，标注"缺乏实证数据" |
+| 时间范围>1年 | 建议拆分为季度报告 |
+
+## 质量检查
+
+- [ ] 执行摘要包含3条关键发现+Top1建议
+- [ ] 核心指标仪表盘完整
+- [ ] 漏斗分析包含最大流失点和提升机会
+- [ ] 留存分析包含生命周期阶段
+- [ ] 每条洞察有数据事实+业务含义
+- [ ] 行动建议至少3条，每条有优先级和验证方式
+- [ ] 数据口径和局限性已说明
+
+## 降级策略
+
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| funnel-analysis缺失 | 漏斗章节标注"缺乏漏斗数据" | 缺少转化分析 |
+| retention-analysis缺失 | 留存章节标注"缺乏留存数据" | 缺少生命周期分析 |
+| anomaly-analysis缺失 | 跳过异常分析章节 | 缺少异常归因 |
+| decision-dace缺失 | 行动建议基于数据分析推导 | 建议可能不够深入 |
+| metrics-system缺失 | 核心指标基于用户提供信息 | 指标定义可能不完整 |
+- 若用户未提供分析时间范围，提示用户提供或跳过该输入相关步骤
+- 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤

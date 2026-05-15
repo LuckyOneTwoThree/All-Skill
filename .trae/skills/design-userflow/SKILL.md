@@ -1,0 +1,230 @@
+---
+name: design-userflow
+description: 当需要设计用户流程和任务流程时使用。用户流程自动设计，从PRD和IA方案自动生成Task Flow和User Flow，包含条件分支、异常路径、质量检查和优化建议。适用于核心用户路径梳理和流程优化。关键词：用户流程、User Flow、Task Flow、流程设计、路径优化、用户路径、操作流程。
+metadata:
+  module: "产品构思与设计"
+  sub-module: "产品设计与原型"
+  type: "pipeline"
+  version: "2.1"
+  domain_tags: ["互联网", "软件", "通用"]
+  trigger_examples:
+    - "用户操作流程怎么画"
+    - "帮我梳理用户路径"
+    - "任务流程怎么设计"
+  interaction_mode: "ai_suggest_human_approve"
+---
+
+# 用户流程自动设计
+
+## 核心原则
+
+1. **异常路径和正常路径同等重要**：80%的UX问题出在异常路径上
+2. **死胡同零容忍**：任何导致用户无法完成任务的路径都必须消除
+3. **批量生成人类筛选**：AI批量生成流程方案，人类做最终筛选和判定
+4. **最短路径优先**：核心任务路径步骤数<5为最佳
+
+🤖→👤 AI建议 → 人类审批
+
+## 交互模式
+
+🤖→👤 AI建议人类审批
+
+## 输入
+
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
+| IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
+| 用户研究数据 | JSON | ○ | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | 用户行为模式、任务偏好 |
+
+## 执行步骤
+
+### Step 1: Task Flow生成
+
+定义任务级流程：
+
+- **起始点**: 用户进入场景
+- **步骤序列**: 完成任务的核心路径
+- **系统响应**: 每步的系统反馈
+- **终止点**: 任务完成状态
+
+### Step 2: User Flow生成
+
+扩展为完整用户流程：
+
+- **条件分支**: if/else决策节点
+- **异常路径**: 网络错误、无权限、空状态等
+- **返回路径**: 返回上一步的操作
+- **替代路径**: 完成同一目标的不同方式
+
+### Step 3: 流程质量自动检查
+
+对生成的流程进行质量验证：
+
+| 检查项 | 说明 |
+|--------|------|
+| 最短路径 | 核心任务最少步骤数 |
+| 异常覆盖 | 异常路径覆盖率 |
+| 返回路径 | 是否支持返回操作 |
+| 决策点信息 | 决策时信息是否充分 |
+| 死胡同 | 无法完成任务的情况 |
+
+### Step 4: 流程优化建议
+
+基于质量检查结果提出改进：
+
+- **过长路径标注**: 步骤>5的路径标记
+- **异常处理补充**: 未覆盖的异常场景建议
+- **引导建议**: 复杂节点的引导优化
+- **死胡同处理**: 消除或优化死胡同
+
+## 输出
+
+**存储路径**：`output/pm-design/design-userflow/`
+**输出文件**：userflow.json
+
+```json
+{
+  "user_flow": {
+    "task": "核心任务名称",
+    "flow_type": "task_flow | user_flow",
+    "steps": [
+      {
+        "step": 1,
+        "step_id": "UF-S001",
+        "action": "用户操作",
+        "page_id": "page-dashboard",
+        "system_response": "系统反馈",
+        "expected_outcome": "预期结果",
+        "error_handling": "异常处理",
+        "branch": null
+      },
+      {
+        "step": 2,
+        "step_id": "UF-S002",
+        "action": "用户操作",
+        "page_id": "page-courses",
+        "system_response": "系统反馈",
+        "expected_outcome": "预期结果",
+        "error_handling": "异常处理",
+        "branch": {
+          "condition": "条件描述",
+          "if_true": {
+            "step_id": "UF-S002a",
+            "action": "条件满足时的操作",
+            "page_id": "page-target",
+            "expected_outcome": "条件满足时的预期结果"
+          },
+          "if_false": {
+            "step_id": "UF-S002b",
+            "action": "条件不满足时的操作",
+            "page_id": "page-fallback",
+            "expected_outcome": "条件不满足时的预期结果"
+          }
+        }
+      }
+    ],
+    "quality_check": {
+      "shortest_path_steps": 3,
+      "exception_coverage": 0.85,
+      "dead_ends": 0,
+      "issues": []
+    }
+  }
+}
+```
+
+**输出校验规则**：详见下方输出校验规则章节
+
+## 决策规则
+
+| 条件 | 动作 |
+|------|------|
+| 死胡同数量 > 0 | 必须修复，每个死胡同提供修复建议 |
+| 核心任务路径步骤数 > 7 | 标注"路径过长"，建议拆分子流程 |
+| 异常路径覆盖率 < 80% | 标注"异常覆盖不足"，列出未覆盖的异常场景 |
+| 决策点信息不充分 | 标注"决策点需补充"，列出缺失的信息项 |
+| 返回路径不完整 | 标注"返回路径缺失"，建议补充返回路径 |
+| 流程置信度 < 0.5 | 升级人类验证，标注"流程推断可信度低" |
+| 关键路径与PRD功能点不匹配 | 标注"功能覆盖缺失"，列出PRD中未覆盖的功能点 |
+
+## 质量检查
+
+| 检查项 | 标准 | 不达标处理 |
+|--------|------|-----------|
+| 核心任务步骤数 | < 5步为最佳，≤ 7步可接受 | 标注"路径过长"，建议拆分子流程 |
+| 异常路径覆盖率 | ≥ 80% | 列出未覆盖异常，标注"异常覆盖不足" |
+| 死胡同数量 | = 0 | 每个死胡同提供修复建议，必须修复 |
+| 决策点信息充分性 | 所有决策点有充分判断信息 | 标注缺失信息项，建议补充 |
+| 返回路径完整性 | 所有分支有返回主路径 | 补充缺失的返回路径 |
+| PRD功能覆盖 | 关键功能点100%覆盖 | 列出未覆盖功能，标注"功能覆盖缺失" |
+| 所有输出标注置信度 | 100% | 缺失置信度的字段补填默认值0.3并标记 |
+
+---
+
+## 降级策略
+
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| PRD文档缺失 | 用户提供功能描述，直接设计流程 | 缺乏PRD结构化数据，流程可能遗漏功能点 |
+| IA方案缺失 | 用户提供功能描述，直接设计流程 | 缺乏IA数据，流程与页面结构可能不匹配 |
+| PRD+IA方案均缺失 | 用户提供功能描述，直接设计流程 | 整体置信度降低，流程可能不够完整 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户功能描述直接设计流程 | 输出仅为基本流程框架 |
+
+## 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| user_flow | object | 是 | 用户流程数据 |
+| user_flow.task | string | 是 | 核心任务名称 |
+| user_flow.flow_type | string | 是 | 流程类型（task_flow/user_flow） |
+| user_flow.steps | array | 是 | 流程步骤列表，不可为空 |
+| user_flow.steps[].step | integer | 是 | 步骤序号 |
+| user_flow.steps[].step_id | string | 是 | 步骤唯一标识（与prd.json.user_flows.steps.step_id对齐） |
+| user_flow.steps[].action | string | 是 | 用户操作 |
+| user_flow.steps[].page_id | string | 是 | 关联页面ID（与prd.json.pages.page_id对齐） |
+| user_flow.steps[].system_response | string | 是 | 系统反馈 |
+| user_flow.steps[].expected_outcome | string | 是 | 预期结果（与prd.json.user_flows.steps.expected_outcome对齐） |
+| user_flow.steps[].error_handling | string | 否 | 异常处理（与prd.json.user_flows.steps.error_handling对齐） |
+| user_flow.quality_check | object | 是 | 质量检查结果 |
+| user_flow.quality_check.shortest_path_steps | integer | 是 | 最短路径步骤数 |
+| user_flow.quality_check.exception_coverage | number | 是 | 异常路径覆盖率（0-1） |
+| user_flow.quality_check.dead_ends | integer | 是 | 死胡同数量（必须为0） |
+
+## 上游变更响应
+
+### 上游变更影响
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| PRD功能需求增删 | 任务流程、步骤序列 | 标注受影响的任务和步骤，建议人类确认是否重新生成流程 |
+| PRD交互逻辑变更 | 条件分支、异常路径 | 标注受影响的分支和异常路径，建议人类确认是否更新流程 |
+| IA方案变更（页面增删） | 流程步骤中的页面引用 | 标注受影响的步骤，建议人类确认是否调整流程 |
+| IA路由变更 | 流程中的页面跳转 | 标注受影响的跳转路径，建议人类确认是否更新 |
+| 用户研究数据更新 | 流程优化建议 | 标注受影响的优化点，建议人类确认是否调整流程 |
+
+### 下游通知机制
+
+| 流程变更类型 | 通知范围 | 通知方式 |
+|-------------|----------|----------|
+| 任务流程变更 | design-prototype、interaction-spec | 标记流程变更，触发原型和交互规范更新 |
+| 条件分支变更 | design-prototype、interaction-spec | 标记分支变更，触发原型和交互规范更新 |
+| 异常路径变更 | design-prototype、interaction-spec | 标记异常路径变更，触发原型和交互规范更新 |
+| 死胡同修复 | design-prototype | 标记修复内容，触发原型更新 |
+
+## 与prd.json数据契约对齐
+
+| 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
+|----------------|-----------------|---------|
+| user_flow.task | prd.json.user_flows[].name | task名称与user_flow name保持一致 |
+| user_flow.steps[].step_id | prd.json.user_flows[].steps[].step_id | 步骤ID必须一致 |
+| user_flow.steps[].page_id | prd.json.pages[].page_id | page_id必须在prd.json.pages中存在 |
+| user_flow.steps[].expected_outcome | prd.json.user_flows[].steps[].expected_outcome | 预期结果描述一致 |
+
+## 数据获取说明
+
+本Skill需要PRD和IA方案数据，请通过以下方式之一提供：
+  1. 直接描述功能流程和用户任务
+  2. 上传PRD文档 / ia_proposals.json文件
+  3. 提供数据文件路径
+- AI不负责外部数据采集，仅负责分析
