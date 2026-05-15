@@ -307,15 +307,41 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
   "properties": {
     "pages": {
       "type": "array",
-      "description": "页面列表，每项含name/route/layout/component_tree/state_management/data_flow"
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "description": "页面名称"},
+          "route": {"type": "string", "description": "路由路径"},
+          "layout": {"type": "string", "description": "布局类型（header-sidebar-main / header-main / full-screen）"},
+          "component_tree": {"type": "array", "items": {"type": "string"}, "description": "页面组件树（组件ID列表）"},
+          "state_management": {"type": "string", "description": "状态管理方案"},
+          "data_flow": {"type": "array", "items": {"type": "object"}, "description": "数据流定义（source/params/response_type）"}
+        }
+      }
     },
     "components": {
       "type": "array",
-      "description": "组件列表，每项含name/framework/files/props/token_coverage/accessibility/interaction"
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "description": "组件名称"},
+          "framework": {"type": "string", "description": "目标框架"},
+          "files": {"type": "array", "items": {"type": "string"}, "description": "组件文件路径列表"},
+          "props": {"type": "array", "items": {"type": "string"}, "description": "Props接口字段列表"},
+          "token_coverage": {"type": "number", "description": "Design Token引用率(%)"},
+          "accessibility": {"type": "object", "description": "无障碍属性（aria_roles/keyboard_nav/focus_management）"},
+          "interaction": {"type": "object", "description": "交互定义（states/transitions/state_machine）"}
+        }
+      }
     },
     "quality_report": {
       "type": "object",
-      "description": "内建质量门禁报告，含pass_rate/p0_issues/p1_issues/aesthetic_score"
+      "properties": {
+        "pass_rate": {"type": "number", "description": "质量检查通过率(%)"},
+        "p0_issues": {"type": "array", "items": {"type": "object"}, "description": "P0阻断问题列表"},
+        "p1_issues": {"type": "array", "items": {"type": "object"}, "description": "P1待修复问题列表"},
+        "aesthetic_score": {"type": "number", "description": "美学评分(0-100)"}
+      }
     },
     "visual_direction": {
       "type": "object",

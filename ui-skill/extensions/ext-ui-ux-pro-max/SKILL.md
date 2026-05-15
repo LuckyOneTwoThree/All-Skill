@@ -50,7 +50,7 @@ When invoked directly by users (not via core Skill), the input is free-form: des
 
 ## Output Contract
 
-When called by core Skills, MUST return structured output in the following schema:
+When called by ui-orchestrator, MUST return structured output in the following schema:
 
 **--design-system mode** (for project-init):
 

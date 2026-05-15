@@ -273,17 +273,39 @@ export async function getUser(id: string) {
       "description": "缓存策略配置",
       "properties": {
         "library": {"type": "string", "description": "数据请求库"},
-        "strategies": {"type": "array", "description": "各数据类型缓存策略"}
+        "strategies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "data_type": {"type": "string", "description": "数据类型（user_info/list_data/detail_data/config_data/realtime_data）"},
+              "stale_time": {"type": "string", "description": "数据新鲜时间"},
+              "cache_time": {"type": "string", "description": "缓存保留时间"},
+              "refetch_strategy": {"type": "string", "description": "重新获取策略（window_focus/polling/none）"}
+            }
+          }
+        }
       }
     },
     "error_handling": {
       "type": "object",
       "description": "错误处理配置",
       "properties": {
-        "timeout_ms": {"type": "number", "description": "请求超时时间"},
+        "timeout_ms": {"type": "number", "description": "请求超时时间(ms)"},
         "retry_count": {"type": "number", "description": "重试次数"},
-        "retry_delay_ms": {"type": "number", "description": "重试延迟"},
-        "error_codes_mapped": {"type": "number", "description": "已映射的错误码数量"}
+        "retry_delay_ms": {"type": "number", "description": "重试延迟(ms)"},
+        "error_codes_mapped": {"type": "number", "description": "已映射的错误码数量"},
+        "error_strategies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "error_type": {"type": "string", "description": "错误类型（network/timeout/401/403/404/422/429/5xx）"},
+              "handling": {"type": "string", "description": "处理方式"},
+              "user_feedback": {"type": "string", "description": "用户反馈文案"}
+            }
+          }
+        }
       }
     },
     "project_dir": {"type": "string", "description": "项目根目录路径"}

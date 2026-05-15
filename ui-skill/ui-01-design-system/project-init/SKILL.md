@@ -244,9 +244,37 @@ else:
         "visual_narrative": {"type": "string", "minLength": 10, "description": "页面视线流动路径描述，如'Z型阅读→聚焦CTA→渐进展示细节'"}
       }
     },
-    "tokens": {"type": "object", "description": "设计令牌（色彩/字体/间距/阴影/断点/动画）"},
-    "component_library": {"type": "object", "description": "组件库选择和主题定制信息"},
-    "scaffold": {"type": "object", "description": "项目脚手架信息（框架/依赖/目录结构）"},
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "colors": {"type": "object", "description": "色彩令牌（brand/functional/neutral/semantic）"},
+        "typography": {"type": "object", "description": "排版令牌（font_families/font_sizes/font_weights/line_heights）"},
+        "spacing": {"type": "object", "description": "间距令牌（scale数组）"},
+        "shadows": {"type": "object", "description": "阴影令牌（sm/md/lg/xl）"},
+        "breakpoints": {"type": "object", "description": "断点令牌（sm/md/lg/xl）"},
+        "animation": {"type": "object", "description": "动画令牌（durations/easings）"}
+      }
+    },
+    "component_library": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "description": "组件库名称（shadcn/Ant Design/MUI/Element Plus/custom）"},
+        "version": {"type": "string", "description": "组件库版本"},
+        "theme_overrides": {"type": "object", "description": "主题覆盖变量映射"},
+        "custom_components": {"type": "array", "items": {"type": "string"}, "description": "需自定义的组件列表"},
+        "available_components": {"type": "array", "items": {"type": "string"}, "description": "可用组件清单"}
+      }
+    },
+    "scaffold": {
+      "type": "object",
+      "properties": {
+        "framework": {"type": "string", "description": "框架（React/Vue/Svelte/Next.js/Nuxt.js）"},
+        "package_manager": {"type": "string", "description": "包管理器（pnpm/npm/yarn）"},
+        "dependencies": {"type": "array", "items": {"type": "string"}, "description": "核心依赖列表"},
+        "directory_structure": {"type": "object", "description": "目录结构定义"},
+        "dev_server_running": {"type": "boolean", "description": "npm run dev是否启动成功"}
+      }
+    },
     "project_dir": {"type": "string", "description": "项目根目录路径"}
   }
 }
