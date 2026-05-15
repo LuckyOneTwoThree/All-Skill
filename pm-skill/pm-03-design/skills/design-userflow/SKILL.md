@@ -109,8 +109,18 @@ metadata:
         "error_handling": "异常处理",
         "branch": {
           "condition": "条件描述",
-          "if_true": {...},
-          "if_false": {...}
+          "if_true": {
+            "step_id": "UF-S002a",
+            "action": "条件满足时的操作",
+            "page_id": "page-target",
+            "expected_outcome": "条件满足时的预期结果"
+          },
+          "if_false": {
+            "step_id": "UF-S002b",
+            "action": "条件不满足时的操作",
+            "page_id": "page-fallback",
+            "expected_outcome": "条件不满足时的预期结果"
+          }
         }
       }
     ],
@@ -211,7 +221,9 @@ metadata:
 | user_flow.steps[].page_id | prd.json.pages[].page_id | page_id必须在prd.json.pages中存在 |
 | user_flow.steps[].expected_outcome | prd.json.user_flows[].steps[].expected_outcome | 预期结果描述一致 |
 
-## 数据获取说明`n本Skill需要PRD和IA方案数据，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要PRD和IA方案数据，请通过以下方式之一提供：
   1. 直接描述功能流程和用户任务
   2. 上传PRD文档 / ia_proposals.json文件
   3. 提供数据文件路径

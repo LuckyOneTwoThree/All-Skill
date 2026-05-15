@@ -35,8 +35,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| product_context | JSON | 是 | 用户提供 | 产品类型、北极星指标、OKR、商业模式 |
-| existing_metrics | JSON数组 | ○ | 用户提供 | 已有指标清单（含名称、定义、计算方式、数据源、层级） |
+| product_context | JSON | 是 | output/pm-strategy/planning-okr/okr.json + output/pm-strategy/business-model-canvas/bmc.json / 用户提供 | 产品类型、北极星指标、OKR、商业模式 |
+| existing_metrics | JSON数组 | ○ | output/pm-metrics-design/tracking-plan/tracking-plan.json / 用户提供 | 已有指标清单（含名称、定义、计算方式、数据源、层级） |
 
 ### product_context（必填）
 

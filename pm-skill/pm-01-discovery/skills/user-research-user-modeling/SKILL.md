@@ -411,7 +411,9 @@ metadata:
 | 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" | 人口统计字段data_source为inferred，置信度降低 |
 | 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） | 使用默认配置，Persona数量和阈值可能非最优 |
 
-## 数据获取说明`n本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要用户声音分析和行为分析数据，请通过以下方式之一提供：
   1. 直接粘贴用户描述文本（目标用户特征、行为模式等）
   2. 上传voice-analysis.json / behavior-analysis.json文件
   3. 提供数据文件路径

@@ -234,7 +234,9 @@ okr_candidates:
 | 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 | 整体置信度显著降低，OKR仅为通用目标参考 |
 | 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，KR目标值缺乏参照 |
 
-## 数据获取说明`n本Skill需要战略分析、北极星指标和BMC数据，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要战略分析、北极星指标和BMC数据，请通过以下方式之一提供：
   1. 直接描述业务目标和关键结果预期
   2. 上传strategic-analysis.json / north-star.json / bmc.json文件
   3. 提供数据文件路径
@@ -264,7 +266,7 @@ okr_candidates:
 
 | 本Skill输出字段 | prd.json对应字段 | 对齐规则 |
 |----------------|-----------------|---------|
-| objectives[].description | prd.json.goals[].description | O描述与PRD目标描述一致 |
-| key_results[].description | prd.json.goals[].success_metrics[].metric_name | KR描述包含PRD成功指标名称 |
-| key_results[].target | prd.json.goals[].success_metrics[].target_value | KR目标值与PRD指标目标值一致 |
-| key_results[].baseline | prd.json.goals[].success_metrics[].current_value | KR基线与PRD指标当前值一致 |
+| okr_candidates[].objective | prd.json.goals[].description | O描述与PRD目标描述一致 |
+| okr_candidates[].key_results[].kr | prd.json.goals[].success_metrics[].metric_name | KR描述包含PRD成功指标名称 |
+| okr_candidates[].key_results[].target | prd.json.goals[].success_metrics[].target_value | KR目标值与PRD指标目标值一致 |
+| okr_candidates[].key_results[].baseline | prd.json.goals[].success_metrics[].current_value | KR基线与PRD指标当前值一致 |

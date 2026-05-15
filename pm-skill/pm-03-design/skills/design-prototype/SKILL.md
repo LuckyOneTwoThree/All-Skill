@@ -264,7 +264,9 @@ component_catalog.json 是原型设计的机器可消费组件清单，供 UI Sk
 | 组件清单变更 | UI Skill（ui-01-component-design） | 标记组件增删/属性变更，触发组件生成更新 |
 | 共享组件变更 | UI Skill（ui-01-component-design） | 标记共享组件变更，触发跨页面组件更新 |
 
-## 数据获取说明`n本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要IA、UserFlow和设计规范数据，请通过以下方式之一提供：
   1. 直接描述功能、页面结构和交互流程
   2. 上传ia_proposals.json / userflow.json / 设计规范文件
   3. 提供数据文件路径

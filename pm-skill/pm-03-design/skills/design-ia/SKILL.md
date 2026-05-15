@@ -107,7 +107,19 @@ AI基于分类结果生成卡片分类建议：
   "ia_proposals": [
     {
       "name": "方案A：功能导向型",
-      "structure": {...},
+      "structure": {
+        "root": {
+          "label": "string - 根节点名称",
+          "children": [
+            {
+              "label": "string - 一级分类名称",
+              "children": [
+                { "label": "string - 二级分类名称", "items": ["string - 功能/内容项"] }
+              ]
+            }
+          ]
+        }
+      },
       "navigation_needs": "4个同级模块需快速切换，层级深度≤2",
       "routes": [
         { "path": "/dashboard", "page": "仪表盘", "depth": 1 },
@@ -200,7 +212,9 @@ AI基于分类结果生成卡片分类建议：
 | ia_proposals[].routes[].page | prd.json.pages[].name | 页面名称必须一致 |
 | ia_proposals[].structure | prd.json.pages[]层级关系 | IA层级结构决定pages的父子关系 |
 
-## 数据获取说明`n本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：
+## 数据获取说明
+
+本Skill需要PRD、现有IA和用户研究数据，请通过以下方式之一提供：
   1. 直接描述功能列表和用户需求
   2. 上传PRD文档 / persona.json / voice-analysis.json文件
   3. 提供数据文件路径
