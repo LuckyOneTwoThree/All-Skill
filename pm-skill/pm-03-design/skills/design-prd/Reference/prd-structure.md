@@ -4,6 +4,20 @@
 
 以下为PRD-S（Standard）的标准结构，PRD-L和PRD-X在此基础上按比例调整。
 
+### PRD-L（Light）调整规则
+
+- **保留**：Section 1（元信息）、Section 2.1-2.2（问题描述+目标定义）、Section 3.2.1-3.2.2（功能列表+用户故事，仅Must/Should）、Section 7.1（功能验收，仅Happy Path）
+- **合并**：Section 4+5 合并为"约束与要求"一段、Section 8+9 合并为"发布与附录"一段
+- **删除**：Section 3.2.5-3.2.6（数据模型/接口定义）、Section 6（数据埋点）、Section 7.2-7.3（性能/安全验收）
+- **目标规模**：200-500字，3-5个核心用户故事
+
+### PRD-X（eXtensive）调整规则
+
+- **保留**：PRD-S全部9节
+- **增强**：Section 3.2.2 每个功能点增加异常流程用户故事、Section 3.2.5 数据模型增加ER图、Section 3.2.6 接口定义增加错误码表、Section 5 增加灾备方案、Section 8.1 增加AB测试方案
+- **新增**：Section 3.3 技术方案评估（多方案对比矩阵）、Section 5.5 合规要求（GDPR/CCPA等）、Section 8.4 国际化计划
+- **目标规模**：3000-8000字，10+用户故事含完整异常流程
+
 ### Section 1：元信息（Meta）
 
 自动生成以下字段：
@@ -53,11 +67,14 @@
 |------|--------------|----------|
 | | | |
 
-**OKR对齐**
+**OKR对齐**（与prd.json goals[]结构对齐）
 ```
-O1: {Objective}
-  KR1: {Key Result}
-  KR2: {Key Result}
+Goal #{goal_id}:
+  描述：{goal_description}
+  OKR对齐：{okr_alignment}
+  成功指标：
+    - {metric_name}：目标 {target_value}，当前 {current_value}，单位 {unit}
+    - ...
 ```
 
 #### 2.3 目标用户与场景

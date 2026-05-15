@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "3.2"
+  version: "3.3"
   domain_tags: ["互联网", "软件", "通用"]
   trigger_examples:
     - "帮我写PRD文档"
@@ -492,9 +492,49 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
         "target": "string"
       }
     ],
-    "availability": [],
-    "security": [],
-    "observability": []
+    "availability": [
+      {
+        "requirement": "string",
+        "metric": "string",
+        "target": "string",
+        "measurement": "string"
+      }
+    ],
+    "security": [
+      {
+        "category": "authentication | authorization | encryption | audit | compliance",
+        "requirement": "string",
+        "implementation": "string"
+      }
+    ],
+    "observability": [
+      {
+        "dimension": "metrics | logs | traces",
+        "indicator": "string",
+        "alert_threshold": "string"
+      }
+    ]
+  },
+  "tracking_plan": {
+    "events": [
+      {
+        "event_id": "string",
+        "event_name": "string",
+        "trigger": "string",
+        "properties": [
+          {
+            "property_name": "string",
+            "type": "string",
+            "required": "boolean"
+          }
+        ],
+        "related_metric": "string"
+      }
+    ],
+    "validation": {
+      "coverage_target": "number",
+      "data_delay_threshold": "string"
+    }
   },
   "traceability": [
     {
@@ -526,6 +566,8 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 - [ ] prd.json 引用一致性：feature.related_pages 中的 page_id 在 pages[] 中存在，feature.related_entities 中的 entity_id 在 entities[] 中存在
 - [ ] prd.json 追溯链完整：每个 feature 都有对应的 traceability 条目
 - [ ] prd.json 与 prd.md 一致：prd.json 中的功能点名称、优先级、验收标准与 prd.md 一致
+- [ ] prd.json tracking_plan 完整性：tracking_plan.events 非空，每个 event 的 properties 非空
+- [ ] prd.json NFR完整性：non_functional_requirements 的4个维度数组均非空
 
 ## 决策规则（详细）
 
@@ -610,22 +652,6 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 | 判定明确 | Then结果可客观判定 | 判定条件可测试性检查 |
 | 覆盖完整 | Happy Path+边界+异常 | 覆盖率统计分析 |
 
-## 决策规则
-
-| 情况 | 处理方式 |
-|------|----------|
-| 自动分级置信度<0.7 | 强制人类确认PRD层级 |
-| 门禁1或2失败 | 阻塞流程，输出缺失项清单 |
-| MVP范围变化>30% | 触发升级，召集相关方会议 |
-| 上游核心字段完全缺失（L2） | 中断流程，强制要求补充 |
-
-## 质量检查
-
-- [ ] 9节结构全部存在
-- [ ] 追溯链从OKR到验收标准贯通
-- [ ] 无模糊量词和悬空引用
-- [ ] 4道门禁全部通过
-
 ## 降级策略
 
 ### 上游文件缺失降级方案
@@ -674,3 +700,4 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 - v3.0: 将PRD完整9节结构、输入Schema、输出Schema拆分到Reference文件夹，SKILL.md保留核心逻辑和概览表格
 - v3.1: 需求管理内建——输入新增insight_analysis和opportunity_definition引用（替代原requirements-collection/understanding/prioritization输入）；标注需求收集、理解和优先级排序已内建于Step 1-3；上游消费新增洞察分析和机会定义；降级策略新增insight_analysis/opportunity_definition缺失方案；数据流向图更新
 - v3.2: 新增prd.json结构化输出——包含features[]/pages[]/entities[]/user_flows[]/goals[]/traceability[]，供Backend/UI编程式消费；下游驱动表新增消费来源列；输出校验规则新增prd.json完整性和引用一致性检查
+- v3.3: prd.json补全——non_functional_requirements的availability/security/observability从空数组补全为完整Schema；新增tracking_plan数据埋点结构；input-schema.md补充insight_analysis/opportunity_definition字段；删除重复的质量检查和决策规则章节；prd-structure.md PRD-L/X调整规则具体化；OKR对齐格式与prd.json goals[]结构对齐

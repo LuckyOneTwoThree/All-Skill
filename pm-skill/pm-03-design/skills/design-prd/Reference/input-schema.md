@@ -5,7 +5,9 @@
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | metadata | JSON/object | 是 | 系统生成 | 请求元信息（request_id、trigger、requester、timestamp） |
-| exploration_outputs | JSON/object | ○ | 由 design-prd 内建覆盖 | 探索阶段输出：用户洞察、问题陈述 |
+| insight_analysis | JSON/object | ○ | output/pm-discovery/insight-analysis | 洞察分析产出：用户洞察、痛点、行为模式，替代原 requirements-collection 输入 |
+| opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition | 机会定义产出：机会列表、优先级排序、问题陈述，替代原 requirements-understanding/prioritization 输入 |
+| exploration_outputs | JSON/object | ○ | 上游探索阶段 | 探索阶段输出：用户洞察、问题陈述 |
 | strategy_outputs | JSON/object | ○ | 用户提供 | 战略阶段输出：OKR、路线图 |
 | ideation_outputs | JSON/object | ○ | output/pm-design/ideation-workshop/ideation-workshop.json | 构思阶段输出：解决方案、功能列表 |
 | design_outputs | JSON/object | ○ | 用户提供 | 设计阶段输出：原型、用户流程、信息架构 |
@@ -24,6 +26,56 @@
       "timestamp": "ISO8601"
     },
     "upstream": {
+      "insight_analysis": {
+        "insights": [
+          {
+            "insight_id": "string",
+            "type": "user_feedback|analytics|competitor",
+            "content": "string",
+            "confidence": "high|medium|low",
+            "source": "string"
+          }
+        ],
+        "pain_points": [
+          {
+            "pain_id": "string",
+            "description": "string",
+            "severity": "high|medium|low",
+            "affected_users": "number"
+          }
+        ],
+        "behavior_patterns": [
+          {
+            "pattern_id": "string",
+            "description": "string",
+            "frequency": "string",
+            "evidence": "string"
+          }
+        ]
+      },
+      "opportunity_definition": {
+        "opportunities": [
+          {
+            "opportunity_id": "string",
+            "title": "string",
+            "description": "string",
+            "priority": "P0|P1|P2",
+            "effort_estimate": "number",
+            "impact_estimate": "number"
+          }
+        ],
+        "problem_statements": [
+          {
+            "ps_id": "string",
+            "description": "string",
+            "impact": {
+              "user_count": "number",
+              "business_loss": "string",
+              "frequency": "string"
+            }
+          }
+        ]
+      },
       "exploration_outputs": {
         "insights": [
           {
