@@ -119,6 +119,16 @@ Skill: planning-kickoff
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-project/project-planning-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: agile-orchestrator
+    reason: 项目规划完成，建议进入敏捷执行阶段，启动第一个Sprint
+    input_mapping:
+      planning_output: "output/pm-project/planning-project-charter/ + planning-resource/ → agile-sprint-planning输入"
+  alternatives:
+    - target: risk-orchestrator
+      reason: 如项目规划识别到高风险
+      condition: 项目宪章中风险评估等级为高时
 模式: 🤖
 ```
 

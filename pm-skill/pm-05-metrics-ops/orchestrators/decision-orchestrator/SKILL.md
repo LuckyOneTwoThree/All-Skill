@@ -102,6 +102,19 @@ Skill: decision-culture
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: design-orchestrator
+    reason: 决策完成，建议进入产品设计阶段，将决策结论转化为功能变更
+    input_mapping:
+      decision_output: "output/pm-metrics-ops/decision-dace/ → design-prd输入"
+  alternatives:
+    - target: experiment-orchestrator
+      reason: 如决策需要A/B测试验证效果
+      condition: 决策结论需要量化验证时
+    - target: iteration-orchestrator
+      reason: 如决策涉及迭代优先级调整
+      condition: 决策结论影响迭代计划时
 模式: 🤖
 ```
 

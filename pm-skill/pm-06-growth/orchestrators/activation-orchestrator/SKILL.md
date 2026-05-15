@@ -98,6 +98,16 @@ Skill: activation-onboarding
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-growth/activation-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: retention-orchestrator
+    reason: 用户激活优化完成，建议进入留存优化阶段，防止用户流失
+    input_mapping:
+      activation_output: "output/pm-growth/activation-aha/ + activation-onboarding/ → retention-management输入"
+  alternatives:
+    - target: growth-orchestrator
+      reason: 如激活不是当前瓶颈，回退到增长诊断重新评估
+      condition: 激活优化效果不达预期时
 模式: 🤖
 ```
 

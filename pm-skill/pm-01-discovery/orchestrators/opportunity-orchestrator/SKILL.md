@@ -93,6 +93,16 @@ Skill: opportunity-definition
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/opportunity-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: business-orchestrator
+    reason: 机会定义完成，建议进入商业模式设计阶段，将机会转化为可持续的商业模式
+    input_mapping:
+      opportunity_output: "output/pm-discovery/opportunity-definition/ → business-model-canvas输入"
+  alternatives:
+    - target: design-orchestrator
+      reason: 如已有商业模式，直接进入产品设计
+      condition: 商业模式已确定，无需重新设计时
 模式: 🤖
 ```
 

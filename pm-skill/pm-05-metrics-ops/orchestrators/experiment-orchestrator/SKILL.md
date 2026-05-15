@@ -101,6 +101,16 @@ Skill: experiment-execution
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-metrics-ops/experiment-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: analysis-orchestrator
+    reason: 实验完成，建议进入数据分析阶段，对比实验前后效果
+    input_mapping:
+      experiment_output: "output/pm-metrics-ops/experiment-execution/ → analysis-anomaly输入"
+  alternatives:
+    - target: release-orchestrator
+      reason: 如实验结果显著，建议全量发布
+      condition: 实验结果统计显著且业务意义达标时
 模式: 🤖
 ```
 

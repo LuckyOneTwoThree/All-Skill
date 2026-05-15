@@ -168,6 +168,16 @@ Skill: user-research-report
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/user-research-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: insight-orchestrator
+    reason: 用户研究完成，建议进入需求洞察分析阶段，从研究数据中提炼洞察
+    input_mapping:
+      user_research_output: "output/pm-discovery/user-research-report/ → insight-analysis输入"
+  alternatives:
+    - target: opportunity-orchestrator
+      reason: 如研究结论已足够明确，直接进入机会定义
+      condition: 用户研究已产出清晰的痛点和需求时
 模式: 🤖
 ```
 

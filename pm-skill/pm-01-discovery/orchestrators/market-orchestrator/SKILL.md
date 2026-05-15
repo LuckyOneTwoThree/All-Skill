@@ -119,6 +119,16 @@ Skill: market-competitor-analysis
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/market-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: opportunity-orchestrator
+    reason: 市场分析完成，建议进入机会识别与定义阶段，基于市场规模和竞品格局定义产品机会
+    input_mapping:
+      market_outputs: "output/pm-discovery/market-tam-som/ + market-competitor-analysis/ → opportunity-definition输入"
+  alternatives:
+    - target: insight-orchestrator
+      reason: 如需用户洞察补充市场分析结论
+      condition: 市场数据缺乏用户视角验证时
 模式: 🤖
 ```
 

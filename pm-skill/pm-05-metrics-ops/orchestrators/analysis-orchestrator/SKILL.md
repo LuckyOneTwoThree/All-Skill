@@ -149,6 +149,16 @@ Skill: data-analysis-report
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: decision-orchestrator
+    reason: 数据分析完成，建议进入数据驱动决策阶段，将分析洞察转化为可执行决策
+    input_mapping:
+      analysis_output: "output/pm-metrics-ops/data-analysis-report/ → decision-dace输入"
+  alternatives:
+    - target: experiment-orchestrator
+      reason: 如分析发现需A/B测试验证的假设
+      condition: 数据分析发现因果关系不确定，需实验验证时
 模式: 🤖
 ```
 

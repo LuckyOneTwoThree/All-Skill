@@ -222,6 +222,17 @@ Skill: change-impact-analysis
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-design/design-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: metrics-orchestrator
+    reason: 产品设计完成，建议进入度量设计阶段，为PRD功能点设计指标体系和埋点方案
+    input_mapping:
+      prd_output: "output/pm-design/design-prd/prd.json → metrics-system输入"
+      prototype_output: "output/pm-design/design-prototype/component_catalog.json → UI Skill消费"
+  alternatives:
+    - target: api-design-orchestrator（Backend）
+      reason: PRD完成后直接启动后端API设计
+      condition: 产品从0到1流程中，PRD确认后需并行启动Backend开发时
 模式: 🤖
 ```
 

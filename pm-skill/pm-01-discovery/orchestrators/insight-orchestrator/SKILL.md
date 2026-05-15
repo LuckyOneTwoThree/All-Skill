@@ -88,6 +88,16 @@ Skill: insight-analysis
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-discovery/insight-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: opportunity-orchestrator
+    reason: 洞察分析完成，建议进入机会识别与定义阶段，将洞察转化为可执行的机会
+    input_mapping:
+      insight_analysis_output: "output/pm-discovery/insight-analysis/ → opportunity-definition输入"
+  alternatives:
+    - target: market-orchestrator
+      reason: 如需补充市场数据支撑洞察结论
+      condition: 洞察结论缺乏市场数据验证时
 模式: 🤖
 ```
 

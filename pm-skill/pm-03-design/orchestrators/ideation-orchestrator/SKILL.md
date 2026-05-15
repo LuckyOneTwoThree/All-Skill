@@ -86,6 +86,16 @@ Skill: ideation-workshop
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-design/ideation-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: design-orchestrator
+    reason: 创意发散完成，建议进入产品设计阶段，将创意方案转化为PRD
+    input_mapping:
+      ideation_output: "output/pm-design/ideation-workshop/ → design-prd输入"
+  alternatives:
+    - target: validation-orchestrator
+      reason: 如需先验证创意假设再进入设计
+      condition: 创意方案存在高风险假设，需先验证时
 模式: 🤖
 ```
 

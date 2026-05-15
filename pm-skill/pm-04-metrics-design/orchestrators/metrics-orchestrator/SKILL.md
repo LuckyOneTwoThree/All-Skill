@@ -118,6 +118,17 @@ Skill: metrics-dashboard
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: 人类决策——进入开发阶段
+    reason: 度量设计完成，需人类确认是否进入开发阶段，启动Backend和UI并行构建
+    input_mapping:
+      metrics_output: "output/pm-metrics-design/metrics-system/ → monitoring-pipeline输入"
+      tracking_output: "output/pm-metrics-design/tracking-plan/ → 开发阶段埋点实现"
+  alternatives:
+    - target: design-orchestrator
+      reason: 如度量设计发现PRD功能点遗漏，需回溯补充设计
+      condition: 指标体系设计中发现PRD功能点覆盖不完整时
 模式: 🤖
 ```
 

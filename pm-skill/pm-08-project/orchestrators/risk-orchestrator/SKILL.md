@@ -103,6 +103,16 @@ Skill: risk-management
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-project/risk-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: agile-orchestrator
+    reason: 风险管理完成，建议回到敏捷执行阶段，将风险应对纳入Sprint规划
+    input_mapping:
+      risk_output: "output/pm-project/risk-identification/ + risk-management/ → agile-sprint-planning输入"
+  alternatives:
+    - target: monitoring-orchestrator
+      reason: 如风险涉及线上监控
+      condition: 风险类型为运维或安全风险时
 模式: 🤖
 ```
 

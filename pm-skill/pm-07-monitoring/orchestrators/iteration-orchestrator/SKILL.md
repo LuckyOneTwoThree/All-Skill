@@ -88,6 +88,16 @@ Skill: iteration-decision
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-monitoring/iteration-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: design-orchestrator
+    reason: 迭代决策完成，建议进入设计阶段，实现迭代需求变更
+    input_mapping:
+      iteration_output: "output/pm-monitoring/iteration-decision/ → change-impact-analysis输入"
+  alternatives:
+    - target: monitoring-orchestrator
+      reason: 如需发布，推荐进入监控预警阶段
+      condition: 迭代决策为发布相关时
 模式: 🤖
 ```
 

@@ -101,6 +101,19 @@ Skill: user-feedback-loop-report
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-monitoring/monitoring-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: diagnosis-orchestrator
+    reason: 监控预警建立完成，如发现异常建议进入诊断阶段，定位问题根因
+    input_mapping:
+      monitoring_output: "output/pm-monitoring/monitoring-pipeline/ → diagnosis-health输入"
+  alternatives:
+    - target: release-orchestrator
+      reason: 如监控发现需发布修复
+      condition: 监控预警触发发布需求时
+    - target: iteration-orchestrator
+      reason: 如监控发现需迭代调整
+      condition: 监控数据表明需调整迭代优先级时
 模式: 🤖
 ```
 

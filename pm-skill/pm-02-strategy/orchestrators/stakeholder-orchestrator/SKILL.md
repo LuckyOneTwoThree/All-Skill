@@ -84,6 +84,16 @@ stages:
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-strategy/stakeholder-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: planning-orchestrator
+    reason: 利益相关者分析完成，建议进入战略规划阶段，确保规划对齐关键利益方
+    input_mapping:
+      stakeholder_output: "output/pm-strategy/stakeholder-analysis/ → planning-okr输入"
+  alternatives:
+    - target: project-planning-orchestrator
+      reason: 如已进入项目执行阶段，直接启动项目规划
+      condition: 战略规划已完成，需要启动项目时
 模式: 🤖
 ```
 

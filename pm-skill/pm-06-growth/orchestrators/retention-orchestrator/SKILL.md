@@ -89,6 +89,16 @@ Skill: retention-management
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-growth/retention-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: revenue-orchestrator
+    reason: 留存优化完成，建议进入商业化阶段，优化付费转化
+    input_mapping:
+      retention_output: "output/pm-growth/retention-management/ → revenue-funnel输入"
+  alternatives:
+    - target: growth-orchestrator
+      reason: 如留存不是当前瓶颈，回退到增长诊断重新评估
+      condition: 留存优化效果不达预期时
 模式: 🤖
 ```
 

@@ -165,6 +165,16 @@ stages:
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-strategy/planning-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: design-orchestrator
+    reason: 战略规划完成，建议进入产品设计阶段，将战略转化为PRD和设计方案
+    input_mapping:
+      planning_outputs: "output/pm-strategy/planning-okr/ + planning-roadmap/ → design-prd输入"
+  alternatives:
+    - target: metrics-orchestrator
+      reason: 如需先设计度量体系再进入设计
+      condition: 需要先确定指标体系再设计产品功能时
 模式: 🤖
 ```
 

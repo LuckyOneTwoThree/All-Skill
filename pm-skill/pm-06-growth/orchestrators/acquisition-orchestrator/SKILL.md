@@ -89,6 +89,16 @@ Skill: acquisition-analysis
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-growth/acquisition-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: activation-orchestrator
+    reason: 获客优化完成，建议进入用户激活阶段，提升新用户转化
+    input_mapping:
+      acquisition_output: "output/pm-growth/acquisition-analysis/ → activation-aha输入"
+  alternatives:
+    - target: growth-orchestrator
+      reason: 如获客不是当前瓶颈，回退到增长诊断重新评估
+      condition: 获客优化效果不达预期时
 模式: 🤖
 ```
 

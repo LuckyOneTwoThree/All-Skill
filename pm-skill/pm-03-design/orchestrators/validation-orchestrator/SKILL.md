@@ -149,6 +149,16 @@ Skill: validation-usability
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-design/validation-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: design-orchestrator
+    reason: 方案验证完成，建议进入产品设计阶段，基于验证结论调整设计方案
+    input_mapping:
+      validation_output: "output/pm-design/validation-assumption-map/ + validation-mvp/ → design-prd输入"
+  alternatives:
+    - target: experiment-orchestrator
+      reason: 如验证结论需要A/B测试进一步确认
+      condition: 验证结果不确定，需要量化实验验证时
 模式: 🤖
 ```
 

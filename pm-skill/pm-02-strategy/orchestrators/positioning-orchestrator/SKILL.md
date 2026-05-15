@@ -86,6 +86,16 @@ stages:
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-strategy/positioning-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: planning-orchestrator
+    reason: 定位策略完成，建议进入战略规划阶段，制定OKR和路线图
+    input_mapping:
+      positioning_output: "output/pm-strategy/positioning-strategy/ → planning-okr输入"
+  alternatives:
+    - target: business-orchestrator
+      reason: 如定位结果影响商业模式，需回溯调整
+      condition: 定位策略与现有商业模式不一致时
 模式: 🤖
 ```
 

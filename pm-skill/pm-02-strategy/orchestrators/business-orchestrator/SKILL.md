@@ -93,6 +93,16 @@ Skill: business-strategy-report
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-strategy/business-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: positioning-orchestrator
+    reason: 商业模式设计完成，建议进入产品定位阶段，确定差异化定位策略
+    input_mapping:
+      business_outputs: "output/pm-strategy/business-model-canvas/ + business-pricing/ → positioning-strategy输入"
+  alternatives:
+    - target: planning-orchestrator
+      reason: 如定位已明确，直接进入战略规划
+      condition: 产品定位已在商业模式设计中确定时
 模式: 🤖
 ```
 

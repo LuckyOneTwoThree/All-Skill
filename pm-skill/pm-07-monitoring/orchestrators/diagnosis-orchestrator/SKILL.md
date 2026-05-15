@@ -145,6 +145,19 @@ Skill: product-sunset-plan
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-monitoring/diagnosis-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: iteration-orchestrator
+    reason: 诊断完成，建议进入迭代决策阶段，根据诊断结论调整迭代计划
+    input_mapping:
+      diagnosis_output: "output/pm-monitoring/diagnosis-health/ + competitor-monitoring-report/ → iteration-decision输入"
+  alternatives:
+    - target: monitoring-orchestrator
+      reason: 如需验收，推荐进入监控预警阶段
+      condition: 诊断结论为需质量验收时
+    - target: product-sunset-plan
+      reason: 如诊断结论为产品应下线
+      condition: 健康度评分极低且无改善空间时
 模式: 🤖
 ```
 

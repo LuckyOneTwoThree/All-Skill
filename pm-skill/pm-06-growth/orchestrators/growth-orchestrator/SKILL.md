@@ -249,6 +249,19 @@ Skill: product-operations-manual
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-growth/growth-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: experiment-orchestrator
+    reason: 增长策略制定完成，建议进入实验验证阶段，量化验证增长方案效果
+    input_mapping:
+      growth_output: "output/pm-growth/growth-strategy-report/ → experiment-design输入"
+  alternatives:
+    - target: release-orchestrator
+      reason: 如增长方案已验证，直接全量发布
+      condition: 增长方案已有充分数据支撑，无需实验验证时
+    - target: gtm-strategy
+      reason: 如是新产品上市，进入GTM策略
+      condition: 增长诊断结论为新产品需上市时
 模式: 🤖
 ```
 

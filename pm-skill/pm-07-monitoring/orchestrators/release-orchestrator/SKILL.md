@@ -140,6 +140,16 @@ Skill: release-notes
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-monitoring/release-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: monitoring-orchestrator
+    reason: 发布完成，建议进入监控预警阶段，跟踪发布后指标变化
+    input_mapping:
+      release_output: "output/pm-monitoring/release-gradual/ → monitoring-pipeline输入"
+  alternatives:
+    - target: agile-orchestrator
+      reason: 如发布后需进入下一Sprint
+      condition: 发布完成需继续迭代时
 模式: 🤖
 ```
 

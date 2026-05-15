@@ -120,6 +120,16 @@ Skill: revenue-upsell
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-growth/revenue-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: growth-orchestrator
+    reason: 商业化优化完成，建议回到增长诊断，评估整体增长飞轮效果
+    input_mapping:
+      revenue_output: "output/pm-growth/revenue-funnel/ + revenue-nrr/ → growth-model输入"
+  alternatives:
+    - target: experiment-orchestrator
+      reason: 如商业化方案需A/B测试验证
+      condition: 定价或付费墙策略变更需量化验证时
 模式: 🤖
 ```
 
