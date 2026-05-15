@@ -127,7 +127,7 @@ stages:
   - id: phase-10
     name: "交付上线"
     depends_on: [phase-8, phase-6]
-    skills: [monitoring-orchestrator, iteration-orchestrator, agile-orchestrator]
+    skills: [release-orchestrator, monitoring-orchestrator, iteration-orchestrator, agile-orchestrator]
     gate:
       condition: "P0问题=0，P1问题≤3，灰度发布通过，复盘结论确认"
       fail_action: "修复阻断问题后重新验证"

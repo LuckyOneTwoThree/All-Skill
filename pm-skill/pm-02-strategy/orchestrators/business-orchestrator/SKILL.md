@@ -29,6 +29,42 @@ metadata:
 
 编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
 
+## Pipeline
+
+```yaml
+stages:
+  - id: phase-1
+    name: "商业模式画布"
+    skills: [business-model-canvas]
+    gate:
+      condition: "BMC 9格全部填充、假设已标注"
+      fail_action: "补充缺失要素，无法填充的标注为待验证假设"
+
+  - id: phase-2
+    name: "价值匹配验证"
+    depends_on: [phase-1]
+    skills: [business-value-fit]
+    gate:
+      condition: "价值主张匹配度≥3.0"
+      fail_action: "调整价值主张或目标用户，重新验证"
+
+  - id: phase-3
+    name: "定价策略"
+    depends_on: [phase-1]
+    skills: [business-pricing]
+    gate:
+      condition: "3个定价方案已生成"
+      fail_action: "补充定价方案，确保差异化"
+
+  - id: phase-4
+    name: "商业战略报告"
+    depends_on: [phase-1, phase-3]
+    skills: [business-strategy-report]
+    gate:
+      condition: "报告执行摘要完整，至少2个战略方向"
+      fail_action: "补充战略方向或标注建议补充战略分析"
+```
+
 ## 阶段执行计划
 
 #### 调用 business-model-canvas
