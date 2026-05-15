@@ -66,64 +66,97 @@ metadata:
 ## Pipeline
 
 ```yaml
+pipeline: product-launch-orchestrator
+version: 8.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/cross-domain/product-launch-orchestrator.md
 
-pipeline:
-  - stage: insight
-    skills: [insight-orchestrator]
+stages:
+  - id: phase-1
+    name: "洞察分析"
     depends_on: []
-    gate: 洞察报告人类确认通过
+    skills: [insight-orchestrator]
+    gate:
+      condition: "洞察报告人类确认通过"
+      fail_action: "补充产品方向或需求信息"
 
-  - stage: market
+  - id: phase-2
+    name: "市场分析"
+    depends_on: [phase-1]
     skills: [market-orchestrator]
-    depends_on: [insight]
-    gate: 市场分析人类确认通过
+    gate:
+      condition: "市场分析人类确认通过"
+      fail_action: "补充市场数据或竞品信息"
 
-  - stage: business
+  - id: phase-3
+    name: "商业模式"
+    depends_on: [phase-1, phase-2]
     skills: [business-orchestrator]
-    depends_on: [insight, market]
-    gate: 商业模式人类确认通过
+    gate:
+      condition: "商业模式人类确认通过"
+      fail_action: "补充商业模式要素"
 
-  - stage: positioning
+  - id: phase-4
+    name: "定位策略"
+    depends_on: [phase-3]
     skills: [positioning-orchestrator]
-    depends_on: [business]
-    gate: 定位陈述人类确认通过
+    gate:
+      condition: "定位陈述人类确认通过"
+      fail_action: "调整定位策略"
 
-  - stage: design
+  - id: phase-5
+    name: "产品设计"
+    depends_on: [phase-3, phase-4]
     skills: [design-orchestrator]
-    depends_on: [business, positioning]
-    gate: PRD人类确认通过
+    gate:
+      condition: "PRD人类确认通过"
+      fail_action: "补充需求细节"
 
-  - stage: metrics
+  - id: phase-6
+    name: "指标体系"
+    depends_on: [phase-5]
+    parallel_with: [phase-7]
     skills: [metrics-orchestrator]
-    depends_on: [design]
-    parallel: true
-    gate: 指标体系人类确认通过
+    gate:
+      condition: "指标体系人类确认通过"
+      fail_action: "补充指标定义"
 
-  - stage: backend-api
+  - id: phase-7
+    name: "API设计"
+    depends_on: [phase-5]
+    parallel_with: [phase-6]
     skills: [api-design-orchestrator]
-    depends_on: [design]
-    parallel: true
-    gate: API契约人类确认通过
+    gate:
+      condition: "API契约人类确认通过"
+      fail_action: "调整API设计"
 
-  - stage: ui-development
+  - id: phase-8
+    name: "UI开发"
+    depends_on: [phase-5, phase-7]
+    parallel_with: [phase-9]
     skills: [ui-orchestrator]
-    depends_on: [design, backend-api]
-    parallel: true
-    gate: UI开发与集成验证通过
+    gate:
+      condition: "UI开发与集成验证通过"
+      fail_action: "修复集成问题"
 
-  - stage: backend-impl
+  - id: phase-9
+    name: "后端实现"
+    depends_on: [phase-7]
+    parallel_with: [phase-8]
     skills: [data-architecture-orchestrator, backend-architecture-orchestrator]
-    depends_on: [backend-api]
-    parallel: true
-    gate: 后端审查通过（P0=0）
+    gate:
+      condition: "后端审查通过（P0=0）"
+      fail_action: "修复P0问题"
 
-  - stage: delivery
+  - id: phase-10
+    name: "交付上线"
+    depends_on: [phase-8, phase-6]
     skills: [monitoring-orchestrator, iteration-orchestrator, agile-orchestrator]
-    depends_on: [ui-development, metrics]
-    gate: P0问题=0，P1问题≤3 → 灰度发布通过 → 复盘结论确认
+    gate:
+      condition: "P0问题=0，P1问题≤3，灰度发布通过，复盘结论确认"
+      fail_action: "修复阻断问题后重新验证"
 ```
 
 ## 阶段执行计划

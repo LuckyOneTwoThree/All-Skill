@@ -67,7 +67,6 @@ post_pipeline:
 stages:
   - id: phase-1
     name: "并行采集"
-    parallel: true
     skills:
       - market-tam-som
       - market-pest

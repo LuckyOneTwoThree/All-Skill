@@ -27,6 +27,17 @@ metadata:
 1. **预警与运营一体执行**：retention-management 内部先构建流失预警识别高风险用户，再基于风险分层设计差异化运营策略
 2. **预警数据驱动运营优先级**：流失风险等级直接决定运营资源的分配和干预强度
 
+## 编排器定位声明
+
+本编排器当前 Pipeline 仅包含 1 个子 Skill（retention-management），属于合并简化后的退化编排器。保留本编排器的理由：
+
+1. **统一入口**：为用户留存子模块提供标准化的调用入口，上层编排器（如 product-launch-orchestrator）无需关心内部子 Skill 的合并历史
+2. **阶段总结**：强制生成阶段总结文档（post_pipeline），确保子模块产出可审计、可追溯
+3. **异常处理**：提供统一的异常处理策略和降级方案，子 Skill 自身的降级策略不覆盖编排器层面的异常拦截
+4. **人类决策点**：在子 Skill 执行前后提供人类决策卡口，确保关键结论经人类确认后才传递下游
+
+若未来该子模块需要扩展为多阶段 Pipeline，本编排器可直接增加阶段，无需修改上层编排器的调用方式。
+
 ## 编排协议
 
 你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
@@ -60,13 +71,21 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  - stage: retention-management
-    gate: 流失预警模型已构建且用户分层已完成
+pipeline: retention-orchestrator
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/retention-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "流失预警与用户分层"
+    depends_on: []
+    skills: [retention-management]
+    gate:
+      condition: "流失预警模型已构建且用户分层已完成"
+      fail_action: "优化模型或补充训练数据"
 ```
 
 ## 阶段执行计划

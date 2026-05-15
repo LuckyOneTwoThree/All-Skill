@@ -68,37 +68,74 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-design/design-orchestrator.md
-  stages:
-    - id: design-prd
-      name: 产品需求文档
-      depends_on: []
-    - id: design-ia
-      name: 信息架构设计
-      depends_on: [design-prd]
-      parallel_with: [design-userflow]
-    - id: design-userflow
-      name: 用户流程设计
-      depends_on: [design-prd]
-      parallel_with: [design-ia]
-    - id: design-prototype
-      name: 原型设计
-      depends_on: [design-ia, design-userflow]
-    - id: interaction-spec
-      name: 交互设计规范
-      depends_on: [design-userflow, design-prototype]
-      parallel_with: [design-handoff-spec]
-    - id: design-handoff-spec
-      name: 设计交接规范
-      depends_on: [design-prototype, design-ia, design-userflow, design-prd]
-      parallel_with: [interaction-spec]
-    - id: change-impact-analysis
-      name: 变更影响分析
-      depends_on: [design-prd]
-      trigger: PRD变更时触发
+pipeline: design-orchestrator
+version: 10.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-design/design-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "产品需求文档"
+    depends_on: []
+    skills: [design-prd]
+    gate:
+      condition: "PRD 4道质量门禁全部通过"
+      fail_action: "门禁1或2失败阻塞流程，输出缺失项清单"
+
+  - id: phase-2
+    name: "信息架构设计"
+    depends_on: [phase-1]
+    parallel_with: [phase-3]
+    skills: [design-ia]
+    gate:
+      condition: "IA方案人类已确认"
+      fail_action: "生成2-3个候选方案供人类选择"
+
+  - id: phase-3
+    name: "用户流程设计"
+    depends_on: [phase-1]
+    parallel_with: [phase-2]
+    skills: [design-userflow]
+    gate:
+      condition: "用户流程死胡同=0"
+      fail_action: "死胡同必须修复后才能进入原型阶段"
+
+  - id: phase-4
+    name: "原型设计"
+    depends_on: [phase-2, phase-3]
+    skills: [design-prototype]
+    gate:
+      condition: "原型设计规范一致性≥85%"
+      fail_action: "一致性<85%需人类确认violations"
+
+  - id: phase-5
+    name: "交互设计规范"
+    depends_on: [phase-3, phase-4]
+    parallel_with: [phase-6]
+    skills: [interaction-spec]
+    gate:
+      condition: "交互状态机8种基础状态全覆盖"
+      fail_action: "补充缺失状态定义"
+
+  - id: phase-6
+    name: "设计交接规范"
+    depends_on: [phase-4, phase-2, phase-3, phase-1]
+    parallel_with: [phase-5]
+    skills: [design-handoff-spec]
+    gate:
+      condition: "交接文档待确认项=0"
+      fail_action: "待确认项需逐项确认或标注接受风险"
+
+  - id: phase-7
+    name: "变更影响分析"
+    depends_on: [phase-1]
+    skills: [change-impact-analysis]
+    trigger: PRD变更时触发
+    gate:
+      condition: "影响矩阵覆盖所有下游设计产出，重做清单可执行"
+      fail_action: "补充缺失的下游影响项"
 ```
 
 ## 阶段执行计划

@@ -66,57 +66,81 @@ metadata:
 ## Pipeline
 
 ```yaml
+pipeline: product-iteration-orchestrator
+version: 8.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/cross-domain/product-iteration-orchestrator.md
 
-pipeline:
-  - stage: requirements
-    skills: [design-prd]
+stages:
+  - id: phase-1
+    name: "需求文档"
     depends_on: []
-    gate: 需求文档人类确认通过
+    skills: [design-prd]
+    gate:
+      condition: "需求文档人类确认通过"
+      fail_action: "补充需求细节"
 
-  - stage: design
+  - id: phase-2
+    name: "产品设计"
+    depends_on: [phase-1]
     skills: [design-orchestrator]
-    depends_on: [requirements]
-    gate: PRD变更人类确认通过
+    gate:
+      condition: "PRD人类确认通过"
+      fail_action: "补充需求细节"
 
-  - stage: impact-analysis
-    skills: []
-    depends_on: [design]
-    gate: 影响范围人类确认通过
+  - id: phase-3
+    name: "影响分析"
+    depends_on: [phase-2]
+    skills: [change-impact-analysis]
+    gate:
+      condition: "影响矩阵覆盖所有下游设计产出，重做清单可执行"
+      fail_action: "补充缺失的下游影响项"
 
-  - stage: api-update
+  - id: phase-4
+    name: "API更新"
+    depends_on: [phase-2]
     skills: [api-design-orchestrator]
-    depends_on: [design]
-    parallel: true
-    conditional: 影响范围含API变更
-    gate: API变更人类确认通过
+    trigger: 影响范围含API变更
+    gate:
+      condition: "API契约人类确认通过"
+      fail_action: "调整API设计"
 
-  - stage: ui-development
+  - id: phase-5
+    name: "UI开发"
+    depends_on: [phase-2, phase-4]
     skills: [ui-orchestrator]
-    depends_on: [design, api-update]
-    parallel: true
-    conditional: 影响范围含UI变更或设计令牌变更，或API发生变更
-    gate: 前端代码审查通过，前后端联调通过
+    trigger: 影响范围含UI变更或设计令牌变更，或API发生变更
+    gate:
+      condition: "UI开发与集成验证通过"
+      fail_action: "修复集成问题"
 
-  - stage: data-update
+  - id: phase-6
+    name: "数据更新"
+    depends_on: [phase-4]
     skills: [data-architecture-orchestrator]
-    depends_on: [api-update]
-    parallel: true
-    conditional: 影响范围含数据模型变更
-    gate: 数据架构变更审查通过
+    trigger: 影响范围含数据模型变更
+    gate:
+      condition: "数据架构审查通过"
+      fail_action: "修复数据架构问题"
 
-  - stage: backend-update
+  - id: phase-7
+    name: "后端更新"
+    depends_on: [phase-4, phase-6]
     skills: [backend-architecture-orchestrator]
-    depends_on: [api-update, data-update]
-    conditional: 影响范围含后端逻辑变更
-    gate: 后端审查通过（P0=0）
+    trigger: 影响范围含后端逻辑变更
+    gate:
+      condition: "后端审查通过（P0=0）"
+      fail_action: "修复P0问题"
 
-  - stage: delivery
+  - id: phase-8
+    name: "交付上线"
+    depends_on: [phase-7, phase-5]
     skills: [monitoring-orchestrator, iteration-orchestrator]
-    depends_on: [backend-update, ui-development]
-    gate: P0问题=0，回归测试通过
+    gate:
+      condition: "P0问题=0，P1问题≤3，灰度发布通过，复盘结论确认"
+      fail_action: "修复阻断问题后重新验证"
 ```
 
 ## 阶段执行计划

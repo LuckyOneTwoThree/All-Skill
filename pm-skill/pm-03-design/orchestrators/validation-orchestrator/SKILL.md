@@ -68,25 +68,47 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-design/validation-orchestrator.md
-  stages:
-    - id: validation-assumption-map
-      name: 假设地图
-      depends_on: []
-    - id: validation-mvp
-      name: MVP范围界定
-      depends_on: [validation-assumption-map]
-    - id: validation-experiment
-      name: 实验设计
-      depends_on: [validation-assumption-map, validation-mvp]
-      parallel_with: [validation-usability]
-    - id: validation-usability
-      name: 可用性测试
-      depends_on: [validation-assumption-map, validation-mvp]
-      parallel_with: [validation-experiment]
+pipeline: validation-orchestrator
+version: 6.1
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-design/validation-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "假设地图"
+    depends_on: []
+    skills: [validation-assumption-map]
+    gate:
+      condition: "最大风险假设已识别，每个功能点至少1个假设"
+      fail_action: "每个功能点至少1个假设，最大风险假设必须有验证计划"
+
+  - id: phase-2
+    name: "MVP范围界定"
+    depends_on: [phase-1]
+    skills: [validation-mvp]
+    gate:
+      condition: "MVP占比<60%，Must Have功能都有假设关联"
+      fail_action: "MVP占比>60%升级人类判断，确认是否调整"
+
+  - id: phase-3
+    name: "实验设计"
+    depends_on: [phase-1, phase-2]
+    parallel_with: [phase-4]
+    skills: [validation-experiment]
+    gate:
+      condition: "实验方案人类已审核，含验证方法、样本量、时长、终止条件"
+      fail_action: "所有实验方案必须人类审核"
+
+  - id: phase-4
+    name: "可用性测试"
+    depends_on: [phase-1, phase-2]
+    parallel_with: [phase-3]
+    skills: [validation-usability]
+    gate:
+      condition: "问题严重程度分级合理（P0/P1/P2/P3），洞察与假设地图有对应关系"
+      fail_action: "测试执行必须由人类研究员主持"
 ```
 
 ## 阶段执行计划

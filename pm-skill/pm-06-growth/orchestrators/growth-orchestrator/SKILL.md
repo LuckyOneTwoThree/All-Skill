@@ -62,37 +62,81 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-growth/growth-orchestrator.md
-  - stage: growth-model
-    gate: 增长模式已确定，飞轮模型已构建
-  - stage: acquisition-orchestrator
-    depends_on: [growth-model]
+pipeline: growth-orchestrator
+version: 8.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-growth/growth-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "增长模式诊断"
+    depends_on: []
+    skills: [growth-model]
+    gate:
+      condition: "增长模式已确定，飞轮模型已构建"
+      fail_action: "补充产品特征和用户数据"
+
+  - id: phase-2
+    name: "获客优化"
+    depends_on: [phase-1]
+    skills: [acquisition-orchestrator]
     trigger: 获客为瓶颈
-    gate: 渠道评估完成且漏斗优化方案已生成
-  - stage: activation-orchestrator
-    depends_on: [growth-model]
+    gate:
+      condition: "渠道评估完成且漏斗优化方案已生成"
+      fail_action: "补充缺失渠道数据或延长分析周期"
+
+  - id: phase-3
+    name: "激活优化"
+    depends_on: [phase-1]
+    skills: [activation-orchestrator]
     trigger: 激活为瓶颈
-    gate: Aha Moment候选已识别且Onboarding策略已生成
-  - stage: retention-orchestrator
-    depends_on: [growth-model]
+    gate:
+      condition: "Aha Moment候选已识别且Onboarding策略已生成"
+      fail_action: "扩大行为搜索范围或补充分群数据"
+
+  - id: phase-4
+    name: "留存优化"
+    depends_on: [phase-1]
+    skills: [retention-orchestrator]
     trigger: 留存为瓶颈
-    gate: 流失预警模型已构建且用户分层已完成
-  - stage: revenue-orchestrator
-    depends_on: [growth-model]
+    gate:
+      condition: "流失预警模型已构建且用户分层已完成"
+      fail_action: "优化模型或补充训练数据"
+
+  - id: phase-5
+    name: "变现优化"
+    depends_on: [phase-1]
+    skills: [revenue-orchestrator]
     trigger: 变现为瓶颈
-    gate: 付费漏斗分析完成且NRR追踪已建立
-  - stage: growth-strategy-report
-    depends_on: [growth-model]
-    gate: 增长策略报告经人类确认
-  - stage: gtm-strategy
-    trigger: 新产品上市 / 市场拓展
-    gate: GTM策略经人类确认
-  - stage: product-operations-manual
+    gate:
+      condition: "付费漏斗分析完成且NRR追踪已建立"
+      fail_action: "补充漏斗步骤定义或数据"
+
+  - id: phase-6
+    name: "增长策略报告"
+    depends_on: [phase-1]
+    skills: [growth-strategy-report]
+    gate:
+      condition: "增长策略报告经人类确认"
+      fail_action: "调整策略方向和执行路线图"
+
+  - id: phase-7
+    name: "GTM策略"
+    skills: [gtm-strategy]
+    trigger: 新产品上市/市场拓展
+    gate:
+      condition: "GTM策略经人类确认"
+      fail_action: "确认上市路径和渠道策略"
+
+  - id: phase-8
+    name: "运营手册"
+    skills: [product-operations-manual]
     trigger: 运营手册制定需求
-    gate: 运营手册经人类确认
+    gate:
+      condition: "运营手册经人类确认"
+      fail_action: "确认运营SOP和应急流程"
 ```
 
 ## 阶段执行计划

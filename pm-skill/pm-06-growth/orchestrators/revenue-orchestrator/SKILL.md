@@ -61,19 +61,37 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  - stage: revenue-funnel
-    gate: 注册到付费全链路转化分析完成，瓶颈已识别
-  - stage: revenue-nrr
-    depends_on: [revenue-funnel]
-    gate: NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别
-  - stage: revenue-upsell
-    depends_on: [revenue-nrr]
-    gate: 升级转化策略和个性化方案已生成
+pipeline: revenue-orchestrator
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/revenue-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "付费漏斗"
+    depends_on: []
+    skills: [revenue-funnel]
+    gate:
+      condition: "注册到付费全链路转化分析完成，瓶颈已识别"
+      fail_action: "补充漏斗步骤定义或数据"
+
+  - id: phase-2
+    name: "NRR追踪"
+    depends_on: [phase-1]
+    skills: [revenue-nrr]
+    gate:
+      condition: "NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别"
+      fail_action: "完善收入数据采集"
+
+  - id: phase-3
+    name: "升级转化"
+    depends_on: [phase-2]
+    skills: [revenue-upsell]
+    gate:
+      condition: "升级转化策略和个性化方案已生成"
+      fail_action: "优化升级信号识别或补充用户行为数据"
 ```
 
 ## 阶段执行计划

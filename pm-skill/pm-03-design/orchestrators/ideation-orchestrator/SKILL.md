@@ -67,14 +67,21 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-design/ideation-orchestrator.md
-  stages:
-    - id: ideation-workshop
-      name: 创意工作坊
-      depends_on: []
+pipeline: ideation-orchestrator
+version: 7.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-design/ideation-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "创意工作坊"
+    depends_on: []
+    skills: [ideation-workshop]
+    gate:
+      condition: "HMW 6维度覆盖、SCAMPER 7维度覆盖且至少10个方案、反转思维设计约束已生成、Top5方案已深化且对比矩阵6维度完整"
+      fail_action: "针对不达标项补充生成或重新深化"
 ```
 
 ## 阶段执行计划

@@ -67,7 +67,6 @@ post_pipeline:
 stages:
   - id: phase-1
     name: "并行采集"
-    parallel: true
     skills:
       - user-research-voice-analysis
       - user-research-behavior-analysis
@@ -77,7 +76,6 @@ stages:
 
   - id: phase-2
     name: "建模与访谈"
-    parallel: true
     depends_on: [phase-1]
     skills:
       - user-research-user-modeling

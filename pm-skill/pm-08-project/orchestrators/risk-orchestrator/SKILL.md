@@ -59,15 +59,29 @@ metadata:
 ## Pipeline
 
 ```yaml
+pipeline: risk-orchestrator
+version: 7.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-project/risk-orchestrator.md
-pipeline:
-  - stage: risk-identification
-    gate: 风险登记册已建立
-  - stage: risk-management
-    depends_on: [risk-identification]
-    gate: 风险已监控与升级处理
+
+stages:
+  - id: phase-1
+    name: "风险识别"
+    depends_on: []
+    skills: [risk-identification]
+    gate:
+      condition: "风险登记册已建立"
+      fail_action: "补充风险扫描或延长识别周期"
+
+  - id: phase-2
+    name: "风险监控与升级"
+    depends_on: [phase-1]
+    skills: [risk-management]
+    gate:
+      condition: "风险已监控与升级处理"
+      fail_action: "补充监控指标或调整预警阈值，立即执行升级"
 ```
 
 ## 阶段执行计划
@@ -142,7 +156,7 @@ Skill: risk-management
 | 阶段1子Skill（风险识别）失败 | 暂停风险流程，输出失败原因，提示用户补充项目数据后重试 |
 | 上游数据缺失（如项目数据、历史风险库） | 基于有限数据执行风险扫描，标注识别覆盖度不足，提示用户补充后重新扫描 |
 | 关键决策点未获人类确认（如风险应对策略） | 暂停升级流程，采用默认保守策略（规避/减轻），标注待确认，持续等待人类决策 |
-| 所有上游数据全部缺失 | 输出通用风险检查清单模板，标注全部为待验证，要求用户提供项目基础信息后重新执行 |
+| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板（仅含元信息和空结构），整体置信度设为0.3，强制人类确认是否继续。人类确认后基于用户提供信息和AI知识库推断生成，所有推断内容标注confidence≤0.5和needs_human_validation:true |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录

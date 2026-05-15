@@ -59,19 +59,37 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
-  stages:
-    - stage: metrics-system
-      gate: 北极星指标人类已选择
-    - stage: tracking-plan
-      depends_on: [metrics-system]
-      gate: 埋点方案人类已审核
-    - stage: metrics-dashboard
-      depends_on: [metrics-system, tracking-plan]
-      gate: Dashboard布局人类已确认
+pipeline: metrics-orchestrator
+version: 6.1
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "指标体系"
+    depends_on: []
+    skills: [metrics-system]
+    gate:
+      condition: "北极星指标人类已选择"
+      fail_action: "北极星指标必须人类决策，AI只提供候选和分析"
+
+  - id: phase-2
+    name: "埋点方案"
+    depends_on: [phase-1]
+    skills: [tracking-plan]
+    gate:
+      condition: "埋点方案人类已审核"
+      fail_action: "业务逻辑正确性和隐私合规性必须人类确认"
+
+  - id: phase-3
+    name: "Dashboard配置"
+    depends_on: [phase-1, phase-2]
+    skills: [metrics-dashboard]
+    gate:
+      condition: "Dashboard布局人类已确认"
+      fail_action: "布局合理性和告警阈值需人类审核"
 ```
 
 ## 阶段执行计划

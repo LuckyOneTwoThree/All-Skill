@@ -60,27 +60,61 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-monitoring/monitoring-orchestrator.md
-  - stage: monitoring-pipeline
-    gate: 监控预警全流程完成（核心路径覆盖率≥95%，告警噪音率<15%）
-  - stage: user-feedback-loop-report
+pipeline: monitoring-orchestrator
+version: 8.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-monitoring/monitoring-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "监控预警Pipeline"
+    depends_on: []
+    skills: [monitoring-pipeline]
+    gate:
+      condition: "监控预警全流程完成（核心路径覆盖率≥95%，告警噪音率<15%）"
+      fail_action: "补充缺失路径的监控配置、优化告警规则"
+
+  - id: phase-2
+    name: "用户反馈闭环"
+    skills: [user-feedback-loop-report]
     trigger: 用户反馈闭环需求
-    gate: 反馈闭环报告经人类审核确认
-  - stage: quality-acceptance
+    gate:
+      condition: "反馈闭环报告经人类审核确认"
+      fail_action: "补充分析或修改改进建议"
+
+  - id: phase-3
+    name: "质量验收"
+    skills: [quality-acceptance]
     trigger: 质量验收需求
-    gate: 质量验收报告经人类审核确认
-  - stage: release-auto-checklist
+    gate:
+      condition: "质量验收报告经人类审核确认"
+      fail_action: "补充验收项或修改放行建议"
+
+  - id: phase-4
+    name: "发布检查"
+    skills: [release-auto-checklist]
     trigger: 发布前检查需求
-    gate: 发布检查报告所有阻断项已解决
-  - stage: release-gradual
+    gate:
+      condition: "发布检查报告所有阻断项已解决"
+      fail_action: "解决阻断项后重新检查"
+
+  - id: phase-5
+    name: "灰度发布"
+    skills: [release-gradual]
     trigger: 灰度发布需求
-    gate: 灰度发布方案经人类审核确认
-  - stage: release-notes
+    gate:
+      condition: "灰度发布方案经人类审核确认"
+      fail_action: "调整灰度阶段或回滚条件"
+
+  - id: phase-6
+    name: "发布说明"
+    skills: [release-notes]
     trigger: 发布说明需求
-    gate: 发布说明文档已生成
+    gate:
+      condition: "发布说明文档已生成"
+      fail_action: "补充缺失版本的发布说明"
 ```
 
 ## 阶段执行计划

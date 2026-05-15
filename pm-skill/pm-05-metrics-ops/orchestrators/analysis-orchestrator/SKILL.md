@@ -62,22 +62,45 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
-  stages:
-    - stage: analysis-anomaly
-      gate: 异常检测Pipeline持续运行，无中断
-    - stage: analysis-funnel
-      parallel: true
-      gate: 核心业务漏斗已定义且数据完整
-    - stage: analysis-retention
-      parallel: true
-      gate: 至少产出1个Aha Moment候选行为
-    - stage: data-analysis-report
-      depends_on: [analysis-anomaly, analysis-funnel, analysis-retention]
-      gate: 报告执行摘要完整，至少3条行动建议
+pipeline: analysis-orchestrator
+version: 7.1
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "异常检测"
+    depends_on: []
+    skills: [analysis-anomaly]
+    gate:
+      condition: "异常检测Pipeline持续运行，无中断"
+      fail_action: "立即修复检测Pipeline，启动备用监控"
+
+  - id: phase-2
+    name: "漏斗分析"
+    parallel_with: [phase-3]
+    skills: [analysis-funnel]
+    gate:
+      condition: "核心业务漏斗已定义且数据完整"
+      fail_action: "补充漏斗定义，确保核心路径覆盖"
+
+  - id: phase-3
+    name: "留存分析"
+    parallel_with: [phase-2]
+    skills: [analysis-retention]
+    gate:
+      condition: "至少产出1个Aha Moment候选行为"
+      fail_action: "扩大行为搜索范围或延长分析周期"
+
+  - id: phase-4
+    name: "数据分析报告"
+    depends_on: [phase-1, phase-2, phase-3]
+    skills: [data-analysis-report]
+    gate:
+      condition: "报告执行摘要完整，至少3条行动建议"
+      fail_action: "补充分析或标注建议补充数据"
 ```
 
 ## 阶段执行计划

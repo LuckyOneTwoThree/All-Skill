@@ -60,16 +60,29 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  - stage: activation-aha
-    gate: 至少产出1个Aha Moment候选行为，含留存提升和到达率数据
-  - stage: activation-onboarding
-    depends_on: [activation-aha]
-    gate: 各用户分群的Onboarding路径和内容已设计
+pipeline: activation-orchestrator
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/activation-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "Aha Moment识别"
+    depends_on: []
+    skills: [activation-aha]
+    gate:
+      condition: "至少产出1个Aha Moment候选行为，含留存提升和到达率数据"
+      fail_action: "扩大行为搜索范围"
+
+  - id: phase-2
+    name: "Onboarding设计"
+    depends_on: [phase-1]
+    skills: [activation-onboarding]
+    gate:
+      condition: "各用户分群的Onboarding路径和内容已设计"
+      fail_action: "补充分群数据或延长分析周期"
 ```
 
 ## 阶段执行计划

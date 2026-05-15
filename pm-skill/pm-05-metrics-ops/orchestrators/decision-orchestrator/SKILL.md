@@ -61,16 +61,29 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
-  stages:
-    - stage: decision-dace
-      gate: 目标已定义、数据已分析、洞察已生成、决策选项已提供
-    - stage: decision-culture
-      depends_on: [decision-dace]
-      gate: 报告体系正常运行（每日/每周/每月/每季）
+pipeline: decision-orchestrator
+version: 7.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "DACE决策循环"
+    depends_on: []
+    skills: [decision-dace]
+    gate:
+      condition: "目标已定义、数据已分析、洞察已生成、决策选项已提供"
+      fail_action: "补充数据或重新定义目标"
+
+  - id: phase-2
+    name: "数据文化建设"
+    depends_on: [phase-1]
+    skills: [decision-culture]
+    gate:
+      condition: "报告体系正常运行（每日/每周/每月/每季）"
+      fail_action: "检查上游数据源或调整报告模板"
 ```
 
 ## 阶段执行计划

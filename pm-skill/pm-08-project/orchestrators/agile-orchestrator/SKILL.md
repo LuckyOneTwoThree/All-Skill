@@ -59,18 +59,37 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 ## Pipeline
 
 ```yaml
+pipeline: agile-orchestrator
+version: 7.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-project/agile-orchestrator.md
-pipeline:
-  - stage: agile-sprint-planning
-    gate: Sprint计划已确认
-  - stage: agile-daily-sync
-    depends_on: [agile-sprint-planning]
-    gate: Daily Sync障碍已暴露
-  - stage: agile-review
-    depends_on: [agile-sprint-planning, agile-daily-sync]
-    gate: Sprint评审与复盘报告已完成
+
+stages:
+  - id: phase-1
+    name: "Sprint规划"
+    depends_on: []
+    skills: [agile-sprint-planning]
+    gate:
+      condition: "Sprint计划已确认"
+      fail_action: "暂停Sprint启动，补充规划"
+
+  - id: phase-2
+    name: "每日同步"
+    depends_on: [phase-1]
+    skills: [agile-daily-sync]
+    gate:
+      condition: "Daily Sync障碍已暴露"
+      fail_action: "加强障碍追踪和升级机制"
+
+  - id: phase-3
+    name: "Sprint评审与复盘"
+    depends_on: [phase-1, phase-2]
+    skills: [agile-review]
+    gate:
+      condition: "Sprint评审与复盘报告已完成"
+      fail_action: "补充分析或修改行动项"
 ```
 
 ## 阶段执行计划
@@ -160,7 +179,7 @@ Skill: agile-review
 | 阶段1子Skill（Sprint规划）失败 | 暂停Sprint启动，输出失败原因，提示用户补充Backlog或调整团队容量后重试 |
 | 上游数据缺失（如Backlog、团队容量） | 用占位数据生成草稿版Sprint计划，标注低置信度，提示用户补充后重新规划 |
 | 关键决策点未获人类确认（如Sprint Goal） | 暂停进入下一阶段，持续等待确认，超时后升级提醒 |
-| 所有上游数据全部缺失 | 输出最小化Sprint框架模板，标注全部为待填充，要求用户提供基础信息后重新执行 |
+| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板（仅含元信息和空结构），整体置信度设为0.3，强制人类确认是否继续。人类确认后基于用户提供信息和AI知识库推断生成，所有推断内容标注confidence≤0.5和needs_human_validation:true |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录

@@ -61,16 +61,29 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-metrics-ops/experiment-orchestrator.md
-  stages:
-    - stage: experiment-design
-      gate: 实验设计经人类审核确认
-    - stage: experiment-execution
-      depends_on: [experiment-design]
-      gate: 样本量充足且统计检验完成、实验报告经人类审核确认
+pipeline: experiment-orchestrator
+version: 8.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-metrics-ops/experiment-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "实验设计"
+    depends_on: []
+    skills: [experiment-design]
+    gate:
+      condition: "实验设计经人类审核确认"
+      fail_action: "阻止实验上线，修改后重新审核"
+
+  - id: phase-2
+    name: "实验执行"
+    depends_on: [phase-1]
+    skills: [experiment-execution]
+    gate:
+      condition: "样本量充足且统计检验完成、实验报告经人类审核确认"
+      fail_action: "延长实验周期或扩大流量"
 ```
 
 ## 阶段执行计划

@@ -1,11 +1,11 @@
 ---
 name: iteration-orchestrator
-description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-decision、release-gradual、release-auto-checklist、release-notes 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分、迭代管理、灰度发布、发布检查、发布说明。
+description: 当需要规划迭代周期或调整产品优先级时使用。迭代决策指挥官，调度 iteration-decision 子Skill执行。关键词：迭代决策、Backlog优化、优先级调整、迭代复盘、迭代规划、需求重组、RICE评分、迭代管理。
 metadata:
   module: "产品监控与迭代"
   sub-module: "迭代优化"
   type: "orchestrator"
-  version: "8.0"
+  version: "9.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "规划下一个迭代"
@@ -60,21 +60,21 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  post_pipeline:
-    - action: stage-summary
-      output: output/phase-reports/pm-monitoring/iteration-orchestrator.md
-  - stage: iteration-decision
-    gate: 迭代决策全流程完成（Backlog已优化，优先级调整方案已生成，迭代复盘完成且改进建议经人类确认）
-  - stage: release-auto-checklist
-    trigger: 发布前检查需求
-    gate: 发布检查报告所有阻断项已解决
-  - stage: release-gradual
-    trigger: 灰度发布需求
-    gate: 灰度发布方案经人类审核确认
-  - stage: release-notes
-    trigger: 发布说明需求
-    gate: 发布说明文档已生成
+pipeline: iteration-orchestrator
+version: 9.0
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-monitoring/iteration-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "迭代决策"
+    depends_on: []
+    skills: [iteration-decision]
+    gate:
+      condition: "迭代决策全流程完成（Backlog已优化，优先级调整方案已生成，迭代复盘完成且改进建议经人类确认）"
+      fail_action: "补充需求分析、影响分析数据或修改改进建议"
 ```
 
 ## 阶段执行计划
@@ -101,45 +101,6 @@ Skill: iteration-decision
 模式: 🤖→👤
 ```
 
-#### 调用 release-auto-checklist
-
-```
-Skill: release-auto-checklist
-输入:
-  release_content: 用户提供（发布内容）
-  env_config: 用户提供（环境配置）
-  dependency_list: 用户提供（依赖清单，可选）
-输出: output/pm-monitoring/release-auto-checklist/
-验证: 检查项全覆盖；所有阻断项已解决
-模式: 🤖
-```
-
-#### 调用 release-gradual
-
-```
-Skill: release-gradual
-输入:
-  release_plan: 用户提供（发布计划）
-  gradual_strategy: 用户提供（灰度策略，可选）
-  monitoring_config: monitoring-pipeline → 监控配置（可选）
-输出: output/pm-monitoring/release-gradual/
-验证: 灰度阶段配置完整；流量规则明确；回滚条件可执行
-模式: 🤖→👤
-```
-
-#### 调用 release-notes
-
-```
-Skill: release-notes
-输入:
-  release_content: 用户提供（发布内容）
-  change_log: 用户提供（变更记录）
-  user_impact: 用户提供（用户影响，可选）
-输出: output/pm-monitoring/release-notes/
-验证: 用户版、运维版、内部版发布说明均已生成
-模式: 🤖
-```
-
 ### 阶段总结（post_pipeline）
 
 所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
@@ -161,17 +122,18 @@ Skill: release-notes
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 迭代决策全流程完成 | Backlog已优化，优先级调整方案已生成，迭代复盘完成且改进建议经人类确认 | 补充需求分析、影响分析数据或修改改进建议 |
-| 发布检查已通过 | 发布检查报告所有阻断项已解决 | 解决阻断项后重新检查 |
-| 灰度发布方案已审核 | 灰度发布方案经人类审核确认 | 调整灰度阶段或回滚条件 |
-| 发布说明已生成 | 用户版、运维版、内部版发布说明均已生成 | 补充缺失版本的发布说明 |
+| 发布与验收 | 如需发布，转交 monitoring-orchestrator 执行 release-gradual → release-auto-checklist → release-notes | — |
 | 阶段总结已生成 | output/phase-reports/pm-monitoring/iteration-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
+
+## 下游衔接
+
+- 如需发布，推荐下一步使用 monitoring-orchestrator
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
 | 迭代计划调整确认 | 优先级调整方案生成完成 | 确认调整方案、资源重新分配和风险接受 |
-| 灰度发布策略确认 | 灰度发布方案生成完成 | 确认灰度阶段、流量规则和回滚条件 |
 
 ## 异常处理
 
@@ -194,3 +156,4 @@ Skill: release-notes
 - v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v7.0: 合并 iteration-backlog + iteration-prioritization + iteration-retrospective → iteration-decision；3阶段Pipeline简化为1阶段；更新所有引用和输出路径
 - v8.0: 新增 release-gradual、release-auto-checklist、release-notes——从pm-05迁移；Pipeline新增3个触发阶段；阶段执行计划新增3个子Skill调用；阶段卡口新增3项；人类决策点新增灰度发布策略确认
+- v9.0: 移除 release-gradual、release-auto-checklist、release-notes——统一归属 monitoring-orchestrator，消除跨编排器重复调度；Pipeline移除3个触发阶段；阶段执行计划移除3个子Skill调用；阶段卡口新增发布与验收转交说明；新增下游衔接推荐

@@ -1,11 +1,11 @@
 ---
 name: diagnosis-orchestrator
-description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，调度 diagnosis-health、diagnosis-competition、competitor-monitoring-report、product-sunset-plan、quality-acceptance 子Skill执行。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR、竞品监控、产品下线、产品诊断、问题排查、质量验收。
+description: 当需要诊断产品健康度或追踪竞品动态时使用。智能诊断指挥官，调度 diagnosis-health、diagnosis-competition、competitor-monitoring-report、product-sunset-plan 子Skill执行。关键词：智能诊断、健康度评分、竞品追踪、问题归因、MTTR、竞品监控、产品下线、产品诊断、问题排查。
 metadata:
   module: "产品监控与迭代"
   sub-module: "问题诊断"
   type: "orchestrator"
-  version: "9.0"
+  version: "10.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "诊断一下产品健康度"
@@ -60,25 +60,46 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  - stage: diagnosis-health
-    gate: 健康度评分偏差±10%以内
-  - stage: diagnosis-competition
-    parallel: true
-    gate: 竞品动态已追踪
-  - stage: competitor-monitoring-report
-    depends_on: [diagnosis-competition]
-    gate: 竞品监控报告经人类审核确认
-  - stage: product-sunset-plan
-    trigger: 产品下线需求
-    gate: 产品下线方案经人类审核确认
-  - stage: quality-acceptance
-    trigger: 质量验收需求
-    gate: 质量验收报告经人类审核确认
+pipeline: diagnosis-orchestrator
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/diagnosis-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "健康度诊断"
+    depends_on: []
+    skills: [diagnosis-health]
+    parallel_with: [phase-2]
+    gate:
+      condition: "健康度评分偏差±10%以内"
+      fail_action: "校准评分模型或补充数据"
+
+  - id: phase-2
+    name: "竞品追踪"
+    skills: [diagnosis-competition]
+    parallel_with: [phase-1]
+    gate:
+      condition: "竞品动态已追踪"
+      fail_action: "补充竞品数据源或延长追踪周期"
+
+  - id: phase-3
+    name: "竞品监控报告"
+    depends_on: [phase-2]
+    skills: [competitor-monitoring-report]
+    gate:
+      condition: "竞品监控报告经人类审核确认"
+      fail_action: "补充分析或修改应对建议"
+
+  - id: phase-4
+    name: "产品下线方案"
+    skills: [product-sunset-plan]
+    trigger: 产品下线需求
+    gate:
+      condition: "产品下线方案经人类审核确认"
+      fail_action: "补充分析或修改迁移方案"
 ```
 
 ## 阶段执行计划
@@ -139,19 +160,6 @@ Skill: product-sunset-plan
 模式: 🤖→👤
 ```
 
-#### 调用 quality-acceptance
-
-```
-Skill: quality-acceptance
-输入:
-  acceptance_criteria: 用户提供（验收标准）
-  test_report: 测试平台（测试报告）
-  launch_checklist: 用户提供（上线检查清单，可选）
-输出: output/pm-monitoring/quality-acceptance/
-验证: 验收标准逐项验证完成；风险项已列出；放行建议可执行
-模式: 🤖→👤
-```
-
 ### 阶段总结（post_pipeline）
 
 所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
@@ -176,8 +184,12 @@ Skill: quality-acceptance
 | 竞品动态已追踪 | 竞品功能变更已识别，优劣势分析已完成 | 补充竞品数据源或延长追踪周期 |
 | 竞品监控报告已审核 | 竞品监控报告经人类审核确认 | 补充分析或修改应对建议 |
 | 产品下线方案已审核 | 产品下线方案经人类审核确认 | 补充分析或修改迁移方案 |
-| 质量验收报告已审核 | 质量验收报告经人类审核确认，放行建议已确认 | 补充验收项或修改放行建议 |
+| 质量验收 | 如需验收，转交 monitoring-orchestrator 执行 quality-acceptance | — |
 | 阶段总结已生成 | output/phase-reports/pm-monitoring/diagnosis-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
+
+## 下游衔接
+
+- 如需验收，推荐下一步使用 monitoring-orchestrator
 
 ## 人类决策点
 
@@ -186,7 +198,6 @@ Skill: quality-acceptance
 | 健康度评分校准 | 健康度评分与实际感知偏差超过±10% | 确认评分模型校准方案和权重调整 |
 | 竞品监控报告确认 | 竞品监控报告生成完成 | 确认威胁评估和应对建议 |
 | 产品下线方案确认 | 产品下线方案生成完成 | 确认下线时间线和用户迁移方案 |
-| 质量验收放行决策 | 质量验收报告生成完成 | 确认验收结果，决定是否放行或附加条件放行 |
 
 ## 异常处理
 
@@ -209,3 +220,4 @@ Skill: quality-acceptance
 - v7.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v8.0: 更新子Skill下游引用——monitoring-anomaly/monitoring-dashboard/monitoring-escalation → monitoring-pipeline，iteration-backlog/iteration-prioritization → iteration-decision
 - v9.0: 新增 quality-acceptance（质量验收）——从pm-05迁移；Pipeline新增quality-acceptance触发阶段；阶段执行计划新增quality-acceptance调用；阶段卡口新增质量验收报告已审核；人类决策点新增质量验收放行决策
+- v10.0: 移除 quality-acceptance——统一归属 monitoring-orchestrator，消除跨编排器重复调度；Pipeline移除quality-acceptance触发阶段；阶段执行计划移除quality-acceptance调用；阶段卡口新增质量验收转交说明；新增下游衔接推荐

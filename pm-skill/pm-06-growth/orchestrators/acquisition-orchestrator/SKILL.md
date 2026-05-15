@@ -27,6 +27,17 @@ metadata:
 1. **渠道评估与漏斗优化一体执行**：acquisition-analysis 内部先完成渠道评估再执行漏斗优化，确保优化方案有渠道级数据支撑
 2. **数据在步骤间流转**：渠道评估的输出直接驱动漏斗优化的输入，无需编排器中转
 
+## 编排器定位声明
+
+本编排器当前 Pipeline 仅包含 1 个子 Skill（acquisition-analysis），属于合并简化后的退化编排器。保留本编排器的理由：
+
+1. **统一入口**：为用户获取子模块提供标准化的调用入口，上层编排器（如 product-launch-orchestrator）无需关心内部子 Skill 的合并历史
+2. **阶段总结**：强制生成阶段总结文档（post_pipeline），确保子模块产出可审计、可追溯
+3. **异常处理**：提供统一的异常处理策略和降级方案，子 Skill 自身的降级策略不覆盖编排器层面的异常拦截
+4. **人类决策点**：在子 Skill 执行前后提供人类决策卡口，确保关键结论经人类确认后才传递下游
+
+若未来该子模块需要扩展为多阶段 Pipeline，本编排器可直接增加阶段，无需修改上层编排器的调用方式。
+
 ## 编排协议
 
 你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
@@ -60,13 +71,21 @@ metadata:
 ## Pipeline
 
 ```yaml
-pipeline:
-  - stage: acquisition-analysis
-    gate: 渠道评估完成且漏斗优化方案已生成
+pipeline: acquisition-orchestrator
+version: 7.0
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/acquisition-orchestrator.md
+
+stages:
+  - id: phase-1
+    name: "渠道评估与漏斗优化"
+    depends_on: []
+    skills: [acquisition-analysis]
+    gate:
+      condition: "渠道评估完成且漏斗优化方案已生成"
+      fail_action: "补充缺失渠道数据或延长分析周期"
 ```
 
 ## 阶段执行计划

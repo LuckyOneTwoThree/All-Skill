@@ -59,18 +59,37 @@ metadata:
 ## Pipeline
 
 ```yaml
+pipeline: project-planning-orchestrator
+version: 7.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-project/project-planning-orchestrator.md
-pipeline:
-  - stage: planning-project-charter
-    gate: 宪章已批准
-  - stage: planning-resource
-    depends_on: [planning-project-charter]
-    gate: 资源已锁定
-  - stage: planning-kickoff
-    depends_on: [planning-project-charter, planning-resource]
-    gate: Kickoff已完成
+
+stages:
+  - id: phase-1
+    name: "项目宪章"
+    depends_on: []
+    skills: [planning-project-charter]
+    gate:
+      condition: "宪章已批准"
+      fail_action: "修改宪章后重新审批"
+
+  - id: phase-2
+    name: "资源锁定"
+    depends_on: [phase-1]
+    skills: [planning-resource]
+    gate:
+      condition: "资源已锁定"
+      fail_action: "升级人类决策，调整范围或资源"
+
+  - id: phase-3
+    name: "Kickoff"
+    depends_on: [phase-1, phase-2]
+    skills: [planning-kickoff]
+    gate:
+      condition: "Kickoff已完成"
+      fail_action: "重新调度会议时间"
 ```
 
 ## 阶段执行计划
@@ -154,7 +173,7 @@ Skill: planning-kickoff
 | 阶段1子Skill（项目宪章）失败 | 暂停项目启动，输出失败原因，提示用户补充项目背景或战略目标后重试 |
 | 上游数据缺失（如产品背景、战略目标） | 用占位数据生成草稿版宪章，标注低置信度，提示用户补充后重新生成 |
 | 关键决策点未获人类确认（如宪章审批） | 暂停进入资源规划阶段，持续等待审批，超时后升级提醒 |
-| 所有上游数据全部缺失 | 输出最小化项目宪章模板，标注全部为待填充，要求用户提供基础信息后重新执行 |
+| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板（仅含元信息和空结构），整体置信度设为0.3，强制人类确认是否继续。人类确认后基于用户提供信息和AI知识库推断生成，所有推断内容标注confidence≤0.5和needs_human_validation:true |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 
 ## 变更记录
