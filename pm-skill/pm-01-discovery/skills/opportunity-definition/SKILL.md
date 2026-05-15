@@ -198,10 +198,42 @@ metadata:
   "type": "object",
   "required": ["scoring", "problem_statement", "hmw", "brief", "metadata"],
   "properties": {
-    "scoring": {"type": "object", "description": "机会评分结果，含各维度得分和加权总分"},
-    "problem_statement": {"type": "object", "description": "结构化问题陈述，含模板要素和质量检查"},
-    "hmw": {"type": "object", "description": "HMW陈述列表，含维度覆盖和创新空间评分"},
-    "brief": {"type": "object", "description": "机会简报，含证据摘要、关键假设和推荐下一步"},
+    "scoring": {
+      "type": "object",
+      "required": ["opportunities", "metadata"],
+      "properties": {
+        "opportunities": {"type": "array", "description": "机会评分列表，详见输出校验规则→scoring校验"},
+        "metadata": {"type": "object", "description": "评分元数据，含awaiting_human_input"}
+      }
+    },
+    "problem_statement": {
+      "type": "object",
+      "required": ["problem_statement", "data_support", "template_elements", "quality_check"],
+      "properties": {
+        "problem_statement": {"type": "string", "description": "完整Problem Statement文本"},
+        "data_support": {"type": "object", "description": "数据支撑，详见输出校验规则→problem_statement校验"},
+        "template_elements": {"type": "object", "description": "模板6要素"},
+        "quality_check": {"type": "object", "description": "5项质量检查结果"}
+      }
+    },
+    "hmw": {
+      "type": "object",
+      "required": ["hmw_statements", "dimension_coverage"],
+      "properties": {
+        "hmw_statements": {"type": "array", "description": "HMW陈述列表，详见输出校验规则→hmw校验"},
+        "dimension_coverage": {"type": "object", "description": "4维度覆盖统计"}
+      }
+    },
+    "brief": {
+      "type": "object",
+      "required": ["title", "problem_statement", "evidence_summary", "opportunity_score", "hmw_statements", "key_assumptions", "recommended_next_step", "human_decisions_needed"],
+      "properties": {
+        "title": {"type": "string"},
+        "evidence_summary": {"type": "object", "description": "3类证据摘要，详见输出校验规则→brief校验"},
+        "key_assumptions": {"type": "array", "description": "关键假设列表，详见输出校验规则→brief校验"},
+        "human_decisions_needed": {"type": "array", "description": "人类决策事项列表"}
+      }
+    },
     "metadata": {"type": "object", "description": "元数据，含版本、时间戳和来源文件"}
   }
 }

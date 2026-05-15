@@ -337,11 +337,14 @@ metadata:
 
 ## 质量检查
 
+P0（必须通过，不通过则阻断输出）：
 - [ ] executive_summary字段≤500字
 - [ ] product_definition包含≥1个target_user且feature_scope.mvp_features≥3个
 - [ ] business_analysis.market_analysis包含TAM/SAM/SOM且business_model.revenue_model非空
 - [ ] execution_plan.okr包含≥2个key_results且roadmap.now非空
 - [ ] risk_assessment.risks覆盖≥3个category
+
+P1（建议通过，不通过则标注"待修复"）：
 - [ ] decision_requests包含≥1个具体审批事项
 - [ ] proposal_metadata.data_sources包含≥1个来源
 

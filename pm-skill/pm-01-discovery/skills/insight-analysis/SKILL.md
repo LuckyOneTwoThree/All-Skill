@@ -253,11 +253,48 @@ metadata:
   "type": "object",
   "required": ["jtbd", "requirement_layers", "5whys", "kano", "priority_scoring", "metadata"],
   "properties": {
-    "jtbd": {"type": "object", "description": "JTBD分析结果，含功能性/情感性/社会性三层Job"},
-    "requirement_layers": {"type": "object", "description": "需求三层模型拆解结果"},
-    "5whys": {"type": "object", "description": "5Whys根因分析结果，含因果链和可行动改进建议"},
-    "kano": {"type": "object", "description": "KANO分类结果，含各功能分类和边界情况"},
-    "priority_scoring": {"type": "object", "description": "优先级评分结果，含加权排序和可信度标注"},
+    "jtbd": {
+      "type": "object",
+      "required": ["jobs", "summary"],
+      "properties": {
+        "jobs": {"type": "array", "description": "任务列表，详见输出校验规则→jtbd校验"},
+        "summary": {"type": "object", "description": "统计摘要，含total_jobs和by_type"}
+      }
+    },
+    "requirement_layers": {
+      "type": "object",
+      "required": ["requirement_layers"],
+      "properties": {
+        "requirement_layers": {"type": "array", "description": "需求三层拆解列表，详见输出校验规则→requirement_layers校验"}
+      }
+    },
+    "5whys": {
+      "type": "object",
+      "required": ["chains", "root_cause", "actionable_fix"],
+      "properties": {
+        "chains": {"type": "array", "description": "因果链列表，详见输出校验规则→5whys校验"},
+        "root_cause": {"type": "string"},
+        "actionable_fix": {"type": "object", "description": "可行动改进建议，含description/effort/impact/suggested_metrics"}
+      }
+    },
+    "kano": {
+      "type": "object",
+      "required": ["kano_classification", "boundary_cases", "summary"],
+      "properties": {
+        "kano_classification": {"type": "array", "description": "KANO分类列表，详见输出校验规则→kano校验"},
+        "boundary_cases": {"type": "array"},
+        "summary": {"type": "object"}
+      }
+    },
+    "priority_scoring": {
+      "type": "object",
+      "required": ["priority_list", "scoring_summary", "priority_thresholds"],
+      "properties": {
+        "priority_list": {"type": "array", "description": "优先级列表，详见输出校验规则→priority_scoring校验"},
+        "scoring_summary": {"type": "object"},
+        "priority_thresholds": {"type": "object"}
+      }
+    },
     "metadata": {"type": "object", "description": "元数据，含版本、时间戳和来源文件"}
   }
 }
