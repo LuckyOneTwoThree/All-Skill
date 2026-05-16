@@ -14,8 +14,8 @@
           "id": {"type": "string"},
           "stage": {"type": "string", "description": "产生债务的阶段（如stage-2）"},
           "description": {"type": "string", "description": "债务描述"},
-          "severity": {"type": "string", "enum": ["low", "medium", "high"]},
-          "status": {"type": "string", "enum": ["open", "resolved", "deferred"]},
+          "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+          "status": {"type": "string", "enum": ["open", "resolved", "deferred", "applied"]},
           "created_at": {"type": "string"},
           "resolved_at": {"type": "string"},
           "resolution": {"type": "string"}

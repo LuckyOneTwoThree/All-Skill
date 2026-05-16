@@ -5,7 +5,7 @@ metadata:
   module: "产品探索与发现"
   sub-module: "用户研究"
   type: "orchestrator"
-  version: "8.1"
+  version: "8.2"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我做一下用户研究"
@@ -26,13 +26,13 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline 定义
 
 ```yaml
 pipeline: user-research-orchestrator
-version: 8.0
+version: 8.2
 
 post_pipeline:
   - action: stage-summary
@@ -49,18 +49,26 @@ stages:
       fail_action: "补充用户反馈数据或行为数据"
 
   - id: phase-2
-    name: "建模与访谈"
+    name: "用户建模"
     depends_on: [phase-1]
     skills:
       - user-research-user-modeling
+    gate:
+      condition: "persona.json 已生成"
+      fail_action: "补充数据或检查子Skill执行结果"
+
+  - id: phase-2b
+    name: "访谈辅助"
+    depends_on: [phase-2]
+    skills:
       - user-research-interview-assist
     gate:
-      condition: "persona.json + interview-script.json 均已生成"
+      condition: "interview-script.json 已生成"
       fail_action: "补充数据或检查子Skill执行结果"
 
   - id: phase-3
     name: "研究报告"
-    depends_on: [phase-1, phase-2]
+    depends_on: [phase-1, phase-2b]
     skills: [user-research-report]
     gate:
       condition: "执行摘要包含3条核心发现+Top1建议"
@@ -102,7 +110,7 @@ Skill: user-research-behavior-analysis
 
 ⏸ **阶段卡口**：voice-analysis.json + behavior-analysis.json 均已生成且验证通过 → 未通过：补充用户反馈数据或行为数据
 
-### 阶段2：建模与访谈（并行调用）
+### 阶段2：用户建模
 
 #### 调用 user-research-user-modeling
 
@@ -119,6 +127,8 @@ Skill: user-research-user-modeling
 ```
 
 ⏸ **阶段卡口**：personas数组非空，至少1个Persona置信度≥0.7 → 未通过：标记建模不充分，建议补充数据或访谈
+
+### 阶段2b：访谈辅助
 
 #### 调用 user-research-interview-assist
 
@@ -159,21 +169,15 @@ Skill: user-research-report
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-discovery/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-discovery/user-research-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-discovery/ |
+| 总结输出路径 | output/phase-reports/pm-discovery/user-research-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: insight-orchestrator
-    reason: 用户研究完成，从研究数据中提炼洞察
-    input_mapping:
-      user_research_output: "output/pm-discovery/user-research-report/ → insight-analysis输入"
+  primary: insight-orchestrator（用户研究完成，从研究数据中提炼洞察）
   alternatives:
     - target: opportunity-orchestrator
       reason: 研究结论已足够明确，直接进入机会定义
@@ -185,10 +189,6 @@ Skill: user-research-report
     - target: user-research-report
       reason: 仅需生成研究报告，无需后续洞察分析
       condition: 研究为独立项目交付物，不需要进一步分析时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

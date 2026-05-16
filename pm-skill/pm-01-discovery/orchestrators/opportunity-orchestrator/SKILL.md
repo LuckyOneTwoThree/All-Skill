@@ -36,7 +36,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline 定义
 
@@ -84,21 +84,15 @@ Skill: opportunity-definition
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-discovery/opportunity-definition/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-discovery/opportunity-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-discovery/opportunity-definition/ |
+| 总结输出路径 | output/phase-reports/pm-discovery/opportunity-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: business-orchestrator
-    reason: 机会定义完成，将机会转化为可持续的商业模式
-    input_mapping:
-      opportunity_output: "output/pm-discovery/opportunity-definition/ → business-model-canvas输入"
+  primary: business-orchestrator（机会定义完成，将机会转化为可持续的商业模式）
   alternatives:
     - target: design-orchestrator
       reason: 商业模式已确定，直接进入产品设计
@@ -107,10 +101,6 @@ Skill: opportunity-definition
       reason: 机会假设风险较高，需先验证再投入
       condition: 机会简报中关键假设风险等级≥高时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

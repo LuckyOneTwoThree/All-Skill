@@ -27,7 +27,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline 定义
 
@@ -56,18 +56,26 @@ stages:
       fail_action: "置信度<0.6的项目升级人类校准，战略方向需人类选择"
 
   - id: phase-3
-    name: "目标设定"
+    name: "北极星指标"
     depends_on: [phase-2]
     skills:
       - planning-north-star
+    gate:
+      condition: "北极星指标人类已选择"
+      fail_action: "北极星必须人类决策"
+
+  - id: phase-3b
+    name: "OKR设定"
+    depends_on: [phase-3]
+    skills:
       - planning-okr
     gate:
-      condition: "北极星指标人类已选择，OKR人类已确认"
-      fail_action: "北极星必须人类决策；OKR达成概率<0.3升级调整"
+      condition: "OKR人类已确认"
+      fail_action: "OKR达成概率<0.3升级调整"
 
   - id: phase-4
     name: "路线图"
-    depends_on: [phase-3]
+    depends_on: [phase-3b]
     skills:
       - planning-roadmap
     gate:
@@ -156,21 +164,15 @@ stages:
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-strategy/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-strategy/planning-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-strategy/ |
+| 总结输出路径 | output/phase-reports/pm-strategy/planning-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: design-orchestrator
-    reason: 战略规划完成，将战略转化为PRD和设计方案
-    input_mapping:
-      planning_outputs: "output/pm-strategy/planning-okr/ + planning-roadmap/ → design-prd输入"
+  primary: design-orchestrator（战略规划完成，将战略转化为PRD和设计方案）
   alternatives:
     - target: metrics-orchestrator
       reason: 需先设计度量体系再进入设计
@@ -179,10 +181,6 @@ stages:
       reason: 路线图已就绪，直接启动项目规划
       condition: 战略规划已充分，需快速进入项目执行时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

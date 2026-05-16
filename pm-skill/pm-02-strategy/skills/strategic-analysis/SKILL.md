@@ -321,17 +321,15 @@ metadata:
       { "item": "互联网巨头以免费策略切入市场", "confidence": 0.70, "evidence": "竞品B 2024Q3推出免费基础版" }
     ],
     "strategies": [
-      { "type": "SO", "strategy": "AI引擎+企业培训市场渗透", "key_actions": ["与50家中大型企业签订培训平台试点协议", "推出企业版AI学习路径定制功能"], "expected_outcome": "6个月内企业客户数增长40%" },
-      { "type": "ST", "strategy": "技术壁垒防御与差异化定价", "key_actions": ["加速AI引擎迭代，保持6个月技术领先窗口", "推出按效果付费模式"], "expected_outcome": "客户留存率维持在85%以上" },
-      { "type": "WO", "strategy": "内容生态补强与政策红利捕获", "key_actions": ["与3家头部职业院校达成内容授权合作", "申请职业教育数字化转型专项补贴"], "expected_outcome": "课程SKU从3学科扩展至8学科" },
-      { "type": "WT", "strategy": "聚焦核心赛道收缩防御", "key_actions": ["暂停K12学科拓展，资源集中投入编程与职业培训", "建立客户成功团队，提升存量客户续费率"], "expected_outcome": "核心赛道续费率提升至90%" }
+      { "type": "SO", "strategy": "AI引擎+企业培训市场渗透", "key_actions": ["与50家中大型企业签订培训平台试点协议" // ... 同结构可扩展], "expected_outcome": "6个月内企业客户数增长40%" }
+      // ... 同结构可扩展
     ]
   },
   "ansoff": {
     "current_position": {
       "quadrant": "市场渗透",
       "description": "当前定位于现有市场中的现有产品",
-      "rationale": ["产品成熟稳定", "市场渗透率已达较高水平", "增长空间受限"]
+      "rationale": ["产品成熟稳定" // ... 同结构可扩展]
     },
     "growth_paths": [
       {
@@ -342,20 +340,10 @@ metadata:
         "expected_return": "medium",
         "timeline": "6-12个月",
         "feasibility": { "overall": 0.70, "market_attractiveness": 0.75, "capability_match": 0.80, "resource_availability": 0.65, "risk_controllability": 0.60 },
-        "key_actions": ["识别目标新市场细分", "调整产品适配新市场", "建立新渠道合作关系"],
-        "risks": [{ "risk": "市场认知不足", "mitigation": "品牌联合推广" }]
-      },
-      {
-        "path": "产品开发",
-        "quadrant": "产品开发",
-        "risk_level": "high",
-        "resource_requirement": "high",
-        "expected_return": "high",
-        "timeline": "12-18个月",
-        "feasibility": { "overall": 0.55, "market_attractiveness": 0.85, "capability_match": 0.50, "resource_availability": 0.40, "risk_controllability": 0.45 },
-        "key_actions": ["新产品技术研发", "MVP快速验证", "用户测试迭代"],
-        "risks": [{ "risk": "技术研发失败", "mitigation": "多方案并行" }]
+        "key_actions": ["识别目标新市场细分" // ... 同结构可扩展],
+        "risks": [{ "risk": "市场认知不足", "mitigation": "品牌联合推广" } // ... 同结构可扩展]
       }
+      // ... 同结构可扩展
     ],
     "recommendations": {
       "primary": "市场开发",
@@ -365,24 +353,24 @@ metadata:
   "porter": null,
   "strategic_conclusions": {
     "integrated_recommendations": [
-      { "recommendation": "优先执行市场开发策略，利用AI引擎优势开拓企业培训新市场", "priority": "high", "supporting_frameworks": ["swot", "ansoff"], "evidence": "SO策略与Ansoff市场开发路径一致，可行性评分0.70" },
-      { "recommendation": "同步推进技术壁垒建设，保持差异化竞争优势", "priority": "medium", "supporting_frameworks": ["swot"], "evidence": "ST策略应对互联网巨头威胁" }
+      { "recommendation": "优先执行市场开发策略，利用AI引擎优势开拓企业培训新市场", "priority": "high", "supporting_frameworks": ["swot", "ansoff"], "evidence": "SO策略与Ansoff市场开发路径一致，可行性评分0.70" }
+      // ... 同结构可扩展
     ],
     "cross_validation_notes": [
-      "SWOT SO策略与Ansoff市场开发路径方向一致，相互验证",
-      "SWOT WT策略建议收缩聚焦，与Ansoff市场开发路径存在张力，建议优先执行市场开发但控制资源投入"
+      "SWOT SO策略与Ansoff市场开发路径方向一致，相互验证"
+      // ... 同结构可扩展
     ],
     "human_decisions_needed": [
-      { "item": "战略方向选择", "context": "SO策略（市场渗透）vs WO策略（内容补强）vs 市场开发路径，需人类决策最终方向", "urgency": "高" },
-      { "item": "资源分配优先级", "context": "市场开发与产品开发两条路径的资源分配需人类决策", "urgency": "高" }
+      { "item": "战略方向选择", "context": "SO策略（市场渗透）vs WO策略（内容补强）vs 市场开发路径，需人类决策最终方向", "urgency": "高" }
+      // ... 同结构可扩展
     ]
   },
   "metadata": {
     "version": "3.0",
     "generated_at": "2026-05-14T21:00:00Z",
     "source_files": [
-      "output/pm-discovery/market-competitor-analysis/competitor-analysis.json",
-      "output/pm-strategy/business-model-canvas/bmc.json"
+      "output/pm-discovery/market-competitor-analysis/competitor-analysis.json"
+      // ... 同结构可扩展
     ]
   }
 }

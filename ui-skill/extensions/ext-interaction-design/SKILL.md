@@ -1,6 +1,16 @@
 ---
 name: ext-interaction-design
-description: Design and implement microinteractions, motion design, transitions, and user feedback patterns. Use when adding polish to UI interactions, implementing loading states, or creating delightful user experiences. Provides structured interaction patterns that integrate with design tokens and visual direction.
+description: 当需要设计和实现微交互、动效设计、过渡动画和用户反馈模式时使用。提供与设计令牌和视觉方向集成的结构化交互模式。关键词：微交互、动效设计、过渡动画、加载状态、用户反馈、交互模式、动画库。
+metadata:
+  module: "UI设计与前端开发"
+  sub-module: "交互设计扩展"
+  type: "extension"
+  version: "1.0"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我设计页面过渡动画"
+    - "添加一些微交互效果"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Interaction Design

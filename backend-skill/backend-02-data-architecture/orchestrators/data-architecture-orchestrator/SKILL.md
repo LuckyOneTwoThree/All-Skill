@@ -30,19 +30,35 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
-## Pipeline
+## Pipeline 定义
 
 ```yaml
+pipeline: data-architecture-orchestrator
+version: 4.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/backend/data-architecture-orchestrator.md
-pipeline:
-  - stage: data-architecture-spec
-    gate: ER图+DDL+数据字典+缓存策略+迁移方案完整 + 人类审查通过
-  - stage: data-architecture-impl
-    gate: 代码可编译 + Migration可执行 + API数据需求100%覆盖 + 代码自审P0=0 + 人类确认通过
+
+stages:
+  - id: phase-1
+    name: "数据架构设计规范"
+    skills:
+      - data-architecture-spec
+    gate:
+      condition: "ER图+DDL+数据字典+缓存策略+迁移方案完整 + 人类审查通过"
+      fail_action: "缺失项必须补充"
+
+  - id: phase-2
+    name: "数据层代码实现"
+    depends_on: [phase-1]
+    skills:
+      - data-architecture-impl
+    gate:
+      condition: "代码可编译 + Migration可执行 + API数据需求100%覆盖 + 代码自审P0=0 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 ```
 
 ## 阶段执行计划
@@ -102,30 +118,19 @@ Skill: data-architecture-impl
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/backend-data-architecture/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/backend/data-architecture-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/backend-data-architecture/ |
+| 总结输出路径 | output/phase-reports/backend/data-architecture-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: backend-architecture-orchestrator
-    reason: 数据架构完成后，进入后端架构设计，基于数据模型和API契约设计服务架构
-    input_mapping:
-      data_model: "output/backend-data-architecture/data-architecture-spec/ → backend-architecture-spec输入"
-      cache_strategy: "output/backend-data-architecture/data-architecture-spec/cache_strategy.json → backend-architecture-spec输入"
+  primary: backend-architecture-orchestrator（数据架构完成后，进入后端架构设计，基于数据模型和API契约设计服务架构）
   alternatives:
     - target: api-design-orchestrator
       reason: 数据模型变更需要反向更新API契约
       condition: 数据架构设计发现API契约需要调整时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

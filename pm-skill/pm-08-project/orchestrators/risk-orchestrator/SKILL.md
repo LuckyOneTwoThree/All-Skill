@@ -28,7 +28,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -94,21 +94,15 @@ Skill: risk-management
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-project/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-project/risk-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-project/ |
+| 总结输出路径 | output/phase-reports/pm-project/risk-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: agile-orchestrator
-    reason: 风险管理完成，将风险应对纳入Sprint规划
-    input_mapping:
-      risk_output: "output/pm-project/risk-identification/ + risk-management/ → agile-sprint-planning输入"
+  primary: agile-orchestrator（风险管理完成，将风险应对纳入Sprint规划）
   alternatives:
     - target: monitoring-orchestrator
       reason: 风险涉及线上监控
@@ -117,17 +111,13 @@ Skill: risk-management
       reason: 风险影响项目范围或资源
       condition: 风险等级变更导致项目宪章需调整时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 风险登记册已建立 | risk-register输出文件已生成且非空 | 补充风险扫描或延长识别周期 |
-| 风险已监控与升级处理 | risk-monitoring输出文件已生成且非空 | 补充监控指标或调整预警阈值，立即执行升级 |
+| 风险登记册已建立 | risk-identification输出文件已生成且非空 | 补充风险扫描或延长识别周期 |
+| 风险已监控与升级处理 | risk-management输出文件已生成且非空 | 补充监控指标或调整预警阈值，立即执行升级 |
 | 阶段总结已生成 | output/phase-reports/pm-project/risk-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

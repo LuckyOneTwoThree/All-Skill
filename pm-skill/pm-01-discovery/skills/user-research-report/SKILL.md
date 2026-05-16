@@ -34,7 +34,7 @@ metadata:
 | 用户声音分析 | JSON | ○ | output/pm-discovery/user-research-voice-analysis/voice-analysis.json | 情感分布、主题聚类、痛点提取 |
 | 行为分析 | JSON | ○ | output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json | 漏斗健康度、Aha Moment、功能使用深度 |
 | 用户建模 | JSON | ○ | output/pm-discovery/user-research-user-modeling/persona.json | Persona、Empathy Map、Journey Map |
-| 访谈数据 | JSON | ○ | output/pm-discovery/user-research-interview-assist/interview_script.json | 访谈脚本、访谈记录、洞察提取 |
+| 访谈数据 | JSON | ○ | output/pm-discovery/user-research-interview-assist/interview-script.json | 访谈脚本、访谈记录、洞察提取 |
 | 研究目标 | string | 是 | 用户提供 | 本次研究要回答的核心问题 |
 | 产品/品类信息 | string | ○ | 用户提供 | 产品名称、品类、目标市场 |
 

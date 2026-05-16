@@ -30,7 +30,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 留存数据 | object | 是 | output/pm-metrics-ops/analysis-retention/retention_analysis.yaml | D1/D7/D30留存率 |
+| 留存数据 | object | 是 | output/pm-metrics-ops/analysis-retention/retention_analysis.json | D1/D7/D30留存率 |
 | 用户行为数据 | object | 是 | 用户提供 | 事件日志、行为序列 |
 | 用户分群数据 | object | ○ | 用户提供 | 用户分群数据 |
 
@@ -154,7 +154,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
     }
   ],
   "onboarding_optimization": {
-    "target_behaviors": ["创建在线课程", "发布课程", "邀请学员"],
+    "target_behaviors": ["创建在线课程" // ... 同结构可扩展],
     "current_funnel": {...},
     "optimized_funnel": {...},
     "expected_activation_lift": "15%"

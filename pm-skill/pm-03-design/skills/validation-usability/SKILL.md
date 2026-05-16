@@ -40,9 +40,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 可用性测试计划 | object | 是 | output/pm-design/validation-assumption-map/assumption-map.json | 测试目标、假设地图、MVP功能 |
+| 可用性测试计划 | object | 是 | output/pm-design/validation-assumption-map/assumption_map.json | 测试目标、假设地图、MVP功能 |
 | 测试参与者 | object | 是 | 用户提供 | 目标用户画像、招募筛选标准 |
-| 测试任务场景 | object | 是 | output/pm-design/design-prototype/prototype.json | 待验证的可用性假设与任务脚本 |
+| 测试任务场景 | object | 是 | output/pm-design/design-prototype/prototype_spec.json | 待验证的可用性假设与任务脚本 |
 
 ## 执行步骤
 
@@ -87,14 +87,8 @@ metadata:
       "related_assumption": "A002",
       "success_criteria": "3秒内完成点击",
       "hints": ["提示信息（如需要）"]
-    },
-    {
-      "task_id": "T002",
-      "task_description": "将推荐内容分享给好友",
-      "related_assumption": "A003",
-      "success_criteria": "成功分享",
-      "hints": []
     }
+    // ... 同结构可扩展
   ]
 }
 ```
@@ -115,13 +109,8 @@ metadata:
         "question": "您是否使用过类似推荐功能的产品？",
         "options": ["经常使用", "偶尔使用", "从未使用"],
         "correct_answer": "经常使用|偶尔使用"
-      },
-      {
-        "question_id": "SQ002",
-        "question": "您每周使用推荐类产品的频率是？",
-        "options": ["每天多次", "每天一次", "每周几次", "很少"],
-        "correct_answer": "每天多次|每天一次|每周几次"
       }
+      // ... 同结构可扩展
     ],
     "target_sample_size": 8,
     "oversample_ratio": 1.25
@@ -228,17 +217,8 @@ metadata:
       "assumption_id": "A001",
       "result": "confirmed|rejected|partial",
       "evidence": "支持/反对的证据"
-    },
-    {
-      "type": "design_changes",
-      "element": "推荐列表",
-      "change_needed": "需要增加解释文案"
-    },
-    {
-      "type": "unexpected_findings",
-      "description": "用户希望有筛选功能",
-      "opportunity": "可作为后续迭代点"
     }
+    // ... 同结构可扩展，type 可为 design_changes / unexpected_findings
   ]
 }
 ```
@@ -279,7 +259,7 @@ metadata:
       "test_date": "2024-01-15",
       "participant_count": 8,
       "test_duration_minutes": 60,
-      "test_goals": ["验证学员能否快速找到适合的课程", "验证课程播放器操作是否流畅"]
+      "test_goals": ["验证学员能否快速找到适合的课程"]
     },
     "problems": [
       {
@@ -288,26 +268,18 @@ metadata:
         "frequency": "3/8",
         "affected_element": "课程推荐列表",
         "description": "学员无法理解推荐课程与自身学习进度的关联",
-        "evidence": ["6/8学员表示不确定推荐依据", "3名学员跳过推荐直接搜索"]
+        "evidence": ["6/8学员表示不确定推荐依据"]
       }
+      // ... 同结构可扩展
     ],
     "insights": [
       {
         "type": "assumption_validation",
         "assumption_id": "A001",
         "result": "confirmed",
-        "description": "假设A001部分成立：学员关注推荐课程但需更多上下文信息"
-      },
-      {
-        "type": "design_changes",
-        "element": "课程推荐卡片",
-        "change_needed": "在推荐卡片上增加「基于你的学习进度推荐」标签说明"
-      },
-      {
-        "type": "unexpected_findings",
-        "description": "学员期望按学习目标筛选课程而非仅看推荐",
-        "notes": "可作为后续迭代增加学习目标筛选功能的依据"
+        "description": "假设A001部分成立"
       }
+      // ... 同结构可扩展，type 可为 design_changes / unexpected_findings
     ],
     "improvement_suggestions": [
       {
@@ -317,6 +289,7 @@ metadata:
         "effort": "中",
         "impact": "高"
       }
+      // ... 同结构可扩展
     ]
   }
 }
@@ -398,38 +371,4 @@ metadata:
 
 **测试执行**: 人类研究员主持，8名用户参与
 
-**AI辅助输出**:
-
-```json
-{
-  "usability_report": {
-    "test_summary": {
-      "participant_count": 8,
-      "test_goals": ["验证推荐内容发现性"]
-    },
-    "problems": [
-      {
-        "problem_id": "P001",
-        "severity": "P1",
-        "affected_element": "推荐列表",
-        "description": "用户不清楚推荐内容的相关性"
-      }
-    ],
-    "insights": [
-      {
-        "type": "assumption_validation",
-        "assumption_id": "A002",
-        "result": "rejected",
-        "description": "假设被推翻：用户无法快速理解推荐逻辑"
-      }
-    ],
-    "improvement_suggestions": [
-      {
-        "suggestion": "增加『为你推荐』的解释文案",
-        "priority": "P1",
-        "problem_ref": "P001"
-      }
-    ]
-  }
-}
-```
+**AI辅助输出**: 结构同上方输出 JSON，其中 `problems`/`insights`/`improvement_suggestions` 各数组按实际测试结果填充，字段含义与输出校验规则一致。

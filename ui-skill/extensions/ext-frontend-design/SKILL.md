@@ -1,6 +1,16 @@
 ---
 name: ext-frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.
+description: 当需要创建独特的、生产级前端界面时使用。生成避免AI同质化的高质量前端代码和UI设计。关键词：前端设计、界面开发、网页设计、组件开发、HTML/CSS、React组件、着陆页、仪表盘。
+metadata:
+  module: "UI设计与前端开发"
+  sub-module: "前端设计扩展"
+  type: "extension"
+  version: "1.0"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我设计一个着陆页"
+    - "创建一个仪表盘界面"
+  interaction_mode: "ai_suggest_human_approve"
 license: Complete terms in LICENSE.txt
 ---
 
@@ -175,7 +185,7 @@ When called by ui-orchestrator, MUST return structured output in the following s
 | layout_differentiation | project-init / page-builder | Append to visual_direction.visual_narrative |
 | visual_bans[*] | project-init / page-builder | Append to visual_direction.visual_bans |
 | aesthetic_direction | project-init | Use as visual_direction.aesthetic_direction value |
-| **executable_specifications** | **design_brief.json** | **直接映射到 design_brief 的 color_specifications / typography_specifications / layout_instructions / spacing_rhythm_values / border_radius_values** |
+| **executable_specifications** | **design_brief.json** | **直接映射到 design_brief 的 color_specifications / typography_specifications / layout_instructions** |
 
 ## Verification Criteria
 

@@ -36,7 +36,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | product_context | JSON | 是 | output/pm-strategy/planning-okr/okr.json + output/pm-strategy/business-model-canvas/bmc.json / 用户提供 | 产品类型、北极星指标、OKR、商业模式 |
-| existing_metrics | JSON数组 | ○ | output/pm-metrics-design/tracking-plan/tracking-plan.json / 用户提供 | 已有指标清单（含名称、定义、计算方式、数据源、层级） |
+| existing_metrics | JSON数组 | ○ | 用户提供 | 已有指标清单（含名称、定义、计算方式、数据源、层级） |
 
 ### product_context（必填）
 
@@ -264,28 +264,8 @@ FOR each L1 metric:
       "data_source": "订单系统",
       "is_actionable": true,
       "optimization_team": "增长团队"
-    },
-    {
-      "name": "新用户激活时长",
-      "calculation": "首次完成核心动作的平均时间",
-      "data_source": "行为埋点",
-      "is_actionable": true,
-      "optimization_team": "产品团队"
-    },
-    {
-      "name": "核心功能首次使用率",
-      "calculation": "首次使用核心功能新用户数 / 新用户总数",
-      "data_source": "行为埋点",
-      "is_actionable": true,
-      "optimization_team": "产品团队"
-    },
-    {
-      "name": "新用户引导完成率",
-      "calculation": "完成新手指引新用户数 / 开始指引新用户数",
-      "data_source": "行为埋点",
-      "is_actionable": true,
-      "optimization_team": "UX团队"
     }
+    // ... 同结构可扩展：新用户激活时长、核心功能首次使用率、新用户引导完成率等
   ]
 }
 ```
@@ -456,17 +436,8 @@ THEN 标记为「不可操作」虚荣指标
         "name": "DAU",
         "calculation": "当日活跃用户数"
       }
-    },
-    {
-      "metric_name": "页面总浏览量",
-      "alert_type": "无时间限定",
-      "severity": "medium",
-      "recommendation": "添加时间维度，计算「日均PV」或「人均PV」",
-      "suggested_replacement": {
-        "name": "人均页面浏览量",
-        "calculation": "日PV / 日UV"
-      }
     }
+    // ... 同结构可扩展：无时间限定、无因果关联、不可操作等类型
   ],
   "summary": {
     "total_detected": 2,
@@ -507,10 +478,7 @@ THEN 标记为「不可操作」虚荣指标
       "definition": "string",
       "calculation": "string",
       "data_source": "string",
-      "validation": {
-        "is_vanity_free": true,
-        "validation_date": "2026-05-08"
-      }
+      "validation": { "is_vanity_free": true, "validation_date": "2026-05-08" }
     },
     "l1_metrics": [
       {
@@ -520,32 +488,19 @@ THEN 标记为「不可操作」虚荣指标
         "calculation": "string",
         "data_source": "string",
         "l2_metrics": [
-          {
-            "name": "string",
-            "calculation": "string",
-            "data_source": "string",
-            "type": "string",
-            "is_actionable": true
-          }
+          { "name": "string", "calculation": "string", "data_source": "string", "type": "string", "is_actionable": true }
+          // ... 同结构可扩展，每L1至少3个L2指标
         ]
       }
+      // ... 同结构可扩展，至少3个L1维度，权重之和为1.0
     ],
     "actionable_metrics": [
-      {
-        "name": "string",
-        "linked_l2": "string",
-        "linked_l1": "string",
-        "optimization_approach": "string"
-      }
+      { "name": "string", "linked_l2": "string", "linked_l1": "string", "optimization_approach": "string" }
+      // ... 同结构可扩展
     ],
     "vanity_alerts": [
-      {
-        "metric_name": "string",
-        "alert_type": "string",
-        "severity": "high|medium|low",
-        "recommendation": "string",
-        "suggested_replacement": {}
-      }
+      { "metric_name": "string", "alert_type": "string", "severity": "high|medium|low", "recommendation": "string", "suggested_replacement": {} }
+      // ... 同结构可扩展
     ]
   }
 }

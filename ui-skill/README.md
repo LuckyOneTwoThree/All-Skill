@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将UI设计与前端开发的完整流程闭环提取为 5 个 AI Agent Skill（1个编排器 + 4个Pipeline），兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责按需调度子 Skill 的执行顺序，无需求则跳过。实现"设计即实现，实现即设计"的UI与前端一体化工作流。
+将UI设计与前端开发的完整流程闭环提取为 9 个 AI Agent Skill（1个编排器 + 4个Pipeline + 4个Extension），兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责按需调度子 Skill 的执行顺序，无需求则跳过。实现"设计即实现，实现即设计"的UI与前端一体化工作流。
 
 ## 快速开始
 
@@ -96,6 +96,10 @@ ui-skill/
 │   ├── api-integration/            API契约消费一体化（类型/Mock/Hook）
 │   └── production-ready/           生产就绪一体化（测试+构建部署+性能优化）
 └── extensions/                     外部 Skill 适配层（按需获取，ext- 前缀）
+    ├── ext-frontend-design/
+    ├── ext-impeccable/
+    ├── ext-interaction-design/
+    ├── ext-ui-ux-pro-max/
     └── README.md
 ```
 

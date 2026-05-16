@@ -40,8 +40,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption-map.json | Pipeline 12输出的假设地图 |
-| MVP范围 | JSON | 是 | output/pm-design/validation-mvp/mvp-scope.json | Pipeline 13输出的MVP范围 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 12输出的假设地图 |
+| MVP范围 | JSON | 是 | output/pm-design/validation-mvp/mvp_definition.json | Pipeline 13输出的MVP范围 |
 | 可用流量/用户数据 | JSON | ○ | 用户提供 | 当前用户量、日活、新增等数据 |
 
 ### 输入格式

@@ -31,7 +31,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -140,21 +140,15 @@ Skill: data-analysis-report
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-metrics-ops/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-metrics-ops/ |
+| 总结输出路径 | output/phase-reports/pm-metrics-ops/analysis-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: decision-orchestrator
-    reason: 数据分析完成，将分析洞察转化为可执行决策
-    input_mapping:
-      analysis_output: "output/pm-metrics-ops/data-analysis-report/ → decision-dace输入"
+  primary: decision-orchestrator（数据分析完成，将分析洞察转化为可执行决策）
   alternatives:
     - target: experiment-orchestrator
       reason: 分析发现需A/B测试验证的假设
@@ -163,10 +157,6 @@ Skill: data-analysis-report
       reason: 分析结论直接影响迭代优先级
       condition: 数据分析产出明确的迭代方向建议时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

@@ -31,7 +31,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | Onboarding数据 | object | 是 | 用户提供 | 完成率、流失率、用户反馈 |
-| Aha Moment数据 | object | 是 | output/pm-growth/activation-aha/aha_moment.yaml | Aha Moment数据 |
+| Aha Moment数据 | object | 是 | output/pm-growth/activation-aha/aha_moment.json | Aha Moment数据 |
 | 用户分群数据 | object | ○ | 用户提供 | 用户特征、行为特征 |
 
 ## Onboarding阶段定义

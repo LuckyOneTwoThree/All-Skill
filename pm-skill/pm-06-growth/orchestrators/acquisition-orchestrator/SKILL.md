@@ -40,7 +40,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -80,21 +80,15 @@ Skill: acquisition-analysis
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-growth/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-growth/acquisition-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-growth/ |
+| 总结输出路径 | output/phase-reports/pm-growth/acquisition-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: activation-orchestrator
-    reason: 获客优化完成，提升新用户转化
-    input_mapping:
-      acquisition_output: "output/pm-growth/acquisition-analysis/ → activation-aha输入"
+  primary: activation-orchestrator（获客优化完成，提升新用户转化）
   alternatives:
     - target: growth-orchestrator
       reason: 获客不是当前瓶颈，回退到增长诊断重新评估
@@ -103,10 +97,6 @@ Skill: acquisition-analysis
       reason: 获客策略需A/B测试验证
       condition: 获客方案涉及渠道策略变更需量化验证时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

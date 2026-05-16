@@ -36,7 +36,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 本编排器为透传编排器，职责是提供统一入口、阶段总结和异常处理。上层编排器（如product-launch-orchestrator）可直接调用insight-analysis子Skill，无需经过本编排器。
 
@@ -79,21 +79,15 @@ Skill: insight-analysis
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-discovery/insight-analysis/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-discovery/insight-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-discovery/insight-analysis/ |
+| 总结输出路径 | output/phase-reports/pm-discovery/insight-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: opportunity-orchestrator
-    reason: 洞察分析完成，将洞察转化为可执行的机会
-    input_mapping:
-      insight_analysis_output: "output/pm-discovery/insight-analysis/ → opportunity-definition输入"
+  primary: opportunity-orchestrator（洞察分析完成，将洞察转化为可执行的机会）
   alternatives:
     - target: market-orchestrator
       reason: 洞察结论缺乏市场数据验证，需补充市场分析
@@ -105,10 +99,6 @@ Skill: insight-analysis
     - target: insight-analysis
       reason: 仅需补充特定维度的需求洞察，无需完整编排流
       condition: 已有洞察基础，仅需增量更新时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

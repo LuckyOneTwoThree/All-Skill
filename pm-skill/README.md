@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将完整的产品方法论闭环提取为 103 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
+将完整的产品方法论闭环提取为 102 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
 
 ## 快速开始
 
@@ -91,19 +91,18 @@ ALL/
 |--------|--------|---------------|----------|
 | 商业模式 | business-orchestrator | business-model-canvas / business-value-fit / business-pricing / business-strategy-report | 商业战略规划报告 |
 | 战略规划 | planning-orchestrator | product-proposal / strategic-analysis / planning-okr / planning-north-star / planning-roadmap | 产品提案+OKR+路线图 |
-| 产品定位 | positioning-orchestrator | positioning-strategy | 定位陈述 → **消费方：ui design-system** |
+| 产品定位 | positioning-orchestrator | positioning-strategy | 定位陈述 → **消费方：ui project-init** |
 | Stakeholder | stakeholder-orchestrator | stakeholder-analysis | 战略简报 |
 
 ### 模块3：产品构思与设计
 
-从创意发散、需求管理、产品设计、方案验证四个维度将战略转化为可执行方案。
+从创意发散、产品设计、方案验证三个维度将战略转化为可执行方案。
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
 | 创意发散 | ideation-orchestrator | ideation-workshop | Top5方案 |
-| 产品设计与原型 | design-orchestrator | design-prd / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec | PRD+原型+交互规范+设计交接 → **消费方：ui page-assembly / ui-component-gen / backend api-contract** |
+| 产品设计与原型 | design-orchestrator | design-prd / design-ia / design-userflow / design-prototype / interaction-spec / design-handoff-spec / change-impact-analysis | PRD+原型+交互规范+设计交接+变更影响分析 → **消费方：ui page-builder / backend api-design** |
 | 方案验证 | validation-orchestrator | validation-assumption-map / validation-mvp / validation-experiment / validation-usability | MVP范围 |
-| 变更影响分析 | — | change-impact-analysis | 变更影响分析报告 → **消费方：backend api-contract / ui page-assembly** |
 
 **关键衔接**：design-prd（PRD生成）是PM与UI/后端的核心契约，PRD同时驱动UI前端生成和后端API设计。
 
@@ -113,13 +112,13 @@ ALL/
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
-| 度量设计 | metrics-orchestrator | metrics-system / tracking-plan / metrics-dashboard | 指标体系+埋点方案 → **消费方：ui page-assembly（埋点）** |
+| 度量设计 | metrics-orchestrator | metrics-system / tracking-plan / metrics-dashboard | 指标体系+埋点方案 → **消费方：ui page-builder（埋点）** |
 
 ### ~~模块5：产品开发与上线~~（已移除）
 
 > ⚠️ **pm-05-development 模块已移除**。开发交付相关能力（任务分解、PRD同步、ADR、数据字典、安全合规、技术债务登记）已由 Backend 模块内建覆盖；quality-auto-test 由 UI/Backend 覆盖；验收与发布技能迁至模块8（监控与迭代）；迭代复盘能力合并至模块9 agile-review。
 
-### 模块6：产品度量运营（上线后）
+### 模块5：产品度量运营（上线后）
 
 上线后通过数据分析、决策闭环、实验验证持续优化。
 
@@ -129,7 +128,7 @@ ALL/
 | 决策闭环 | decision-orchestrator | decision-dace / decision-culture | DACE决策循环 |
 | 实验验证 | experiment-orchestrator | experiment-design / experiment-execution | A/B测试报告+行动建议 |
 
-### 模块7：产品增长与运营
+### 模块6：产品增长与运营
 
 围绕AARRR模型的获客、激活、留存、变现四个维度驱动增长。
 
@@ -141,18 +140,18 @@ ALL/
 | 留存 | retention-orchestrator | retention-management | 流失预警+分层运营 |
 | 变现 | revenue-orchestrator | revenue-funnel / revenue-nrr / revenue-upsell | 付费漏斗+NRR+增购 |
 
-### 模块8：产品监控与迭代
+### 模块7：产品监控与迭代
 
 通过监控预警、问题诊断、迭代优化、发布交付形成持续改进闭环。
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
 | 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | 监控体系+异常归因+反馈闭环 |
-| 问题诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
-| 迭代优化 | iteration-orchestrator | iteration-decision | Backlog优化+迭代复盘 |
-| 发布交付 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 验收报告+灰度发布+检查清单+发布说明 |
+| 智能诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
+| 迭代决策 | iteration-orchestrator | iteration-decision | Backlog优化+迭代复盘 |
+| 发布编排 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 验收报告+灰度发布+检查清单+发布说明 |
 
-### 模块9：项目管理与执行
+### 模块8：项目管理与执行
 
 贯穿全程的项目规划、敏捷执行和风险管理。
 
@@ -213,7 +212,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 ## 核心产出文档
 
-74 个 Pipeline Skill 中，17 个产出人类可读的 Markdown 可交付文档，其余 57 个产出 JSON 数据片段供下游 Skill 消费。
+74 个 Pipeline Skill 中，18 个产出人类可读的 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。
 
 | 生命周期 | 产出文档 | Skill |
 |----------|---------|-------|

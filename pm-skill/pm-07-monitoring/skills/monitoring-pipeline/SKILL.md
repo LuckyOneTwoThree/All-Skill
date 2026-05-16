@@ -43,7 +43,7 @@ metadata:
 | 指标体系 | JSON | 是 | output/pm-metrics-design/metrics-system/metric_system.json | 需监控的业务指标和技术指标定义 |
 | SLA 要求 | JSON | 是 | 用户提供 | 可用性、响应时间、吞吐量要求 |
 | 现有监控 | JSON | ○ | output/pm-monitoring/monitoring-pipeline/现有配置 | 已有的监控配置和告警规则 |
-| 版本发布信息 | object | ○ | output/pm-monitoring/release-gradual/release_record.json | 近期发布记录 |
+| 版本发布信息 | object | ○ | output/pm-monitoring/release-gradual/release_status.json | 近期发布记录 |
 | 配置变更记录 | object | ○ | 用户提供 | 配置修改历史 |
 | 流量变化数据 | object | ○ | 用户提供 | 流量趋势和异常波动 |
 | 根因知识库 | object[] | ○ | 用户提供 | 历史问题-根因映射 |
@@ -187,18 +187,7 @@ root_cause:
     - question: "为什么 {现象}？"
       answer: "{直接原因}"
       evidence: "{证据}"
-    - question: "为什么 {直接原因}？"
-      answer: "{深层原因}"
-      evidence: "{证据}"
-    - question: "为什么 {深层原因}？"
-      answer: "{根因}"
-      evidence: "{证据}"
-    - question: "为什么 {根因}？"
-      answer: "{系统性问题}"
-      evidence: "{证据}"
-    - question: "为什么 {系统性问题}？"
-      answer: "{根本原因}"
-      evidence: "{证据}"
+    # ... 同结构可扩展
   root_cause_summary: "{一句话根因描述}"
   root_cause_category: {category}
   confidence: 0.0-1.0
@@ -287,24 +276,10 @@ role_requirements:
   - role: executive
     focus_areas:
       - business_health
-      - revenue_metrics
-      - user_satisfaction
+      # ... 同结构可扩展
     alert_preference: critical_only
     refresh_rate: 15m
-  - role: engineering_lead
-    focus_areas:
-      - system_health
-      - incident_status
-      - performance_trends
-    alert_preference: high_and_above
-    refresh_rate: 5m
-  - role: oncall_engineer
-    focus_areas:
-      - active_alerts
-      - affected_services
-      - recent_changes
-    alert_preference: all
-    refresh_rate: real_time
+  # ... 同结构可扩展
 ```
 
 #### 3.2 核心指标分组
@@ -329,9 +304,7 @@ metric_groups:
       - metric_name: api_response_time_p95
         data_source: apm
         visualization: time_series
-      - metric_name: error_rate
-        data_source: apm
-        visualization: gauge
+      # ... 同结构可扩展
     priority: high | medium | low
     refresh_interval: {minutes}
 ```
@@ -391,20 +364,11 @@ dashboard_template:
         layout:
           width: 3
           height: 1
-      - widget_id: WDG-002
-        widget_type: time_series
-        title: 订单量趋势
-        metrics:
-          - name: orders_trend
-            data_source: business_db
-        layout:
-          width: 9
-          height: 2
+      # ... 同结构可扩展
     filters:
       - filter_type: time_range
         default: 7d
-      - filter_type: region
-        options: [all, cn, us, eu]
+      # ... 同结构可扩展
     refresh_interval: 15m
 ```
 
@@ -456,10 +420,7 @@ alert_classification:
   factors:
     - factor: service_impact
       contribution: {value}
-    - factor: user_impact
-      contribution: {value}
-    - factor: business_impact
-      contribution: {value}
+    # ... 同结构可扩展
   adjusted: true | false
   adjustment_reason: {reason}
 ```
@@ -479,19 +440,8 @@ escalation_rules:
       - level: 1
         recipients: [oncall_primary]
         notification_channels: [sms, call, slack]
-      - level: 2
-        trigger: no_ack_15min
-        recipients: [oncall_secondary, tl]
-        notification_channels: [sms, call, slack, email]
-      - level: 3
-        trigger: no_ack_30min
-        recipients: [engineering_manager, incident_commander]
-        notification_channels: [sms, call]
-  - rule_id: ESC-002
-    trigger:
-      severity: high
-      duration: 15 minutes
-    escalation_chain: [...]
+      # ... 同结构可扩展
+  # ... 同结构可扩展
 ```
 
 **升级执行输出**：
@@ -534,19 +484,7 @@ notification:
         [CRITICAL] {service_name}
         {alert_summary}
         详情: {link}
-    - channel: slack
-      content: |
-        :rotating_light: *{severity}* Alert
-        *Service:* {service_name}
-        *Issue:* {alert_summary}
-        *Impact:* {affected_users} users affected
-        *Action:* {recommended_action}
-        <{link}|View Details>
-    - channel: email
-      subject: "[{severity}] {service_name} - {alert_title}"
-      body: |
-        Alert Details:
-        ...
+    # ... 同结构可扩展
 ```
 
 **发送状态**：
@@ -559,10 +497,7 @@ notification_status:
       recipient: {phone}
       status: sent | delivered | failed
       sent_at: {ISO8601}
-    - channel: slack
-      recipient: {channel_name}
-      status: sent | delivered | failed
-      sent_at: {ISO8601}
+    # ... 同结构可扩展
   acknowledgment:
     required: true | false
     acknowledged_by: {name}
@@ -661,7 +596,7 @@ oncall_report:
 │   │   ├── root_cause.md
 │   │   ├── impact_assessment.md
 │   │   ├── remediation.md
-│   │   └── needs_human_escalation: true | false
+│   │   └── needs_human_escalation.yaml
 │   └── escalation_queue.md
 ├── dashboards/
 │   ├── {role}/

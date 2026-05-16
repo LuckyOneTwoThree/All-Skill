@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "变现"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["电商", "SaaS", "金融", "教育", "游戏", "通用"]
   trigger_examples:
     - "优化付费转化率"
@@ -30,7 +30,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -76,7 +76,7 @@ stages:
 Skill: revenue-funnel
 输入:
   payment_funnel_data: 用户提供（注册到付费全链路数据）
-  conversion_data: revenue-nrr → nrr_report.yaml（可选）
+  conversion_data: revenue-nrr → nrr_analysis.json（可选）
   user_profile_data: 用户提供（可选）
 输出: output/pm-growth/revenue-funnel/
 验证: 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据
@@ -102,7 +102,7 @@ Skill: revenue-nrr
 Skill: revenue-upsell
 输入:
   user_behavior_data: 用户提供
-  payment_history: output/pm-growth/revenue-nrr/nrr_report.yaml
+  payment_history: output/pm-growth/revenue-nrr/nrr_analysis.json
   product_usage_data: 用户提供（可选）
 输出: output/pm-growth/revenue-upsell/
 验证: 升级信号识别覆盖4类信号（用量/功能/行为/意向）；个性化内容包含用户名、用量、收益3个要素；A/B测试设计包含护栏指标；升级ROI计算包含触达成本
@@ -111,21 +111,15 @@ Skill: revenue-upsell
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-growth/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-growth/revenue-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-growth/ |
+| 总结输出路径 | output/phase-reports/pm-growth/revenue-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: growth-orchestrator
-    reason: 商业化优化完成，回到增长诊断评估整体增长飞轮效果
-    input_mapping:
-      revenue_output: "output/pm-growth/revenue-funnel/ + revenue-nrr/ → growth-model输入"
+  primary: growth-orchestrator（商业化优化完成，回到增长诊断评估整体增长飞轮效果）
   alternatives:
     - target: experiment-orchestrator
       reason: 商业化方案需A/B测试验证
@@ -134,10 +128,6 @@ Skill: revenue-upsell
       reason: 商业化指标需补充度量设计
       condition: 付费漏斗关键指标缺乏埋点支撑时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

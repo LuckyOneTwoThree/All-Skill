@@ -38,7 +38,7 @@ metadata:
 | 价值曲线 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 竞争价值曲线 |
 | 差异化评估 | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | 差异化程度 |
 | 利益相关者 | JSON | ○ | output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json | 利益相关者地图 |
-| 定价策略 | JSON | ○ | output/pm-strategy/business-pricing/pricing_strategy.json | 定价方案 |
+| 定价策略 | JSON | ○ | output/pm-strategy/business-pricing/pricing_analysis.json | 定价方案 |
 | 北极星指标 | JSON | ○ | output/pm-strategy/planning-north-star/north_star.json | 核心指标定义 |
 | 产品/业务信息 | string | 是 | 用户提供 | 产品名称、业务模式、当前阶段 |
 

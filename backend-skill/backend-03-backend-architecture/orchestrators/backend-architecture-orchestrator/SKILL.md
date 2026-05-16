@@ -30,19 +30,35 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
-## Pipeline
+## Pipeline 定义
 
 ```yaml
+pipeline: backend-architecture-orchestrator
+version: 4.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/backend/backend-architecture-orchestrator.md
-pipeline:
-  - stage: backend-architecture-spec
-    gate: 架构模式+服务设计+架构审查+技术债登记完整 + P0问题=0 + 人类审查通过
-  - stage: backend-architecture-impl
-    gate: 项目可启动 + /health返回200 + 架构决策100%在代码中体现 + 代码自审P0=0 + 人类确认通过
+
+stages:
+  - id: phase-1
+    name: "后端架构设计规范"
+    skills:
+      - backend-architecture-spec
+    gate:
+      condition: "架构模式+服务设计+架构审查+技术债登记完整 + P0问题=0 + 人类审查通过"
+      fail_action: "P0问题必须修复后才能通过"
+
+  - id: phase-2
+    name: "后端架构代码实现"
+    depends_on: [phase-1]
+    skills:
+      - backend-architecture-impl
+    gate:
+      condition: "项目可启动 + /health返回200 + 架构决策100%在代码中体现 + 代码自审P0=0 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 ```
 
 ## 阶段执行计划
@@ -105,21 +121,15 @@ Skill: backend-architecture-impl
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/backend-architecture/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/backend/backend-architecture-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/backend-architecture/ |
+| 总结输出路径 | output/phase-reports/backend/backend-architecture-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: release-orchestrator
-    reason: 后端架构实现完成后，进入质量验收和发布流程
-    input_mapping:
-      backend_output: "output/backend-architecture/ → release-orchestrator输入"
+  primary: release-orchestrator（后端架构实现完成后，进入质量验收和发布流程）
   alternatives:
     - target: ui-orchestrator
       reason: 后端就绪后启动UI前端开发与集成
@@ -127,10 +137,6 @@ Skill: backend-architecture-impl
     - target: monitoring-orchestrator
       reason: 后端上线后建立监控预警体系
       condition: 后端已部署需要持续监控时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

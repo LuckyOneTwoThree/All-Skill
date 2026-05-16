@@ -38,7 +38,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -114,7 +114,7 @@ stages:
 
   - id: phase-7
     name: "变更影响分析"
-    depends_on: [phase-1]
+    depends_on: [phase-1, phase-2, phase-3, phase-4]
     skills: [change-impact-analysis]
     trigger: PRD变更时触发
     gate:
@@ -249,22 +249,15 @@ Skill: change-impact-analysis
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-design/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-design/design-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-design/ |
+| 总结输出路径 | output/phase-reports/pm-design/design-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: metrics-orchestrator
-    reason: 产品设计完成，为PRD功能点设计指标体系和埋点方案
-    input_mapping:
-      prd_output: "output/pm-design/design-prd/prd.json → metrics-system输入"
-      prototype_output: "output/pm-design/design-prototype/component_catalog.json → UI Skill消费"
+  primary: metrics-orchestrator（产品设计完成，为PRD功能点设计指标体系和埋点方案）
   alternatives:
     - target: validation-orchestrator
       reason: PRD中存在高风险假设需验证
@@ -276,10 +269,6 @@ Skill: change-impact-analysis
     - target: design-handoff-spec
       reason: 仅需生成交接文档给开发团队
       condition: 设计方案已确认，仅需开发交接摘要时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
@@ -289,9 +278,9 @@ Skill: change-impact-analysis
 | IA设计完成 | IA方案人类已确认 | 生成2-3个候选方案供人类选择 |
 | 用户流程完成 | design-userflow输出文件已生成且非空 | 死胡同必须修复后才能进入原型阶段 |
 | 原型完成 | design-prototype输出文件已生成且非空 | 一致性<85%需人类确认violations |
-| 交互规范完成 | design-interaction-spec输出文件已生成且非空 | 补充缺失状态定义 |
-| 设计交接完成 | design-handoff输出文件已生成且非空 | 待确认项需逐项确认或标注接受风险 |
-| 变更影响分析完成 | design-change-impact输出文件已生成且非空 | 补充缺失的下游影响项 |
+| 交互规范完成 | interaction-spec输出文件已生成且非空 | 补充缺失状态定义 |
+| 设计交接完成 | design-handoff-spec输出文件已生成且非空 | 待确认项需逐项确认或标注接受风险 |
+| 变更影响分析完成 | change-impact-analysis输出文件已生成且非空 | 补充缺失的下游影响项 |
 | 阶段总结已生成 | output/phase-reports/pm-design/design-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点
@@ -314,5 +303,5 @@ Skill: change-impact-analysis
 - v7.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
 - v8.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v9.0: 移除requirements-srs——需求管理功能（需求收集、理解、优先级排序、需求规格）已由design-prd覆盖；Pipeline移除requirements-srs阶段；阶段执行计划移除requirements-srs调用；阶段卡口移除SRS生成完成；人类决策点移除SRS需求确认
-- v10.1: 新增phase-0（UI反馈处理），接收UI→PM反向反馈通道的design_feedback.json；核心原则新增"双向反馈闭环"；人类决策点新增UI反馈处理确认
 - v10.0: 新增change-impact-analysis（变更影响分析）——从pm-05迁移；PRD变更时触发，评估对下游设计（IA/用户流程/原型）的波及范围；Pipeline新增change-impact-analysis触发阶段；阶段执行计划新增change-impact-analysis调用；阶段卡口新增变更影响分析完成
+- v10.1: 新增phase-0（UI反馈处理），接收UI→PM反向反馈通道的design_feedback.json；核心原则新增"双向反馈闭环"；人类决策点新增UI反馈处理确认

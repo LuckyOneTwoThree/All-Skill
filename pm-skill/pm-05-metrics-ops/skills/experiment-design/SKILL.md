@@ -1,4 +1,4 @@
-﻿---
+---
 name: experiment-design
 description: 当需要设计新的A/B测试实验时使用。A/B测试自动设计，AI自动执行假设结构化、指标选择、样本量计算、分流方案设计和实验配置生成。关键词：A/B测试设计、实验设计、样本量计算、分流方案、假设检验、做个AB测试、想验证一下这个改动、怎么设计实验。
 metadata:
@@ -32,7 +32,7 @@ metadata:
 |--------|------|------|------|------|
 | 假设陈述 | string | 是 | 用户提供 | 业务问题或改进想法 |
 | 可用流量 | number | 是 | 用户提供 | 可参与实验的用户量 |
-| 指标体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metrics.json | 产品关键指标定义 |
+| 指标体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metric_system.json | 产品关键指标定义 |
 | 历史数据 | JSON | ○ | analysis-funnel / analysis-retention | 用于样本量计算的基线数据 |
 
 ## 执行步骤
@@ -200,26 +200,12 @@ ab_test_design:
         definition: "注册后7日留存率"
         baseline_value: 0.42
         acceptable_change: -0.02  # 允许下降2%
-        
-      - name: "daily_active_users"
-        definition: "DAU"
-        baseline_value: 1000000
-        acceptable_change: -0.05  # 允许下降5%
-        
-      - name: "app_crash_rate"
-        definition: "崩溃率"
-        baseline_value: 0.002
-        acceptable_change: +0.001  # 允许增加0.1%
-        
+      # ... 同结构可扩展
+    
     secondary_metrics:
       - name: "registration_abandon_rate"
         definition: "注册中断率"
-        
-      - name: "time_to_complete_registration"
-        definition: "完成注册耗时"
-        
-      - name: "register_via_social_count"
-        definition: "社交账号注册数"
+      # ... 同结构可扩展
   
   # 样本量计算
   sample_size:
@@ -243,11 +229,11 @@ ab_test_design:
       treatment: 50
     
     targeting:
-      platform: ["ios", "android"]
+      platform: ["ios"]  # ... 同结构可扩展
       user_type: "new_user"
       exclusion:
         - registered_users
-        - test_accounts
+        # ... 同结构可扩展
         
     hash_salt: "exp_reg_2024_v1"
     
@@ -256,14 +242,12 @@ ab_test_design:
     automatic:
       - condition: "达到目标样本量"
         action: "触发结果分析"
-      - condition: "p值持续显著超过0.99"
-        action: "提前终止"
+      # ... 同结构可扩展
         
     manual:
       - condition: "护栏指标显著下降"
         action: "告警+人工决策"
-      - condition: "外部重大事件影响"
-        action: "暂停实验"
+      # ... 同结构可扩展
         
     minimum_runtime_days: 5
     maximum_runtime_days: 30
@@ -296,12 +280,10 @@ ab_test_design:
     overall_risk: "low"
     reasons:
       - "仅影响新用户注册流程"
-      - "保留核心功能"
-      - "可快速回滚"
+      # ... 同结构可扩展
     mitigation:
       - "配置实时监控"
-      - "设置自动告警"
-      - "准备回滚方案"
+      # ... 同结构可扩展
 ```
 
 ## 输出

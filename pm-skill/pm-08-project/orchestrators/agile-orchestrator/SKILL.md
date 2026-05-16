@@ -28,13 +28,13 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
 ```yaml
 pipeline: agile-orchestrator
-version: 7.0
+version: 9.0
 
 post_pipeline:
   - action: stage-summary
@@ -115,21 +115,15 @@ Skill: agile-review
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-project/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-project/agile-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-project/ |
+| 总结输出路径 | output/phase-reports/pm-project/agile-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: release-orchestrator
-    reason: Sprint完成且交付物达到发布标准，进入发布流程
-    input_mapping:
-      sprint_output: "output/pm-project/agile-review/ → release-orchestrator输入"
+  primary: release-orchestrator（Sprint完成且交付物达到发布标准，进入发布流程）
   alternatives:
     - target: agile-orchestrator
       reason: 进入下一Sprint规划，持续迭代
@@ -138,18 +132,14 @@ Skill: agile-review
       reason: Sprint复盘发现需加强监控
       condition: 复盘发现线上问题频发或监控覆盖不足时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| Sprint计划已确认 | sprint-planning输出文件已生成且非空 | 暂停Sprint启动，补充规划 |
-| Daily Sync障碍已暴露 | daily-sync输出文件已生成且非空 | 加强障碍追踪和升级机制 |
-| Sprint评审与复盘报告已完成 | sprint-review输出文件已生成且人类审核确认 | 补充分析或修改行动项 |
+| Sprint计划已确认 | agile-sprint-planning输出文件已生成且非空 | 暂停Sprint启动，补充规划 |
+| Daily Sync障碍已暴露 | agile-daily-sync输出文件已生成且非空 | 加强障碍追踪和升级机制 |
+| Sprint评审与复盘报告已完成 | agile-review输出文件已生成且人类审核确认 | 补充分析或修改行动项 |
 | 阶段总结已生成 | output/phase-reports/pm-project/agile-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

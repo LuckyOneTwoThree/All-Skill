@@ -28,7 +28,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -99,7 +99,7 @@ Skill: tracking-plan
 Skill: metrics-dashboard
 输入:
   metric_system: output/pm-metrics-design/metrics-system/metric_system.json
-  tracking_plan: output/pm-metrics-design/tracking-plan/tracking_plan
+  tracking_plan: output/pm-metrics-design/tracking-plan/tracking_plan.json
   user_roles: 用户提供
   dashboard_platform: 用户提供
 输出: output/pm-metrics-design/metrics-dashboard/
@@ -109,22 +109,15 @@ Skill: metrics-dashboard
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-metrics-design/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-metrics-design/ |
+| 总结输出路径 | output/phase-reports/pm-metrics-design/metrics-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: monitoring-orchestrator
-    reason: 度量设计完成，将指标体系和埋点方案落地为监控配置
-    input_mapping:
-      metrics_output: "output/pm-metrics-design/metrics-system/ → monitoring-pipeline输入"
-      tracking_output: "output/pm-metrics-design/tracking-plan/ → 开发阶段埋点实现"
+  primary: monitoring-orchestrator（度量设计完成，将指标体系和埋点方案落地为监控配置）
   alternatives:
     - target: design-orchestrator
       reason: 度量设计发现PRD功能点遗漏，需回溯补充
@@ -136,10 +129,6 @@ Skill: metrics-dashboard
     - target: tracking-plan
       reason: 仅需生成埋点方案，无需完整度量设计
       condition: 指标体系已建立，仅需更新埋点方案时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

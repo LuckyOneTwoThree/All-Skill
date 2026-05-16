@@ -5,7 +5,7 @@ metadata:
   module: "产品增长与运营"
   sub-module: "激活"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["电商", "社交", "工具", "通用"]
   trigger_examples:
     - "找到Aha Moment"
@@ -29,7 +29,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -66,7 +66,7 @@ stages:
 ```
 Skill: activation-aha
 输入:
-  retention_data: analysis-retention → retention_analysis.yaml
+  retention_data: analysis-retention → retention_analysis.json
   user_behavior_data: 用户提供
   user_segment_data: 用户提供（可选）
 输出: output/pm-growth/activation-aha/
@@ -80,7 +80,7 @@ Skill: activation-aha
 Skill: activation-onboarding
 输入:
   onboarding_data: 用户提供
-  aha_moment_data: output/pm-growth/activation-aha/aha_moment.yaml
+  aha_moment_data: output/pm-growth/activation-aha/aha_moment.json
   user_segment_data: 用户提供（可选）
 输出: output/pm-growth/activation-onboarding/
 验证: Onboarding阶段定义完整（欢迎→激活完成）；流失分析覆盖各阶段和用户分群；个性化引导与用户分群匹配；A/B测试包含护栏指标（后续留存、付费转化）
@@ -89,21 +89,15 @@ Skill: activation-onboarding
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-growth/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-growth/activation-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-growth/ |
+| 总结输出路径 | output/phase-reports/pm-growth/activation-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: retention-orchestrator
-    reason: 用户激活优化完成，防止用户流失
-    input_mapping:
-      activation_output: "output/pm-growth/activation-aha/ + activation-onboarding/ → retention-management输入"
+  primary: retention-orchestrator（用户激活优化完成，防止用户流失）
   alternatives:
     - target: growth-orchestrator
       reason: 激活不是当前瓶颈，回退到增长诊断重新评估
@@ -115,10 +109,6 @@ Skill: activation-onboarding
     - target: activation-aha
       reason: 仅需识别Aha Moment，无需完整激活编排
       condition: 已有Onboarding方案，仅需确认Aha Moment时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

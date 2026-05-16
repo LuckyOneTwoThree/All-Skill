@@ -57,7 +57,7 @@ metadata:
 | Controller | src/controllers/ | 每个资源一个Controller，负责请求/响应转换和参数校验 |
 | 请求校验 | src/validators/ | 基于OpenAPI schema的请求参数校验 |
 | API类型定义 | src/types/api.ts | API请求/响应TypeScript类型（与OpenAPI对齐），仅定义API层传输结构 |
-| 类型转换层 | src/types/mappers.ts | API类型↔Model类型的转换函数，确保API层与数据层解耦 |
+| 类型转换层 | src/types/mappers.ts | API类型↔Model类型的转换函数骨架（Model类型由data-architecture-impl生成，此处仅定义接口签名和占位实现，待data-architecture-impl完成后由backend-architecture-impl补全） |
 
 **阶段卡口**：代码可编译（npm run build 或 tsc --noEmit 通过），路由与OpenAPI规范一一对应
 
@@ -67,7 +67,7 @@ metadata:
 
 | 生成内容 | 路径 | 说明 |
 |----------|------|------|
-| Service | src/services/ | 每个资源一个Service，包含业务逻辑、事务管理、跨资源协调、缓存调用 |
+| Service | src/services/resource/ | 每个资源一个Service，包含资源级业务逻辑（CRUD）、事务管理、缓存调用 |
 
 **Service方法结构**：参数校验→权限检查→业务处理→数据持久化→缓存更新→响应组装
 
@@ -153,7 +153,7 @@ metadata:
 - [ ] Controller仅做请求/响应转换，不含业务逻辑
 - [ ] Service包含完整业务逻辑+错误处理+事务管理
 - [ ] 中间件按安全级别正确匹配
-- [ ] API类型与Model类型通过mappers.ts转换，不直接引用
+- [ ] API类型与Model类型通过mappers.ts转换，不直接引用（mappers.ts为骨架实现，完整转换待data-architecture-impl完成后由backend-architecture-impl补全）
 - [ ] PRD功能点100%有API端点覆盖
 - [ ] 前端页面数据需求100%有API对应（有前端输入时）
 - [ ] 代码自审P0问题=0

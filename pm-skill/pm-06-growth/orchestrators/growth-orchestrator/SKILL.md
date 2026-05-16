@@ -31,7 +31,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -125,7 +125,7 @@ stages:
 Skill: growth-model
 输入:
   product_features: 用户提供（产品特征）
-  user_data: analysis-retention → retention_analysis.yaml
+  user_data: analysis-retention → retention_analysis.json
   business_model: 用户提供（商业模式）
 输出: output/pm-growth/growth-model/
 验证: 北极星指标与≥1个OKR Objective直接关联；增长模型包含≥3个可量化变量；增长飞轮包含≥4个节点且形成闭环；瓶颈约束识别≤5个，每个有量化影响评估
@@ -156,7 +156,7 @@ Skill: activation-orchestrator
 输入:
   growth_model: output/pm-growth/growth-model/
   user_behavior_data: 用户提供
-  retention_data: analysis-retention → retention_analysis.yaml
+  retention_data: analysis-retention → retention_analysis.json
 输出: output/pm-growth/activation-aha/、output/pm-growth/activation-onboarding/
 验证: Aha Moment候选已识别；Onboarding策略已生成
 模式: 🤖→👤
@@ -242,21 +242,15 @@ Skill: product-operations-manual
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-growth/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-growth/growth-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-growth/ |
+| 总结输出路径 | output/phase-reports/pm-growth/growth-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: acquisition-orchestrator
-    reason: 增长策略制定完成，进入获客优化执行
-    input_mapping:
-      growth_output: "output/pm-growth/growth-strategy-report/ → acquisition-analysis输入"
+  primary: acquisition-orchestrator（增长策略制定完成，进入获客优化执行）
   alternatives:
     - target: experiment-orchestrator
       reason: 增长方案需A/B测试验证效果
@@ -268,10 +262,6 @@ Skill: product-operations-manual
       reason: 新产品需上市，进入GTM策略阶段（内部phase-7）
       condition: 增长诊断结论为新产品需上市时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

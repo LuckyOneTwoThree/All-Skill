@@ -29,7 +29,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -131,21 +131,15 @@ Skill: release-notes
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-monitoring/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-monitoring/release-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-monitoring/ |
+| 总结输出路径 | output/phase-reports/pm-monitoring/release-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: monitoring-orchestrator
-    reason: 发布完成，跟踪发布后指标变化
-    input_mapping:
-      release_output: "output/pm-monitoring/release-gradual/ → monitoring-pipeline输入"
+  primary: monitoring-orchestrator（发布完成，跟踪发布后指标变化）
   alternatives:
     - target: agile-orchestrator
       reason: 发布后需进入下一Sprint
@@ -154,18 +148,14 @@ Skill: release-notes
       reason: 发布后启动增长策略
       condition: 发布涉及增长相关功能，需驱动用户增长时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 质量验收已通过 | quality-acceptance输出文件已生成且非空 | 修复P0问题后重新验收 |
-| 发布检查已通过 | release-check输出文件已生成且非空 | 补充缺失项后重新检查 |
-| 灰度发布监控正常 | release-canary输出文件已生成且非空 | 回滚并排查问题 |
+| 发布检查已通过 | release-auto-checklist输出文件已生成且非空 | 补充缺失项后重新检查 |
+| 灰度发布监控正常 | release-gradual输出文件已生成且非空 | 回滚并排查问题 |
 | 发布说明已确认 | release-notes输出文件已生成且人类已确认 | 补充发布说明内容 |
 | 阶段总结已生成 | output/phase-reports/pm-monitoring/release-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 

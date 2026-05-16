@@ -37,7 +37,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -75,21 +75,15 @@ stages:
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-strategy/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-strategy/stakeholder-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-strategy/ |
+| 总结输出路径 | output/phase-reports/pm-strategy/stakeholder-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: planning-orchestrator
-    reason: 利益相关者分析完成，确保规划对齐关键利益方
-    input_mapping:
-      stakeholder_output: "output/pm-strategy/stakeholder-analysis/ → planning-okr输入"
+  primary: planning-orchestrator（利益相关者分析完成，确保规划对齐关键利益方）
   alternatives:
     - target: project-planning-orchestrator
       reason: 已进入项目执行阶段，直接启动项目规划
@@ -98,18 +92,14 @@ stages:
       reason: 利益相关者诉求影响商业模式，需回溯调整
       condition: 关键利益方诉求与现有商业模式冲突时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | Stakeholder地图完成 | Stakeholder地图人类已校准 | 影响力评估需人类校准，遗漏的相关方需人工补充 |
-| 战略文档完成 | stakeholder-strategy输出文件已生成且非空 | 质量检查不通过自动修改，修改后仍不达标需人类审核精炼 |
-| 战略简报完成 | stakeholder-brief输出文件已生成且非空 | 语气和重点需根据受众调整 |
+| 战略文档完成 | stakeholder-analysis输出文件已生成且非空 | 质量检查不通过自动修改，修改后仍不达标需人类审核精炼 |
+| 战略简报完成 | stakeholder-analysis输出文件已生成且非空 | 语气和重点需根据受众调整 |
 | 阶段总结已生成 | output/phase-reports/pm-strategy/stakeholder-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 异常处理

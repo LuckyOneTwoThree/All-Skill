@@ -681,7 +681,7 @@ Step 3在发布完成后（建议T+2周）执行，自动收集多源数据，�
 ```json
 {
   "type": "object",
-  "required": ["sprint_review"],
+  "required": ["sprint_review", "sprint_retro", "metadata"],
   "properties": {
     "sprint_review": {"type": "object", "description": "Sprint评审数据，包含交付物、Demo清单和反馈收集"},
     "sprint_retro": {"type": "object", "description": "Sprint回顾数据，包含指标、问题识别和改进建议"},
@@ -765,178 +765,30 @@ Step 3在发布完成后（建议T+2周）执行，自动收集多源数据，�
 ```json
 {
   "sprint_review": {
-    "deliverables": {
-      "sprint_summary": {
-        "sprint_id": "SPR-2024-S08",
-        "planned_stories": 8,
-        "completed_stories": 7,
-        "cancelled_stories": 0,
-        "completion_rate": 0.875,
-        "planned_points": 34,
-        "completed_points": 30,
-        "points_completion_rate": 0.88
-      },
-      "completed_items": [
-        {
-          "story_id": "STO-042",
-          "title": "课程播放器进度记忆功能",
-          "story_points": 5,
-          "key_deliverables": ["断点续播", "多端进度同步"],
-          "completed_by": "李伟",
-          "quality_notes": "通过全量回归测试，无P0/P1缺陷"
-        }
-      ],
-      "incomplete_items": [
-        {
-          "story_id": "STO-048",
-          "title": "课堂弹幕互动功能",
-          "remaining_work": "弹幕审核后台接口待联调",
-          "carryover_decision": "next_sprint"
-        }
-      ]
-    },
-    "demo_checklist": {
-      "demo_duration_minutes": 45,
-      "items": [
-        {
-          "order": 1,
-          "demo_topic": "课程断点续播演示",
-          "story_id": "STO-042",
-          "presenter": "李伟",
-          "duration_minutes": 10,
-          "environment_check": {
-            "staging_ready": true,
-            "test_data_ready": true,
-            "access_verified": true
-          },
-          "key_points": ["跨设备续播", "进度条精确跳转"],
-          "questions_to_anticipate": ["离线场景是否支持？"]
-        }
-      ]
-    },
-    "feedback_collected": {
-      "total_feedback_count": 12,
-      "feedback_by_type": {
-        "feature_request": 3,
-        "usability_issue": 2,
-        "performance_concern": 1,
-        "bug_report": 1,
-        "positive_feedback": 4,
-        "other": 1
-      },
-      "feedback_items": [
-        {
-          "feedback_id": "FB-001",
-          "description": "希望课程播放器支持倍速播放",
-          "type": "feature_request",
-          "source": "教务主管",
-          "timestamp": "2024-04-12T15:30:00+08:00",
-          "priority": "medium",
-          "related_story": null,
-          "actionable": true
-        }
-      ]
-    }
+    "deliverables": { /* sprint_summary/completed_items/incomplete_items */ },
+    "demo_checklist": { /* demo_duration_minutes/items[] */ },
+    "feedback_collected": { /* total_feedback_count/feedback_by_type/feedback_items[] */ }
   },
   "sprint_retro": {
-    "metrics": {
-      "completion_metrics": {
-        "story_completion_rate": 0.875,
-        "point_completion_rate": 0.88,
-        "avg_story_completion_time_days": 3.2,
-        "carryover_rate": 0.125
-      },
-      "quality_metrics": {
-        "bug_count": 4,
-        "bug_rejection_rate": 0.25,
-        "code_review_turnaround_hours": 8,
-        "build_failure_rate": 0.05
-      },
-      "collaboration_metrics": {
-        "blocker_resolution_time_hours": 6,
-        "meeting_hours_total": 12,
-        "ad_hoc_interruption_count": 5,
-        "cross_team_dependency_delays": 1
-      },
-      "team_health": {
-        "avg_overtime_hours": 3.5,
-        "member_stress_indicators": ["1名成员反馈排期偏紧"],
-        "velocity_stability": "stable"
-      }
-    },
-    "problems_identified": [
-      {
-        "problem_id": "PRB-001",
-        "description": "弹幕审核接口依赖内容安全团队排期，导致Story跨Sprint",
-        "category": "collaboration",
-        "evidence": "STO-048因审核接口未就绪阻塞3天",
-        "frequency": "recurring",
-        "severity": "high",
-        "impact": "课堂互动功能交付延迟1个Sprint"
-      }
-    ],
-    "improvement_suggestions": [
-      {
-        "suggestion_id": "IMP-001",
-        "problem_addressed": "PRB-001",
-        "description": "跨团队依赖需提前对齐排期",
-        "proposed_action": "Sprint规划阶段邀请内容安全团队参与依赖确认",
-        "expected_impact": "减少跨团队阻塞导致的延期",
-        "implementation_effort": "low",
-        "priority": "high",
-        "owner_suggestion": "张明（PM）",
-        "success_metric": "跨团队阻塞导致的延期减少50%"
-      }
-    ]
+    "metrics": { /* completion_metrics/quality_metrics/collaboration_metrics/team_health */ },
+    "problems_identified": [{ /* problem_id/description/category/evidence/frequency/severity/impact */ }],
+    "improvement_suggestions": [{ /* suggestion_id/problem_addressed/proposed_action/priority/... */ }]
   },
   "retrospective_report": {
     "sprint_id": "S08",
-    "sprint_dates": { "start": "2024-04-01", "end": "2024-04-12" },
-    "report_date": "2024-04-12",
-    "goal_achievement": {
-      "status": "partially",
-      "sprint_goal": "完成课堂互动功能与播放器优化",
-      "evidence": "播放器优化完成，课堂互动功能因审核接口阻塞未完成"
-    },
-    "delivery_metrics": {
-      "stories_planned": 8,
-      "stories_completed": 7,
-      "stories_spilled": 1,
-      "sp_planned": 34,
-      "sp_completed": 30,
-      "spill_reasons": [{"story": "STO-048", "reason": "外部依赖"}]
-    },
-    "quality_metrics": {
-      "defect_density": 0.13,
-      "defect_distribution": { "P0": 0, "P1": 1, "P2": 2, "P3": 1 },
-      "rework_rate": 0.0,
-      "tech_debt_delta": "无新增技术债务"
-    },
-    "velocity": {
-      "current": 30,
-      "trend": "stable",
-      "historical": [],
-      "capacity_utilization": 0.88
-    },
-    "action_items": {
-      "keep": ["跨团队依赖提前确认"],
-      "improve": ["弹幕审核接口联调流程"],
-      "try": ["Sprint规划阶段邀请依赖团队参与"]
-    },
-    "next_sprint_recommendation": {
-      "velocity_range": [28, 34],
-      "risks": ["弹幕审核接口仍为外部依赖"],
-      "capacity_adjustment": "无变动",
-      "experiments": ["依赖团队参与Sprint规划"]
-    }
+    "goal_achievement": { /* status/sprint_goal/evidence */ },
+    "delivery_metrics": { /* stories_planned/completed/spilled/sp_planned/completed/spill_reasons */ },
+    "quality_metrics": { /* defect_density/defect_distribution/rework_rate/tech_debt_delta */ },
+    "velocity": { /* current/trend/historical/capacity_utilization */ },
+    "action_items": { /* keep[]/improve[]/try[] */ },
+    "next_sprint_recommendation": { /* velocity_range/risks/capacity_adjustment/experiments */ }
   },
   "metadata": {
     "sprint_id": "SPR-2024-S08",
-    "generated_at": "2024-04-12T18:00:00+08:00",
+    "generated_at": "ISO datetime",
     "review_completed": true,
     "retro_completed": true,
-    "report_completed": true,
-    "action_items_committed": 3
+    "report_completed": true
   }
 }
 ```

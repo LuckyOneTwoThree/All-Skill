@@ -36,7 +36,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -76,7 +76,7 @@ stages:
 
   - id: phase-4
     name: "后端实现"
-    depends_on: [phase-3]
+    depends_on: [phase-2, phase-3]
     parallel_with: [phase-5]
     trigger: 数据/后端需变更
     skills: [data-architecture-orchestrator, backend-architecture-orchestrator]
@@ -86,7 +86,7 @@ stages:
 
   - id: phase-5
     name: "UI变更"
-    depends_on: [phase-3]
+    depends_on: [phase-2, phase-3]
     parallel_with: [phase-4]
     trigger: UI需变更
     skills: [ui-orchestrator]
@@ -227,21 +227,15 @@ Skill: monitoring-orchestrator
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/cross-domain/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/cross-domain/product-iteration-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/cross-domain/ |
+| 总结输出路径 | output/phase-reports/cross-domain/product-iteration-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: monitoring-orchestrator
-    reason: 迭代发布后进入持续监控
-    input_mapping:
-      iteration_output: "output/cross-domain/ → monitoring-orchestrator输入"
+  primary: monitoring-orchestrator（迭代发布后进入持续监控）
   alternatives:
     - target: product-iteration-orchestrator
       reason: 继续下一轮迭代
@@ -253,10 +247,6 @@ Skill: monitoring-orchestrator
       reason: 进入下一Sprint规划
       condition: 采用敏捷开发模式时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

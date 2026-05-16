@@ -14,7 +14,7 @@ metadata:
     - "生成验收报告"
     - "版本要验收了，帮我出报告"
     - "整理一下验收结果"
-  interaction_mode: "ai_plan"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # 验收执行计划生成与签收报告生成
@@ -71,14 +71,8 @@ metadata:
       "content": "Given 用户在登录页面\nWhen 用户输入有效手机号13800138000\nAnd 点击获取验证码按钮\nThen 系统发送6位数字验证码到该手机号\nAnd 页面显示发送成功提示",
       "automatable": true,
       "priority": "P0"
-    },
-    {
-      "id": "AC002",
-      "format": "given_when_then",
-      "content": "Given 用户收到验证码123456\nWhen 用户输入验证码123456\nAnd 点击登录按钮\nThen 用户登录成功\nAnd 页面跳转到首页",
-      "automatable": true,
-      "priority": "P0"
     }
+    // ... 同结构可扩展
   ]
 }
 ```
@@ -236,13 +230,8 @@ metadata:
         "criteria": ["AC001", "AC002"],
         "execution_mode": "sequential",
         "reason": "存在依赖关系（AC002依赖AC001的数据）"
-      },
-      {
-        "group_id": "group_2",
-        "criteria": ["AC003", "AC004", "AC005"],
-        "execution_mode": "parallel",
-        "reason": "相互独立"
       }
+      // ... 同结构可扩展
     ],
     "estimated_duration_minutes": 25
   }
@@ -604,84 +593,19 @@ Must需求通过率：{X}%
 {
   "output_id": "acceptance_report_xxx",
   "story_id": "story_001",
-  "build_ref": "build_2024_0125_001",
   "version": "2.3.0",
-  "acceptance_date": "2025-03-15",
-  "acceptance_scope": "",
-  "acceptance_party": "",
-  "executed_at": "ISO8601",
-  "acceptance_report": {
-    "summary": {
-      "total_criteria": 12,
-      "passed": 10,
-      "failed": 2,
-      "pass_rate": 0.83,
-      "automated_execution_rate": 0.92
-    },
-    "criteria_results": [
-      {
-        "id": "AC-001",
-        "description": "",
-        "source": "FR-XXX",
-        "priority": "Must/Should",
-        "test_cases": 0,
-        "passed": 0,
-        "failed": 0,
-        "status": "✅/❌/⚠️"
-      }
-    ]
-  },
-  "failed_cases_analysis": [
-    {
-      "criteria_id": "AC002",
-      "failure_type": "code_defect",
-      "evidence": {...},
-      "root_cause": "前端路由跳转逻辑错误",
-      "fix_suggestion": {...}
-    }
-  ],
-  "gate_decision": {
-    "passed": false,
-    "blocked_by": "P0_FAILURE",
-    "blocking_items": [...]
-  },
-  "defects": [
-    {
-      "id": "BUG-001",
-      "criteria_id": "AC-001",
-      "severity": "致命/严重/一般/轻微",
-      "description": "",
-      "status": "待修复/修复中/已修复"
-    }
-  ],
+  "acceptance_report": { /* 见输出校验规则 */ },
+  "failed_cases_analysis": [ { /* 见Step 1.7失败分析 */ } ],
+  "gate_decision": { /* 见Step 1.6门禁输出 */ },
+  "defects": [ { /* 见Step 2.3缺陷分析 */ } ],
   "open_issues": [],
-  "conclusion": {
-    "result": "通过/有条件通过/不通过",
-    "recommendation": "",
-    "sign_off": [
-      {
-        "role": "产品负责人",
-        "name": "",
-        "opinion": "同意/不同意/有条件同意",
-        "signature": "",
-        "date": ""
-      }
-    ]
-  }
+  "conclusion": { /* 见Step 2.5验收结论 */ }
 }
 ```
 
 ### 输出字段说明
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| acceptance_report | JSON | 验收报告主体 |
-| failed_cases_analysis | JSON | 失败用例分析 |
-| gate_decision | JSON | 质量门禁判定结果 |
-| criteria_results | JSON | 验收标准逐项结果 |
-| defects | JSON | 缺陷清单 |
-| open_issues | JSON | 遗留问题清单 |
-| conclusion | JSON | 验收结论与签收确认 |
+见输出Schema及输出校验规则。
 
 ## 输出校验规则
 
@@ -734,11 +658,11 @@ Must需求通过率：{X}%
 
 | 验收变更类型 | 通知范围 | 通知方式 |
 |-------------|----------|----------|
-| 门禁结果变更 | iteration-orchestrator | 标记门禁变更，触发发布决策更新 |
+| 门禁结果变更 | release-orchestrator | 标记门禁变更，触发发布决策更新 |
 | P0/P1检查失败 | change-impact-analysis | 标记失败项，触发影响评估 |
-| 需人工验证项 | iteration-orchestrator | 标记待验证项，触发人工验收流程 |
-| P0/P1失败 | iteration-orchestrator | 标记阻断项，阻止发布流程 |
-| 签收状态变更 | iteration-orchestrator | 标记签收状态，触发发布决策 |
+| 需人工验证项 | release-orchestrator | 标记待验证项，触发人工验收流程 |
+| P0/P1失败 | release-orchestrator | 标记阻断项，阻止发布流程 |
+| 签收状态变更 | release-orchestrator | 标记签收状态，触发发布决策 |
 
 ---
 
@@ -823,13 +747,8 @@ Must需求通过率：{X}%
   "started_at": "ISO8601",
   "completed_at": "ISO8601",
   "steps": [
-    {"step": "criteria_parsing", "status": "completed", "duration_ms": 200},
-    {"step": "environment_config_suggestion", "status": "completed", "duration_ms": 200},
-    {"step": "execution_instruction_generation", "status": "completed", "duration_ms": 500, "generated_instructions": 12},
-    {"step": "result_judgment", "status": "completed", "duration_ms": 500},
-    {"step": "failure_analysis", "status": "completed", "duration_ms": 3000},
-    {"step": "report_generation", "status": "completed", "duration_ms": 2000},
-    {"step": "sign_off_compilation", "status": "completed", "duration_ms": 500}
+    {"step": "criteria_parsing", "status": "completed", "duration_ms": 200}
+    // ... 同结构可扩展
   ],
   "gate_decision": {
     "passed": false,

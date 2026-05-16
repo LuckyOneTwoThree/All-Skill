@@ -302,89 +302,91 @@ metadata:
 
 ### 输出校验规则
 
+> 类型信息见上方输出Schema，下表仅列出必填标记与约束条件（"—"表示无额外约束）。
+
 #### jtbd 校验
 
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| `jtbd.jobs` | array | 是 | 任务列表，不可为空 |
-| `jtbd.jobs[].type` | enum(functional,emotional,social) | 是 | 任务类型 |
-| `jtbd.jobs[].job` | string | 是 | 任务描述，不可为空 |
-| `jtbd.jobs[].frequency` | number | 是 | 出现频次 |
-| `jtbd.jobs[].evidence` | string | 是 | 推断依据，不可为空 |
-| `jtbd.jobs[].confidence` | number | 是 | 置信度(0-1.0) |
-| `jtbd.jobs[].pain_with_current` | string | 否 | 当前方案的痛点 |
-| `jtbd.jobs[].pain_level` | enum(high,medium,low) | 否 | 痛点程度 |
-| `jtbd.summary.total_jobs` | number | 是 | 任务总数 |
-| `jtbd.summary.by_type` | object | 是 | 按类型统计 |
+| 字段路径 | 必填 | 约束条件 |
+|----------|------|----------|
+| `jtbd.jobs` | 是 | 不可为空 |
+| `jtbd.jobs[].type` | 是 | enum: functional, emotional, social |
+| `jtbd.jobs[].job` | 是 | 不可为空 |
+| `jtbd.jobs[].frequency` | 是 | — |
+| `jtbd.jobs[].evidence` | 是 | 不可为空 |
+| `jtbd.jobs[].confidence` | 是 | 范围 0-1.0 |
+| `jtbd.jobs[].pain_with_current` | 否 | — |
+| `jtbd.jobs[].pain_level` | 否 | enum: high, medium, low |
+| `jtbd.summary.total_jobs` | 是 | — |
+| `jtbd.summary.by_type` | 是 | — |
 
 #### requirement_layers 校验
 
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| `requirement_layers.requirement_layers` | array | 是 | 需求三层拆解结果列表，不可为空 |
-| `requirement_layers.requirement_layers[].id` | string | 是 | 需求标识，唯一 |
-| `requirement_layers.requirement_layers[].surface.content` | string | 是 | 表层需求，保留原始表述 |
-| `requirement_layers.requirement_layers[].surface.confidence` | number | 是 | 必须等于1.0 |
-| `requirement_layers.requirement_layers[].behavioral.content` | string | 是 | 行为需求，含场景+行为描述 |
-| `requirement_layers.requirement_layers[].behavioral.confidence` | number | 是 | 必须在0.7-0.9范围内 |
-| `requirement_layers.requirement_layers[].behavioral.inference_basis` | string | 是 | 推断依据，不可为空 |
-| `requirement_layers.requirement_layers[].essential.content` | string | 是 | 本质需求，描述底层动机 |
-| `requirement_layers.requirement_layers[].essential.confidence` | number | 是 | 必须在0.4-0.7范围内 |
-| `requirement_layers.requirement_layers[].essential.inference_basis` | string | 是 | 推断依据，不可为空 |
-| `requirement_layers.requirement_layers[].validation_needed` | boolean | 是 | 本质需求置信度<0.5或行为需求置信度<0.7时必须为true |
-| `requirement_layers.summary.total` | integer | 是 | 需求总数 |
+| 字段路径 | 必填 | 约束条件 |
+|----------|------|----------|
+| `requirement_layers.requirement_layers` | 是 | 不可为空 |
+| `requirement_layers.requirement_layers[].id` | 是 | 唯一 |
+| `requirement_layers.requirement_layers[].surface.content` | 是 | 保留原始表述 |
+| `requirement_layers.requirement_layers[].surface.confidence` | 是 | 必须等于1.0 |
+| `requirement_layers.requirement_layers[].behavioral.content` | 是 | 含场景+行为描述 |
+| `requirement_layers.requirement_layers[].behavioral.confidence` | 是 | 范围 0.7-0.9 |
+| `requirement_layers.requirement_layers[].behavioral.inference_basis` | 是 | 不可为空 |
+| `requirement_layers.requirement_layers[].essential.content` | 是 | 描述底层动机 |
+| `requirement_layers.requirement_layers[].essential.confidence` | 是 | 范围 0.4-0.7 |
+| `requirement_layers.requirement_layers[].essential.inference_basis` | 是 | 不可为空 |
+| `requirement_layers.requirement_layers[].validation_needed` | 是 | 本质需求置信度<0.5或行为需求置信度<0.7时必须为true |
+| `requirement_layers.summary.total` | 是 | — |
 
 #### 5whys 校验
 
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| `5whys.chains` | array | 是 | 因果链列表，长度≥1 |
-| `5whys.chains[].path_id` | string | 是 | 路径标识 |
-| `5whys.chains[].round` | number | 是 | 追问轮次 |
-| `5whys.chains[].question` | string | 是 | 追问问题 |
-| `5whys.chains[].answer` | string | 是 | 回答内容 |
-| `5whys.chains[].evidence` | string | 是 | 证据来源 |
-| `5whys.chains[].confidence` | number | 是 | 置信度(0-1.0) |
-| `5whys.chains[].data_support` | enum(high,medium,low) | 是 | 数据支撑度 |
-| `5whys.root_cause` | string | 是 | 根本原因，非空 |
-| `5whys.actionable_fix.description` | string | 是 | 改进建议描述 |
-| `5whys.actionable_fix.effort` | enum(low,medium,high) | 是 | 实施难度 |
-| `5whys.actionable_fix.impact` | enum(low,medium,high) | 是 | 预期影响 |
-| `5whys.actionable_fix.suggested_metrics` | array | 是 | 建议追踪的指标 |
+| 字段路径 | 必填 | 约束条件 |
+|----------|------|----------|
+| `5whys.chains` | 是 | 长度≥1 |
+| `5whys.chains[].path_id` | 是 | — |
+| `5whys.chains[].round` | 是 | — |
+| `5whys.chains[].question` | 是 | — |
+| `5whys.chains[].answer` | 是 | — |
+| `5whys.chains[].evidence` | 是 | — |
+| `5whys.chains[].confidence` | 是 | 范围 0-1.0 |
+| `5whys.chains[].data_support` | 是 | enum: high, medium, low |
+| `5whys.root_cause` | 是 | 非空 |
+| `5whys.actionable_fix.description` | 是 | — |
+| `5whys.actionable_fix.effort` | 是 | enum: low, medium, high |
+| `5whys.actionable_fix.impact` | 是 | enum: low, medium, high |
+| `5whys.actionable_fix.suggested_metrics` | 是 | — |
 
 #### kano 校验
 
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| `kano.kano_classification` | array | 是 | KANO分类结果列表，不可为空 |
-| `kano.kano_classification[].feature_id` | string | 是 | 功能标识 |
-| `kano.kano_classification[].category` | string | 是 | 分类，必须为must-be/one-dimensional/attractive/indifferent/reverse/insufficient_data之一 |
-| `kano.kano_classification[].confidence` | number | 是 | 分类置信度(0-1) |
-| `kano.kano_classification[].evidence` | object | 是 | 分类证据，含5项指标 |
-| `kano.kano_classification[].review_period` | string | 是 | 复评周期 |
-| `kano.boundary_cases` | array | 是 | 边界情况列表，confidence<0.7的必须在其中 |
-| `kano.summary` | object | 是 | 各类型功能数量统计 |
+| 字段路径 | 必填 | 约束条件 |
+|----------|------|----------|
+| `kano.kano_classification` | 是 | 不可为空 |
+| `kano.kano_classification[].feature_id` | 是 | — |
+| `kano.kano_classification[].category` | 是 | 必须为must-be/one-dimensional/attractive/indifferent/reverse/insufficient_data之一 |
+| `kano.kano_classification[].confidence` | 是 | 范围 0-1 |
+| `kano.kano_classification[].evidence` | 是 | 含5项指标 |
+| `kano.kano_classification[].review_period` | 是 | — |
+| `kano.boundary_cases` | 是 | confidence<0.7的必须在其中 |
+| `kano.summary` | 是 | — |
 
 #### priority_scoring 校验
 
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| `priority_scoring.priority_list` | array | 是 | 需求优先级列表，不可为空 |
-| `priority_scoring.priority_list[].rank` | number | 是 | 排名 |
-| `priority_scoring.priority_list[].requirement_id` | string | 是 | 需求标识 |
-| `priority_scoring.priority_list[].requirement_name` | string | 是 | 需求名称 |
-| `priority_scoring.priority_list[].scores.pain_intensity.score` | number | 是 | 痛点强度(1-5) |
-| `priority_scoring.priority_list[].scores.frequency_weight.score` | number | 是 | 频率权重(1-5) |
-| `priority_scoring.priority_list[].scores.solvability.score` | number | 是 | 可解决性(1-5) |
-| `priority_scoring.priority_list[].scores.solvability.confirmed` | boolean | 是 | 是否已获技术确认 |
-| `priority_scoring.priority_list[].scores.kano_coefficient.coefficient` | number | 是 | KANO系数 |
-| `priority_scoring.priority_list[].scores.kano_coefficient.category` | string | 是 | KANO分类 |
-| `priority_scoring.priority_list[].base_score` | number | 是 | 基础分 |
-| `priority_scoring.priority_list[].kano_bonus` | number | 是 | KANO加成 |
-| `priority_scoring.priority_list[].total_score` | number | 是 | 总分 |
-| `priority_scoring.priority_list[].score_confidence` | enum(high,medium,low) | 是 | 评分可信度 |
-| `priority_scoring.scoring_summary` | object | 是 | 评分统计摘要 |
-| `priority_scoring.priority_thresholds` | object | 是 | 优先级分级阈值 |
+| 字段路径 | 必填 | 约束条件 |
+|----------|------|----------|
+| `priority_scoring.priority_list` | 是 | 不可为空 |
+| `priority_scoring.priority_list[].rank` | 是 | — |
+| `priority_scoring.priority_list[].requirement_id` | 是 | — |
+| `priority_scoring.priority_list[].requirement_name` | 是 | — |
+| `priority_scoring.priority_list[].scores.pain_intensity.score` | 是 | 范围 1-5 |
+| `priority_scoring.priority_list[].scores.frequency_weight.score` | 是 | 范围 1-5 |
+| `priority_scoring.priority_list[].scores.solvability.score` | 是 | 范围 1-5 |
+| `priority_scoring.priority_list[].scores.solvability.confirmed` | 是 | — |
+| `priority_scoring.priority_list[].scores.kano_coefficient.coefficient` | 是 | — |
+| `priority_scoring.priority_list[].scores.kano_coefficient.category` | 是 | — |
+| `priority_scoring.priority_list[].base_score` | 是 | — |
+| `priority_scoring.priority_list[].kano_bonus` | 是 | — |
+| `priority_scoring.priority_list[].total_score` | 是 | — |
+| `priority_scoring.priority_list[].score_confidence` | 是 | enum: high, medium, low |
+| `priority_scoring.scoring_summary` | 是 | — |
+| `priority_scoring.priority_thresholds` | 是 | — |
 
 ### Output JSON 示例
 
@@ -407,25 +409,8 @@ metadata:
         "confidence": 1.0,
         "evidence": ["用户访谈#23", "行为数据-表单放弃率35%"],
         "sentiment_intensity": 4
-      },
-      {
-        "type": "emotional",
-        "job": "获得轻松省力的体验",
-        "frequency": 8,
-        "pain_with_current": "每次操作都感到烦躁",
-        "confidence": 0.7,
-        "evidence": ["3位用户提到'太麻烦了'"],
-        "sentiment_intensity": 3
-      },
-      {
-        "type": "social",
-        "job": "获得同事的认可",
-        "frequency": 3,
-        "pain_with_current": "觉得自己工具落后于同事",
-        "confidence": 0.6,
-        "evidence": ["用户访谈#17提到'同事都在用XX'"],
-        "sentiment_intensity": 2
       }
+      // ... 同结构可扩展
     ],
     "summary": {
       "total_jobs": 3,
@@ -463,8 +448,8 @@ metadata:
       "metrics": { "drop_off_rate": 0.35, "affected_users": 1200 }
     },
     "chains": [
-      { "path_id": "main", "round": 1, "question": "为什么用户在注册流程第3步大量放弃？", "answer": "第3步需要填写过多非必要信息", "evidence": "表单字段数12个，行业平均5个", "confidence": 0.85, "data_support": "high" },
-      { "path_id": "main", "round": 2, "question": "为什么第3步需要填写过多非必要信息？", "answer": "产品需求将所有字段设为必填，未区分必要与非必要", "evidence": "需求文档PRD-2024-031中所有字段标记为必填", "confidence": 0.8, "data_support": "high" }
+      { "path_id": "main", "round": 1, "question": "为什么用户在注册流程第3步大量放弃？", "answer": "第3步需要填写过多非必要信息", "evidence": "表单字段数12个，行业平均5个", "confidence": 0.85, "data_support": "high" }
+      // ... 同结构可扩展
     ],
     "root_cause": "缺乏分阶段收集数据的策略，将注册流程当作唯一的数据收集窗口",
     "actionable_fix": {
@@ -481,9 +466,8 @@ metadata:
       "analysis_timestamp": "ISO8601"
     },
     "kano_classification": [
-      { "feature_id": "FEAT-001", "feature_name": "批量导出", "category": "must-be", "confidence": 0.85, "evidence": { "negative_rate": 0.75, "frequency": 0.08, "positive_rate": 0.25, "usage_depth_correlation": 0.6, "avg_sentiment_intensity": 3.5 }, "review_period": "6个月" },
-      { "feature_id": "FEAT-002", "feature_name": "AI智能推荐", "category": "attractive", "confidence": 0.65, "evidence": { "negative_rate": 0.1, "frequency": 0.03, "positive_rate": 0.7, "usage_depth_correlation": 0.2, "avg_sentiment_intensity": 4.0 }, "review_period": "3个月", "needs_human_judgment": true },
-      { "feature_id": "FEAT-003", "feature_name": "界面主题切换", "category": "indifferent", "confidence": 0.9, "evidence": { "negative_rate": 0.05, "frequency": 0.005, "positive_rate": 0.15, "usage_depth_correlation": 0.05, "avg_sentiment_intensity": 1.2 }, "review_period": "12个月" }
+      { "feature_id": "FEAT-001", "feature_name": "批量导出", "category": "must-be", "confidence": 0.85, "evidence": { "negative_rate": 0.75, "frequency": 0.08, "positive_rate": 0.25, "usage_depth_correlation": 0.6, "avg_sentiment_intensity": 3.5 }, "review_period": "6个月" }
+      // ... 同结构可扩展
     ],
     "boundary_cases": [
       { "feature_id": "FEAT-002", "reason": "频率接近兴奋型/期望型边界", "suggested_action": "补充更多用户反馈数据或进行专项问卷验证" }
@@ -521,8 +505,8 @@ metadata:
     "version": "3.0",
     "generated_at": "2026-05-14T21:00:00Z",
     "source_files": [
-      "output/pm-discovery/user-research-voice-analysis/voice-analysis.json",
-      "output/pm-discovery/user-research-behavior-analysis/behavior-analysis.json"
+      "output/pm-discovery/user-research-voice-analysis/voice-analysis.json"
+      // ... 同结构可扩展
     ]
   }
 }

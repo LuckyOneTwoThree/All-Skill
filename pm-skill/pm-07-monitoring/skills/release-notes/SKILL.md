@@ -31,7 +31,7 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 需求变更记录 | Markdown/JSON | ○ | output/pm-monitoring/release-auto-checklist/change_log.md | 本版本的需求变更 |
+| 需求变更记录 | Markdown/JSON | ○ | output/pm-monitoring/release-auto-checklist/release_checklist.json | 本版本的需求变更 |
 | PRD文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求参考 |
 | SRS文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 需求规格参考（已由 design-prd 覆盖） |
 | 版本号 | string | 是 | 用户提供 | 如 v2.3.0 |
@@ -234,7 +234,7 @@ metadata:
     "release_type": {"type": "string", "description": "发布类型：major/minor/patch/hotfix"},
     "target_audience": {"type": "string", "description": "目标受众"},
     "high_impact_changes": {"type": "array", "description": "高影响变更列表"},
-    "changes": {"type": "array", "description": "变更列表，按类别分类"},
+    "changes": {"type": "object", "description": "变更列表，按类别分类", "properties": {"new_features": {"type": "array"}, "improvements": {"type": "array"}, "bug_fixes": {"type": "array"}}},
     "known_issues": {"type": "array", "description": "已知问题列表"},
     "breaking_changes": {"type": "array", "description": "破坏性变更列表"},
     "upgrade_guide": {"type": "object", "description": "升级指引"}

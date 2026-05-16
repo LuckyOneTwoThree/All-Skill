@@ -29,7 +29,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 本编排器为透传编排器，职责是提供统一入口、阶段总结和异常处理。上层编排器可直接调用iteration-decision子Skill，无需经过本编排器。
 
@@ -79,21 +79,15 @@ Skill: iteration-decision
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-monitoring/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-monitoring/iteration-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-monitoring/ |
+| 总结输出路径 | output/phase-reports/pm-monitoring/iteration-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: design-orchestrator
-    reason: 迭代决策完成，实现迭代需求变更
-    input_mapping:
-      iteration_output: "output/pm-monitoring/iteration-decision/ → change-impact-analysis输入"
+  primary: design-orchestrator（迭代决策完成，实现迭代需求变更）
   alternatives:
     - target: release-orchestrator
       reason: 迭代决策为直接发布
@@ -102,10 +96,6 @@ Skill: iteration-decision
       reason: 迭代后需加强监控
       condition: 迭代涉及核心功能变更，需加强上线后监控时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

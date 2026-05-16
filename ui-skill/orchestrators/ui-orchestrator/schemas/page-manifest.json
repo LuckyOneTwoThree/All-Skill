@@ -7,7 +7,7 @@
   "properties": {
     "manifest_id": {"type": "string"},
     "generated_at": {"type": "string"},
-    "source": {"type": "string", "description": "页面清单来源（prd.json / ia_proposals.json / both / user_input）"},
+    "source": {"type": "string", "enum": ["prd.json", "ia_proposals.json", "both", "user_input"], "description": "页面清单来源"},
     "pages": {
       "type": "array",
       "description": "必须生成的页面清单",

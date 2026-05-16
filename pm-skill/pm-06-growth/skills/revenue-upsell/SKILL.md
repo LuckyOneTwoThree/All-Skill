@@ -31,7 +31,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 用户行为数据 | object | 是 | 用户提供 | 使用量、功能使用、协作行为 |
-| 付费历史数据 | object | 是 | output/pm-growth/revenue-nrr/nrr_report.yaml | 历史套餐、付费金额、付费周期 |
+| 付费历史数据 | object | 是 | output/pm-growth/revenue-nrr/nrr_analysis.json | 历史套餐、付费金额、付费周期 |
 | 产品使用数据 | object | ○ | 用户提供 | 功能使用详情、用量统计 |
 
 ## 升级信号类型

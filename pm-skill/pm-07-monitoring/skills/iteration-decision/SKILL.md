@@ -271,13 +271,16 @@ adjustment_options:
         - item_id: {id}
           story_points: {points}
           source: {trigger_event}
+        # ... 同结构可扩展
       items_to_remove:
         - item_id: {id}
           story_points: {points}
           reason: {reason}
+        # ... 同结构可扩展
       items_to_modify:
         - item_id: {id}
           modification: {description}
+        # ... 同结构可扩展
     tradeoffs:
       scope: "放弃 {feature}"
       schedule: "延期 {X} 天"
@@ -287,9 +290,9 @@ adjustment_options:
       - risk: {description}
         likelihood: high | medium | low
         mitigation: {description}
+      # ... 同结构可扩展
     recommendation_score: {score}
-  - option_id: OPT-002
-    # 第二个方案...
+  # ... 同结构可扩展
 ```
 
 #### 2.3 风险评估
@@ -342,8 +345,7 @@ risk_assessment:
 communication_draft:
   recipients:
     - team_members
-    - product_owner
-    - stakeholders
+    # ... 同结构可扩展
   subject: "迭代 {sprint_name} 变更通知"
   sections:
     change_summary:
@@ -528,7 +530,7 @@ problem_identification:
         value: {value}
         baseline: {baseline}
         deviation: {deviation}
-      - feedback: "{quote}"
+      # ... 同结构可扩展
     root_cause_analysis:
       - question: "为什么 {problem}？"
         answer: "{cause}"
@@ -614,7 +616,7 @@ improvement_suggestions:
 │   │   ├── adjustment_options.yaml
 │   │   ├── risk_assessment.yaml
 │   │   ├── communication_draft.md
-│   │   └── needs_human_decision: true | false
+│   │   └── needs_human_decision.yaml
 │   └── latest/
 │       └── adjustment_recommendation.md
 └── retrospective/

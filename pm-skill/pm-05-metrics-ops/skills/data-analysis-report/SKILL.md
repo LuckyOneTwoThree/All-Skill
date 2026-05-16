@@ -2,7 +2,7 @@
 name: data-analysis-report
 description: 当需要产出完整的数据分析报告时使用。数据洞察报告自动生成，整合漏斗分析、留存分析、异常检测和决策洞察数据，补充趋势解读和行动建议，输出结构化Markdown报告。关键词：数据分析报告、数据洞察报告、运营报告、数据报告、分析报告、出个数据报告、帮我写运营分析、总结下数据情况。
 metadata:
-  module: "度量运营与决策"
+  module: "产品度量运营"
   sub-module: "数据分析"
   type: "pipeline"
   version: "2.1"
@@ -31,9 +31,9 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 漏斗分析 | JSON | ○ | output/pm-metrics-ops/analysis-funnel/funnel-analysis.json | 漏斗健康度、转化率、流失点 |
-| 留存分析 | JSON | ○ | output/pm-metrics-ops/analysis-retention/retention-analysis.json | 留存曲线、流失预警、 cohorts |
-| 异常检测 | JSON | ○ | output/pm-metrics-ops/analysis-anomaly/anomaly-analysis.json | 异常指标、归因、影响范围 |
+| 漏斗分析 | JSON | ○ | output/pm-metrics-ops/analysis-funnel/funnel_analysis.json | 漏斗健康度、转化率、流失点 |
+| 留存分析 | JSON | ○ | output/pm-metrics-ops/analysis-retention/retention_analysis.json | 留存曲线、流失预警、 cohorts |
+| 异常检测 | JSON | ○ | output/pm-metrics-ops/analysis-anomaly/ | 异常指标、归因、影响范围 |
 | 决策洞察 | JSON | ○ | output/pm-metrics-ops/decision-dace/decision_insight.json | 数据驱动的决策建议 |
 | 度量体系 | JSON | ○ | output/pm-metrics-design/metrics-system/metrics_system.json | 指标定义和基线 |
 | 分析时间范围 | string | 是 | 用户提供 | 如"2025年Q1""最近30天" |
@@ -218,52 +218,31 @@ metadata:
 ```json
 {
   "report_metadata": {
-    "product": "产品名",
-    "time_range": "分析时间范围",
-    "generated_at": "时间戳",
-    "data_sources": [],
-    "data_quality": ""
+    "product": "产品名", "time_range": "分析时间范围",
+    "generated_at": "时间戳", "data_sources": [], "data_quality": ""
   },
   "executive_summary": {
-    "key_metrics": [],
-    "key_findings": [],
-    "top_recommendation": ""
+    "key_metrics": [], "key_findings": [], "top_recommendation": ""
   },
   "funnel_analysis": {
-    "full_funnel": [],
-    "biggest_drop": {},
-    "biggest_opportunity": {},
-    "key_findings": []
+    "full_funnel": [], "biggest_drop": {},
+    "biggest_opportunity": {}, "key_findings": []
   },
   "retention_analysis": {
-    "d1": 0, "d7": 0, "d30": 0,
-    "curve_shape": "",
-    "lifecycle_stages": [],
-    "churn_warnings": []
+    "d1": 0, "d7": 0, "d30": 0, "curve_shape": "",
+    "lifecycle_stages": [], "churn_warnings": []
   },
-  "anomaly_analysis": {
-    "events": [],
-    "attributions": []
-  },
+  "anomaly_analysis": { "events": [], "attributions": [] },
   "insights": [
-    {
-      "id": "INS-001",
-      "fact": "数据事实",
-      "implication": "业务含义",
-      "action_direction": "行动方向"
-    }
+    { "id": "INS-001", "fact": "数据事实", "implication": "业务含义", "action_direction": "行动方向" }
+    // ... 同结构可扩展
   ],
   "recommendations": [
-    {
-      "id": "REC-001",
-      "description": "建议描述",
-      "target_metric": "目标指标",
-      "expected_lift": "预期提升",
-      "difficulty": "低/中/高",
-      "category": "速赢/核心优化/长期投入/观察项",
-      "priority": "P0/P1/P2",
-      "validation_method": "验证方式"
-    }
+    { "id": "REC-001", "description": "建议描述", "target_metric": "目标指标",
+      "expected_lift": "预期提升", "difficulty": "低/中/高",
+      "category": "速赢/核心优化/长期投入/观察项", "priority": "P0/P1/P2",
+      "validation_method": "验证方式" }
+    // ... 同结构可扩展
   ]
 }
 ```

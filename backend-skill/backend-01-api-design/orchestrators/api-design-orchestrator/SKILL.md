@@ -30,19 +30,35 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
-## Pipeline
+## Pipeline 定义
 
 ```yaml
+pipeline: api-design-orchestrator
+version: 4.0
+
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/backend/api-design-orchestrator.md
-pipeline:
-  - stage: api-design-spec
-    gate: API契约+安全策略+认证鉴权方案完整 + 人类审查通过
-  - stage: api-design-impl
-    gate: 代码可编译 + PRD功能点100%覆盖 + 代码自审P0=0 + 人类确认通过
+
+stages:
+  - id: phase-1
+    name: "API设计规范"
+    skills:
+      - api-design-spec
+    gate:
+      condition: "API契约+安全策略+认证鉴权方案完整 + 人类审查通过"
+      fail_action: "缺失任一项阻塞"
+
+  - id: phase-2
+    name: "API代码实现"
+    depends_on: [phase-1]
+    skills:
+      - api-design-impl
+    gate:
+      condition: "代码可编译 + PRD功能点100%覆盖 + 代码自审P0=0 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 ```
 
 ## 阶段执行计划
@@ -104,29 +120,19 @@ Skill: api-design-impl
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/backend-api-design/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/backend/api-design-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/backend-api-design/ |
+| 总结输出路径 | output/phase-reports/backend/api-design-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: data-architecture-orchestrator
-    reason: API契约完成后，进入数据架构设计，基于API数据需求设计ER模型和表结构
-    input_mapping:
-      api_contract: "output/backend-api-design/api-design-spec/ → data-architecture-spec输入"
+  primary: data-architecture-orchestrator（API契约完成后，进入数据架构设计，基于API数据需求设计ER模型和表结构）
   alternatives:
     - target: ui-orchestrator
       reason: API契约可供UI前端并行开发消费
       condition: 前后端并行开发模式下
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

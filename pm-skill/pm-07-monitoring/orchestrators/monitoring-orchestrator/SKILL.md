@@ -29,7 +29,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -93,21 +93,15 @@ Skill: user-feedback-loop-report
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-monitoring/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-monitoring/monitoring-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-monitoring/ |
+| 总结输出路径 | output/phase-reports/pm-monitoring/monitoring-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: diagnosis-orchestrator
-    reason: 监控预警建立完成，如发现异常进入诊断定位根因
-    input_mapping:
-      monitoring_output: "output/pm-monitoring/monitoring-pipeline/ → diagnosis-health输入"
+  primary: diagnosis-orchestrator（监控预警建立完成，如发现异常进入诊断定位根因）
   alternatives:
     - target: release-orchestrator
       reason: 监控发现需发布修复
@@ -119,10 +113,6 @@ Skill: user-feedback-loop-report
     - target: monitoring-pipeline
       reason: 仅需搭建监控，无需完整监控编排
       condition: 已有反馈闭环机制，仅需监控预警配置时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

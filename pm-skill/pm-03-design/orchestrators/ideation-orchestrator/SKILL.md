@@ -36,7 +36,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -77,21 +77,15 @@ Skill: ideation-workshop
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-design/ideation-workshop/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-design/ideation-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-design/ideation-workshop/ |
+| 总结输出路径 | output/phase-reports/pm-design/ideation-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: design-orchestrator
-    reason: 创意发散完成，将创意方案转化为PRD
-    input_mapping:
-      ideation_output: "output/pm-design/ideation-workshop/ → design-prd输入"
+  primary: design-orchestrator（创意发散完成，将创意方案转化为PRD）
   alternatives:
     - target: validation-orchestrator
       reason: 创意方案存在高风险假设，需先验证
@@ -100,10 +94,6 @@ Skill: ideation-workshop
       reason: 创意方向不明确，需回溯到机会定义
       condition: 创意收敛后仍无法形成明确产品方向时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

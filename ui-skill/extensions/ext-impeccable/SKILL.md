@@ -1,7 +1,16 @@
 ---
 name: ext-impeccable
-description: Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.
-version: 3.1.0
+description: 当需要对前端界面进行设计、重设计、塑造、评审、审计、打磨、动画、排版等精细化处理时使用。覆盖网站、着陆页、仪表盘、产品UI等全场景。关键词：UI设计、界面优化、视觉层次、交互设计、动效、排版、配色、响应式、无障碍、设计系统。
+metadata:
+  module: "UI设计与前端开发"
+  sub-module: "Impeccable设计扩展"
+  type: "extension"
+  version: "3.1.0"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "帮我优化这个页面的设计"
+    - "审计一下这个界面的UX问题"
+  interaction_mode: "ai_suggest_human_approve"
 user-invocable: true
 argument-hint: "[craft|shape · audit|critique · animate|bolder|colorize|delight|layout|overdrive|quieter|typeset · adapt|clarify|distill · harden|onboard|optimize|polish · teach|document|extract|live] [target]"
 license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.

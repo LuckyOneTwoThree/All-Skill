@@ -15,7 +15,6 @@ Usage:
 
 import csv
 import json
-import os
 from datetime import datetime
 from pathlib import Path
 from core import search, DATA_DIR
@@ -214,16 +213,16 @@ class DesignSystemGenerator:
                 "accessibility": best_style.get("Accessibility", "")
             },
             "colors": {
-                "primary": best_color.get("Primary (Hex)", "#2563EB"),
-                "secondary": best_color.get("Secondary (Hex)", "#3B82F6"),
+                "primary": best_color.get("Primary (Hex)", "#0F766E"),
+                "secondary": best_color.get("Secondary (Hex)", "#14B8A6"),
                 "cta": best_color.get("CTA (Hex)", "#F97316"),
                 "background": best_color.get("Background (Hex)", "#F8FAFC"),
                 "text": best_color.get("Text (Hex)", "#1E293B"),
                 "notes": best_color.get("Notes", "")
             },
             "typography": {
-                "heading": best_typography.get("Heading Font", "Inter"),
-                "body": best_typography.get("Body Font", "Inter"),
+                "heading": best_typography.get("Heading Font", "DM Sans"),
+                "body": best_typography.get("Body Font", "Source Sans 3"),
                 "mood": best_typography.get("Mood/Style Keywords", reasoning.get("typography_mood", "")),
                 "best_for": best_typography.get("Best For", ""),
                 "google_fonts_url": best_typography.get("Google Fonts URL", ""),
@@ -918,8 +917,6 @@ def _generate_intelligent_overrides(page_name: str, page_query: str, design_syst
     Uses the existing search infrastructure to find relevant style, UX, and layout
     data instead of hardcoded page types.
     """
-    from core import search
-    
     page_lower = page_name.lower()
     query_lower = (page_query or "").lower()
     combined_context = f"{page_lower} {query_lower}"

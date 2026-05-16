@@ -41,7 +41,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 方案设计 | JSON | 是 | output/pm-design/design-prototype / output/pm-design/design-userflow | 完整功能列表及描述 |
-| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption-map.json | Pipeline 12输出的假设地图 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 12输出的假设地图 |
 | 资源约束 | JSON | ○ | 用户提供 | 时间、人力、预算限制 |
 
 ### 输入格式
@@ -289,88 +289,27 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 {
   "mvp_scope": {
     "core_hypothesis": [
-      {
-        "id": "A001",
-        "description": "用户认为推荐内容与兴趣匹配",
-        "risk_score": 20
-      }
+      { "id": "A001", "description": "假设描述", "risk_score": 20 }
+      // ... 同结构可扩展
     ],
     "must_have": [
-      {
-        "feature": "功能名称",
-        "linked_assumption": "关联假设ID",
-        "effort_estimate": 8,
-        "rationale": "必须包含的理由"
-      }
+      { "feature": "功能名称", "linked_assumption": "关联假设ID", "effort_estimate": 8, "rationale": "必须包含的理由" }
+      // ... 同结构可扩展
     ],
     "nice_to_have": [
-      {
-        "feature": "功能名称",
-        "priority": "P1",
-        "target_version": "v2.0"
-      }
+      { "feature": "功能名称", "priority": "P1", "target_version": "v2.0" }
+      // ... 同结构可扩展
     ],
     "cut_features": [
-      {
-        "feature": "功能名称",
-        "rationale": "排除理由"
-      }
+      { "feature": "功能名称", "rationale": "排除理由" }
+      // ... 同结构可扩展
     ],
-    "timeline": {
-      "total_weeks": 2,
-      "milestones": [
-        {
-          "name": "里程碑名称",
-          "week": 1,
-          "deliverables": ["交付物1", "交付物2"]
-        }
-      ]
-    },
-    "resource_estimate": {
-      "team_size": 3,
-      "roles": [
-        {
-          "role": "角色名称",
-          "count": 1,
-          "rationale": "配置理由"
-        }
-      ],
-      "external_dependencies": []
-    },
-    "success_criteria": [
-      {
-        "criterion": "成功标准描述",
-        "metric": "量化指标",
-        "target_value": "目标值",
-        "linked_hypothesis": "关联假设ID"
-      }
-    ],
-    "risk_mitigation": [
-      {
-        "risk": "风险描述",
-        "impact": "high/medium/low",
-        "mitigation": "缓解措施"
-      }
-    ],
-    "effort_summary": {
-      "mvp_total": 24,
-      "full_solution_total": 60,
-      "mvp_ratio": "40%"
-    },
-    "go_no_go": {
-      "metrics": [
-        {
-          "name": "指标名称",
-          "linked_criterion": "success_criteria[0]",
-          "description": "指标描述"
-        }
-      ],
-      "thresholds": {
-        "go": "Go条件描述",
-        "no_go": "No-Go条件描述",
-        "needs_more_data": "需更多数据条件描述"
-      }
-    }
+    "timeline": { "total_weeks": 2, "milestones": [{ /* 同Step5结构 */ }] },
+    "resource_estimate": { "team_size": 3, "roles": [{ /* 同Step6结构 */ }], "external_dependencies": [] },
+    "success_criteria": [{ /* 同Step7结构 */ }],
+    "risk_mitigation": [{ /* 同Step7结构 */ }],
+    "effort_summary": { "mvp_total": 24, "full_solution_total": 60, "mvp_ratio": "40%" },
+    "go_no_go": { "metrics": [{ /* 同Step8结构 */ }], "thresholds": { "go": "...", "no_go": "...", "needs_more_data": "..." } }
   },
   "approval_status": "pending|approved|needs_discussion",
   "recommendation": "AI建议说明"

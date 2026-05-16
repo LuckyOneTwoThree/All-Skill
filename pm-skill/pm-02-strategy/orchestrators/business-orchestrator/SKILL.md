@@ -27,11 +27,14 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
 ```yaml
+pipeline: business-orchestrator
+version: 7.1
+
 stages:
   - id: phase-1
     name: "商业模式画布"
@@ -58,11 +61,15 @@ stages:
 
   - id: phase-4
     name: "商业战略报告"
-    depends_on: [phase-1, phase-3]
+    depends_on: [phase-1, phase-2, phase-3]
     skills: [business-strategy-report]
     gate:
       condition: "报告执行摘要完整，至少2个战略方向"
       fail_action: "补充战略方向或标注建议补充战略分析"
+
+post_pipeline:
+  - action: stage-summary
+    output: output/phase-reports/pm-strategy/business-orchestrator.md
 ```
 
 ## 阶段执行计划
@@ -120,21 +127,15 @@ Skill: business-strategy-report
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-strategy/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-strategy/business-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-strategy/ |
+| 总结输出路径 | output/phase-reports/pm-strategy/business-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: positioning-orchestrator
-    reason: 商业模式设计完成，确定差异化定位策略
-    input_mapping:
-      business_outputs: "output/pm-strategy/business-model-canvas/ + business-pricing/ → positioning-strategy输入"
+  primary: positioning-orchestrator（商业模式设计完成，确定差异化定位策略）
   alternatives:
     - target: planning-orchestrator
       reason: 定位已明确，直接进入战略规划
@@ -143,10 +144,6 @@ Skill: business-strategy-report
       reason: 商业模式和定位均已确定，直接进入设计
       condition: 商业模式与定位均已完成，需快速进入产品构建时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

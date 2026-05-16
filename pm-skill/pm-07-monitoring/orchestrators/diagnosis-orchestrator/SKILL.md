@@ -29,13 +29,13 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
 ```yaml
 pipeline: diagnosis-orchestrator
-version: 7.0
+version: 10.0
 
 post_pipeline:
   - action: stage-summary
@@ -137,21 +137,15 @@ Skill: product-sunset-plan
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-monitoring/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-monitoring/diagnosis-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-monitoring/ |
+| 总结输出路径 | output/phase-reports/pm-monitoring/diagnosis-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: iteration-orchestrator
-    reason: 诊断完成，根据诊断结论调整迭代计划
-    input_mapping:
-      diagnosis_output: "output/pm-monitoring/diagnosis-health/ + competitor-monitoring-report/ → iteration-decision输入"
+  primary: iteration-orchestrator（诊断完成，根据诊断结论调整迭代计划）
   alternatives:
     - target: monitoring-orchestrator
       reason: 诊断结论为需建立监控预警
@@ -159,27 +153,23 @@ Skill: product-sunset-plan
     - target: growth-orchestrator
       reason: 诊断结论为增长瓶颈，需增长策略
       condition: 健康度下降主因为增长乏力时
-    - target: product-sunset-plan
-      reason: 健康度极低且无改善空间，需制定下线方案
+    - target: iteration-orchestrator
+      reason: 健康度极低且无改善空间，需制定迭代改进或下线方案
       condition: 健康度评分<30分且连续3个周期无改善时
   special_cases:
-    - target: diagnosis-health
+    - target: monitoring-orchestrator
       reason: 仅需健康度诊断，无需完整诊断编排
       condition: 已有竞品数据，仅需产品健康检查时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 健康度评分偏差±10% | diagnosis-health-score输出文件已生成且非空 | 校准评分模型或补充数据 |
-| 竞品动态已追踪 | diagnosis-competitor-track输出文件已生成且非空 | 补充竞品数据源或延长追踪周期 |
+| 健康度评分偏差±10% | diagnosis-health输出文件已生成且非空 | 校准评分模型或补充数据 |
+| 竞品动态已追踪 | diagnosis-competition输出文件已生成且非空 | 补充竞品数据源或延长追踪周期 |
 | 竞品监控报告已审核 | 竞品监控报告经人类审核确认 | 补充分析或修改应对建议 |
 | 产品下线方案已审核 | 产品下线方案经人类审核确认 | 补充分析或修改迁移方案 |
-| 质量验收 | 如需验收，转交 monitoring-orchestrator 执行 quality-acceptance | — |
+| 质量验收 | 如需验收，转交 release-orchestrator 执行 quality-acceptance | — |
 | 阶段总结已生成 | output/phase-reports/pm-monitoring/diagnosis-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 下游衔接
@@ -187,8 +177,8 @@ Skill: product-sunset-plan
 - 诊断完成 → iteration-orchestrator（调整迭代计划）
 - 缺乏监控覆盖 → monitoring-orchestrator
 - 增长乏力 → growth-orchestrator
-- 健康度极低 → product-sunset-plan
-- 仅需健康检查 → diagnosis-health
+- 健康度极低 → iteration-orchestrator（制定迭代改进或下线方案）
+- 仅需健康检查 → monitoring-orchestrator
 
 ## 人类决策点
 

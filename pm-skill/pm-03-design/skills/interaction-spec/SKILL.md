@@ -30,8 +30,8 @@ metadata:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 用户流程 | markdown | 是 | design-userflow | 用户流程图、状态转换、决策节点 |
-| 原型规格 | markdown | 是 | design-prototype | 原型设计、交互标注、组件规格 |
+| 用户流程 | JSON | 是 | design-userflow | 用户流程图、状态转换、决策节点 |
+| 原型规格 | JSON | 是 | design-prototype | 原型设计、交互标注、组件规格 |
 | 设计交接文档 | markdown | 否 | design-handoff-spec | 设计令牌、组件规格、响应式断点 |
 | 品牌规范 | text | 否 | 用户输入 | 品牌调性、动画风格偏好 |
 

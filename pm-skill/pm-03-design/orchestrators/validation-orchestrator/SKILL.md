@@ -37,7 +37,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -107,7 +107,7 @@ Skill: validation-mvp
   design_output: output/pm-design/design-prototype/prototype_spec.json（或output/pm-design/design-userflow/userflow.json）
   assumption_map: output/pm-design/validation-assumption-map/assumption_map.json
   resource_constraints: 可选
-输出: output/pm-design/validation-mvp/mvp_scope.json
+输出: output/pm-design/validation-mvp/mvp_definition.json
 验证: MVP占比<60%，Must Have功能都有假设关联
 模式: 🤖→👤
 ```
@@ -118,7 +118,7 @@ Skill: validation-mvp
 Skill: validation-experiment
 输入:
   assumption_map: output/pm-design/validation-assumption-map/assumption_map.json
-  mvp_scope: output/pm-design/validation-mvp/mvp_scope.json
+  mvp_scope: output/pm-design/validation-mvp/mvp_definition.json
   traffic_data: 可选（可用流量/用户数据）
 输出: output/pm-design/validation-experiment/experiment_design.json
 验证: 实验方案人类已审核，含验证方法、样本量、时长、终止条件
@@ -140,21 +140,15 @@ Skill: validation-usability
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-design/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-design/validation-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-design/ |
+| 总结输出路径 | output/phase-reports/pm-design/validation-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: design-orchestrator
-    reason: 方案验证完成，基于验证结论调整设计方案
-    input_mapping:
-      validation_output: "output/pm-design/validation-assumption-map/ + validation-mvp/ → design-prd输入"
+  primary: design-orchestrator（方案验证完成，基于验证结论调整设计方案）
   alternatives:
     - target: experiment-orchestrator
       reason: 验证结论需A/B测试进一步确认
@@ -166,10 +160,6 @@ Skill: validation-usability
     - target: validation-usability
       reason: 仅需可用性测试，无需完整验证流程
       condition: 方案已通过假设验证，仅需用户体验测试时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

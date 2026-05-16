@@ -32,7 +32,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | metric_system | JSON | 是 | output/pm-metrics-design/metrics-system/metric_system.json | 指标体系（含北极星、L1/L2/行动指标） |
-| tracking_plan | JSON数组 | 是 | output/pm-metrics-design/tracking-plan/tracking_plan | 埋点方案 |
+| tracking_plan | JSON数组 | 是 | output/pm-metrics-design/tracking-plan/tracking_plan.json | 埋点方案 |
 | user_roles | string[] | ○ | 用户提供 | Dashboard使用角色 |
 | dashboard_platform | string | ○ | 用户提供 | 可视化平台（amplitude/grafana/datadog） |
 

@@ -57,11 +57,11 @@
       "description": "页面布局指令",
       "items": {
         "type": "object",
-        "required": ["page_id", "page"],
+        "required": ["page_id", "name"],
         "properties": {
           "page_id": {"type": "string", "description": "页面唯一标识，必须与page_manifest.json.pages[].page_id一致"},
-          "page": {"type": "string", "description": "页面名称（人类可读）"},
-          "layout_type": {"type": "string", "description": "布局类型（如asymmetric-hero/sidebar-main/fullscreen-cta）"},
+          "name": {"type": "string", "description": "页面名称（人类可读）"},
+          "layout_type": {"type": "string", "enum": ["asymmetric-hero", "sidebar-main", "fullscreen-cta", "dashboard-grid", "content-flow", "split-view"], "description": "布局类型"},
           "visual_focus": {"type": "string", "description": "视觉焦点区域"},
           "grid_config": {"type": "string", "description": "网格配置（如12col/240px-sidebar/1fr）"},
           "breakpoints": {"type": "object", "description": "响应式断点配置"}
@@ -103,7 +103,7 @@
       "type": "object",
       "description": "品牌色分布策略",
       "properties": {
-        "usage_mode": {"type": "string", "description": "accent/spotlight/flood"},
+        "usage_mode": {"type": "string", "enum": ["accent", "spotlight", "flood"], "description": "品牌色使用模式"},
         "target_percentage": {"type": "number", "description": "品牌色占页面面积目标百分比"},
         "distribution": {"type": "array", "items": {"type": "object", "properties": {"area": {"type": "string"}, "usage": {"type": "string"}}}, "description": "各区域品牌色使用方式"}
       }

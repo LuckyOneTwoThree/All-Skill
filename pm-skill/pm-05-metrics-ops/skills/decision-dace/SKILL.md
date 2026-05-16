@@ -38,7 +38,7 @@ metadata:
 |--------|------|------|------|------|
 | OKR数据 | object | 是 | 用户提供 | 目标与关键结果、基线值与目标值 |
 | KR进度 | object | 是 | output/pm-metrics-ops/analysis-anomaly/anomaly_report.json | 各KR当前进度与偏差分析 |
-| 实验结果 | object | 是 | output/pm-metrics-ops/experiment-execution/ab_test_result.yaml | A/B测试结果、异常检测数据 |
+| 实验结果 | object | 是 | output/pm-metrics-ops/experiment-execution/experiment_result.json | A/B测试结果、异常检测数据 |
 | 分析结果 | object | 是 | output/pm-metrics-ops/analysis-anomaly/anomaly_report.json | anomaly/funnel/retention报告 |
 | 业务上下文 | object | ○ | 用户提供 | 产品阶段、团队目标 |
 | 历史洞察库 | object[] | ○ | output/pm-metrics-ops/decision-dace/insight_library.json | 避免重复 |

@@ -5,7 +5,7 @@ metadata:
   module: "项目管理与执行"
   sub-module: "项目规划"
   type: "orchestrator"
-  version: "6.1"
+  version: "7.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "启动一个新项目"
@@ -28,7 +28,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 
@@ -110,21 +110,15 @@ Skill: planning-kickoff
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-project/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-project/project-planning-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-project/ |
+| 总结输出路径 | output/phase-reports/pm-project/project-planning-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: agile-orchestrator
-    reason: 项目规划完成，启动第一个Sprint
-    input_mapping:
-      planning_output: "output/pm-project/planning-project-charter/ + planning-resource/ → agile-sprint-planning输入"
+  primary: agile-orchestrator（项目规划完成，启动第一个Sprint）
   alternatives:
     - target: risk-orchestrator
       reason: 项目规划识别到高风险
@@ -133,17 +127,13 @@ Skill: planning-kickoff
       reason: 项目规划完成但产品方案未就绪
       condition: 项目已立项但PRD尚未完成时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 宪章已批准 | 项目宪章经人类审批 | 修改宪章后重新审批 |
-| 资源已锁定 | resource-planning输出文件已生成且非空 | 升级人类决策，调整范围或资源 |
+| 资源已锁定 | planning-resource输出文件已生成且非空 | 升级人类决策，调整范围或资源 |
 | Kickoff已完成 | kickoff输出文件已生成且非空 | 重新调度会议时间 |
 | 阶段总结已生成 | output/phase-reports/pm-project/project-planning-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 

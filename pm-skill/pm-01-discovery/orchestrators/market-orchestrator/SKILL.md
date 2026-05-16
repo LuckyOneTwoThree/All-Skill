@@ -26,7 +26,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline 定义
 
@@ -110,21 +110,15 @@ Skill: market-competitor-analysis
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/pm-discovery/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/pm-discovery/market-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/pm-discovery/ |
+| 总结输出路径 | output/phase-reports/pm-discovery/market-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: opportunity-orchestrator
-    reason: 市场分析完成，基于市场规模和竞品格局定义产品机会
-    input_mapping:
-      market_outputs: "output/pm-discovery/market-tam-som/ + market-competitor-analysis/ → opportunity-definition输入"
+  primary: opportunity-orchestrator（市场分析完成，基于市场规模和竞品格局定义产品机会）
   alternatives:
     - target: insight-orchestrator
       reason: 市场数据缺乏用户视角，需用户洞察补充
@@ -136,10 +130,6 @@ Skill: market-competitor-analysis
     - target: market-competitor-analysis
       reason: 仅需竞品情报更新，无需完整市场分析
       condition: 市场规模已评估，仅需竞品动态追踪时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

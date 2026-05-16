@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const VALID_TYPES = new Set(["pipeline", "orchestrator", "guide"]);
+const VALID_TYPES = new Set(["pipeline", "orchestrator", "guide", "extension"]);
 const VALID_INTERACTION_MODES = new Set([
   "ai_auto",
   "ai_suggest_human_approve",
@@ -14,14 +14,13 @@ const OUTPUT_PATH_MAP = {
     "pm-strategy",
     "pm-design",
     "pm-metrics-design",
-    "pm-development",
     "pm-metrics-ops",
     "pm-growth",
     "pm-monitoring",
     "pm-project",
     "phase-reports",
   ],
-  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui", "phase-reports"],
+  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui", "ui-project-init", "checkpoints", "phase-reports"],
   "backend-skill": [
     "backend-api-design",
     "backend-data-architecture",
@@ -34,7 +33,8 @@ const OUTPUT_PATH_MAP = {
 const ALL_VALID_OUTPUT_PREFIXES = Object.values(OUTPUT_PATH_MAP).flat();
 
 function parseFrontmatter(content) {
-  const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+  const cleaned = content.replace(/^\uFEFF/, '');
+  const fmMatch = cleaned.match(/^---\s*\n([\s\S]*?)\n---/);
   if (!fmMatch) return null;
   const fmText = fmMatch[1];
   const result = {};
@@ -249,40 +249,36 @@ function validateStructure(content, skillType) {
         "Missing post_pipeline definition in Pipeline YAML. All orchestrators should define post_pipeline with stage-summary action.",
       ]);
     }
-    if (!content.includes("阶段总结（强制）")) {
+    if (!content.includes("阶段总结（post_pipeline）") && !content.includes("阶段总结协议")) {
       warnings.push([
         "structure",
-        "Missing mandatory stage-summary rule (调用规则第6条). Should be '阶段总结（强制）' with post_pipeline reference.",
+        "Missing stage-summary section. Should include '### 阶段总结（post_pipeline）' section or reference to orchestrator-protocol.md.",
       ]);
     }
-    if (!content.includes("阶段总结（post_pipeline）")) {
+    if (!content.includes("阶段总结已生成") && !content.includes("阶段总结协议")) {
       warnings.push([
         "structure",
-        "Missing stage-summary execution block in 阶段执行计划. Should include '### 阶段总结（post_pipeline）' section.",
+        "Missing stage-summary gate. Should include '阶段总结已生成' row in 阶段卡口 table or reference orchestrator-protocol.md.",
       ]);
     }
-    if (!content.includes("阶段总结已生成")) {
+    if (!content.includes("阶段总结生成失败") && !content.includes("阶段总结协议")) {
       warnings.push([
         "structure",
-        "Missing stage-summary gate in 阶段卡口 table. Should include '阶段总结已生成' row.",
-      ]);
-    }
-    if (!content.includes("阶段总结生成失败")) {
-      warnings.push([
-        "structure",
-        "Missing stage-summary fallback in 异常处理 table. Should include '阶段总结生成失败' row.",
+        "Missing stage-summary fallback. Should include '阶段总结生成失败' row in 异常处理 table or reference orchestrator-protocol.md.",
       ]);
     }
   }
 
   for (const section of requiredSections) {
-    if (!sections.includes(section)) {
+    const found = sections.some(s => s === section || s.startsWith(section));
+    if (!found) {
       errors.push(["structure", `Missing required section: ## ${section}`]);
     }
   }
 
   for (const section of recommendedSections) {
-    if (!sections.includes(section)) {
+    const found = sections.some(s => s === section || s.startsWith(section));
+    if (!found) {
       warnings.push([
         "structure",
         `Missing recommended section: ## ${section}`,
@@ -296,7 +292,7 @@ function validateStructure(content, skillType) {
 function validateInputTable(content) {
   const errors = [];
   const warnings = [];
-  const inputMatch = content.match(/##\s+输入\s*\n([\s\S]*?)(?=\n##\s|\Z)/);
+  const inputMatch = content.match(/##\s+输入\s*\n([\s\S]*?)(?=\n##\s|$)/);
   if (!inputMatch) return { errors, warnings };
 
   const inputSection = inputMatch[1];
@@ -325,7 +321,7 @@ function validateOutput(content, skillType) {
   const warnings = [];
   if (skillType !== "pipeline") return { errors, warnings };
 
-  const outputMatch = content.match(/##\s+输出\s*\n([\s\S]*?)(?=\n##\s|\Z)/);
+  const outputMatch = content.match(/##\s+输出\s*\n([\s\S]*?)(?=\n##\s|$)/);
   if (!outputMatch) return { errors, warnings };
 
   const outputSection = outputMatch[1];
@@ -463,7 +459,7 @@ function main() {
     console.log("");
     console.log("Examples:");
     console.log(
-      "  node validate-skill.js pm-skill/pm-01-discovery/skills/insight-5whys/SKILL.md"
+      "  node validate-skill.js pm-skill/pm-01-discovery/skills/insight-analysis/SKILL.md"
     );
     console.log("  node validate-skill.js .                              (validate all)");
     process.exit(1);
@@ -472,6 +468,10 @@ function main() {
   const target = args[0];
   let skills = [];
 
+  if (!fs.existsSync(target)) {
+    console.log(`ERROR: Path not found: ${target}`);
+    process.exit(1);
+  }
   if (fs.statSync(target).isDirectory()) {
     skills = findAllSkills(target);
     if (skills.length === 0) {

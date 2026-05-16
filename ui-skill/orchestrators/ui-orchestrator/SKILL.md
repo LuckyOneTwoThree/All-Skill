@@ -350,22 +350,16 @@ stages:
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/ui-frontend/
-  人类决策记录: 本轮执行中的人类决策点及结果
-  ext增强记录: 本轮执行中的ext Skill调用结果摘要
-输出: output/phase-reports/ui/ui-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/ui-frontend/ |
+| 总结输出路径 | output/phase-reports/ui/ui-orchestrator.md |
+| ext增强记录 | 本轮执行中的ext Skill调用结果摘要 |
+
 下游衔接:
-  primary:
-    target: release-orchestrator
-    reason: UI开发完成后，进入质量验收和发布流程
-    input_mapping:
-      ui_output: "output/ui-frontend/ → release-orchestrator输入"
+  primary: release-orchestrator（UI开发完成后，进入质量验收和发布流程）
   alternatives:
     - target: api-integration
       reason: 后端API已就绪，需要前后端联调集成
@@ -373,10 +367,19 @@ stages:
     - target: monitoring-orchestrator
       reason: UI上线后建立前端性能和用户体验监控
       condition: 前端已部署需要持续监控时
-模式: 🤖
-```
 
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
+## 阶段卡口
+
+遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 通用阶段卡口标准。
+
+| 卡口 | 条件 | 未通过处理 |
+|------|------|------------|
+| 阶段总结已生成 | output/phase-reports/ui/ui-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
+| stage-e/1 完成 | 项目初始化+约束审查产出完整 | 修复后重试 |
+| stage-2 完成 | design_brief.json + 回写验证通过 | 回写验证失败按异常处理 |
+| stage-3 完成 | pages.json 生成 + 视觉审查完成 | P0问题必须修复 |
+| stage-4 完成 | quality_debt.json 更新 + quality_score≥75 | 修复后重新审计 |
+| stage-6 完成 | production_ready.json 生成 | 修复后重试 |
 
 ## 人类决策点
 
@@ -405,6 +408,7 @@ stages:
 **债务管理规则**：
 - 每个降级/标注项产生一条 debt_item
 - stage-6（生产就绪+优化）执行前汇总检查 quality_debt.json
+- critical severity 的 open 债务 → 🛑 阻断执行，必须修复后才能继续
 - high severity 的 open 债务 → ⏸ 人类确认是否继续
 - medium severity 的 open 债务 → 标注在阶段总结中
 - low severity 的 open 债务 → 记录但不阻塞

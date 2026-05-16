@@ -31,7 +31,7 @@ metadata:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 注册到付费全链路数据 | object | 是 | 用户提供 | 事件日志、用户行为 |
-| 付费转化数据 | object | 是 | output/pm-growth/revenue-nrr/nrr_report.yaml | 付费用户、付费金额、付费产品 |
+| 付费转化数据 | object | 是 | output/pm-growth/revenue-nrr/nrr_analysis.json | 付费用户、付费金额、付费产品 |
 | 用户特征数据 | object | ○ | 用户提供 | 用户画像、分群标签 |
 
 ## 付费漏斗阶段定义
@@ -174,22 +174,8 @@ metadata:
         "name": "注册用户",
         "count": 100000,
         "percentage": 1.0
-      },
-      {
-        "name": "活跃用户",
-        "count": 60000,
-        "conversion_rate": 0.6
-      },
-      {
-        "name": "付费意向用户",
-        "count": 10000,
-        "conversion_rate": 0.167
-      },
-      {
-        "name": "首付费用户",
-        "count": 3000,
-        "conversion_rate": 0.3
       }
+      // ... 同结构可扩展
     ],
     "overall_conversion_rate": 0.03,
     "avg_time_to_pay": 14.5

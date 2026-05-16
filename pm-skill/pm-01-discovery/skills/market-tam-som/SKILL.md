@@ -293,15 +293,15 @@ metadata:
 | pest.json | 政策法规变化 | SAM地理系数、SAM客群系数 | 新政策可能扩大或缩小可服务市场范围，需重新评估geo_coefficient和audience_coefficient |
 | pest.json | 经济指标变化 | TAM行业总规模 | GDP/消费支出等指标变化直接影响top_down路径的industry_total |
 | pest.json | 技术动态变化 | SAM服务能力系数 | 新技术突破可能提升service_coefficient，扩大可服务边界 |
-| competitor-intel.json | 竞争格局变化 | SOM竞争约束系数 | 新竞品进入或竞品份额变化直接影响competition_constraint |
-| competitor-intel.json | 竞品定价策略变化 | SOM获客约束系数 | 竞品价格战可能提高获客成本，影响acquisition_constraint |
+| competitor-analysis.json | 竞争格局变化 | SOM竞争约束系数 | 新竞品进入或竞品份额变化直接影响competition_constraint |
+| competitor-analysis.json | 竞品定价策略变化 | SOM获客约束系数 | 竞品价格战可能提高获客成本，影响acquisition_constraint |
 
 ### 下游通知机制表
 
 | 触发事件 | 通知目标 | 通知内容 | 优先级 |
 |---------|---------|---------|--------|
-| TAM中性值变化>20% | competitor-report | TAM规模显著变化，建议重新评估市场吸引力与竞争策略 | 高 |
-| SAM过滤系数调整>0.1 | competitor-report | 可服务市场范围变化，建议更新竞品覆盖分析 | 中 |
+| TAM中性值变化>20% | market-competitor-analysis | TAM规模显著变化，建议重新评估市场吸引力与竞争策略 | 高 |
+| SAM过滤系数调整>0.1 | market-competitor-analysis | 可服务市场范围变化，建议更新竞品覆盖分析 | 中 |
 | SOM可获取份额变化>30% | opportunity-definition | 可获取市场规模显著变化，建议重新评估机会评分 | 高 |
 | 关键假设新增或变更 | 所有下游Skill | 新增/变更关键假设，可能影响依赖本Skill输出的分析结论 | 中 |
 | confidence.overall_score降至<0.5 | 所有下游Skill | 整体置信度低于阈值，下游使用本输出时需附加不确定性说明 | 高 |

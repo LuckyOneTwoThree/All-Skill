@@ -341,21 +341,15 @@ Skill: agile-orchestrator
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/cross-domain/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/cross-domain/product-launch-orchestrator.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/cross-domain/ |
+| 总结输出路径 | output/phase-reports/cross-domain/product-launch-orchestrator.md |
+
 下游衔接:
-  primary:
-    target: product-iteration-orchestrator
-    reason: 产品上线后进入迭代优化循环
-    input_mapping:
-      launch_output: "output/cross-domain/ → product-iteration-orchestrator输入"
+  primary: product-iteration-orchestrator（产品上线后进入迭代优化循环）
   alternatives:
     - target: growth-orchestrator
       reason: 产品已验证PMF，启动规模化增长
@@ -364,10 +358,6 @@ Skill: agile-orchestrator
       reason: 持续监控产品运行指标
       condition: 需要独立建立长期监控体系时
   special_cases: []
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 

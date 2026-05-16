@@ -2,9 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-121-orange.svg)](#四大领域总览)
+[![Skill Count](https://img.shields.io/badge/Skills-122-orange.svg)](#四大领域总览)
 
-> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现121个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
+> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现122个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
 
 > ## ⚠ 声明：AI 是杠杆，不是替代
 >
@@ -20,7 +20,7 @@
 
 ## 这是什么
 
-将软件产品从0到1的全生命周期方法论，提取为 **121 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
+将软件产品从0到1的全生命周期方法论，提取为 **122 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
 
 每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。四大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
 
@@ -39,7 +39,7 @@
 ├── insight-analysis/SKILL.md
 ├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
-├── ...（121个Skill扁平平铺）
+├── ...（122个Skill扁平平铺）
 └── production-ready/SKILL.md
 ```
 
@@ -96,7 +96,7 @@
 
 | 领域 | 模块数 | 编排器 | Pipeline Skill | Extension | 导航 | 核心定位 |
 |------|--------|--------|---------------|-----------|------|----------|
-| **pm-skill** 产品方法论 | 8 | 26 | 74 | — | 1 | 做正确的事：从探索发现到增长运营 |
+| **pm-skill** 产品方法论 | 8 | 27 | 74 | — | 1 | 做正确的事：从探索发现到增长运营 |
 | **ui-skill** UI设计与前端 | 3 | 1 | 4 | 4 | — | 正确地呈现：设计即实现，令牌驱动 |
 | **backend-skill** 后端架构 | 3 | 3 | 6 | — | — | 正确地构建：设计先行，审查后实现 |
 | **cross-domain** 跨领域协调 | — | 2 | — | — | — | 全局编排：产品迭代与产品启动 |
@@ -165,8 +165,8 @@ All-Skill/
 ├── scripts/                          ← 项目基础设施（非 Skill）
 │   └── validate-skill.js                 SKILL.md 校验脚本
 ├── templates/                        ← 项目基础设施（非 Skill）
-│   ├── pipeline-skill-template/          Pipeline Skill 编写模板
-│   └── orchestrator-skill-template/      Orchestrator Skill 编写模板
+│   ├── orchestrator-protocol.md          Orchestrator 协议模板
+│   └── pipeline-skill-template.md        Pipeline Skill 编写模板
 ├── CONTRIBUTING.md                   ← 项目基础设施（非 Skill）
 ├── LICENSE                           ← 项目基础设施（非 Skill）
 ├── ROADMAP.md                        ← 项目基础设施（非 Skill）
@@ -192,12 +192,11 @@ All-Skill/
 │   │   ├── orchestrators/                     growth / acquisition / activation / retention / revenue
 │   │   └── skills/                            11个Pipeline Skill
 │   ├── pm-07-monitoring/                  模块7：产品监控与迭代
-│   │   ├── orchestrators/                     monitoring / diagnosis / iteration
+│   │   ├── orchestrators/                     monitoring / diagnosis / iteration / release
 │   │   └── skills/                            11个Pipeline Skill
-│   ├── pm-08-project/                     模块8：项目管理与执行
-│   │   ├── orchestrators/                     agile / project-planning / risk
-│   │   └── skills/                            8个Pipeline Skill
-│   └── docs/                              可视化文档站
+│   └── pm-08-project/                     模块8：项目管理与执行
+│       ├── orchestrators/                     agile / project-planning / risk
+│       └── skills/                            8个Pipeline Skill
 │
 ├── ui-skill/                         ✅ Skill 文件 —— UI设计与前端开发
 │   ├── ui-01-design-system/               模块1：设计系统（项目初始化+视觉风格）
@@ -229,7 +228,7 @@ All-Skill/
 
 ## 各领域模块详解
 
-### PM 产品方法论（101个Skill）
+### PM 产品方法论（102个Skill）
 
 #### 模块1：产品探索与发现
 
@@ -255,7 +254,7 @@ All-Skill/
 
 #### 模块3：产品构思与设计
 
-从创意发散、产品设计、方案验证、变更影响分析四个维度将战略转化为可执行方案。
+从创意发散、产品设计、方案验证三个维度将战略转化为可执行方案。
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
@@ -297,13 +296,14 @@ All-Skill/
 
 #### 模块7：产品监控与迭代
 
-通过监控预警、问题诊断、迭代优化、质量验收、发布管理形成持续改进闭环。
+通过监控预警、问题诊断、迭代优化、发布管理形成持续改进闭环。
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
-| 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report / quality-acceptance | 监控体系+异常归因+反馈闭环+质量验收 |
-| 问题诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
-| 迭代优化 | iteration-orchestrator | iteration-decision / release-gradual / release-auto-checklist / release-notes | Backlog优化+灰度发布+检查清单+发布说明 |
+| 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | 监控体系+异常归因+反馈闭环 |
+| 智能诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
+| 迭代决策 | iteration-orchestrator | iteration-decision | Backlog优化 |
+| 发布编排 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 质量验收+灰度发布+检查清单+发布说明 |
 
 #### 模块8：项目管理与执行
 
@@ -323,8 +323,8 @@ All-Skill/
 
 | 编排器 | 作用 | 调度的子编排器 |
 |--------|------|--------------|
-| product-iteration-orchestrator | 产品迭代总指挥，根据需求变更影响范围调度各领域编排器 | requirements / design / api-design / data-architecture / backend-architecture / ui / monitoring / iteration |
-| product-launch-orchestrator | 产品启动总指挥，协调从0到1的全流程并行构建 | insight / market / business / positioning / design / metrics / api-design / data-architecture / backend-architecture / ui / monitoring / iteration / agile |
+| product-iteration-orchestrator | 产品迭代总指挥，根据需求变更影响范围调度各领域编排器 | design / api-design / data-architecture / backend-architecture / ui / release / monitoring |
+| product-launch-orchestrator | 产品启动总指挥，协调从0到1的全流程并行构建 | insight / market / business / positioning / design / metrics / api-design / data-architecture / backend-architecture / ui / release / monitoring / iteration / agile |
 
 ---
 
@@ -397,7 +397,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 74 个 Pipeline Skill 中，17 个产出包含 Markdown 可交付文档，其余 57 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 121 个 Skill（含 32 个编排器 + 74 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
+PM 领域的 74 个 Pipeline Skill 中，18 个产出包含 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 122 个 Skill（含 33 个编排器 + 74 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
 
 ### PM 核心产出文档一览
 

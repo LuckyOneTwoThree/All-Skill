@@ -1,6 +1,16 @@
 ---
 name: ext-ui-ux-pro-max
-description: UI/UX design intelligence with searchable database
+description: 当需要基于可搜索数据库获取UI/UX设计智能推荐时使用。包含67种风格、96种配色方案、57种字体搭配、99条UX指南和25种图表类型。关键词：设计系统、配色方案、字体搭配、UX指南、图表类型、设计推荐、设计数据库。
+metadata:
+  module: "UI设计与前端开发"
+  sub-module: "UI/UX Pro Max扩展"
+  type: "extension"
+  version: "1.0"
+  domain_tags: ["互联网", "SaaS", "通用"]
+  trigger_examples:
+    - "推荐一个适合SaaS的配色方案"
+    - "找一些适合仪表盘的UX设计指南"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 # ui-ux-pro-max
 

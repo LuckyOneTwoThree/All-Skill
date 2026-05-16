@@ -68,14 +68,14 @@ metadata:
 
 | 生成内容 | 路径 | 说明 |
 |----------|------|------|
-| 服务层骨架 | src/services/ | 每个限界上下文一个Service目录（与api-design-impl的Service对齐，补充跨资源协调逻辑） |
+| 服务层骨架 | src/services/coordinator/ | 每个限界上下文一个Service目录（跨资源协调逻辑，调用api-design-impl的资源级Service） |
 | 通信层 | src/clients/（或events/） | 服务间通信（HTTP/gRPC/消息队列） |
 
 **代码质量要求**：
-- Service层与api-design-impl的Service对齐
+- Service层与api-design-impl的资源级Service对齐，coordinator层调用resource层
 - 服务间通信方式与架构决策匹配
 
-**阶段卡口**：Service层与api-design-impl对齐，通信方式与架构决策匹配
+**阶段卡口**：Service层与api-design-impl的资源级Service对齐，通信方式与架构决策匹配
 
 ### Step 3: 基础设施代码生成
 

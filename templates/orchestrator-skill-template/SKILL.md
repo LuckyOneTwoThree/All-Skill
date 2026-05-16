@@ -69,7 +69,6 @@ post_pipeline:
 stages:
   - id: phase-1
     name: "{阶段1业务名称}"
-    parallel: true  # 如果有并行子Skill则设为true
     skills:
       - {skill-name-a}
       - {skill-name-b}
@@ -134,21 +133,15 @@ Skill: {skill-name-c}
 
 ### 阶段总结（post_pipeline）
 
-所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+遵循 [orchestrator-protocol.md](../orchestrator-protocol.md) 阶段总结协议。
 
-```
-动作: 生成阶段总结
-输入:
-  所有子Skill输出: output/{领域路径}/
-  人类决策记录: 本轮执行中的人类决策点及结果
-输出: output/phase-reports/{module}/{orchestrator-name}.md
-验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+| 参数 | 值 |
+|------|-----|
+| 子Skill输出路径 | output/{领域路径}/ |
+| 总结输出路径 | output/phase-reports/{module}/{orchestrator-name}.md |
+
 下游衔接:
-  primary:
-    target: {下游编排器名称}
-    reason: {推荐理由}
-    input_mapping:
-      {当前输出}: "output/{领域路径}/ → {下游编排器输入}"
+  primary: {下游编排器名称}（{推荐理由}）
   alternatives:
     - target: {备选编排器1}
       reason: {推荐理由}
@@ -160,10 +153,6 @@ Skill: {skill-name-c}
     - target: {子Skill名称}
       reason: {仅需单项能力，无需完整编排流}
       condition: {触发场景}，无需完整编排流时
-模式: 🤖
-```
-
-⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 阶段卡口
 
