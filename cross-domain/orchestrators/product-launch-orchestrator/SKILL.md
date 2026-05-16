@@ -5,7 +5,7 @@ metadata:
   module: "跨领域协调"
   sub-module: "产品启动"
   type: "orchestrator"
-  version: "6.0"
+  version: "8.0"
   domain_tags: ["电商", "SaaS", "社交", "金融", "教育", "医疗", "物流", "游戏", "工具", "通用"]
   trigger_examples:
     - "我要做一个交易商城系统"
@@ -265,6 +265,7 @@ Skill: backend-architecture-orchestrator
 ```
 Skill: ui-orchestrator
 输入:
+  mode: full（产品启动场景，需求和设计已由上游design-orchestrator确认，跳过探索阶段）
   品牌规范: 品牌规范资料
   产品定位: output/cross-domain/positioning-orchestrator/
   目标语言: 用户提供（默认zh-CN）

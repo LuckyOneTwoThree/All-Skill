@@ -39,7 +39,10 @@ Skill: ui-orchestrator
 | 品牌色占比 | page-builder 美学验证检查 |
 | 排版层级跳跃 | page-builder 美学验证检查 |
 | 留白节奏 | page-builder 美学验证检查 |
-| 设计品味 | page-builder 必经 audit/critique |
+| 设计品味 | page-builder 统一评分体系（audit×0.6+critique×0.4） |
+| PM约束偏离 | page-builder design_decisions 4级记录 |
+| 设计自由度 | ui-orchestrator Stage 1 条件分支（设计探索）+ constraint_review |
+| 质量债务 | page-builder quality_debt.json 追踪 |
 | 单元测试 | production-ready 覆盖 |
 | E2E测试 | production-ready 覆盖 |
 | API联调 | api-integration 覆盖 |
@@ -103,16 +106,28 @@ project-init → page-builder → api-integration → production-ready
      │              │               │                  │
      │              │               │                  └── 测试+构建+性能，上线保障
      │              │               └── 契约驱动联调，Mock先行
-     │              └── 组件+页面+审查，视觉节奏，内建质量门禁
+     │              └── 设计简报驱动，组件+页面+审查，视觉节奏，内建质量门禁
      └── 脚手架+设计系统+视觉风格+PRODUCT.md+DESIGN.md
 
-ui-orchestrator
+ui-orchestrator（四种执行模式）
      │
-     ├─ project-init（必经）
-     ├─ page-builder（必经）
+     ├─ express: ext-frontend-design 直接生成 → 最小质量检查 → 输出
+     │    └─ 适用：单页面/落地页/快速原型
+     │    └─ 放弃：设计系统一致性、令牌驱动、质量债务追踪
+     │
+     ├─ project-init（必经，express模式跳过）
+     │    └─ 条件分支A: 设计探索（mode=progressive）
+     │    └─ 条件分支B: PM约束审查（有PM输入时）
+     ├─ page-builder（必经，消费 design_brief.json）
      ├─ api-integration（有API需求时执行，否则跳过）
      └─ production-ready（需上线时执行，否则跳过）
 ```
+
+**Pipeline 阶段精简**（v7.0）：9阶段 → 4+2阶段
+- Stage 0/0.5/1.5 → 合并为 Stage 1 条件分支
+- Stage 4+5 → 合并为"增强+审计一体化"
+- Stage 7+8 → 合并为 Stage 6
+- Stage 4 的 ext-frontend-design → 移除（Stage 2 已调用）
 
 ## Skill 类型
 
@@ -137,6 +152,8 @@ UI与前端一体化流程的起点。合并原 project-scaffold 与 design-syst
 - `ext-frontend-design` 必调：确保视觉差异化，避免AI同质化
 - `PRODUCT.md` 生成：产品定义文档，供下游 Skill 消费
 - `DESIGN.md` 生成：设计决策文档，记录视觉风格和设计令牌依据
+- `anchor_overrides`：页面级视觉锚点覆盖机制，允许特定页面打破全局视觉锚点
+- 语义一致性校验：visual_direction 6条维度间逻辑约束自动校验
 
 **阶段卡口**：
 - visual_direction 10维度均有明确定义
@@ -162,13 +179,19 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 **新增能力**：
 - 视觉节奏设计：在页面组装阶段引入视觉节奏规划，确保页面层次感和信息引导
 - 内建质量门禁：将原 ui-review 的审查能力内建到组件生成和页面组装流程中，不通过不放过
+- 设计简报驱动模式：消费 design_brief.json（由编排器在 Stage 2 生成），ext Skill 产出从"建议"转化为"可执行设计规范"，page-builder 直接消费
+- PM约束偏离记录（design_decisions）：4级严重度（minor/moderate/major/critical），记录设计自由度偏离
+- UI→PM反向反馈通道（design_feedback.json）：双向反馈闭环，设计侧可反向约束PM产出
+- 统一评分体系：audit(20→100, ×5) + critique(40→100, ×2.5)，综合=audit×0.6+critique×0.4
+- 质量债务追踪（quality_debt.json）：降级问题统一追踪，供下游 production-ready 消费
 
 **阶段卡口**：
 - Design Token引用率100%
 - 状态机无死锁
 - 组件树层级≤4层
 - P0问题=0
-- 美学验证通过 + audit设计品味评分≥80分
+- 美学验证通过 + 综合质量评分（audit×0.6+critique×0.4）≥75分
+- design_decisions 无 critical 级偏离未记录
 - 进入API集成前：P0问题全部修复
 
 **人类决策点**：页面布局确认、组件方案确认（含交互行为）、P1问题处理
@@ -281,6 +304,8 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 - **按需跳过不降质**：跳过的是流程步骤，不是产出质量
 - **令牌驱动一切**：硬编码是技术债，所有视觉属性从令牌推导
 - **设计即实现**：UI与前端一体化，设计意图一步到位转化为代码
+- **设计简报驱动**：ext Skill 产出从"建议"转化为"可执行规范"，消除建议-执行断裂
+- **双向反馈闭环**：UI→PM 反向反馈通道，设计侧可约束PM产出
 - **可访问性默认内建**：不是事后补丁，是默认项
 - **质量门禁内建**：不通过不放过，P0问题阻塞发布
 - **契约驱动联调**：Mock先行，后端未就绪不阻塞前端开发
@@ -318,8 +343,8 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 | Skill | 版本 | 输出 Schema 版本 |
 |-------|------|----------------|
-| ui-orchestrator | 3.3 | — |
-| project-init | 1.3 | visual_direction v1.1（含 minLength/minItems 约束） |
-| page-builder | 1.3 | pages.json v1.1（含 api_integration_skipped） |
-| api-integration | 1.1 | api-integration.json v1.0 |
-| production-ready | 1.1 | production-ready.json v1.0 |
+| ui-orchestrator | 7.0 | — |
+| project-init | 1.7 | visual_direction v1.2（含 anchor_overrides + 语义一致性校验） |
+| page-builder | 2.0 | pages.json v2.0（含 design_brief 消费 + design_decisions + design_feedback） |
+| api-integration | 2.0 | api-integration.json v1.0 |
+| production-ready | 1.3 | production-ready.json v1.0 |

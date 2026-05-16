@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "orchestrator"
-  version: "10.0"
+  version: "10.1"
   domain_tags: ["通用"]
   trigger_examples:
     - "帮我写PRD"
@@ -23,6 +23,7 @@ metadata:
 1. **设计是取舍不是堆砌**——核心路径必须极致流畅，非核心路径可以妥协
 2. **上游质量决定下游效率**——PRD质量门禁不可绕过，垃圾进垃圾出
 3. **设计一致性是系统属性**——从令牌到组件到交互规范必须一脉相承，断裂即债务
+4. **双向反馈闭环**——PM→UI 是正向约束，UI→PM 是反向反馈，两者共同保证设计质量
 
 ## 异常处理
 
@@ -43,16 +44,25 @@ metadata:
 
 ```yaml
 pipeline: design-orchestrator
-version: 10.0
+version: 10.1
 
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-design/design-orchestrator.md
 
 stages:
+  - id: phase-0
+    name: "UI反馈处理"
+    depends_on: []
+    skills: []
+    trigger: output/pm-design/design-feedback/design_feedback.json 存在时
+    gate:
+      condition: "反馈建议已评估，接受/拒绝已决定"
+      fail_action: "标注未处理反馈，不阻塞主流程"
+
   - id: phase-1
     name: "产品需求文档"
-    depends_on: []
+    depends_on: [phase-0]
     skills: [design-prd]
     gate:
       condition: "PRD 4道质量门禁全部通过"
@@ -114,6 +124,32 @@ stages:
 
 ## 阶段执行计划
 
+#### 处理 UI 反馈（phase-0，条件执行）
+
+```
+触发条件: output/pm-design/design-feedback/design_feedback.json 存在
+动作: 评估UI→PM反馈建议
+输入:
+  design_feedback: output/pm-design/design-feedback/design_feedback.json
+处理流程:
+  1. 读取 design_feedback.json
+  2. 按 target_artifact 分组 suggestions
+  3. 对每个 suggestion 评估：
+     - 接受：标记为 accepted，纳入后续阶段修改范围
+     - 拒绝：标记为 rejected，记录拒绝理由
+  4. ⏸ 人类确认反馈处理结果
+  5. 对 accepted 的 suggestions：
+     - 若 target_artifact 为 prd.json：在 phase-1 中纳入修改范围
+     - 若 target_artifact 为 ia_proposals.json：在 phase-2 中纳入修改范围
+     - 若 target_artifact 为 userflow.json：在 phase-3 中纳入修改范围
+     - 若 target_artifact 为 component_catalog.json：在 phase-4 中纳入修改范围
+     - 若 target_artifact 为 interaction-spec.json：在 phase-5 中纳入修改范围
+  6. 处理完成后删除 design_feedback.json，避免重复消费
+输出: 反馈处理结果（accepted/rejected 清单）
+验证: 反馈建议已逐项评估，处理结果已人类确认
+模式: 🤖→👤
+```
+
 #### 调用 design-prd
 
 ```
@@ -132,7 +168,7 @@ Skill: design-prd
 ```
 Skill: design-ia
 输入:
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   existing_ia: 可选
   user_research: 可选
 输出: output/pm-design/design-ia/ia_proposals.json
@@ -145,7 +181,7 @@ Skill: design-ia
 ```
 Skill: design-userflow
 输入:
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   ia_proposals: output/pm-design/design-ia/ia_proposals.json
   user_research: 可选
 输出: output/pm-design/design-userflow/userflow.json
@@ -190,7 +226,7 @@ Skill: design-handoff-spec
   design_tokens: 可选
   ia_proposals: output/pm-design/design-ia/ia_proposals.json
   userflow: output/pm-design/design-userflow/userflow.json
-  prd: output/pm-design/design-prd/PRD-{产品名}.md
+  prd: output/pm-design/design-prd/prd.md
   component_library: 可选
 输出: output/pm-design/design-handoff-spec/
 验证: 交接文档待确认项=0
@@ -222,6 +258,17 @@ Skill: change-impact-analysis
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/pm-design/design-orchestrator.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: metrics-orchestrator
+    reason: 产品设计完成，建议进入度量设计阶段，为PRD功能点设计指标体系和埋点方案
+    input_mapping:
+      prd_output: "output/pm-design/design-prd/prd.json → metrics-system输入"
+      prototype_output: "output/pm-design/design-prototype/component_catalog.json → UI Skill消费"
+  alternatives:
+    - target: api-design-orchestrator
+      reason: PRD完成后直接启动后端API设计（跨模块：Backend）
+      condition: 产品从0到1流程中，PRD确认后需并行启动Backend开发时
 模式: 🤖
 ```
 
@@ -244,6 +291,7 @@ Skill: change-impact-analysis
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
+| UI反馈处理确认 | phase-0，design_feedback.json存在时 | 确认接受/拒绝UI侧的反馈建议 |
 | PRD层级确认 | AI自动分级置信度<0.7 | 确认PRD层级（L/S/X） |
 | IA方案选择 | IA生成2-3个候选方案 | 选择最终IA方案 |
 | 设计规范violation确认 | 设计规范一致性<85% | 判断是否接受violation |
@@ -259,4 +307,5 @@ Skill: change-impact-analysis
 - v7.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
 - v8.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
 - v9.0: 移除requirements-srs——需求管理功能（需求收集、理解、优先级排序、需求规格）已由design-prd覆盖；Pipeline移除requirements-srs阶段；阶段执行计划移除requirements-srs调用；阶段卡口移除SRS生成完成；人类决策点移除SRS需求确认
+- v10.1: 新增phase-0（UI反馈处理），接收UI→PM反向反馈通道的design_feedback.json；核心原则新增"双向反馈闭环"；人类决策点新增UI反馈处理确认
 - v10.0: 新增change-impact-analysis（变更影响分析）——从pm-05迁移；PRD变更时触发，评估对下游设计（IA/用户流程/原型）的波及范围；Pipeline新增change-impact-analysis触发阶段；阶段执行计划新增change-impact-analysis调用；阶段卡口新增变更影响分析完成

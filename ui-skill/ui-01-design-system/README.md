@@ -17,9 +17,9 @@ UI与前端一体化流程的起点。在需要建立设计系统或统一视觉
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| project-init | 从品牌规范推导视觉方向，选择组件库并定制主题，同步生成项目脚手架和设计上下文文件 | 品牌规范、产品定位、目标平台、目标语言、framework、project_dir、PRD(可选)、handoff-spec(可选) | project-init.json（含visual_direction/tokens/component_library/scaffold）+ PRODUCT.md + DESIGN.md + 项目骨架 |
+| project-init | 从品牌规范推导视觉方向，选择组件库并定制主题，同步生成项目脚手架和设计上下文文件 | 品牌规范、产品定位、目标平台、目标语言、framework、project_dir、PRD(可选)、handoff-spec(可选) | project-init.json（含visual_direction/tokens/component_library/scaffold/anchor_overrides）+ PRODUCT.md + DESIGN.md + 项目骨架 |
 
-> 💡 **合并说明**：v2.0 将原 project-scaffold + design-system 合并为 project-init 一个 Skill，减少阶段交接开销。新增视觉风格定义步骤（Step 2），ext-frontend-design 改为必调（每个项目必须经过美学方向审视），新增 PRODUCT.md/DESIGN.md 生成供后续 Skill 和 ext-impeccable 消费。暗色模式推导、语言适配等能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-ui-ux-pro-max）增强。
+> 💡 **合并说明**：v2.0 将原 project-scaffold + design-system 合并为 project-init 一个 Skill，减少阶段交接开销。新增视觉风格定义步骤（Step 2），ext-frontend-design 改为必调（每个项目必须经过美学方向审视），新增 PRODUCT.md/DESIGN.md 生成供后续 Skill 和 ext-impeccable 消费，新增 anchor_overrides（页面级视觉锚点覆盖机制），新增 visual_direction 语义一致性校验（6条维度间逻辑约束）。暗色模式推导、语言适配等能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-ui-ux-pro-max）增强。
 
 ## 执行顺序
 

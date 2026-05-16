@@ -101,13 +101,13 @@ E2E测试：核心用户流程100%覆盖，使用Playwright/Cypress。
 
 | 检查项 | 实现方式 | 阻断级别 |
 |--------|---------|---------|
-| CSP配置 | 生成Content-Security-Policy头，限制script-src/style-src/img-src | P1 |
+| CSP配置 | 生成Content-Security-Policy头，限制script-src/style-src/img-src | P0 |
 | XSS防护 | 确保所有用户输入经过转义，React默认转义+DOMPurify | P0 |
 | CSRF防护 | SameSite Cookie + CSRF Token（若使用Cookie认证） | P1 |
 | SRI | 外部CDN资源添加integrity属性 | P1 |
 | 敏感信息泄露 | 检查代码中无硬编码密钥/token/密码 | P0 |
 | 依赖漏洞 | npm audit / pnpm audit，高危漏洞必须修复 | P0 |
-| HTTPS强制 | 生产环境强制HTTPS，HSTS头配置 | P1 |
+| HTTPS强制 | 生产环境强制HTTPS，HSTS头配置 | P0 |
 
 P0级别不通过则阻断输出。
 

@@ -30,3 +30,9 @@
 | API契约 | Backend → api-design-orchestrator | UI → ui-orchestrator（前端联调） | Backend → UI |
 | 设计令牌+组件库 | UI → ui-orchestrator | UI → ui-orchestrator | UI内部 |
 | 目标语言 | 用户指定（默认zh-CN） | UI → ui-orchestrator | 全链路传递 |
+| design_feedback.json | UI → ui-orchestrator | PM → design-orchestrator | UI → PM（反向反馈） |
+| constraint_review.json | UI → ui-orchestrator（Stage 1 条件分支） | PM → design-orchestrator | UI → PM（约束审查） |
+| design_brief.json | UI → ui-orchestrator（Stage 2） | UI → page-builder | UI内部（ext产出→可执行规范） |
+| quality_debt.json | UI → page-builder | UI → production-ready | UI内部（质量债务传递） |
+
+**双向反馈闭环**：UI→PM 反向反馈通道（design_feedback.json + constraint_review.json），设计侧可反向约束PM产出，确保设计自由度不被过度约束。

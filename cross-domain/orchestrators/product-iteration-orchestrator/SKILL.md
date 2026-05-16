@@ -180,6 +180,7 @@ Skill: backend-architecture-orchestrator
 ```
 Skill: ui-orchestrator
 输入:
+  mode: full（产品迭代场景，需求变更已由上游design-orchestrator确认，跳过探索阶段）
   PRD变更: output/cross-domain/design-orchestrator/
   API变更输出: output/cross-domain/api-design-orchestrator/
   目标语言: 用户提供（默认zh-CN）

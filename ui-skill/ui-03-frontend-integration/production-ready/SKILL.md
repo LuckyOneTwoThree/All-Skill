@@ -34,12 +34,15 @@ metadata:
 |--------|------|------|------|------|
 | 前端代码 | code | 是 | {project_dir}/src/ | 页面和组件代码（代码在项目src目录，元数据在output路径） |
 | API集成 | JSON | ○ | output/ui-frontend-integration/api-integration/ | API集成元数据（代码在{project_dir}/src/api/） |
+| quality_debt | JSON | ○ | output/ui-frontend/page-builder/quality_debt.json | page-builder 阶段降级的质量债务清单 |
 | 目标框架 | string | 是 | 上游编排器传递 | React/Vue/Svelte |
 | 部署目标 | string | ○ | 用户提供 | Vercel/Netlify/自建/CDN |
 | 目标语言 | string | ○ | 上游编排器传递（默认zh-CN） | 目标界面语言 |
 | project_dir | string | 是 | 上游编排器传递 | 项目根目录绝对路径 |
 
 ## 执行步骤
+
+**quality_debt 消费规则**：若 quality_debt.json 存在，在 Step 1 前优先处理 critical 级债务（必须修复），major 级债务纳入测试重点覆盖范围。
 
 ### Step 1: 构建配置与优化
 
@@ -93,7 +96,7 @@ E2E测试：核心用户流程100%覆盖，使用Playwright/Cypress。
 
 渲染性能优化：虚拟列表+React.memo/useMemo+防抖节流。
 
-> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
+> ext 增强结果已通过上游 design_brief.json 消费，本步骤专注核心逻辑
 
 ### Step 3b: 安全审计
 
@@ -101,13 +104,13 @@ E2E测试：核心用户流程100%覆盖，使用Playwright/Cypress。
 
 | 检查项 | 实现方式 | 阻断级别 |
 |--------|---------|---------|
-| CSP配置 | 生成Content-Security-Policy头，限制script-src/style-src/img-src | P1 |
+| CSP配置 | 生成Content-Security-Policy头，限制script-src/style-src/img-src | P0 |
 | XSS防护 | 确保所有用户输入经过转义，React默认转义+DOMPurify | P0 |
 | CSRF防护 | SameSite Cookie + CSRF Token（若使用Cookie认证） | P1 |
 | SRI | 外部CDN资源添加integrity属性 | P1 |
 | 敏感信息泄露 | 检查代码中无硬编码密钥/token/密码 | P0 |
 | 依赖漏洞 | npm audit / pnpm audit，高危漏洞必须修复 | P0 |
-| HTTPS强制 | 生产环境强制HTTPS，HSTS头配置 | P1 |
+| HTTPS强制 | 生产环境强制HTTPS，HSTS头配置 | P0 |
 
 P0级别不通过则阻断输出。
 

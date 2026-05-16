@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "设计系统"
   type: "pipeline"
-  version: "1.5"
+  version: "1.7"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "初始化前端项目"
@@ -94,7 +94,7 @@ metadata:
 
 暗色模式推导（内建能力）：主色相不变降明度升饱和度、背景反转、文字对比度≥4.5:1。
 
-> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
+> ext 增强结果已通过 visual_direction/tokens 输出供下游消费，本步骤专注核心逻辑
 
 ### Step 2: 视觉风格定义
 
@@ -130,6 +130,42 @@ metadata:
 | 动效风格 | 交互动效的力度和节奏 | motion_style | none/subtle(微反馈)/moderate(平滑过渡)/expressive(弹性+编排)/theatrical(戏剧性编排) |
 | 网格密度 | 内容区域的信息密度 | grid_density | sparse(宽松+大量留白)/balanced(标准间距)/dense(紧凑+信息密集) |
 
+**语义一致性校验**（visual_direction 维度间的逻辑约束）：
+
+visual_direction 的各维度之间存在语义约束关系，自相矛盾的定义会导致下游消费混乱。以下组合必须通过校验：
+
+| 校验规则 | 矛盾示例 | 修正建议 |
+|----------|---------|---------|
+| aesthetic_direction 与 tension_level 语义一致 | "极简克制风" + tension_level=extreme | 调整tension_level为conservative/balanced，或调整aesthetic_direction |
+| grid_density 与 brand_color_usage 互补 | grid_density=sparse + brand_color_usage=flood | 稀疏布局+大面积品牌色通常矛盾，建议grid_density→balanced或brand_color_usage→spotlight |
+| spacing_rhythm 与 tension_level 匹配 | spacing_rhythm=tight(4px) + tension_level=bold | bold张力需要大幅跳跃间距，建议spacing_rhythm→relaxed+symphonic |
+| type_scale 与 tension_level 匹配 | type_scale=modest(1.2x) + tension_level=bold | bold张力需要强字号跳跃，建议type_scale→strong(1.5x)或dramatic(2x+) |
+| motion_style 与 tension_level 匹配 | motion_style=none + tension_level=extreme | extreme张力需要丰富动效，建议motion_style→expressive或theatrical |
+| shadow_style 与 aesthetic_direction 匹配 | "极简扁平风" + shadow_style=dramatic | 极简风格不需要大范围投影，建议shadow_style→none或subtle |
+
+**校验执行时机**：Step 2 输出 visual_direction 后立即执行，矛盾项标注为 P0 问题，必须修正后才能继续。
+
+**页面级覆盖的语义校验**：anchor_overrides 覆盖后的锚点组合仍须通过上述校验规则。
+
+**页面级锚点覆盖**（anchor_overrides）：
+
+全局锚点定义了整体视觉基调，但特定页面可能需要打破全局节奏以实现视觉焦点或差异化。anchor_overrides 允许在页面级别覆盖全局锚点值，同时保持整体视觉一致性。
+
+**覆盖规则**：
+- 每个覆盖必须提供 `reason`（覆盖理由）和 `visual_impact`（视觉影响说明）
+- 覆盖后的锚点值仍须在枚举范围内（如 border_radius_level 仍为 sharp/subtle/medium/round/pill）
+- 单个页面最多覆盖 3 个锚点维度，超过 3 个说明该页面可能需要独立的视觉方向
+- 覆盖不改变全局锚点定义，仅影响指定页面的消费行为
+
+**典型覆盖场景**：
+
+| 场景 | 覆盖维度 | 示例 |
+|------|---------|------|
+| Landing页需要视觉冲击 | grid_density: balanced→dense, brand_color_usage: accent→spotlight | 首页密集展示+品牌色突出 |
+| 详情页需要呼吸感 | grid_density: dense→sparse, spacing_rhythm: tight→standard | 内容页宽松留白 |
+| 表单页需要安全感 | border_radius_level: sharp→subtle, shadow_style: subtle→elevated | 圆角+阴影增加亲和力 |
+| 数据大屏需要沉浸感 | grid_density: balanced→dense, motion_style: moderate→expressive | 密集数据+丰富动效 |
+
 **视觉参考图生成**：
 
 基于视觉方向和锚点定义，生成2张Moodboard参考图，为后续页面构建提供视觉锚点：
@@ -154,7 +190,7 @@ prompt构建规则:
   - image_size: landscape_16_9
 ```
 
-> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
+> ext 增强结果已通过 visual_direction/tokens 输出供下游消费，本步骤专注核心逻辑
 
 ### Step 3: 组件库选择与主题定制
 
@@ -246,7 +282,7 @@ else:
 | ko-KR | Noto Sans KR | 14-16px | 1.6-1.8 | 偏大 |
 | ar-SA | Noto Sans Arabic | 14-16px | 1.6-1.8 | 偏大（RTL） |
 
-> ext skill 增强由编排器在后续阶段统一调用，本步骤专注核心逻辑
+> ext 增强结果已通过 visual_direction/tokens 输出供下游消费，本步骤专注核心逻辑
 
 ## 输出
 
@@ -291,7 +327,34 @@ else:
         "motion_style": {"type": "string", "enum": ["none", "subtle", "moderate", "expressive", "theatrical"], "description": "交互动效的力度和节奏"},
         "grid_density": {"type": "string", "enum": ["sparse", "balanced", "dense"], "description": "内容区域的信息密度"},
         "moodboard_light": {"type": "string", "description": "亮色模式Moodboard参考图URL"},
-        "moodboard_dark": {"type": "string", "description": "暗色模式Moodboard参考图URL（可选）"}
+        "moodboard_dark": {"type": "string", "description": "暗色模式Moodboard参考图URL（可选）"},
+        "anchor_overrides": {
+          "type": "array",
+          "description": "页面级锚点覆盖，允许特定页面打破全局视觉锚点以实现差异化",
+          "items": {
+            "type": "object",
+            "required": ["page", "overrides"],
+            "properties": {
+              "page": {"type": "string", "description": "页面名称或路由路径"},
+              "overrides": {
+                "type": "array",
+                "description": "该页面的锚点覆盖列表，最多3个维度",
+                "items": {
+                  "type": "object",
+                  "required": ["dimension", "global_value", "override_value", "reason", "visual_impact"],
+                  "properties": {
+                    "dimension": {"type": "string", "enum": ["border_radius_level", "shadow_style", "spacing_rhythm", "type_scale", "brand_color_usage", "image_treatment", "motion_style", "grid_density"], "description": "覆盖的锚点维度"},
+                    "global_value": {"type": "string", "description": "全局锚点值"},
+                    "override_value": {"type": "string", "description": "页面级覆盖值（须在对应枚举范围内）"},
+                    "reason": {"type": "string", "description": "覆盖理由"},
+                    "visual_impact": {"type": "string", "description": "视觉影响说明"}
+                  }
+                },
+                "maxItems": 3
+              }
+            }
+          }
+        }
       }
     },
     "tokens": {
@@ -397,6 +460,8 @@ P1（建议通过，不通过则标注"待修复"）：
 
 ## 变更记录
 
+- v1.7: 新增visual_direction语义一致性校验（6条维度间逻辑约束），矛盾项标注为P0问题
+- v1.6: 新增anchor_overrides（页面级锚点覆盖机制），允许特定页面打破全局视觉锚点实现差异化，含覆盖规则和典型场景
 - v1.5: 质量检查P0/P1分级，P0不通过阻断输出
 - v1.4: 移除handoff-spec输入（PM不应定义UI决策）；PRD消费规则替代handoff-spec消费规则；PRD说明增加"含功能区域和组件需求"
 - v1.3: ext-impeccable两阶段调用策略（解决PRODUCT.md/DESIGN.md循环依赖）；Step 1-2使用内联上下文替代Setup；Step 5完成后执行完整Setup确认；colorize/typeset调用块增加内联上下文指令

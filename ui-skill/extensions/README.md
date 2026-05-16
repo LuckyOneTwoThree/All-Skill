@@ -35,6 +35,20 @@
 | project-init Step 2 | `project-init` | 提供差异化美学方向建议 |
 | page-builder Step 2 | `page-builder` | 组件视觉差异化实现 |
 
+**可执行设计规范（executable_specifications）**：
+
+ext-frontend-design 输出新增 `executable_specifications`（required字段），将建议转化为可直接消费的设计规范：
+
+| 规范维度 | 内容 | 消费方 |
+|----------|------|--------|
+| color_values | 具体CSS色值数组 | design_brief.json → page-builder |
+| typography_values | 字体/字号/字重/行高具体值 | design_brief.json → page-builder |
+| layout_patterns | 布局模式+间距+对齐规则 | design_brief.json → page-builder |
+| spacing_rhythm_values | 间距节奏具体值 | design_brief.json → page-builder |
+| border_radius_values | 圆角具体值 | design_brief.json → page-builder |
+
+color_substitutions 新增 `use_instead_values` 字段（具体CSS色值数组），替代抽象建议。
+
 ### ext-impeccable — 设计质量全生命周期工具箱
 
 | 属性 | 说明 |
@@ -97,7 +111,7 @@
 
 ## 调用机制
 
-ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度，不在 Pipeline Skill 内部调用。核心 Skill 中不再包含 `Skill: ext-xxx` 调用块，所有 ext 调用由编排器按阶段执行。
+ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度，不在 Pipeline Skill 内部调用。核心 Skill 中不再包含 `Skill: ext-xxx` 调用块，所有 ext 调用由编排器按阶段执行。ext Skill 产出通过 **design_brief.json** 转化为可执行设计规范，page-builder 直接消费，消除"建议-执行断裂"。
 
 ### ext-impeccable Setup（统一规范）
 
@@ -145,10 +159,13 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 
 | 阶段 | 名称 | 调用的 ext skill | 说明 |
 |------|------|-----------------|------|
-| stage-2 | 设计系统增强 | ext-ui-ux-pro-max, ext-impeccable(colorize/typeset), ext-frontend-design | 审视 project-init 产出 |
-| stage-4 | 页面组件增强 | ext-ui-ux-pro-max, ext-impeccable(layout/adapt/shape/animate/bolder\|quieter/delight/clarify/onboard/distill), ext-frontend-design, ext-interaction-design | 审视 page-builder 产出 |
-| stage-5 | 质量审计 | ext-impeccable(audit/critique) | 质量审计与修复闭环 |
-| stage-8 | 生产优化 | ext-impeccable(harden/polish/optimize) | 审视 production-ready 产出 |
+| stage-e | 快速生成 | ext-frontend-design | express 模式专属，直接生成页面代码 |
+| stage-1 | 设计系统建立 | — | 内建条件分支：设计探索+PM约束审查 |
+| stage-2 | 设计增强+简报生成 | ext-ui-ux-pro-max, ext-impeccable(colorize/typeset), ext-frontend-design | 审视 project-init 产出，生成 design_brief.json |
+| stage-3 | 页面与组件构建 | — | page-builder 消费 design_brief |
+| stage-4 | 页面增强+质量审计 | ext-ui-ux-pro-max, ext-impeccable(layout/adapt/shape/audit/critique/{bolder\|quieter/delight/clarify/onboard/distill}), ext-interaction-design | 增强+审计一体化，ext-frontend-design 不再调用（stage-2已调用） |
+| stage-5 | API集成 | — | 按需 |
+| stage-6 | 生产就绪+优化 | ext-impeccable(harden/polish/optimize) | 按需 |
 
 **跳过条件**（仅限以下场景）：
 - ext-impeccable extract：全新项目无现有代码
@@ -173,9 +190,12 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 | 冲突场景 | 解决方案 |
 |----------|---------|
 | ext-frontend-design 方向与 ext-ui-ux-pro-max 推荐冲突 | 优先 ext-frontend-design（创意方向 > 数据推荐） |
+| ext-frontend-design 与 ext-impeccable 视觉建议冲突 | 优先 ext-frontend-design（创意方向 > 质量打磨） |
 | bolder 与 quieter 同时满足触发条件 | 按品牌色占比判断（<25%→bolder，>40%→quieter） |
 | animate 与 ext-interaction-design 功能重叠 | animate 管策略（评估哪里需要动画），interaction-design 管实现（提供代码模式），先策略后实现 |
 | distill 删减了 bolder/delight 增强的内容 | 以 distill 为准（简化优先于增强） |
+
+**ext Skill 冲突消解优先级**：ext-frontend-design > ext-ui-ux-pro-max > ext-impeccable
 
 ### ext-impeccable 子命令输出消费规则
 
@@ -196,8 +216,8 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 | clarify | UX文案优化代码 | 表单/空状态/错误状态文案替换到页面代码 | page-builder |
 | onboard | 新手引导设计代码 | 引导流程代码追加到页面组件 | page-builder |
 | distill | 简化后代码 | 以 distill 输出为准，替换原页面代码（简化优先于增强） | page-builder |
-| audit | 审查报告 | 评分<75分触发 critique 闭环；评分≥75分通过审查 | page-builder |
-| critique | UX设计评审+代码修改 | 修改后的代码替换原代码，触发 re-audit 验证（最多2次循环） | page-builder |
+| audit | 审查报告 | 统一评分：原始分(20→100, ×5)；综合分=audit×0.6+critique×0.4；综合分<75分触发 critique 闭环 | page-builder |
+| critique | UX设计评审+代码修改 | 统一评分：原始分(40→100, ×2.5)；修改后的代码替换原代码，触发 re-audit 验证（最多3次闭环+偏科检测） | page-builder |
 | harden | 生产就绪化代码 | 错误处理/i18n/边缘情况代码合并到组件代码 | page-builder |
 | polish | 最终打磨代码 | 直接替换原组件代码（polish 始终最后执行） | page-builder |
 | optimize | UI渲染优化方案 | 优化方案应用到性能瓶颈组件，LCP目标≤2.5s | production-ready |

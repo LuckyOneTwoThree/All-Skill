@@ -57,7 +57,7 @@ When called by ui-orchestrator, MUST return structured output in the following s
 ```json
 {
   "type": "object",
-  "required": ["aesthetic_direction", "font_substitutions", "color_substitutions", "layout_differentiation", "visual_bans", "differentiation_summary"],
+  "required": ["aesthetic_direction", "font_substitutions", "color_substitutions", "layout_differentiation", "visual_bans", "differentiation_summary", "executable_specifications"],
   "properties": {
     "aesthetic_direction": {
       "type": "string",
@@ -81,6 +81,7 @@ When called by ui-orchestrator, MUST return structured output in the following s
         "properties": {
           "avoid": {"type": "string", "description": "Color pattern to avoid (e.g., 'blue-purple gradient')"},
           "use_instead": {"type": "string", "description": "Recommended replacement (e.g., 'warm amber accent on tinted neutrals')"},
+          "use_instead_values": {"type": "array", "items": {"type": "string"}, "description": "Specific CSS color values to use (e.g., ['oklch(65% 0.2 45)', 'oklch(97% 0.01 60)'])"},
           "reason": {"type": "string", "description": "Why this substitution improves distinctiveness"}
         }
       }
@@ -97,6 +98,66 @@ When called by ui-orchestrator, MUST return structured output in the following s
     "differentiation_summary": {
       "type": "string",
       "description": "One-sentence summary of what makes this design distinctive and memorable"
+    },
+    "executable_specifications": {
+      "type": "object",
+      "description": "Concrete, directly consumable design specifications for design_brief.json generation. These are NOT suggestions but executable values that page-builder MUST apply.",
+      "properties": {
+        "color_values": {
+          "type": "object",
+          "description": "Specific CSS color values for each token role",
+          "properties": {
+            "background_primary": {"type": "string"},
+            "background_secondary": {"type": "string"},
+            "surface_elevated": {"type": "string"},
+            "text_primary": {"type": "string"},
+            "text_secondary": {"type": "string"},
+            "brand_primary": {"type": "string"},
+            "brand_secondary": {"type": "string"},
+            "accent": {"type": "string"},
+            "border": {"type": "string"}
+          }
+        },
+        "typography_values": {
+          "type": "object",
+          "properties": {
+            "heading_font": {"type": "string", "description": "e.g., 'DM Sans'"},
+            "body_font": {"type": "string", "description": "e.g., 'DM Sans'"},
+            "h1_size": {"type": "string", "description": "e.g., '48px'"},
+            "h2_size": {"type": "string"},
+            "body_size": {"type": "string", "description": "e.g., '16px'"},
+            "heading_weight": {"type": "string", "description": "e.g., '700'"},
+            "body_weight": {"type": "string", "description": "e.g., '400'"}
+          }
+        },
+        "layout_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "page_type": {"type": "string", "description": "e.g., 'landing', 'dashboard', 'detail'"},
+              "pattern": {"type": "string", "description": "e.g., 'asymmetric-hero', 'sidebar-main', 'fullscreen-cta'"},
+              "description": {"type": "string"}
+            }
+          }
+        },
+        "spacing_rhythm_values": {
+          "type": "object",
+          "properties": {
+            "base_unit": {"type": "string", "description": "e.g., '8px'"},
+            "scale": {"type": "array", "items": {"type": "string"}, "description": "e.g., ['4px', '8px', '16px', '32px', '48px']"}
+          }
+        },
+        "border_radius_values": {
+          "type": "object",
+          "properties": {
+            "small": {"type": "string", "description": "e.g., '4px'"},
+            "medium": {"type": "string", "description": "e.g., '12px'"},
+            "large": {"type": "string", "description": "e.g., '20px'"},
+            "pill": {"type": "string", "description": "e.g., '999px'"}
+          }
+        }
+      }
     }
   }
 }
@@ -111,6 +172,8 @@ When called by ui-orchestrator, MUST return structured output in the following s
 | layout_differentiation | project-init / page-builder | Append to visual_direction.aesthetic_direction |
 | visual_bans[*] | project-init / page-builder | Append to visual_direction.visual_bans |
 | aesthetic_direction | project-init | Use as visual_direction.aesthetic_direction value |
+| **executable_specifications** | **design_brief.json** | **直接映射到 design_brief 的 color_specifications / typography_specifications / layout_instructions / spacing_rhythm_values / border_radius_values** |
+| **color_substitutions[*].use_instead_values** | **design_brief.json** | **直接作为 color_specifications 中的具体 CSS 色值** |
 
 ## Verification Criteria
 

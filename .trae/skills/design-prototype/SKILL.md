@@ -5,7 +5,7 @@ metadata:
   module: "产品构思与设计"
   sub-module: "产品设计与原型"
   type: "pipeline"
-  version: "3.1"
+  version: "3.2"
   domain_tags: ["互联网", "软件", "通用"]
   trigger_examples:
     - "帮我生成原型"
@@ -36,6 +36,7 @@ metadata:
 | IA方案 | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | Pipeline 9输出的信息架构方案 |
 | User Flow | JSON | 是 | output/pm-design/design-userflow/userflow.json | Pipeline 10输出的用户流程 |
 | PRD文档 | Markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求参考 |
+| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/features[]，供原型设计对齐 |
 
 ## 执行步骤
 
@@ -122,6 +123,32 @@ metadata:
 
 component_catalog.json 是原型设计的机器可消费组件清单，供 UI Skill 编程式消费，确保组件生成与原型设计对齐。
 
+**推荐+备选模式**：每个组件提供推荐类型和备选方案，UI Skill 可根据设计判断选择更合适的实现方式，避免原型预选型限制设计自由度。
+
+| 字段 | 说明 |
+|------|------|
+| type | 推荐的组件类型（基于原型功能需求推导） |
+| alternatives | 备选组件方案列表，每个备选含类型、名称、推荐理由和适用场景 |
+| selection_criteria | 组件选型决策依据，描述在什么条件下选择推荐类型 vs 备选类型 |
+
+**示例**：
+```json
+{
+  "component_id": "user-list",
+  "type": "data_display",
+  "name": "UserTable",
+  "alternatives": [
+    {
+      "type": "composite",
+      "name": "UserCardGrid",
+      "reason": "Card Grid 更适合视觉差异化，支持图片+摘要的富展示",
+      "best_for": "数据量<20条、需要视觉冲击力、移动端优先的场景"
+    }
+  ],
+  "selection_criteria": "数据量>20行或需要排序/筛选用Table，数据量<20行或需要视觉差异化用CardGrid"
+}
+```
+
 ```json
 {
   "catalog_id": "string",
@@ -158,7 +185,16 @@ component_catalog.json 是原型设计的机器可消费组件清单，供 UI Sk
           "description": "string",
           "prop_overrides": {}
         }
-      ]
+      ],
+      "alternatives": [
+        {
+          "type": "layout | navigation | data_display | form | feedback | media | composite",
+          "name": "string",
+          "reason": "string",
+          "best_for": "string"
+        }
+      ],
+      "selection_criteria": "string"
     }
   ],
   "shared_components": [
@@ -203,6 +239,7 @@ component_catalog.json 是原型设计的机器可消费组件清单，供 UI Sk
 | 核心页面覆盖 | 所有核心页面已覆盖 | 标注"覆盖不全"，列出未覆盖页面并补充 |
 | 功能区域覆盖 | 每个页面的功能区域与PRD对齐 | 标注"功能区域不完整"，补充缺失的功能区域 |
 | 组件清单覆盖 | component_catalog 覆盖所有页面的 functional_areas 和 data_display_needs | 标注"组件清单不完整"，补充缺失组件 |
+| 组件备选方案 | 关键组件（跨页面共享组件+数据展示类组件）有alternatives备选方案 | 标注"备选方案缺失"，补充备选方案（不影响输出） |
 | 组件页面引用一致性 | component_catalog.components[].pages_used_in 中的页面名在 prototype.pages[] 中存在 | 标注"引用不一致"，修正页面引用 |
 
 ---
@@ -241,6 +278,8 @@ component_catalog.json 是原型设计的机器可消费组件清单，供 UI Sk
 | component_catalog.components[].props | array | 是 | 组件属性列表 |
 | component_catalog.components[].data_binding | object | 是 | 数据绑定，含data_source/fields/loading_state/error_state/empty_state |
 | component_catalog.components[].pages_used_in | array | 是 | 使用该组件的页面列表，须与prototype.pages[].name对应 |
+| component_catalog.components[].alternatives | array | 否 | 备选组件方案列表，每项含type/name/reason/best_for |
+| component_catalog.components[].selection_criteria | string | 否 | 组件选型决策依据 |
 | component_catalog.shared_components | array | 是 | 跨页面共享组件列表 |
 | component_catalog.component_dependencies | array | 是 | 组件依赖关系列表 |
 
