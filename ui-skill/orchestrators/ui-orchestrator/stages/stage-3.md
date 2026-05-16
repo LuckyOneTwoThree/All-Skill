@@ -69,8 +69,42 @@ page_manifest.json Schema 定义见 [schemas/page-manifest.json](../schemas/page
 当 design_brief.json 不存在时，page-builder 退回"令牌驱动模式"（仅消费 visual_direction + tokens）。
 
 输出: output/ui-frontend/page-builder/ + 代码写入 {project_dir}/src/
-验证: P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式375/768/1024px
+验证: P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式375/768/1024px + 强制视觉审查已完成
 ⏸ 人类确认页面布局和组件方案
+
+## 强制视觉审查（v7.2 新增）
+
+stage-3 完成后、stage-4 增强前，编排器必须执行强制视觉审查。这是整个 full 流程中**唯一的人类视觉质量关卡**——stage-4 的 audit/critique 是自动化评分，无法替代人类对设计美感的判断。
+
+```
+动作: 强制视觉审查
+触发条件: stage-3 gate 通过后，stage-4 执行前
+输入:
+  页面代码: {project_dir}/src/
+  运行中的开发服务器: npm run dev
+  design_brief: output/ui-frontend/design-brief/design_brief.json
+  visual_direction: output/ui-project-init/project-init.json → visual_direction
+处理流程:
+  1. 确保开发服务器正在运行（npm run dev）
+  2. 提示人类在浏览器中查看每个页面
+  3. 人类按以下维度评估（每项1-5分）：
+     - 整体视觉印象：第一眼是否吸引人？
+     - 品牌一致性：是否符合品牌调性？
+     - 色彩和谐度：色彩搭配是否舒适有层次？
+     - 排版节奏：字号层级是否清晰有节奏？
+     - 布局呼吸感：留白是否充分，信息密度是否合理？
+  4. 任一维度≤2分：标注该维度为"需重点增强"，传递给 stage-4 的 ext Skill 作为优先修复项
+  5. 平均分≤2.5：⏸ 人类决定是否回退到 stage-2 重新生成 design_brief
+输出: visual_review_result（持久化至 output/ui-frontend/visual-review/visual_review_result.json，同时内联传递给stage-4）
+验证: 人类已完成视觉审查
+模式: 👤（必须人类执行）
+```
+
+**视觉审查与 stage-4 增强的衔接**：
+- 审查中评分≤2 的维度，在 stage-4 的 ext 调用中优先处理
+- 如"色彩和谐度"≤2：stage-4 优先调用 ext-impeccable colorize/bolder
+- 如"排版节奏"≤2：stage-4 优先调用 ext-impeccable typeset
+- 如"布局呼吸感"≤2：stage-4 优先调用 ext-impeccable layout adapt
 
 ## design_feedback 回传处理（UI→PM反向反馈通道）
 

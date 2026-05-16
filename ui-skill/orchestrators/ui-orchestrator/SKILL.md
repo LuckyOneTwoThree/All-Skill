@@ -5,7 +5,7 @@ metadata:
   module: "UI设计与前端开发"
   sub-module: "UI总指挥"
   type: "orchestrator"
-  version: "7.1"
+  version: "7.3"
   domain_tags: ["互联网", "通用"]
   trigger_examples:
     - "做UI"
@@ -43,7 +43,7 @@ metadata:
 ### express 模式 Pipeline
 
 ```
-stage-e: 选择一个 ext Skill 直接生成 → 最小质量检查 → 输出
+stage-e: 生成锚点 → 设计方向快选(2-3套) → 结构化prompt → ext Skill生成 → 增强质量检查 → 输出
 ```
 
 **设计引擎选择**：express 模式通过 `express_engine` 参数选择设计引擎（4选1），不同引擎有不同的设计风格和能力侧重：
@@ -65,7 +65,7 @@ stage-e: 选择一个 ext Skill 直接生成 → 最小质量检查 → 输出
 
 | 模式 | 说明 | 适用场景 |
 |------|------|---------|
-| `auto`（默认） | 编排器自动从 PRD + 品牌规范生成 prompt，传给选定的 ext Skill | 快速出结果，不想手动操作 |
+| `auto`（默认） | 编排器生成2-3套设计方向供用户快选，基于选中方向生成结构化prompt，传给选定的 ext Skill | 快速出结果，想要设计方向选择权 |
 | `manual` | 用户自行前往推荐的外部工具官网，获取/编写 prompt，填入 `express_prompt` 参数 | 想要更精细控制设计效果 |
 
 **manual 模式使用流程**：
@@ -80,10 +80,21 @@ stage-e: 选择一个 ext Skill 直接生成 → 最小质量检查 → 输出
 - ✅ 获得：极快速度、最少流程、直接出可运行代码
 - ❌ 放弃：设计系统一致性、令牌驱动架构、组件库集成、质量债务追踪、PM↔UI反馈闭环
 
-**express 模式最小质量检查**（仅3项致命检查）：
+**express 模式最小质量检查**（5项，v7.2升级）：
 1. WCAG AA 对比度达标
 2. 无硬编码密钥/token
 3. 页面可运行（npm run dev 启动成功）
+4. visual_bans 合规（无 AI 同质化模式）
+5. 设计锚点一致性（色彩/排版方向校验）
+
+**轻量设计锚点**（v7.2 新增）：
+express 模式虽跳过完整设计系统建立，但在 ext Skill 调用前生成轻量设计锚点（express_design_anchor），包含 register、color_direction、typography_direction、layout_direction、visual_bans，确保 ext Skill 产出有设计方向约束而非完全随机。锚点根据 express_engine 自动调整侧重（visual→非蓝紫非card-grid，ux→功能型排版+大方留白，polish→完整anti-patterns，motion→动效友好布局）。
+
+**设计方向快选**（v7.3 新增）：
+auto 模式下，锚点生成后编排器生成 2-3 套差异化设计方向描述（每套约100-200字，含色温/布局/排版/张力差异），用户快速选择后回写锚点。用户也可跳过快选直接使用默认方向（`express_skip_scheme=true`）。与 full 模式的"设计探索→人类选择"形成对应，express 版本更轻量（方向描述而非完整视觉方向）。
+
+**结构化 Prompt**（v7.3 新增）：
+原 auto 模式的 prompt 是简单拼接（PRD + 品牌规范 + 锚点），v7.3 升级为结构化 prompt——基于用户选中的设计方向 + PRD + 锚点，生成包含具体色值/字体名/布局模式/禁忌列表/功能需求的精确 prompt，替代模糊描述。manual 模式下用户 prompt 末尾自动附加锚点设计约束。
 
 **express 模式输出**：
 - 页面代码直接写入 {project_dir}/src/
@@ -182,7 +193,7 @@ project-init → ext-enhance → page-builder → ext-enhance+audit → [api-int
 
 ```yaml
 pipeline: ui-orchestrator
-version: 7.1
+version: 7.3
 
 post_pipeline:
   - action: stage-summary
@@ -201,7 +212,7 @@ stages:
       polish: ext-impeccable
       motion: ext-interaction-design
     gate:
-      condition: "页面代码已生成 + WCAG AA对比度达标 + 无硬编码密钥 + npm run dev启动成功"
+      condition: "页面代码已生成 + WCAG AA对比度达标 + 无硬编码密钥 + npm run dev启动成功 + visual_bans合规 + 设计锚点一致性"
       fail_action: "修复致命问题后重新验证"
     detail: stages/stage-e.md
 
@@ -220,7 +231,7 @@ stages:
     depends_on: []
     skills: [project-init]
     gate:
-      condition: "visual_direction 10维度定义完成 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + WCAG AA达标 + npm run dev启动成功"
+      condition: "visual_direction 10维度定义完成 + 维度间一致性校验通过 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + WCAG AA达标 + npm run dev启动成功"
       fail_action: "修复不达标项后重新验证"
     conditional_branches:
       - trigger: mode=progressive
@@ -253,7 +264,7 @@ stages:
     depends_on: [stage-2]
     skills: [page-builder]
     gate:
-      condition: "P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式375/768/1024px"
+      condition: "P0问题=0 + Token引用率100% + WCAG AA达标 + 响应式375/768/1024px + 强制视觉审查已完成"
       fail_action: "修复P0问题后重新验证"
     detail: stages/stage-3.md
 
@@ -262,8 +273,8 @@ stages:
     depends_on: [stage-3]
     skills: [ext-ui-ux-pro-max, ext-impeccable, ext-interaction-design]
     gate:
-      condition: "quality_score≥75（audit百分制×0.6+critique百分制×0.4）；ext-impeccable未部署时降级为内建自评分数≥60"
-      fail_action: "修复后重新audit+critique，最多3次闭环；ext-impeccable未部署时使用内建自评，门槛降为60"
+      condition: "quality_score≥75（audit百分制×0.5+critique百分制×0.5）；ext-impeccable未部署时降级为内建自评分数≥60"
+      fail_action: "修复后重新audit+critique，最多3次闭环；ext-impeccable未部署时使用内建自评，门槛降为60；单项audit<60或critique<55时⏸人类确认"
     detail: stages/stage-4.md
 
   - id: stage-5
@@ -278,7 +289,8 @@ stages:
 
   - id: stage-6
     name: "生产就绪+优化"
-    depends_on: [stage-4, stage-5]
+    depends_on: [stage-4]
+    optional_depends_on: [stage-5]
     trigger: 需要生产部署
     skills: [production-ready, ext-impeccable]
     gate:
@@ -297,6 +309,7 @@ stages:
 | express_engine | 用户提供（默认visual，仅mode=express时生效） | 否 |
 | express_prompt_source | 用户提供（默认auto，仅mode=express时生效） | 否 |
 | express_prompt | 用户提供（仅express_prompt_source=manual时必填） | 否 |
+| express_skip_scheme | 用户提供（默认false，仅mode=express且express_prompt_source=auto时生效，跳过设计方向快选） | 否 |
 | 品牌规范 | 用户提供 / output/pm-strategy/positioning-strategy/positioning-strategy.json | 是 |
 | 产品定位 | output/pm-strategy/positioning-strategy/positioning-strategy.json | 否 |
 | 目标平台 | 用户提供 | 是 |
@@ -320,7 +333,7 @@ stages:
 | Stage 1 | [stages/stage-1.md](stages/stage-1.md) | 品牌规范+PRD | project-init.json+PRODUCT.md+DESIGN.md |
 | Stage 2 | [stages/stage-2.md](stages/stage-2.md) | visual_direction+tokens | design_brief.json+page_manifest.json+回写后的project-init.json |
 | Stage 3 | [stages/stage-3.md](stages/stage-3.md) | design_brief+page_manifest | pages.json+页面代码+design_feedback.json+quality_debt.json |
-| Stage 4 | [stages/stage-4.md](stages/stage-4.md) | 页面代码+design_brief.json | 增强后代码+quality_score |
+| Stage 4 | [stages/stage-4.md](stages/stage-4.md) | 页面代码+design_brief.json+visual_review_result | 增强后代码+quality_score+quality_debt.json更新 |
 | Stage 5 | [stages/stage-5.md](stages/stage-5.md) | API契约+pages.json | api-integration.json+请求层代码 |
 | Stage 6 | [stages/stage-6.md](stages/stage-6.md) | 前端代码+quality_debt | 构建产物+测试+优化 |
 
@@ -337,9 +350,16 @@ stages:
 
 ### 阶段总结（post_pipeline）
 
-输入: 所有子Skill输出 + 执行计划 + 人类决策记录 + ext增强记录
+所有业务阶段执行完成后，**必须立即**生成阶段总结文档：
+
+```
+动作: 生成阶段总结
+输入:
+  所有子Skill输出: output/ui-frontend/
+  人类决策记录: 本轮执行中的人类决策点及结果
+  ext增强记录: 本轮执行中的ext Skill调用结果摘要
 输出: output/phase-reports/ui/ui-orchestrator.md
-验证: 阶段总结文档已生成，6项结构均非空
+验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
 下游衔接:
   primary:
     target: release-orchestrator
@@ -353,18 +373,25 @@ stages:
     - target: monitoring-orchestrator
       reason: UI上线后建立前端性能和用户体验监控
       condition: 前端已部署需要持续监控时
+模式: 🤖
+```
+
+⏸ **阶段卡口**：阶段总结文档已生成且6项结构均非空 → 未通过：补充缺失结构项后重新生成
 
 ## 人类决策点
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
 | 执行模式确认 | 项目信息收集完成时 | 确认执行模式（express/prototype/full/progressive） |
+| 设计方向快选 | stage-e，express_prompt_source=auto且express_skip_scheme=false | 从2-3套设计方向中选择1套或融合多套 |
+| 页面清单完整性确认 | stage-3，无PM输入时 | 确认页面清单是否完整覆盖所有需求页面 |
 | 探索方案选择 | stage-1条件分支A后，mode=progressive | 选择探索方案或融合多个方案 |
 | 约束对齐确认 | stage-1条件分支A续后，mode=progressive | 确认约束对齐结果和设计决策 |
-| 视觉方向确认 | stage-1后，stage-2前 | 确认核心视觉方向 |
+| 视觉方向确认 | stage-1后，stage-2前 | 确认核心视觉方向和品牌色 |
 | PM约束审查确认 | stage-1条件分支B后，critical级别finding存在时 | 确认约束审查中的critical发现 |
-| 设计系统增强确认 | stage-2后，stage-3前 | 确认ext增强结果 |
+| 设计系统增强确认 | stage-2后，stage-3前 | 确认ext增强结果；回写验证V5发现visual_direction语义矛盾时确认处理方式 |
 | 页面方案确认 | stage-3后，stage-4前 | 确认页面布局和组件 |
+| 视觉审查确认 | stage-3后，stage-4前，强制视觉审查完成时 | 确认视觉审查结果，低分维度决定是否回退stage-2 |
 | PM反馈确认 | stage-3后，design_feedback.json存在时 | 确认是否接受UI→PM的反馈建议 |
 | 质量审计确认 | stage-4后，quality_score<75或偏科时 | 确认是否放行 |
 | 发布决策 | stage-6后 | 确认是否发布 |
@@ -386,10 +413,15 @@ stages:
 |----------|----------|----------|
 | 项目信息不足 | 提示用户补充，必选项缺失不可继续 | — |
 | stage-e 失败 | 修复致命问题后重试，3次后建议切换到 full 模式 | — |
+| stage-e manual模式用户无法获取prompt | 提供两个选项：①切换auto模式（含设计方向快选）②切换full模式 | — |
 | stage-1 失败 | 修复后重试，不可跳过 | — |
+| stage-1 visual_direction一致性校验矛盾 | 阻断级(❌)：必须修复后重试；警告级(⚠️)：标注+⏸人类确认 | 警告级→medium |
 | stage-2 核心增强失败 | ext-frontend-design/ext-ui-ux-pro-max失败→阻断stage-3；colorize/typeset失败→标注不阻断 | colorize/typeset失败→medium |
+| stage-2 回写验证失败 | V1(JSON解析)→回滚使用原始令牌；V2(WCAG)→调整色值；V3(tokens不同步)→以json为准重新生成css；V4(硬编码)→移除替换；V5(语义矛盾)→⏸人类确认 | V1-V4自动修复→low |
 | stage-3 P0问题 | 必须修复，不可跳过 | — |
+| stage-3 视觉审查平均分≤2.5 | ⏸ 人类决定：回退stage-2重新生成design_brief，或继续进入stage-4增强修复 | 继续进入stage-4→high |
 | stage-4 quality_score<75 | 修复后重新audit+critique，最多3次闭环，3次后⏸人类确认 | 3次后仍不达标→high |
+| stage-4 单项偏科(audit<60或critique<55) | 标注"偏科风险"，⏸人类确认 | medium |
 | stage-4 ext-impeccable未部署 | 使用内建自评分数，gate门槛降为60 | medium |
 | stage-5 api-integration 失败 | 标注"待重试"，不阻塞stage-6 | medium |
 | stage-6 构建失败 | 修复后重试 | — |
@@ -398,13 +430,13 @@ stages:
 
 ## 变更记录
 
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| 7.1 | 2026-05-16 | 拆分主文件：Schema 抽取到 schemas/（4文件），阶段执行计划抽取到 stages/（7文件），主文件从 955 行精简至 ~350 行 |
-| 7.0 | 2026-05-16 | 新增 express 模式（4引擎可选+auto/manual prompt来源）；合并 Stage 0/0.5/1.5 为 Stage 1 条件分支；合并 Stage 4+5 为"增强+审计一体化"；合并 Stage 7+8 为 Stage 6；新增页面清单完整性保障（page_manifest.json） |
-| 6.0 | 2026-05-15 | 新增三种执行模式（prototype/full/progressive）；新增 Stage 0 设计探索 + Stage 0.5 约束对齐 + Stage 1.5 PM约束审查；新增 design_brief.json 生成机制；新增 ext Skill 冲突消解优先级；统一评分体系；quality_debt.json 追踪 |
-| 5.0 | 2026-05-14 | ext Skill 调用依赖声明；回写验证 V1-V5 |
-| 4.0 | 2026-05-13 | page-builder 一体化重构 |
-| 3.0 | 2026-05-12 | ext Skill 架构引入 |
-| 2.0 | 2026-05-10 | 设计系统增强阶段 |
-| 1.0 | 2026-05-08 | 初始版本 |
+- v7.3: express模式新增设计方向快选(2-3套差异化方向供用户选择)+结构化prompt生成(具体色值/字体/布局/禁忌替代模糊描述)+manual模式prompt增强(自动附加锚点约束)；新增express_skip_scheme参数；人类决策点增加设计方向快选+页面清单完整性确认；异常处理表补充5项(stage-e manual超时/stage-1一致性校验/stage-2回写验证/stage-4偏科门槛)；visual_review_result持久化；quality_debt severity统一为high+stage-4读取已有债务；ext Skill调用补充必填字段(design_brief/register/query)；Consumer Mapping修正(ext-frontend-design补充token替换映射+ext-ui-ux-pro-max字段名对齐Output Contract+ext-interaction-design字段名修正)；降级分类表修正(核心增强类阻断/可选增强类标注)；stage-6 optional_depends_on说明
+- v7.2: express模式新增轻量设计锚点(express_design_anchor)+增强质量检查(5项)；full模式新增强制视觉审查(stage-3后)+visual_direction一致性校验(stage-1)+critique扩展设计美学维度+quality_score权重调整为50:50+单项最低门槛；Stage依赖链修正(stage-5/6依赖stage-4)；page_manifest生成提前到stage-2；ext降级策略分类(核心增强类阻断/可选增强类标注)；prototype-report Schema新增；checkpoint增加mode字段
+- v7.1: 拆分主文件——Schema抽取到schemas/(4文件)，阶段执行计划抽取到stages/(7文件)，主文件从955行精简至~350行
+- v7.0: 新增express模式(4引擎可选+auto/manual prompt来源)；合并Stage 0/0.5/1.5为Stage 1条件分支；合并Stage 4+5为"增强+审计一体化"；合并Stage 7+8为Stage 6；新增页面清单完整性保障(page_manifest.json)
+- v6.0: 新增三种执行模式(prototype/full/progressive)；新增Stage 0设计探索+Stage 0.5约束对齐+Stage 1.5 PM约束审查；新增design_brief.json生成机制；新增ext Skill冲突消解优先级；统一评分体系；quality_debt.json追踪
+- v5.0: ext Skill调用依赖声明；回写验证V1-V5
+- v4.0: page-builder一体化重构
+- v3.0: ext Skill架构引入
+- v2.0: 设计系统增强阶段
+- v1.0: 初始版本

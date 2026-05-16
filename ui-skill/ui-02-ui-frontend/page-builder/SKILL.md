@@ -467,7 +467,7 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
         "pass_rate": {"type": "number", "description": "质量检查通过率(%)"},
         "p0_issues": {"type": "array", "items": {"type": "object"}, "description": "P0阻断问题列表"},
         "p1_issues": {"type": "array", "items": {"type": "object"}, "description": "P1待修复问题列表"},
-        "aesthetic_score": {"type": "number", "description": "美学评分(0-100)，计算规则：audit百分制×0.6+critique百分制×0.4（由编排器stage-5计算后回填）；未执行审计时为内建自评分数"}
+        "aesthetic_score": {"type": "number", "description": "美学评分(0-100)，计算规则：audit百分制×0.5+critique百分制×0.5（由编排器stage-4计算后回填）；未执行审计时为内建自评分数"}
       }
     },
     "design_decisions": {
@@ -673,7 +673,7 @@ P1（建议通过，不通过则标注"待修复"）：
 ## 变更记录
 
 - v2.0: 核心架构升级——新增设计简报驱动模式（design_brief.json），ext Skill产出从建议升级为可执行设计规范；核心原则新增"设计简报驱动"为第一优先级；Step 1新增设计简报消费规则（8维度强约束）；Step 2新增设计简报驱动的组件生成；移除"ext skill增强由编排器在后续阶段统一调用"声明
-- v1.8: P0/P1分类修正——间距Token引用升级P0、空状态/错误状态升级P0、组件来源降级P1；aesthetic_score明确计算规则（audit×0.6+critique×0.4）；P0检查列表同步更新
+- v1.8: P0/P1分类修正——间距Token引用升级P0、空状态/错误状态升级P0、组件来源降级P1；aesthetic_score明确计算规则（audit×0.5+critique×0.5）；P0检查列表同步更新
 - v1.7: 新增探索阶段设计决策输入（design_decisions.json from Stage 1 条件分支），作为design_decisions初始值；PM约束偏离记录增加探索阶段决策消费规则
 - v1.6: 新增design_feedback.json（UI→PM反向反馈通道），当major/critical级别偏离时必须生成；下游通知机制增加design_feedback回传
 - v1.5: 新增design_decisions（PM约束偏离记录），含4级严重度分级（minor/moderate/major/critical）和对应处理规则；视觉锚点消费增加页面级覆盖机制（anchor_overrides）

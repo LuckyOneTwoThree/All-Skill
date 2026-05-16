@@ -39,7 +39,7 @@ Skill: ui-orchestrator
 | 品牌色占比 | page-builder 美学验证检查 |
 | 排版层级跳跃 | page-builder 美学验证检查 |
 | 留白节奏 | page-builder 美学验证检查 |
-| 设计品味 | page-builder 统一评分体系（audit×0.6+critique×0.4） |
+| 设计品味 | page-builder 统一评分体系（audit×0.5+critique×0.5） |
 | PM约束偏离 | page-builder design_decisions 4级记录 |
 | 设计自由度 | ui-orchestrator Stage 1 条件分支（设计探索）+ constraint_review |
 | 质量债务 | page-builder quality_debt.json 追踪 |
@@ -186,7 +186,7 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 - 设计简报驱动模式：消费 design_brief.json（由编排器在 Stage 2 生成），ext Skill 产出从"建议"转化为"可执行设计规范"，page-builder 直接消费
 - PM约束偏离记录（design_decisions）：4级严重度（minor/moderate/major/critical），记录设计自由度偏离
 - UI→PM反向反馈通道（design_feedback.json）：双向反馈闭环，设计侧可反向约束PM产出
-- 统一评分体系：audit(20→100, ×5) + critique(40→100, ×2.5)，综合=audit×0.6+critique×0.4
+- 统一评分体系：audit(20→100, ×5) + critique(40→100, ×2.5)，综合=audit×0.5+critique×0.5
 - 质量债务追踪（quality_debt.json）：降级问题统一追踪，供下游 production-ready 消费
 
 **阶段卡口**：
@@ -194,7 +194,7 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 - 状态机无死锁
 - 组件树层级≤4层
 - P0问题=0
-- 美学验证通过 + 综合质量评分（audit×0.6+critique×0.4）≥75分
+- 美学验证通过 + 综合质量评分（audit×0.5+critique×0.5）≥75分
 - design_decisions 无 critical 级偏离未记录
 - 进入API集成前：P0问题全部修复
 
@@ -347,7 +347,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 | Skill | 版本 | 输出 Schema 版本 |
 |-------|------|----------------|
-| ui-orchestrator | 7.1 | — |
+| ui-orchestrator | 7.3 | — |
 | project-init | 1.7 | visual_direction v1.2（含 anchor_overrides + 语义一致性校验） |
 | page-builder | 2.0 | pages.json v2.0（含 design_brief 消费 + design_decisions + design_feedback） |
 | api-integration | 2.0 | api-integration.json v1.0 |

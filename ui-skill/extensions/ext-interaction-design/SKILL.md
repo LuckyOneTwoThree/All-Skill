@@ -28,6 +28,7 @@ When called by ui-orchestrator (on behalf of page-builder), accept the following
 | visual_direction | object | no | Current visual_direction (tension_level, mood_keywords, aesthetic_direction) |
 | design_tokens | object | no | Animation tokens (duration-instant/fast/normal/slow, easing-default/decelerate/accelerate) |
 | target_framework | string | no | React / Vue / Svelte / HTML |
+| express_design_anchor | object | no | Lightweight design anchor for express mode (register, color_direction, typography_direction, layout_direction, design_focus, visual_bans). Passed by ui-orchestrator when mode=express. Must be consumed as design direction constraints: layout_direction informs interaction pattern selection, visual_bans must be respected |
 
 ## Output Contract
 
@@ -79,8 +80,7 @@ When called by ui-orchestrator, MUST return structured output:
 
 | 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
 |---------|-------------|---------|---------|
-| patterns[].code | page-builder | 组件交互代码 | 直接插入组件代码中 |
-| patterns[].css | page-builder | 组件样式代码 | 直接插入组件样式 |
+| patterns[].implementation | page-builder | 组件交互代码 | 直接插入组件代码中 |
 | animation_tokens | page-builder | design_tokens.animation | 合并到现有design tokens |
 | accessibility_adaptation | page-builder | 组件无障碍属性 | 追加ARIA属性和键盘导航 |
 
@@ -96,10 +96,11 @@ When called by ui-orchestrator, MUST return structured output:
 
 ## Degradation Strategy
 
-| Scenario | Behavior |
-|----------|----------|
-| ext-interaction-design not deployed | Skip, annotate "交互动效待 ext-interaction-design 支持", use default animation tokens |
-| ext-interaction-design call fails | Apply default animation token values and basic CSS transitions, annotate "交互动效使用内置降级规则" |
+| Scenario | Behavior | 编排器处理 |
+|----------|----------|-----------|
+| ext-interaction-design not deployed | Skip, annotate "交互动效待 ext-interaction-design 支持", use default animation tokens | 可选增强类，不阻断下游 |
+| ext-interaction-design call fails | Apply default animation token values and basic CSS transitions, annotate "交互动效使用内置降级规则" | 可选增强类，不阻断下游 |
+| Output validation fails | Use partial output (valid patterns only), annotate skipped patterns | 可选增强类，不阻断下游 |
 
 ## When to Use This Skill
 

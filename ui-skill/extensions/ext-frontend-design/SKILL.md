@@ -47,6 +47,7 @@ When called by ui-orchestrator (on behalf of project-init / page-builder), accep
 | target_language | string | no | Target UI language (default: en-US) |
 | target_framework | string | no | React / Vue / Svelte / HTML |
 | inline_context | string | no | Inline context when PRODUCT.md/DESIGN.md are not yet available (passed by project-init Step 1-2, contains register + product name + positioning + brand spec + current step output + target language) |
+| express_design_anchor | object | no | Lightweight design anchor for express mode (register, color_direction, typography_direction, layout_direction, design_focus, visual_bans). Passed by ui-orchestrator when mode=express. Must be consumed as design direction constraints: color_direction informs color_substitutions, typography_direction informs font_substitutions, layout_direction informs layout_differentiation, visual_bans must be respected |
 
 When invoked directly by users (not via core Skill), the input is free-form: describe what you want built.
 
@@ -168,12 +169,13 @@ When called by ui-orchestrator, MUST return structured output in the following s
 | Output Field | Consumer | Mapping |
 |---|---|---|
 | font_substitutions[*].avoid | project-init / page-builder | Append "禁止使用{font}" to visual_direction.visual_bans |
+| font_substitutions[*].use_instead | project-init / page-builder | Replace tokens.typography.font_families (逐项替换) |
 | color_substitutions[*].avoid | project-init / page-builder | Append the avoided pattern to visual_direction.visual_bans |
-| layout_differentiation | project-init / page-builder | Append to visual_direction.aesthetic_direction |
+| color_substitutions[*].use_instead_values | project-init / page-builder / design_brief.json | Replace tokens.colors (逐项替换); 直接作为 color_specifications 中的具体 CSS 色值 |
+| layout_differentiation | project-init / page-builder | Append to visual_direction.visual_narrative |
 | visual_bans[*] | project-init / page-builder | Append to visual_direction.visual_bans |
 | aesthetic_direction | project-init | Use as visual_direction.aesthetic_direction value |
 | **executable_specifications** | **design_brief.json** | **直接映射到 design_brief 的 color_specifications / typography_specifications / layout_instructions / spacing_rhythm_values / border_radius_values** |
-| **color_substitutions[*].use_instead_values** | **design_brief.json** | **直接作为 color_specifications 中的具体 CSS 色值** |
 
 ## Verification Criteria
 

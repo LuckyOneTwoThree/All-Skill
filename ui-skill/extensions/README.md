@@ -215,7 +215,7 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 | clarify | UX文案优化代码 | 表单/空状态/错误状态文案替换到页面代码 | page-builder |
 | onboard | 新手引导设计代码 | 引导流程代码追加到页面组件 | page-builder |
 | distill | 简化后代码 | 以 distill 输出为准，替换原页面代码（简化优先于增强） | page-builder |
-| audit | 审查报告 | 统一评分：原始分(20→100, ×5)；综合分=audit×0.6+critique×0.4；综合分<75分触发 critique 闭环 | page-builder |
+| audit | 审查报告 | 统一评分：原始分(20→100, ×5)；综合分=audit×0.5+critique×0.5；综合分<75分触发 critique 闭环 | page-builder |
 | critique | UX设计评审+代码修改 | 统一评分：原始分(40→100, ×2.5)；修改后的代码替换原代码，触发 re-audit 验证（最多3次闭环+偏科检测） | page-builder |
 | harden | 生产就绪化代码 | 错误处理/i18n/边缘情况代码合并到组件代码 | page-builder |
 | polish | 最终打磨代码 | 直接替换原组件代码（polish 始终最后执行） | page-builder |
@@ -245,7 +245,8 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 
 | 降级类型 | 适用场景 | 示例 |
 |----------|---------|------|
-| 跳过+标注 | 外部 Skill 未部署或调用失败 | `ext-frontend-design`、`ext-ui-ux-pro-max`、`ext-interaction-design` |
+| 阻断下游 | 核心增强类未部署或调用失败，下游阶段依赖其产出 | `ext-frontend-design`、`ext-ui-ux-pro-max` |
+| 跳过+标注 | 可选增强类未部署或调用失败，不影响下游阶段 | `ext-interaction-design` |
 | 内置替代 | 核心有基础能力，外部 Skill 提供增强版 | `ext-impeccable` 各子命令（核心有默认输出作为降级） |
 
 ### 三种场景的具体行为

@@ -30,10 +30,22 @@ When a core Skill (project-init Step 1-2) passes inline context because PRODUCT.
 1. **Skip `load-context.mjs` entirely.** Do NOT run the loader script.
 2. **Do NOT trigger `teach`.** The calling Skill will generate PRODUCT.md/DESIGN.md later.
 3. Consume the inline context directly. It contains: register (brand/product), product name, product positioning, brand spec, current step output, target language.
-4. Load the register reference matching the inline context's register field (brand.md or product.md).
-5. If a sub-command was specified, load its reference file as usual.
+4. If `express_design_anchor` is provided in the inline context, consume it as design direction constraints: register informs brand/product register selection, color_direction informs color strategy, typography_direction informs font choices, layout_direction informs spacing/rhythm, design_focus informs which aesthetic dimensions to prioritize, visual_bans must be respected. This field is passed by ui-orchestrator when mode=express.
+5. Load the register reference matching the inline context's register field (brand.md or product.md).
+6. If a sub-command was specified, load its reference file as usual.
 
 **How to detect Mode B**: The calling Skill will explicitly state `跳过 Setup，使用内联上下文` (or equivalent English: `Skip Setup, use inline context`) in the input. If you see this directive, enter Mode B immediately without attempting load-context.mjs.
+
+### Input Contract
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| sub_command | string | no | 子命令（craft/shape/audit/critique/bolder/colorize/typeset/layout/clarify/onboard/distill/harden/polish/optimize/adapt/animate/quieter/delight/overdrive/extract/document/live） |
+| register | string | yes | "brand" 或 "product"，决定加载 brand.md 或 product.md |
+| inline_context | string | no | Mode B 内联上下文（register+产品名称+产品定位+品牌规范+当前步骤产出+目标语言） |
+| express_design_anchor | object | no | 快速模式轻量设计锚点（register, color_direction, typography_direction, layout_direction, design_focus, visual_bans），仅 mode=express 时传递 |
+| target_framework | string | no | 目标框架（React/Vue/Svelte/HTML），影响代码输出格式 |
+| target_language | string | no | 目标语言（默认 zh-CN），影响 UX 文案和注释语言 |
 
 Skipping context entirely (neither Mode A nor Mode B) produces generic output that ignores the project.
 

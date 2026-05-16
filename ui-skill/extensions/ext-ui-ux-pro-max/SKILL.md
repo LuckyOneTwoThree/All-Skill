@@ -45,6 +45,7 @@ When called by ui-orchestrator (on behalf of project-init / page-builder), accep
 | mode | string | yes | "--design-system" (project-init) or "--domain {landing/dashboard/general}" (page-builder) |
 | project_name | string | no | Project name for persistence (-p flag) |
 | existing_plan | string \| object | no | Current design plan from core Skill (as reference, not constraint) |
+| express_design_anchor | object | no | Lightweight design anchor for express mode (register, color_direction, typography_direction, layout_direction, design_focus, visual_bans). Passed by ui-orchestrator when mode=express. Must be consumed as design direction constraints: color_direction informs color palette selection, typography_direction informs font pairing selection, visual_bans must be respected |
 
 When invoked directly by users (not via core Skill), the input is free-form: describe what you need.
 
@@ -138,17 +139,17 @@ When called by ui-orchestrator, MUST return structured output in the following s
 
 | 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
 |---------|-------------|---------|---------|
-| style_recommendations.color_palettes | project-init | visual_direction.color_strategy | 参考采纳，不覆盖品牌色推导结果 |
-| style_recommendations.typography | project-init | visual_direction.typography_strategy | 参考采纳，不覆盖已选字体 |
-| style_recommendations.effects | project-init | visual_direction.aesthetic_direction | 参考采纳，补充效果描述 |
+| colors[].palette | project-init | tokens.colors.brand | 参考采纳，不覆盖品牌色推导结果 |
+| typography[].heading/body | project-init | tokens.typography.font_families | 参考采纳，不覆盖已选字体 |
+| effects | project-init | visual_direction.aesthetic_direction | 参考采纳，补充效果描述 |
 | anti_patterns | project-init | visual_direction.visual_bans | 追加到visual_bans数组 |
 
 ### --domain 模式输出消费映射
 
 | 输出字段 | 消费方 Skill | 消费路径 | 合并规则 |
 |---------|-------------|---------|---------|
-| layout_recommendations | page-builder | Step 1 页面结构规划 | 参考采纳，不覆盖PRD功能区域定义 |
-| cta_strategies | page-builder | Step 2 组件视觉节奏 | 参考采纳 |
+| layout_pattern | page-builder | Step 1 页面结构规划 | 参考采纳，不覆盖PRD功能区域定义 |
+| cta_strategy | page-builder | Step 2 组件视觉节奏 | 参考采纳 |
 | information_architecture | page-builder | Step 1 视觉节奏设计 | 参考采纳 |
 | anti_patterns | page-builder | visual_direction.visual_bans | 追加到visual_bans数组 |
 

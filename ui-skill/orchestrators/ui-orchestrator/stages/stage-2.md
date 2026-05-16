@@ -19,10 +19,10 @@ ext-ui-ux-pro-max 与 ext-frontend-design 存在设计哲学矛盾——前者�
 
 | # | Skill | 输入 | 输出 | 验证 |
 |---|-------|------|------|------|
-| 2.1 | ext-ui-ux-pro-max --design-system | 品牌规范+visual_direction (stage-1) | 设计系统推荐 | ≥3色彩方案+2字体配对 |
-| 2.2 | ext-impeccable colorize | 色彩体系+品牌规范 (stage-1) | 色彩布局增强 | 色彩增强建议已生成 |
-| 2.3 | ext-frontend-design | visual_direction+品牌规范+产品定位 (stage-1) | 美学方向审视 | 不含AI同质化特征 |
-| 2.4 | ext-impeccable typeset | 排版体系+visual_direction (stage-1) | 排版层级增强 | 排版增强建议已生成 |
+| 2.1 | ext-ui-ux-pro-max --design-system | query="{product_type} {industry} {style_keywords}"+品牌规范+visual_direction+project_name (stage-1) | 设计系统推荐 | ≥3色彩方案+2字体配对 |
+| 2.2 | ext-impeccable colorize | 色彩体系+品牌规范 (stage-1，Mode A: 运行load-context.mjs) | 色彩布局增强 | 色彩增强建议已生成 |
+| 2.3 | ext-frontend-design | design_brief=项目需求描述+register+品牌规范+产品定位+visual_direction+design_tokens+target_language+target_framework (stage-1) | 美学方向审视 | 不含AI同质化特征 |
+| 2.4 | ext-impeccable typeset | 排版体系+visual_direction (stage-1，Mode A: 运行load-context.mjs) | 排版层级增强 | 排版增强建议已生成 |
 
 ## 强制回写步骤（2.1-2.4全部完成后必须执行）
 

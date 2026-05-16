@@ -8,8 +8,25 @@
 | PRD结构化数据 | output/pm-design/design-prd/prd.json（可选） |
 
 输出: output/ui-project-init/ + 代码写入 {project_dir}/ + PRODUCT.md + DESIGN.md
-验证: visual_direction 10维度定义 + WCAG AA达标 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + npm run dev启动成功
+验证: visual_direction 10维度定义 + 维度间一致性校验通过 + WCAG AA达标 + PRODUCT.md/DESIGN.md非占位符 + 令牌文件已写入 + npm run dev启动成功
 ⏸ 人类确认视觉方向和品牌色
+
+## visual_direction 一致性校验（v7.2 新增）
+
+stage-1 gate 不仅检查 10 维度是否"已定义"，还校验维度间的逻辑一致性，防止矛盾的 visual_direction 传递到下游。
+
+**一致性校验规则**：
+
+| 规则 | 校验内容 | 矛盾示例 | 处理 |
+|------|---------|---------|------|
+| 色彩-情绪一致 | color_strategy 的温度与 mood_keywords 匹配 | color_strategy=冷色调 + mood_keywords=温暖亲切 | ⚠️ 标注矛盾，建议调整 |
+| 布局-密度一致 | layout_differentiation 与 tension_level 匹配 | layout=极简大量留白 + tension_level=high | ⚠️ 标注矛盾，建议调整 |
+| 禁忌-方向一致 | visual_bans 不与 aesthetic_direction 矛盾 | aesthetic_direction=大胆撞色 + visual_bans=高饱和色 | ❌ 阻断，必须修复 |
+| 排版-风格一致 | typography_strategy 与 register 匹配 | register=brand + typography=功能型紧凑 | ⚠️ 标注矛盾，建议调整 |
+
+**校验结果处理**：
+- ❌ 阻断级矛盾：必须修复后才能通过 gate
+- ⚠️ 警告级矛盾：标注但不阻断，⏸ 人类确认是否接受
 
 ## 条件分支A：设计探索（mode=progressive 时，在 project-init 执行前运行）
 
@@ -51,6 +68,15 @@
 验证: design_decisions.json 已生成，所有功能需求已覆盖
 模式: 🤖→👤
 ```
+
+**design_feedback 回传机制**（与 stage-3 回传流程一致）：
+当 design_feedback.json 存在且 suggestions 非空时，编排器执行以下回传流程：
+1. 读取 design_feedback.json
+2. 按 severity 排序（critical > high > medium）
+3. ⏸ 人类确认是否接受反馈建议（接受/拒绝/部分接受）
+4. 将确认后的反馈写入 `output/pm-design/design-feedback/design_feedback.json`
+5. 标注 checkpoint 中 design_feedback 已回传
+6. design-orchestrator 启动时检查此路径，优先处理反馈后删除避免重复消费
 
 ⏸ 人类确认约束对齐结果和设计决策
 

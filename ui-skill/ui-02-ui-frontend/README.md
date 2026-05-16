@@ -20,7 +20,7 @@ UI与前端一体化的核心模块。将设计系统转化为可运行的前端
 |-------|------|------|------|
 | page-builder | 基于设计简报和视觉方向，在页面上下文中生成组件并组装为完整页面，内建质量门禁 | 页面需求、设计简报(design_brief.json)、视觉方向、设计令牌、组件库、目标框架、project_dir、PRD(可选)、路由结构(可选)、原型规格(可选)、userflow(可选)、interaction-spec(可选) | pages.json（含pages/components/quality_report/design_decisions）+ design_feedback.json + quality_debt.json + 组件代码 + 页面代码 |
 
-> 💡 **合并说明**：v2.0 将原 ui-component-gen + page-assembly + ui-review 合并为 page-builder 一个 Skill，消除阶段交接开销。新增设计简报驱动模式（消费 design_brief.json，ext Skill 产出从"建议"转化为"可执行设计规范"），视觉节奏设计（消费 visual_direction 定义视觉重心/密度分布/色彩节奏/层次感），组件改为页面上下文生成（确保视觉一致性和交互连贯性），审查改为内建质量门禁（生成即校验，不依赖独立审查步骤），PM约束偏离记录（design_decisions 4级严重度），UI→PM反向反馈通道（design_feedback.json），统一评分体系（audit×0.6+critique×0.4），质量债务追踪（quality_debt.json）。国际化能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨、交互增强等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-interaction-design、ext-ui-ux-pro-max）增强。
+> 💡 **合并说明**：v2.0 将原 ui-component-gen + page-assembly + ui-review 合并为 page-builder 一个 Skill，消除阶段交接开销。新增设计简报驱动模式（消费 design_brief.json，ext Skill 产出从"建议"转化为"可执行设计规范"），视觉节奏设计（消费 visual_direction 定义视觉重心/密度分布/色彩节奏/层次感），组件改为页面上下文生成（确保视觉一致性和交互连贯性），审查改为内建质量门禁（生成即校验，不依赖独立审查步骤），PM约束偏离记录（design_decisions 4级严重度），UI→PM反向反馈通道（design_feedback.json），统一评分体系（audit×0.5+critique×0.5），质量债务追踪（quality_debt.json）。国际化能力已内建（见 [extensions/README.md](../extensions/README.md) 已内建能力表），视觉差异化、质量打磨、交互增强等通过外部 Skill（ext-frontend-design、ext-impeccable、ext-interaction-design、ext-ui-ux-pro-max）增强。
 
 ## 执行顺序
 
@@ -66,7 +66,7 @@ output/ui-frontend/
 - visual_direction 的视觉禁忌100%未被违反
 - 视觉节奏6维度已在页面中体现
 - visual_direction一致性：组件视觉风格与aesthetic_direction一致
-- 综合质量评分（audit×0.6+critique×0.4）≥75分
+- 综合质量评分（audit×0.5+critique×0.5）≥75分
 - design_decisions 无 critical 级偏离未记录
 
 ### 进入下一模块（前端集成）前需满足：
