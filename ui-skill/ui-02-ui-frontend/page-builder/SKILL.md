@@ -68,9 +68,11 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 ### 多页面项目策略
 
 页面数>3时，采用分页处理：
-1. 每个页面独立执行 Step 2-4，完成后代码写入文件、上下文只保留摘要
-2. 所有页面完成后统一执行 Step 5（代码输出与最终打磨）
-3. 分页间共享 visual_direction 和设计令牌（始终保留在上下文中）
+1. **分页前**：生成完整页面清单（从 page_manifest.json 或页面需求提取），确认待生成页面总数
+2. 每个页面独立执行 Step 2-4，完成后代码写入文件、上下文只保留摘要
+3. 所有页面完成后统一执行 Step 5（代码输出与最终打磨）
+4. **分页后**：校验已生成页面与分页前清单的一致性，遗漏页面补充生成
+5. 分页间共享 visual_direction 和设计令牌（始终保留在上下文中）
 
 ## 交互模式
 
@@ -87,6 +89,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 页面需求 | string/markdown | 是 | 用户提供 / output/pm-design/design-prd/prd.md | 页面功能描述和布局需求 |
+| 页面清单 | JSON | 条件必填 | output/ui-frontend/page-manifest/page_manifest.json | 编排器生成的统一页面清单，存在时必须消费，pages[]为页面生成权威来源 |
 | 视觉方向 | JSON | 是 | output/ui-project-init/project-init.json → visual_direction | 美学方向/色彩策略/视觉禁忌等 |
 | 设计令牌 | JSON | 是 | output/ui-project-init/project-init.json → tokens | 设计变量定义 |
 | 组件库 | JSON | 是 | output/ui-project-init/project-init.json → component_library | 可用组件清单和主题定制 |
@@ -94,8 +97,8 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 目标语言 | string | 是 | 上游编排器传递 / 用户提供（默认zh-CN） | 目标界面语言 |
 | project_dir | string | 是 | output/ui-project-init/project-init.json → project_dir | 项目根目录绝对路径 |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求上下文（含功能区域和组件需求） |
-| PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/features[]，供页面构建编程式消费 |
-| 路由结构 | JSON | ○ | output/pm-design/design-ia/ia_proposals.json | 信息架构定义的路由层级 |
+| PRD结构化数据 | JSON | 条件必填 | output/pm-design/design-prd/prd.json | 当文件存在时必填消费，pages[]为页面清单权威来源 |
+| 路由结构 | JSON | 条件必填 | output/pm-design/design-ia/ia_proposals.json | 当文件存在时必填消费，routes[]为路由清单权威来源 |
 | 交互规范 | markdown | ○ | output/pm-design/interaction-spec/interaction-spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
 | 交互规范(结构化) | JSON | ○ | output/pm-design/interaction-spec/interaction-spec.json | 交互状态机/动画意图/手势意图的结构化数据，供编程式消费 |
 | 探索阶段设计决策 | JSON | ○ | output/ui-frontend/design-exploration/design_decisions.json | progressive模式下Stage 1条件分支（约束对齐）产出的设计决策，作为design_decisions初始值 |
@@ -108,8 +111,13 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 将页面需求拆解为布局区块，同时设计视觉节奏（而非只做功能布局）：
 
 **PRD 消费规则**（意图约束）：
+- **页面清单消费优先级**：page_manifest.json > prd.json.pages[] > ia_proposals.routes[] > 页面需求(string/markdown)
+- 若有 page_manifest.json 输入：其 `pages[]` 为**页面生成的权威来源**，page-builder 必须为其中每个 page_id 生成对应页面，不可遗漏
 - 若有 PRD 输入：其定义的功能区域和内容需求作为**必须覆盖的功能清单**（页面必须包含 PRD 中定义的所有功能区域），但区域布局方式、视觉层次、间距节奏由 page-builder 结合 visual_direction 决定
 - PRD 定义"页面需要什么功能区域"，page-builder 决定"这些区域如何视觉呈现"
+- **页面清单覆盖约束**：若有 prd.json 输入，其 `pages[]` 为**页面清单的权威来源**，page-builder 必须为 `pages[]` 中的每个 `page_id` 生成对应页面，不可遗漏
+- **路由清单覆盖约束**：若有 ia_proposals.json 输入，其 `routes[]` 为**路由清单的权威来源**，page-builder 必须为 `routes[]` 中的每个路由生成对应页面，不可遗漏
+- **交叉校验**：当 prd.json 和 ia_proposals.json 同时存在时，`prd.json.pages[].route` 必须与 `ia_proposals.routes[].path` 一一对应，不一致时以 prd.json.pages[] 为准，差异记录到 design_decisions
 
 **component_catalog 消费规则**（推荐+备选模式）：
 - 若有 component_catalog 输入：其 `type` 为推荐组件类型，`alternatives` 为备选方案，`selection_criteria` 为选型依据
@@ -233,7 +241,7 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 |----------|------------------|---------|--------|
 | 色彩规范 | color_specifications | 具体CSS色值直接应用（如`oklch(97% 0.01 60)`），替代令牌中的推导值 | 强约束 |
 | 排版规范 | typography_specifications | 具体字号/字重/行高直接应用 | 强约束 |
-| 布局指令 | layout_instructions | 页面布局结构直接遵循 | 强约束 |
+| 布局指令 | layout_instructions | 布局类型和视觉焦点作为设计参考，page-builder 可基于页面上下文和 visual_direction 调整布局实现（如将推荐的 sidebar-main 改为 tab-main，需记录到 design_decisions） | 指导性 |
 | 组件规范 | component_specifications | 组件结构/状态/变体直接实现 | 强约束 |
 | 动效规范 | animation_specifications | 动效参数（时长/缓动/延迟）直接应用 | 强约束 |
 | 品牌色策略 | brand_color_strategy | 品牌色分布区域和占比直接遵循 | 强约束 |
@@ -242,9 +250,10 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 
 **消费规则**：
 - design_brief 中的具体值（CSS色值、字号、间距值）**覆盖** visual_direction 中的推导值
-- design_brief 中的布局指令**优先于** page-builder 的默认布局推导
+- design_brief 中的布局指令作为**设计参考**，page-builder 可基于页面上下文调整实现，调整需记录到 design_decisions
 - design_brief 中的视觉禁忌**追加到** visual_direction.visual_bans
 - 当 design_brief 与 PM 输入冲突时：design_brief 优先，冲突记录到 design_decisions
+- 当 design_brief 的指导性维度（layout_instructions/differentiation_direction）与 page-builder 的设计判断冲突时：以设计判断为准，偏离记录到 design_decisions
 
 ### Step 2: 组件生成（在页面上下文中）
 
@@ -391,6 +400,8 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 | 组件树层级 | ≤4层 | P1 |
 | 组件来源 | 100%来自组件库或本次生成 | P1 |
 | 路由覆盖 | 全部页面有路由 | P1 |
+| 页面清单覆盖 | page_manifest.json.pages[] 中的所有 page_id 均有对应页面生成（无 page_manifest 时检查 prd.json.pages[]） | P0 |
+| 路由清单覆盖 | ia_proposals.routes[] 中的所有路由均已配置 | P0 |
 
 **问题处理规则**：P0问题必须修复后才能输出，P1问题标注"待修复"。
 
@@ -408,11 +419,11 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 
 ## 输出
 
-**代码文件输出**：{project_dir}/src/（组件、页面、路由、状态管理直接写入项目目录）
+**代码文件输出**：{project_dir}/src/（组件、页面、路由、状态管理、数据层fallback直接写入项目目录）
 
 **元数据输出**：output/ui-frontend/page-builder/
 
-**输出文件**：pages.json, design_feedback.json
+**输出文件**：pages.json, design_feedback.json, quality_debt.json
 
 **输出Schema**：
 
@@ -482,6 +493,18 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
     "api_integration_skipped": {
       "type": "boolean",
       "description": "是否跳过了api-integration（true时表示数据层为fallback Mock，待后续替换）"
+    },
+    "page_coverage": {
+      "type": "object",
+      "description": "页面清单覆盖报告（当prd.json或ia_proposals.json存在时生成）",
+      "properties": {
+        "source": {"type": "string", "description": "页面清单来源（prd.json / ia_proposals.json / both）"},
+        "expected_pages": {"type": "array", "items": {"type": "object"}, "description": "期望页面清单（来自PM产出）"},
+        "generated_pages": {"type": "array", "items": {"type": "string"}, "description": "实际生成的页面名称列表"},
+        "missing_pages": {"type": "array", "items": {"type": "object"}, "description": "遗漏的页面（期望但未生成）"},
+        "extra_pages": {"type": "array", "items": {"type": "string"}, "description": "额外生成的页面（不在期望清单中）"},
+        "coverage_rate": {"type": "number", "description": "页面覆盖率(%)，100%表示无遗漏"}
+      }
     },
     "project_dir": {"type": "string", "description": "项目根目录路径"}
   }
@@ -615,6 +638,8 @@ P1（建议通过，不通过则标注"待修复"）：
 | 视觉方向缺失 | 基于设计令牌推断视觉方向 | 美学方向可能不够精准 |
 | 设计令牌缺失 | 使用内联样式+TODO注释 | 样式值硬编码，需后续替换 |
 | 组件库缺失 | 全部新建组件 | 可能存在重复组件 |
+| 设计简报缺失 | 退回令牌驱动模式，仅消费visual_direction和设计令牌生成组件 | 色彩/排版/布局无强约束规范，组件视觉一致性依赖令牌推导 |
+| 页面清单缺失 | 从PRD文本或页面需求描述中提取页面列表，无结构化校验 | 页面可能遗漏，路由可能不完整，无page_coverage覆盖率报告 |
 | PRD缺失 | 仅基于页面需求描述生成，无产品需求上下文 | 组件功能可能偏离产品意图，缺少业务逻辑约束，功能区域覆盖不完整 |
 | 路由结构缺失 | 基于页面需求自行规划路由层级和嵌套关系 | 路由可能与IA定义不一致，导航结构需后续对齐 |
 | 交互规范缺失 | 使用默认动画规范表和通用反馈机制，异常路径基于PRD推断 | 交互状态机可能不完整，异常路径可能遗漏，动画和反馈可能与产品层面定义不一致 |
@@ -627,6 +652,8 @@ P1（建议通过，不通过则标注"待修复"）：
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | 视觉方向变更 | 所有组件和页面的视觉决策 | 标注受影响的组件和页面，建议重新生成 |
+| 设计简报变更 | 组件生成、色彩规范、排版规范、布局指令 | 标注受影响的维度和页面，强约束维度变更需重新生成对应组件 |
+| 页面清单变更 | 页面覆盖完整性、路由配置 | 标注新增/删除的页面，补充生成遗漏页面或移除废弃页面 |
 | 设计令牌变更 | 组件样式引用 | 标注受影响的组件，建议更新Token引用 |
 | 组件库变更 | 组件复用关系 | 标注受影响的复用组件，建议重新匹配 |
 | PRD变更 | 页面功能需求、组件边界、功能区域覆盖 | 标注受影响的页面和组件，评估是否需重新规划 |
@@ -639,6 +666,7 @@ P1（建议通过，不通过则标注"待修复"）：
 |---------------|-------------|---------|---------|
 | 页面组件树变更 | production-ready | 受影响的测试和构建 | 组件树结构变更 |
 | 路由配置变更 | production-ready | 路由变更 | 路由路径变更 |
+| quality_debt变更 | production-ready | 新增/升级的critical/high级债务 | debt_items中severity变更或新增open状态项 |
 | 数据流变更 | api-integration | API需求变更 | 数据获取方式变更 |
 | design_feedback生成 | ui-orchestrator → design-orchestrator | PM产出修改建议 | design_feedback.json存在且suggestions非空 |
 

@@ -33,6 +33,7 @@
 | design_feedback.json | UI → ui-orchestrator | PM → design-orchestrator | UI → PM（反向反馈） |
 | constraint_review.json | UI → ui-orchestrator（Stage 1 条件分支） | PM → design-orchestrator | UI → PM（约束审查） |
 | design_brief.json | UI → ui-orchestrator（Stage 2） | UI → page-builder | UI内部（ext产出→可执行规范） |
-| quality_debt.json | UI → page-builder | UI → production-ready | UI内部（质量债务传递） |
+| page_manifest.json | UI → ui-orchestrator（Stage 2 预生成，Stage 3 校验） | UI → page-builder | UI内部（页面清单校验，防止页面遗漏） |
+| quality_debt.json | UI → page-builder + stage-4 ext增强 | UI → production-ready | UI内部（质量债务传递） |
 
 **双向反馈闭环**：UI→PM 反向反馈通道（design_feedback.json + constraint_review.json），设计侧可反向约束PM产出，确保设计自由度不被过度约束。

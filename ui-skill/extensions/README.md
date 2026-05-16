@@ -30,10 +30,9 @@
 
 **调用点**：
 
-| 调用时机 | 调用方 Skill | 作用 |
-|----------|-------------|------|
-| project-init Step 2 | `project-init` | 提供差异化美学方向建议 |
-| page-builder Step 2 | `page-builder` | 组件视觉差异化实现 |
+| 调用时机 | 编排器阶段 | 作用 |
+|----------|-----------|------|
+| 设计系统增强 | stage-2 | 提供差异化美学方向建议，生成 design_brief.json |
 
 **可执行设计规范（executable_specifications）**：
 
@@ -59,26 +58,26 @@ color_substitutions 新增 `use_instead_values` 字段（具体CSS色值数组�
 
 **子命令与调用点**：
 
-| 子命令 | 作用 | 调用方 Skill | 客观触发条件 |
+| 子命令 | 作用 | 编排器阶段 | 客观触发条件 |
 |--------|------|-------------|-------------|
-| colorize | 战略性色彩增强 | `project-init` | 品牌色占比<10% 或 中性色占比>70% |
-| typeset | 排版层级增强 | `project-init` | 字号层级<6级 或 最大/最小字号比<2 |
-| extract | 从现有代码逆向提取设计系统 | `project-init` | 输入包含"现有组件库"或"已有项目" |
-| shape | 编码前先设计（产出设计简报） | `page-builder` | 组件意图描述含"复杂"/状态数>5 |
-| animate | 动效策略评估 | `page-builder` | 组件状态转换>3个 或 有异步操作 |
-| bolder | 放大视觉表现力 | `page-builder` | 品牌色占比<15% 或 视觉描述含"安全/标准" |
-| quieter | 收敛视觉强度 | `page-builder` | 品牌色占比>40% 或 医疗/金融/法律场景 |
-| delight | 增加愉悦感微细节 | `page-builder` | 组件为核心用户流程节点 |
-| harden | 生产就绪化（边界/错误/i18n） | `page-builder` | 组件有表单输入/异步操作/国际化需求 |
-| polish | 最终质量打磨（始终最后执行） | `page-builder` | 所有其他外部调用完成后 |
-| layout | 页面布局/间距/视觉层级增强 | `page-builder` | 页面区块>5个 或 组件树层级>3 |
-| adapt | 响应式设计策略层适配 | `page-builder` | 目标平台含"跨平台"或"移动端" |
-| clarify | UX文案优化 | `page-builder` | 页面含表单/空状态/错误状态 |
-| onboard | 新手引导设计 | `page-builder` | 页面为首页/注册页/新手引导页 |
-| distill | 简化过度复杂的UI | `page-builder` | 页面组件数>10个 或 操作按钮>5个 |
-| audit | 5维度技术质量审计 | `page-builder` | 始终调用（如已部署） |
-| critique | UX设计评审（启发式评分） | `page-builder` | audit设计品味评分<80分 |
-| optimize | UI渲染性能专项诊断和修复 | `production-ready` | LCP>2.5s且瓶颈为UI渲染 |
+| colorize | 战略性色彩增强 | stage-2 | 品牌色占比<10% 或 中性色占比>70% |
+| typeset | 排版层级增强 | stage-2 | 字号层级<6级 或 最大/最小字号比<2 |
+| extract | 从现有代码逆向提取设计系统 | stage-2 | 输入包含"现有组件库"或"已有项目" |
+| shape | 编码前先设计（产出设计简报） | stage-4 | 组件意图描述含"复杂"/状态数>5 |
+| animate | 动效策略评估 | stage-4 | 组件状态转换>3个 或 有异步操作 |
+| bolder | 放大视觉表现力 | stage-4 | 品牌色占比<15% 或 视觉描述含"安全/标准" |
+| quieter | 收敛视觉强度 | stage-4 | 品牌色占比>40% 或 医疗/金融/法律场景 |
+| delight | 增加愉悦感微细节 | stage-4 | 组件为核心用户流程节点 |
+| harden | 生产就绪化（边界/错误/i18n） | stage-6 | 组件有表单输入/异步操作/国际化需求 |
+| polish | 最终质量打磨（始终最后执行） | stage-6 | 所有其他外部调用完成后 |
+| layout | 页面布局/间距/视觉层级增强 | stage-4 | 页面区块>5个 或 组件树层级>3 |
+| adapt | 响应式设计策略层适配 | stage-4 | 目标平台含"跨平台"或"移动端" |
+| clarify | UX文案优化 | stage-4 | 页面含表单/空状态/错误状态 |
+| onboard | 新手引导设计 | stage-4 | 页面为首页/注册页/新手引导页 |
+| distill | 简化过度复杂的UI | stage-4 | 页面组件数>10个 或 操作按钮>5个 |
+| audit | 5维度技术质量审计 | stage-4 | 始终调用（如已部署） |
+| critique | UX设计评审（启发式评分） | stage-4 | audit设计品味评分<80分 |
+| optimize | UI渲染性能专项诊断和修复 | stage-6 | LCP>2.5s且瓶颈为UI渲染 |
 
 ### ext-interaction-design — 交互动效模式库
 
@@ -90,9 +89,9 @@ color_substitutions 新增 `use_instead_values` 字段（具体CSS色值数组�
 
 **调用点**：
 
-| 调用时机 | 调用方 Skill | 作用 |
-|----------|-------------|------|
-| page-builder Step 2 | `page-builder` | 提供可直接使用的交互动效代码模式 |
+| 调用时机 | 编排器阶段 | 作用 |
+|----------|-----------|------|
+| 页面交互动效设计 | stage-4 | 提供可直接使用的交互动效代码模式 |
 
 ### ext-ui-ux-pro-max — 数据驱动设计决策引擎
 
@@ -104,10 +103,10 @@ color_substitutions 新增 `use_instead_values` 字段（具体CSS色值数组�
 
 **调用点**：
 
-| 调用时机 | 调用方 Skill | 作用 |
-|----------|-------------|------|
-| project-init Step 1 | `project-init` | 配色/字体/风格数据推荐（`--design-system`） |
-| page-builder Step 1 | `page-builder` | 页面结构推荐（`--domain` 自动检测页面类型） |
+| 调用时机 | 编排器阶段 | 作用 |
+|----------|-----------|------|
+| 设计系统基线推荐 | stage-2 | 配色/字体/风格数据推荐 |
+| 页面结构推荐 | stage-4 | 页面结构推荐 |
 
 ## 调用机制
 
@@ -152,14 +151,14 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 1. 编排器按阶段调度：核心阶段（Pipeline Skill）→ ext增强阶段（ext Skill）交替执行
 2. ext增强阶段：编排器使用 Skill 工具调用 ext-xxx，传递核心阶段产出作为输入
 3. 上层输入作为"已有方案"传入（参考，不作为约束），ext skill 独立审视并可能挑战现有方案
-4. ext skill 不存在或调用失败 → 执行降级策略，标注"xxx待 ext-xxx 支持"，不阻塞后续阶段
+4. ext skill 不存在或调用失败 → 按分类执行降级策略：核心增强类（ext-frontend-design/ext-ui-ux-pro-max）失败阻断下游阶段；可选增强类失败标注不阻断，记录到 quality_debt.json
 ```
 
 **编排器 ext 调用阶段**：
 
 | 阶段 | 名称 | 调用的 ext skill | 说明 |
 |------|------|-----------------|------|
-| stage-e | 快速生成 | ext-frontend-design | express 模式专属，直接生成页面代码 |
+| stage-e | 快速生成 | ext-frontend-design / ext-ui-ux-pro-max / ext-impeccable / ext-interaction-design（4选1，由express_engine参数决定） | express 模式专属，直接生成页面代码 |
 | stage-1 | 设计系统建立 | — | 内建条件分支：设计探索+PM约束审查 |
 | stage-2 | 设计增强+简报生成 | ext-ui-ux-pro-max, ext-impeccable(colorize/typeset), ext-frontend-design | 审视 project-init 产出，生成 design_brief.json |
 | stage-3 | 页面与组件构建 | — | page-builder 消费 design_brief |
@@ -193,7 +192,7 @@ ext skill 是专业设计能力，由 **ui-orchestrator 编排器**统一调度�
 | ext-frontend-design 与 ext-impeccable 视觉建议冲突 | 优先 ext-frontend-design（创意方向 > 质量打磨） |
 | bolder 与 quieter 同时满足触发条件 | 按品牌色占比判断（<25%→bolder，>40%→quieter） |
 | animate 与 ext-interaction-design 功能重叠 | animate 管策略（评估哪里需要动画），interaction-design 管实现（提供代码模式），先策略后实现 |
-| distill 删减了 bolder/delight 增强的内容 | 以 distill 为准（简化优先于增强） |
+| distill 删减了 bolder/delight 增强的内容 | 以 distill 为准（简化优先于增强），但 distill 必须评估被删减内容的设计意图：若被删减内容属于 design_brief 的强约束维度（color_specifications/typography_specifications/visual_bans），则保留不删减；若属于指导性维度（differentiation_direction），可删减但需记录到 design_decisions |
 
 **ext Skill 冲突消解优先级**：ext-frontend-design > ext-ui-ux-pro-max > ext-impeccable
 

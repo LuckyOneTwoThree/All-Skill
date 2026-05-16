@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "design-brief",
+  "description": "设计简报——ext Skill产出的可执行设计规范，供page-builder直接消费",
+  "type": "object",
+  "required": ["brief_id", "generated_at", "color_specifications", "typography_specifications", "layout_instructions", "brand_color_strategy", "visual_bans", "differentiation_direction"],
+  "properties": {
+    "brief_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "color_specifications": {
+      "type": "object",
+      "description": "具体CSS色值规范，替代令牌推导值",
+      "properties": {
+        "background_primary": {"type": "string", "description": "主背景色（如oklch(99% 0.002 60)）"},
+        "background_secondary": {"type": "string", "description": "次背景色"},
+        "surface_elevated": {"type": "string", "description": "提升面背景色"},
+        "text_primary": {"type": "string", "description": "主文本色"},
+        "text_secondary": {"type": "string", "description": "次文本色"},
+        "brand_primary": {"type": "string", "description": "品牌主色"},
+        "brand_secondary": {"type": "string", "description": "品牌辅色"},
+        "accent": {"type": "string", "description": "强调色"},
+        "success": {"type": "string", "description": "成功色"},
+        "warning": {"type": "string", "description": "警告色"},
+        "error": {"type": "string", "description": "错误色"},
+        "border": {"type": "string", "description": "边框色"},
+        "gradient_hero": {"type": "string", "description": "Hero区域渐变（如linear-gradient(...)）"}
+      }
+    },
+    "typography_specifications": {
+      "type": "object",
+      "description": "具体排版规范",
+      "properties": {
+        "font_families": {
+          "type": "object",
+          "properties": {
+            "heading": {"type": "string", "description": "标题字体（如'DM Sans'）"},
+            "body": {"type": "string", "description": "正文字体"},
+            "mono": {"type": "string", "description": "等宽字体"}
+          }
+        },
+        "type_scale_values": {
+          "type": "object",
+          "properties": {
+            "h1": {"type": "string", "description": "如48px/700/1.1"},
+            "h2": {"type": "string"},
+            "h3": {"type": "string"},
+            "body_large": {"type": "string"},
+            "body": {"type": "string"},
+            "body_small": {"type": "string"},
+            "caption": {"type": "string"}
+          }
+        }
+      }
+    },
+    "layout_instructions": {
+      "type": "array",
+      "description": "页面布局指令",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "page"],
+        "properties": {
+          "page_id": {"type": "string", "description": "页面唯一标识，必须与page_manifest.json.pages[].page_id一致"},
+          "page": {"type": "string", "description": "页面名称（人类可读）"},
+          "layout_type": {"type": "string", "description": "布局类型（如asymmetric-hero/sidebar-main/fullscreen-cta）"},
+          "visual_focus": {"type": "string", "description": "视觉焦点区域"},
+          "grid_config": {"type": "string", "description": "网格配置（如12col/240px-sidebar/1fr）"},
+          "breakpoints": {"type": "object", "description": "响应式断点配置"}
+        }
+      }
+    },
+    "component_specifications": {
+      "type": "array",
+      "description": "组件级设计规范",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page_id": {"type": "string", "description": "所属页面标识（与page_manifest.json.pages[].page_id关联）"},
+          "component": {"type": "string", "description": "组件名称"},
+          "variant": {"type": "string", "description": "变体（如primary/secondary/ghost）"},
+          "structure": {"type": "string", "description": "组件结构描述"},
+          "states": {"type": "array", "items": {"type": "string"}, "description": "必须实现的状态"},
+          "specific_values": {"type": "object", "description": "具体CSS值（如border-radius: 12px, padding: 16px 24px）"}
+        }
+      }
+    },
+    "animation_specifications": {
+      "type": "array",
+      "description": "动效规范",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page_id": {"type": "string", "description": "所属页面标识（与page_manifest.json.pages[].page_id关联）"},
+          "element": {"type": "string", "description": "应用动效的元素"},
+          "trigger": {"type": "string", "description": "触发条件"},
+          "animation": {"type": "string", "description": "动效描述（如fade-in-up 0.4s ease-out）"},
+          "duration": {"type": "string", "description": "时长（如300ms）"},
+          "easing": {"type": "string", "description": "缓动函数（如cubic-bezier(0.16, 1, 0.3, 1)）"},
+          "delay": {"type": "string", "description": "延迟（如100ms stagger）"}
+        }
+      }
+    },
+    "brand_color_strategy": {
+      "type": "object",
+      "description": "品牌色分布策略",
+      "properties": {
+        "usage_mode": {"type": "string", "description": "accent/spotlight/flood"},
+        "target_percentage": {"type": "number", "description": "品牌色占页面面积目标百分比"},
+        "distribution": {"type": "array", "items": {"type": "object", "properties": {"area": {"type": "string"}, "usage": {"type": "string"}}}, "description": "各区域品牌色使用方式"}
+      }
+    },
+    "visual_bans": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "绝对禁止的视觉模式（如'均匀卡片网格'/'蓝紫渐变白底'/'Inter字体'）"
+    },
+    "differentiation_direction": {
+      "type": "string",
+      "description": "差异化方向描述（如'暖色调+大字号跳跃+不对称布局'）"
+    }
+  }
+}

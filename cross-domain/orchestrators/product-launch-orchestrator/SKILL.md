@@ -35,7 +35,7 @@ metadata:
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+编排协议遵循 [orchestrator-protocol.md](../../../templates/orchestrator-protocol.md) 统一标准。
 
 ## Pipeline
 

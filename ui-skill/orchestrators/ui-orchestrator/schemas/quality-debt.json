@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "quality-debt",
+  "description": "质量债务追踪——降级/标注/待修复问题的统一记录",
+  "type": "object",
+  "required": ["debt_items"],
+  "properties": {
+    "debt_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "stage", "description", "severity", "status", "created_at"],
+        "properties": {
+          "id": {"type": "string"},
+          "stage": {"type": "string", "description": "产生债务的阶段（如stage-2）"},
+          "description": {"type": "string", "description": "债务描述"},
+          "severity": {"type": "string", "enum": ["low", "medium", "high"]},
+          "status": {"type": "string", "enum": ["open", "resolved", "deferred"]},
+          "created_at": {"type": "string"},
+          "resolved_at": {"type": "string"},
+          "resolution": {"type": "string"}
+        }
+      }
+    }
+  }
+}

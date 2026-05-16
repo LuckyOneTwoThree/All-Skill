@@ -111,11 +111,15 @@ project-init → page-builder → api-integration → production-ready
 
 ui-orchestrator（四种执行模式）
      │
-     ├─ express: ext-frontend-design 直接生成 → 最小质量检查 → 输出
-     │    └─ 适用：单页面/落地页/快速原型
-     │    └─ 放弃：设计系统一致性、令牌驱动、质量债务追踪
+     ├─ express: 选择一个 ext Skill 直接生成 → 最小质量检查 → 输出
+     │    └─ 适用：单页面/落地页/快速原型/概念验证
+     │    └─ 放弃：设计系统一致性、令牌驱动、组件库集成、质量债务追踪、PM↔UI反馈闭环
      │
-     ├─ project-init（必经，express模式跳过）
+     ├─ prototype: project-init → prototype输出（视觉方向+约束审查，无页面代码）
+     │    └─ 适用：需求验证、多方案对比、交互逻辑对齐
+     │    └─ 放弃：页面代码、ext增强、质量审计、API集成、生产就绪
+     │
+     ├─ project-init（必经，express/prototype模式跳过page-builder）
      │    └─ 条件分支A: 设计探索（mode=progressive）
      │    └─ 条件分支B: PM约束审查（有PM输入时）
      ├─ page-builder（必经，消费 design_brief.json）
@@ -204,7 +208,7 @@ UI与前端一体化的核心模块。合并原 ui-component-gen、page-assembly
 
 | Skill | 作用 | 输入 | 输出 | 交互模式 |
 |-------|------|------|------|----------|
-| api-integration | 基于OpenAPI生成前端请求层、类型定义、Mock数据和Hook | API契约文档、页面数据需求 | 请求代码+类型+Mock | 🤖 |
+| api-integration | 基于OpenAPI生成前端请求层、类型定义、Mock数据和Hook | API契约文档、页面数据需求 | 请求代码+类型+Mock | 🤖→👤 |
 
 **阶段卡口**：
 - 100%接口有类型定义+Mock数据
@@ -288,7 +292,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 ## 外部 Skill 扩展
 
-核心 Skill 通过 `Skill: ext-xxx` 定向调用外部 Skill，未安装时自动降级不阻塞流程。
+核心 Skill 通过 `Skill: ext-xxx` 定向调用外部 Skill，未安装时按分类执行降级策略：**核心增强类**（ext-frontend-design、ext-ui-ux-pro-max）失败阻断下游阶段；**可选增强类**（ext-impeccable 子命令、ext-interaction-design）失败标注不阻断。
 
 > **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-frontend-design`），与核心自建 Skill 区分。部署到 `.trae/skills/` 下扁平平铺即可。详见 [extensions/README.md](extensions/README.md)。
 
@@ -343,7 +347,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 | Skill | 版本 | 输出 Schema 版本 |
 |-------|------|----------------|
-| ui-orchestrator | 7.0 | — |
+| ui-orchestrator | 7.1 | — |
 | project-init | 1.7 | visual_direction v1.2（含 anchor_overrides + 语义一致性校验） |
 | page-builder | 2.0 | pages.json v2.0（含 design_brief 消费 + design_decisions + design_feedback） |
 | api-integration | 2.0 | api-integration.json v1.0 |

@@ -72,15 +72,15 @@ output/ui-project-init/
 
 ## 外部 Skill 扩展
 
-> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-frontend-design`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-frontend-design`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，核心增强类（ext-frontend-design/ext-ui-ux-pro-max）失败阻断下游，可选增强类失败标注不阻断。详见 [extensions/README.md](../extensions/README.md)。
 
-| 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
-|----------------|---------|---------|------|------|
-| `ext-frontend-design` | 视觉差异化，避免AI同质化 | project-init Step 2（**必调**） | 品牌规范+产品定位+目标语言 | 差异化美学方向建议 |
-| `ext-ui-ux-pro-max` `--design-system` | 数据驱动设计决策（配色/字体/风格推荐） | project-init Step 1 | 品牌规范+产品定位 | 设计推荐数据 |
-| `ext-impeccable` `colorize` | 战略性色彩增强 | project-init Step 1 | 令牌草案+品牌色占比 | 增强后的色彩方案 |
-| `ext-impeccable` `typeset` | 排版层级增强 | project-init Step 2 | 字号/字重层级 | 增强后的排版方案 |
-| `ext-impeccable` `extract` | 从现有代码逆向提取设计系统 | project-init Step 3 | 现有组件库/项目代码 | 逆向提取的设计令牌 |
+| 外部 Skill 名称 | 增强能力 | 编排器阶段 | 输入 | 输出 |
+|----------------|---------|-----------|------|------|
+| `ext-frontend-design` | 视觉差异化，避免AI同质化 | stage-2（**必调**） | 品牌规范+产品定位+目标语言 | 差异化美学方向建议 |
+| `ext-ui-ux-pro-max` `--design-system` | 数据驱动设计决策（配色/字体/风格推荐） | stage-2 | 品牌规范+产品定位 | 设计推荐数据 |
+| `ext-impeccable` `colorize` | 战略性色彩增强 | stage-2 | 令牌草案+品牌色占比 | 增强后的色彩方案 |
+| `ext-impeccable` `typeset` | 排版层级增强 | stage-2 | 字号/字重层级 | 增强后的排版方案 |
+| `ext-impeccable` `extract` | 从现有代码逆向提取设计系统 | stage-2 | 现有组件库/项目代码 | 逆向提取的设计令牌 |
 
 ## 核心信念
 

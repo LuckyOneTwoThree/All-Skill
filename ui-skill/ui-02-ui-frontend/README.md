@@ -4,7 +4,7 @@
 
 UI与前端一体化的核心模块。将设计系统转化为可运行的前端代码，实现"设计即实现，实现即设计"。目标是**基于设计简报和视觉方向，在页面上下文中一体化生成组件并组装为完整页面，内建质量门禁确保产出质量**。
 
-**express 模式说明**：当 `mode=express` 时，本模块（page-builder）被跳过，由 ext-frontend-design 直接生成页面代码。express 模式不建立设计系统、不生成 design tokens、不经过增强-审计循环，仅通过最小质量检查（WCAG AA + 无硬编码密钥 + 可运行）。适用于单页面/落地页/快速原型场景。
+**express 模式说明**：当 `mode=express` 时，本模块（page-builder）被跳过，由选定的 ext Skill（visual→ext-frontend-design / ux→ext-ui-ux-pro-max / polish→ext-impeccable / motion→ext-interaction-design）直接生成页面代码。express 模式不建立设计系统、不生成 design tokens、不经过增强-审计循环，仅通过最小质量检查（WCAG AA + 无硬编码密钥 + 可运行）。适用于单页面/落地页/快速原型场景。
 
 ## 何时使用
 
@@ -85,19 +85,19 @@ output/ui-frontend/
 
 ## 外部 Skill 扩展
 
-> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，核心增强类失败阻断下游，可选增强类失败标注不阻断。详见 [extensions/README.md](../extensions/README.md)。
 
-| 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
-|----------------|---------|---------|------|------|
-| `ext-ui-ux-pro-max` `--domain landing\|dashboard` | 数据驱动页面结构推荐 | page-builder Step 1 | 页面类型+需求 | 页面结构推荐 |
-| `ext-impeccable` `layout adapt` | 布局增强+响应式适配 | page-builder Step 1 | 页面区块+目标平台 | 增强后的布局代码 |
-| `ext-impeccable` `shape` | 编码前设计简报 | page-builder Step 2 | 组件意图+状态数 | 设计简报 |
-| `ext-frontend-design` | 视觉差异化，避免AI同质化 | 编排器 stage-2（非 page-builder 阶段） | visual_direction+品牌规范 | 可执行设计规范（design_brief.json） |
-| `ext-interaction-design` | 交互动效代码模式 | page-builder Step 2 | 拖拽/手势/复杂状态转换 | 交互动效代码 |
-| `ext-impeccable` `animate bolder\|quieter delight` | 动效策略+视觉表现力+愉悦感 | page-builder Step 2 | 组件状态+品牌色占比 | 增强后的组件代码 |
-| `ext-impeccable` `clarify onboard distill` | UX文案+新手引导+简化 | page-builder Step 3 | 页面内容+类型 | 增强后的页面代码 |
-| `ext-impeccable` `audit critique` | 技术质量审计+UX设计评审 | 编排器 stage-4（增强+审计一体化） | 组件代码+页面代码 | 审计报告+评审评分 |
-| `ext-impeccable` `harden polish` | 生产就绪化+质量打磨 | 编排器 stage-6（生产就绪+优化） | 组件代码 | 打磨后的组件代码 |
+| 外部 Skill 名称 | 增强能力 | 编排器阶段 | 输入 | 输出 |
+|----------------|---------|-----------|------|------|
+| `ext-ui-ux-pro-max` `--domain landing\|dashboard` | 数据驱动页面结构推荐 | stage-4 | 页面类型+需求 | 页面结构推荐 |
+| `ext-impeccable` `layout adapt` | 布局增强+响应式适配 | stage-4 | 页面区块+目标平台 | 增强后的布局代码 |
+| `ext-impeccable` `shape` | 编码前设计简报 | stage-4 | 组件意图+状态数 | 设计简报 |
+| `ext-frontend-design` | 视觉差异化，避免AI同质化 | stage-2 | visual_direction+品牌规范 | 可执行设计规范（design_brief.json） |
+| `ext-interaction-design` | 交互动效代码模式 | stage-4 | 拖拽/手势/复杂状态转换 | 交互动效代码 |
+| `ext-impeccable` `animate bolder\|quieter delight` | 动效策略+视觉表现力+愉悦感 | stage-4 | 组件状态+品牌色占比 | 增强后的组件代码 |
+| `ext-impeccable` `clarify onboard distill` | UX文案+新手引导+简化 | stage-4 | 页面内容+类型 | 增强后的页面代码 |
+| `ext-impeccable` `audit critique` | 技术质量审计+UX设计评审 | stage-4 | 组件代码+页面代码 | 审计报告+评审评分 |
+| `ext-impeccable` `harden polish` | 生产就绪化+质量打磨 | stage-6 | 组件代码 | 打磨后的组件代码 |
 
 ## 核心信念
 

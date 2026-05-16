@@ -84,7 +84,7 @@ output/ui-frontend-integration/
 
 ## 外部 Skill 扩展
 
-> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，未安装时自动降级不阻塞流程。详见 [extensions/README.md](../extensions/README.md)。
+> **命名规范**：外部 Skill 统一使用 `ext-` 前缀（如 `ext-impeccable`），与核心自建 Skill 区分。核心 Skill 通过 `Skill: ext-xxx` 定向调用，核心增强类失败阻断下游，可选增强类失败标注不阻断。详见 [extensions/README.md](../extensions/README.md)。
 
 | 外部 Skill 名称 | 增强能力 | 调用时机 | 输入 | 输出 |
 |----------------|---------|---------|------|------|

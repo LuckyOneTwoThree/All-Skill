@@ -190,11 +190,13 @@ Core Skills verify ext-frontend-design output against these criteria (dispatched
 
 ## Degradation Strategy
 
-| Scenario | Behavior |
-|----------|----------|
-| ext-frontend-design not deployed | Skip, annotate "视觉差异化待 ext-frontend-design 支持", do not block |
-| ext-frontend-design call fails | Execute degradation: apply built-in anti-AI-homogenization rules (avoid Inter/Roboto/blue-purple gradients/card grids), annotate "视觉差异化使用内置降级规则" |
-| Output fails verification | Re-request once with specific failure reasons; if still fails, use partial output + annotate failed criteria |
+> **注意**：ext-frontend-design 是核心增强类 ext Skill。以下为 Skill 自身降级行为，实际阻断逻辑由编排器 gate 决定。编排器将 ext-frontend-design 列为核心增强，未部署或调用失败时阻断下游阶段（stage-3）。
+
+| Scenario | Skill自身行为 | 编排器处理 |
+|----------|-------------|-----------|
+| ext-frontend-design not deployed | Skill不可用 | 编排器阻断stage-3，提示安装或切换express模式 |
+| ext-frontend-design call fails | 执行内置降级：应用反AI同质化规则（避免Inter/Roboto/蓝紫渐变/卡片网格），标注"视觉差异化使用内置降级规则" | 编排器评估降级结果：若visual_direction包含差异化规范则放行，否则阻断stage-3 |
+| Output fails verification | 重新请求一次，附带失败原因；仍失败则使用部分输出+标注失败项 | 编排器评估部分输出：若满足gate条件则放行，否则阻断 |
 
 ## Design Thinking
 

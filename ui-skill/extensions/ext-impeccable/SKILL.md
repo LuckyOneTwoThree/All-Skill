@@ -182,4 +182,17 @@ If the first word is `craft`, setup still runs first, but [reference/craft.md](r
 node {SKILL_DIR}/scripts/pin.mjs <pin|unpin> <command>
 ```
 
+## Degradation Strategy
+
+| 场景 | 行为 | 编排器处理 |
+|------|------|-----------|
+| 未部署（stage-2 colorize/typeset） | 跳过，标注"色彩/排版增强待 ext-impeccable 支持" | 不阻断（可选增强类） |
+| 未部署（stage-4 audit/critique） | 跳过，quality_score 使用内建自评分数，标注"质量审计待 ext-impeccable 支持" | 不阻断，但 gate 门槛降级（75→60） |
+| 未部署（stage-4 其他子命令） | 跳过，标注"UX增强待 ext-impeccable 支持" | 不阻断（可选增强类） |
+| 未部署（stage-6 harden/polish/optimize） | 跳过，标注"生产优化待 ext-impeccable 支持" | 不阻断（可选增强类） |
+| 调用失败 | 记录失败原因到 quality_debt.json，标注"ext-impeccable {子命令}调用失败" | 按上述分类处理 |
+| 输出验证失败 | 重新请求一次，附带失败原因；仍失败则使用部分输出+标注失败项 | 按上述分类处理 |
+
+> **注意**：ext-impeccable 是可选增强类 ext Skill，但 audit/critique 的产出（quality_score）是 Stage-4 gate 的必要输入。未部署时使用内建自评分数替代，gate 门槛从 75 降级为 60。
+
 Valid `<command>` is any command from the table above. Report the script's result concisely. Confirm the new shortcut on success, relay stderr verbatim on error.

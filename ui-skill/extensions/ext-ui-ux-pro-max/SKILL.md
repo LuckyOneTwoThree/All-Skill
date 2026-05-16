@@ -420,3 +420,13 @@ Before delivering UI code, verify these items:
 - [ ] Form inputs have labels
 - [ ] Color is not the only indicator
 - [ ] `prefers-reduced-motion` respected
+
+## Degradation Strategy
+
+| 场景 | 行为 | 编排器处理 |
+|------|------|-----------|
+| 未部署 | 核心增强类——编排器阻断下游阶段（stage-3），提示用户安装 ext-ui-ux-pro-max 或切换到 express 模式 | 阻断 |
+| 调用失败 | 编排器阻断下游阶段，记录失败原因到 quality_debt.json，提示用户重试或切换模式 | 阻断 |
+| 输出验证失败 | 重新请求一次，附带失败原因；仍失败则阻断下游阶段 | 阻断 |
+
+> **注意**：ext-ui-ux-pro-max 是核心增强类 ext Skill，其产出（设计系统推荐）是 design_brief.json 的必要输入。未部署或调用失败时**不可跳过**，必须阻断下游阶段。
