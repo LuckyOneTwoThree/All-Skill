@@ -1,0 +1,219 @@
+---
+name: planning-north-star
+description: 当需要确定产品核心指标、OKR北极星指标、指标体系设计时使用。北极星指标选择。AI辅助选择最能衡量产品成功和用户价值的指标。这是人类决策点，AI提供数据支撑，人类最终选择。关键词：北极星指标、核心指标、指标选择、产品成功指标、NSM、关键指标、看什么数据。
+metadata:
+  module: "产品商业与战略"
+  sub-module: "战略规划与路线图"
+  type: "pipeline"
+  version: "2.1"
+  domain_tags: ["SaaS", "通用"]
+  trigger_examples:
+    - "我们的核心指标该选什么"
+    - "怎么衡量产品成功"
+  interaction_mode: "human_ai_collaborate"
+---
+
+# 北极星指标选择
+
+## 核心原则
+
+1. **多候选比较**——生成3-5个候选指标，四维度评分后推荐，人类最终选择
+2. **价值-商业双锚**——北极星必须同时关联用户价值和商业成功，缺一不可
+3. **输入变量可驱动**——推荐指标必须拆解为3个可量化、可追踪、可影响的输入变量
+4. **防操纵设计**——评估指标被操纵、失效、误导的风险并给出预警
+
+## 交互模式
+👤→🤖 人类执行AI辅助
+
+## 输入
+
+| 输入项 | 类型 | 必填 | 来源 | 说明 |
+|--------|------|------|------|------|
+| 用户价值数据 | JSON | 是 | user-research-user-modeling / user-research-voice-analysis | 探索阶段用户价值数据 |
+| BMC商业模式画布 | JSON | 是 | output/pm-strategy/business-model-canvas/bmc.json | 价值主张、收入来源 |
+| 业务现状数据 | JSON | ○ | 用户提供 | 当前业务指标、用户规模 |
+
+## 执行步骤
+
+### Step 1: 候选指标生成
+
+基于输入数据生成3-5个北极星指标候选：
+
+- 从BMC中提取价值主张关键词，映射为可量化指标
+- 从用户价值数据中提取用户核心行为，转化为行为指标
+- 从业务现状数据中提取现有指标，评估是否适合作为北极星
+- 每个候选指标必须包含：指标名称、计算公式、数据来源、更新频率
+
+### Step 2: 四维度评分
+
+对每个候选指标按4个维度进行1-5分评分：
+
+| 维度 | 评分标准 |
+|------|----------|
+| 与核心价值关系 | 5分=直接衡量用户价值实现 3分=间接关联 1分=无关联 |
+| 与商业成功相关性 | 5分=与收入/增长强相关 3分=弱相关 1分=无关 |
+| 可操作性 | 5分=团队可直接影响 3分=部分影响 1分=无法影响 |
+| 可衡量性 | 5分=数据定义清晰+自动采集 3分=需人工采集 1分=无法采集 |
+
+**综合得分 = 0.3×价值关系 + 0.3×商业相关 + 0.2×可操作性 + 0.2×可衡量性**
+
+### Step 3: 推荐与备选
+
+- 综合得分≥4.0的指标作为推荐北极星指标
+- 综合得分3.0-4.0的指标作为备选指标
+- 综合得分<3.0的指标标注淘汰原因
+- 推荐指标需与BMC价值主张和OKR对齐验证
+
+### Step 4: 输入变量定义
+
+为推荐指标定义3个关键输入变量（驱动因素）：
+
+- 每个输入变量必须可量化、可追踪、可影响
+- 输入变量与北极星指标的因果关系需明确
+- 标注每个输入变量的数据来源和采集方式
+
+## 输出
+
+**存储路径**：`output/pm-strategy/planning-north-star/`
+
+**输出文件**：north_star.json
+
+### 输出校验规则
+
+| 字段路径 | 类型 | 必填 | 说明 |
+|----------|------|------|------|
+| north_star_metric.recommended.metric_name | string | 是 | 推荐北极星指标名称 |
+| north_star_metric.recommended.definition | string | 是 | 指标定义和计算公式 |
+| north_star_metric.recommended.relationship_to_value | string | 是 | 与用户价值的关系说明 |
+| north_star_metric.recommended.relationship_to_business | string | 是 | 与商业成功的关系说明 |
+| north_star_metric.recommended.measurement.data_source | string | 是 | 数据来源 |
+| north_star_metric.recommended.measurement.calculation | string | 是 | 计算公式 |
+| north_star_metric.recommended.measurement.frequency | string | 是 | 更新频率 |
+| north_star_metric.alternatives | array | 是 | 至少2个备选指标 |
+| north_star_metric.alternatives[].fit_score | number | 是 | 备选指标适配评分0-1 |
+| north_star_metric.analysis_summary.recommendation_rationale | string | 是 | 推荐理由 |
+
+```yaml
+north_star_metric:
+  recommended:
+    metric_name: "Weekly Active Users (WAU)"
+    definition: "过去7天内至少访问1次的独立用户数"
+    relationship_to_value: "衡量用户持续使用产品的频率，反映产品为用户提供的持续价值"
+    relationship_to_business: "与广告收入和付费转化高度相关，是增长引擎的关键指标"
+    actionability: "高-可通过产品优化、内容运营、推送策略提升"
+    measurement:
+      data_source: "用户行为日志"
+      calculation: "COUNT(DISTINCT user_id WHERE last_active <= 7 days)"
+      frequency: "每日更新"
+      owner: "增长团队"
+  alternatives:
+    - metric_name: "Daily Active Users (DAU)"
+      pros: "实时性强，响应快"
+      cons: "波动大，稳定性差"
+      fit_score: 0.75
+    - metric_name: "Monthly Active Users (MAU)"
+      pros: "稳定性好，反映长期用户基础"
+      cons: "响应慢，难以及时发现问题"
+      fit_score: 0.70
+    - metric_name: "User Engagement Score"
+      pros: "综合反映用户参与度"
+      cons: "定义主观，难以标准化"
+      fit_score: 0.65
+  analysis_summary:
+    recommendation_rationale: "WAU平衡了实时性和稳定性，与用户价值和产品商业成功都有强关联，且团队有明确的提升路径"
+    implementation_notes: "需要建立用户ID体系和7天活跃计算逻辑，建议与DAU并行监测"
+    warning: "注意区分新用户和老用户的活跃模式差异"
+```
+
+## AI辅助分析内容
+
+AI应该提供以下分析支撑：
+
+1. **指标候选池**
+   - 基于BMC分析可能的指标
+   - 基于用户价值数据分析关联指标
+   - 基于行业benchmark推荐指标
+
+2. **相关性分析**
+   - 各指标与收入的相关性分析
+   - 各指标与留存的相关性分析
+   - 指标间的相关性矩阵
+
+3. **趋势分析**
+   - 各候选指标的历史趋势
+   - 指标变化的归因分析
+   - 预测指标未来的变化
+
+4. **风险评估**
+   - 指标操纵风险
+   - 指标失效风险
+   - 指标误导风险
+
+### 决策流程
+
+```
+1. 人类发起需求
+2. AI分析并推荐指标候选
+3. 人类评估候选指标
+4. AI提供详细分析支撑
+5. 人类讨论并选择
+6. AI记录决策和理由
+7. 人类确认最终指标
+```
+
+## 决策规则
+
+1. **人类决策**：北极星指标选择是人类决策点
+2. **AI支撑**：AI只提供分析支撑，不做最终决策
+3. **多方参与**：建议产品、技术、业务多方参与讨论
+
+## 质量检查
+
+- [ ] 至少3个指标候选已分析
+- [ ] 每个候选有5个维度评估
+- [ ] 相关性分析已完成
+- [ ] 风险评估已提供
+- [ ] 最终选择有人类确认记录
+- [ ] 选择理由已记录
+
+---
+
+## 降级策略
+
+当上游文件不存在时，本Skill仍可独立执行：
+
+| 缺失的上游输入 | 降级方案 | 输出影响 |
+|---------------|---------|---------|
+| 用户价值数据（voice-analysis / persona） | 用户提供产品描述 → 推荐北极星候选 | 缺乏用户价值数据，指标与用户价值关联度可能偏弱 |
+| bmc.json | 用户提供产品描述 → 推荐北极星候选 | 缺乏BMC数据，指标与商业模型关联度可能偏弱 |
+| 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选 | 整体置信度降低，指标缺乏价值-商业双锚定 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 | 整体置信度显著降低，推荐仅为行业通用参考 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，无法评估指标现状 |
+
+## 数据获取说明
+
+本Skill需要用户价值数据和BMC数据，请通过以下方式之一提供：
+  1. 直接描述产品核心价值和业务模式
+  2. 上传persona.json / voice-analysis.json / bmc.json文件
+  3. 提供数据文件路径
+- AI不负责外部数据采集，仅负责分析
+
+---
+
+## 上游变更响应
+
+### 上游变更影响表
+
+| 上游变更 | 影响范围 | 响应策略 |
+|----------|----------|----------|
+| bmc.json价值主张变更 | 候选指标与价值主张的关联需重新评估 | 重新执行Step 1-2，更新候选指标和评分 |
+| bmc.json收入模式变更 | 指标与商业成功相关性 | 重新评分商业相关维度 |
+| persona/voice-analysis用户价值更新 | 候选指标池和用户价值关联 | 重新执行Step 1，更新候选指标 |
+
+### 下游通知机制表
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 北极星指标变更 | planning-okr、planning-roadmap | 输出文件版本号+变更摘要 |
+| 输入变量定义变更 | planning-okr | 输出文件版本号+变更摘要 |
+| 候选指标评分变更 | planning-okr | 输出文件版本号+变更摘要 |

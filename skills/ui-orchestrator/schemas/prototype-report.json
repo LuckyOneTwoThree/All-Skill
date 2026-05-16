@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "prototype-report",
+  "description": "原型报告——prototype模式输出，包含视觉方向概要、关键页面布局描述和组件选型摘要",
+  "type": "object",
+  "required": ["report_id", "generated_at", "visual_direction_summary", "key_pages", "component_selection_summary"],
+  "properties": {
+    "report_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "visual_direction_summary": {
+      "type": "object",
+      "description": "视觉方向概要",
+      "required": ["aesthetic_direction", "color_strategy", "typography_strategy"],
+      "properties": {
+        "aesthetic_direction": {"type": "string", "description": "美学方向描述"},
+        "color_strategy": {"type": "string", "description": "色彩策略概要"},
+        "typography_strategy": {"type": "string", "description": "排版策略概要"},
+        "visual_bans": {"type": "array", "items": {"type": "string"}, "description": "视觉禁忌列表"},
+        "differentiation_direction": {"type": "string", "description": "差异化方向"}
+      }
+    },
+    "key_pages": {
+      "type": "array",
+      "description": "关键页面布局描述",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "name", "layout_description"],
+        "properties": {
+          "page_id": {"type": "string", "description": "页面唯一标识"},
+          "name": {"type": "string", "description": "页面名称"},
+          "route": {"type": "string", "description": "路由路径"},
+          "layout_description": {"type": "string", "description": "布局描述（如：顶部全宽hero+三列特性卡片+底部CTA）"},
+          "visual_focus": {"type": "string", "description": "视觉焦点区域"},
+          "key_components": {"type": "array", "items": {"type": "string"}, "description": "关键组件列表"}
+        }
+      }
+    },
+    "component_selection_summary": {
+      "type": "array",
+      "description": "组件选型摘要",
+      "items": {
+        "type": "object",
+        "required": ["component", "type", "rationale"],
+        "properties": {
+          "component": {"type": "string", "description": "组件名称"},
+          "type": {"type": "string", "description": "组件类型（如layout/navigation/data_display/form/feedback）"},
+          "rationale": {"type": "string", "description": "选型理由"},
+          "alternatives": {"type": "array", "items": {"type": "string"}, "description": "备选方案"}
+        }
+      }
+    },
+    "constraint_review_highlights": {
+      "type": "array",
+      "description": "PM约束审查要点（仅当constraint_review.json存在时包含）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dimension": {"type": "string"},
+          "assessment": {"type": "string"},
+          "finding": {"type": "string"}
+        }
+      }
+    },
+    "next_steps": {
+      "type": "string",
+      "description": "后续步骤建议（如：确认视觉方向后切换full模式从stage-2开始）"
+    }
+  }
+}

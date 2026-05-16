@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ui-orchestrator-checkpoint",
+  "description": "UI编排器断点续执行检查点",
+  "type": "object",
+  "required": ["mode", "completed_stages", "pending_stages", "skipped_stages", "stage_outputs", "ext_enhancement_applied", "last_updated"],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["express", "prototype", "full", "progressive"],
+      "description": "当前执行模式。模式切换时更新为新模式，previous_mode保留原模式供参考"
+    },
+    "previous_mode": {
+      "type": "string",
+      "enum": ["express", "prototype", "full", "progressive"],
+      "description": "切换前的执行模式（仅模式切换时存在，如prototype→full）"
+    },
+    "completed_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "已成功完成的阶段ID列表（如 ['stage-1', 'stage-2']）"
+    },
+    "pending_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "待执行的阶段ID列表（如 ['stage-3', 'stage-4']）"
+    },
+    "skipped_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "reason": {"type": "string"}
+        }
+      },
+      "description": "跳过的阶段及原因"
+    },
+    "stage_outputs": {
+      "type": "object",
+      "description": "每个已完成阶段的输出文件路径，键为阶段ID，值为输出路径"
+    },
+    "ext_enhancement_applied": {
+      "type": "object",
+      "description": "ext阶段执行状态，键为阶段ID，值为该阶段ext Skill调用结果摘要",
+      "properties": {
+        "stage-1": {"type": "object", "description": "设计系统建立结果（含条件分支：设计探索/PM约束审查）"},
+        "stage-e": {"type": "object", "description": "快速生成结果（express模式）"},
+        "stage-p": {"type": "object", "description": "原型输出结果（prototype模式）"},
+        "stage-2": {"type": "object", "description": "设计增强+简报生成结果"},
+        "stage-3": {"type": "object", "description": "页面与组件构建结果（含design_feedback回传状态）"},
+        "stage-4": {"type": "object", "description": "页面增强+质量审计结果"},
+        "stage-5": {"type": "object", "description": "API集成结果"},
+        "stage-6": {"type": "object", "description": "生产就绪+优化结果"}
+      }
+    },
+    "last_updated": {"type": "string", "description": "最后更新时间（ISO 8601）"}
+  }
+}

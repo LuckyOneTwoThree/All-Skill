@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "constraint-review",
+  "description": "PM约束审查结果——UI侧从设计视角审查PM产出的合理性，保障设计自由度",
+  "type": "object",
+  "required": ["review_id", "generated_at", "dimensions", "findings"],
+  "properties": {
+    "review_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "source_artifacts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "审查的PM产出文件列表（如['prd.json', 'ia_proposals.json']）"
+    },
+    "dimensions": {
+      "type": "array",
+      "description": "5维度审查结果",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "assessment", "rationale"],
+        "properties": {
+          "dimension": {"type": "string", "enum": ["page_division", "functional_areas", "component_selection", "navigation_structure", "interaction_complexity"]},
+          "assessment": {"type": "string", "enum": ["reasonable", "minor_concern", "major_concern", "critical_concern"]},
+          "rationale": {"type": "string", "description": "评估理由"},
+          "suggestion": {"type": "string", "description": "改进建议（仅concern级别时提供）"}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "具体发现的问题",
+      "items": {
+        "type": "object",
+        "required": ["id", "dimension", "severity", "description", "recommendation"],
+        "properties": {
+          "id": {"type": "string", "description": "发现唯一标识"},
+          "dimension": {"type": "string", "enum": ["page_division", "functional_areas", "component_selection", "navigation_structure", "interaction_complexity"]},
+          "severity": {"type": "string", "enum": ["minor", "moderate", "major", "critical"]},
+          "description": {"type": "string", "description": "问题描述"},
+          "affected_artifact": {"type": "string", "description": "受影响的PM产出文件和字段路径"},
+          "recommendation": {"type": "string", "description": "建议的修改方案"},
+          "design_freedom_impact": {"type": "string", "description": "对设计自由度的影响评估"}
+        }
+      }
+    },
+    "summary": {"type": "string", "description": "审查摘要（一句话概括核心发现）"}
+  }
+}
