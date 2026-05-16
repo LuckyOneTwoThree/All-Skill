@@ -106,13 +106,17 @@ Skill: risk-management
 下游衔接:
   primary:
     target: agile-orchestrator
-    reason: 风险管理完成，建议回到敏捷执行阶段，将风险应对纳入Sprint规划
+    reason: 风险管理完成，将风险应对纳入Sprint规划
     input_mapping:
       risk_output: "output/pm-project/risk-identification/ + risk-management/ → agile-sprint-planning输入"
   alternatives:
     - target: monitoring-orchestrator
-      reason: 如风险涉及线上监控
+      reason: 风险涉及线上监控
       condition: 风险类型为运维或安全风险时
+    - target: project-planning-orchestrator
+      reason: 风险影响项目范围或资源
+      condition: 风险等级变更导致项目宪章需调整时
+  special_cases: []
 模式: 🤖
 ```
 

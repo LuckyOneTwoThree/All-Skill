@@ -92,13 +92,17 @@ Skill: acquisition-analysis
 下游衔接:
   primary:
     target: activation-orchestrator
-    reason: 获客优化完成，建议进入用户激活阶段，提升新用户转化
+    reason: 获客优化完成，提升新用户转化
     input_mapping:
       acquisition_output: "output/pm-growth/acquisition-analysis/ → activation-aha输入"
   alternatives:
     - target: growth-orchestrator
-      reason: 如获客不是当前瓶颈，回退到增长诊断重新评估
-      condition: 获客优化效果不达预期时
+      reason: 获客不是当前瓶颈，回退到增长诊断重新评估
+      condition: 获客渠道ROI低于行业基准或优化效果不达预期时
+    - target: experiment-orchestrator
+      reason: 获客策略需A/B测试验证
+      condition: 获客方案涉及渠道策略变更需量化验证时
+  special_cases: []
 模式: 🤖
 ```
 

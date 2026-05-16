@@ -171,13 +171,20 @@ Skill: user-research-report
 下游衔接:
   primary:
     target: insight-orchestrator
-    reason: 用户研究完成，建议进入需求洞察分析阶段，从研究数据中提炼洞察
+    reason: 用户研究完成，从研究数据中提炼洞察
     input_mapping:
       user_research_output: "output/pm-discovery/user-research-report/ → insight-analysis输入"
   alternatives:
     - target: opportunity-orchestrator
-      reason: 如研究结论已足够明确，直接进入机会定义
+      reason: 研究结论已足够明确，直接进入机会定义
       condition: 用户研究已产出清晰的痛点和需求时
+    - target: design-orchestrator
+      reason: 研究结论可直接支撑产品设计
+      condition: 用户研究已产出完整的用户画像和场景，且商业模式已确定时
+  special_cases:
+    - target: user-research-report
+      reason: 仅需生成研究报告，无需后续洞察分析
+      condition: 研究为独立项目交付物，不需要进一步分析时
 模式: 🤖
 ```
 

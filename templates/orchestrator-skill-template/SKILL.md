@@ -51,7 +51,10 @@ metadata:
 3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
 4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
 5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
-6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器。结构包含三层：
+   - **primary**（1个）：最推荐的下游编排器，必须是编排流skill，不能指向自身
+   - **alternatives**（2-3个）：备选下游编排器，优先编排流skill，condition 采用[触发场景]+[判断依据]格式
+   - **special_cases**（0-1个）：特殊情况推荐子Skill（非编排流），condition 必须注明"无需完整编排流"
 
 ## Pipeline 定义
 
@@ -140,6 +143,23 @@ Skill: {skill-name-c}
   人类决策记录: 本轮执行中的人类决策点及结果
 输出: output/phase-reports/{module}/{orchestrator-name}.md
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
+下游衔接:
+  primary:
+    target: {下游编排器名称}
+    reason: {推荐理由}
+    input_mapping:
+      {当前输出}: "output/{领域路径}/ → {下游编排器输入}"
+  alternatives:
+    - target: {备选编排器1}
+      reason: {推荐理由}
+      condition: {触发场景}+{判断依据}时
+    - target: {备选编排器2}
+      reason: {推荐理由}
+      condition: {触发场景}+{判断依据}时
+  special_cases:
+    - target: {子Skill名称}
+      reason: {仅需单项能力，无需完整编排流}
+      condition: {触发场景}，无需完整编排流时
 模式: 🤖
 ```
 

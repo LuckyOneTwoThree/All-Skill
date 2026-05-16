@@ -261,14 +261,21 @@ Skill: change-impact-analysis
 下游衔接:
   primary:
     target: metrics-orchestrator
-    reason: 产品设计完成，建议进入度量设计阶段，为PRD功能点设计指标体系和埋点方案
+    reason: 产品设计完成，为PRD功能点设计指标体系和埋点方案
     input_mapping:
       prd_output: "output/pm-design/design-prd/prd.json → metrics-system输入"
       prototype_output: "output/pm-design/design-prototype/component_catalog.json → UI Skill消费"
   alternatives:
+    - target: validation-orchestrator
+      reason: PRD中存在高风险假设需验证
+      condition: PRD中标记为高风险的功能点占比>30%时
     - target: api-design-orchestrator
-      reason: PRD完成后直接启动后端API设计（跨模块：Backend）
+      reason: PRD确认后并行启动后端API设计（跨模块：Backend）
       condition: 产品从0到1流程中，PRD确认后需并行启动Backend开发时
+  special_cases:
+    - target: design-handoff-spec
+      reason: 仅需生成交接文档给开发团队
+      condition: 设计方案已确认，仅需开发交接摘要时
 模式: 🤖
 ```
 

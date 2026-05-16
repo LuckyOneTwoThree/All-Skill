@@ -122,13 +122,17 @@ Skill: planning-kickoff
 下游衔接:
   primary:
     target: agile-orchestrator
-    reason: 项目规划完成，建议进入敏捷执行阶段，启动第一个Sprint
+    reason: 项目规划完成，启动第一个Sprint
     input_mapping:
       planning_output: "output/pm-project/planning-project-charter/ + planning-resource/ → agile-sprint-planning输入"
   alternatives:
     - target: risk-orchestrator
-      reason: 如项目规划识别到高风险
+      reason: 项目规划识别到高风险
       condition: 项目宪章中风险评估等级为高时
+    - target: design-orchestrator
+      reason: 项目规划完成但产品方案未就绪
+      condition: 项目已立项但PRD尚未完成时
+  special_cases: []
 模式: 🤖
 ```
 

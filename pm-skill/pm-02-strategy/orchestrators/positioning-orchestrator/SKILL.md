@@ -89,13 +89,17 @@ stages:
 下游衔接:
   primary:
     target: planning-orchestrator
-    reason: 定位策略完成，建议进入战略规划阶段，制定OKR和路线图
+    reason: 定位策略完成，制定OKR和路线图
     input_mapping:
       positioning_output: "output/pm-strategy/positioning-strategy/ → planning-okr输入"
   alternatives:
     - target: business-orchestrator
-      reason: 如定位结果影响商业模式，需回溯调整
+      reason: 定位结果影响商业模式，需回溯调整
       condition: 定位策略与现有商业模式不一致时
+    - target: design-orchestrator
+      reason: 定位已清晰且规划已完成，直接进入设计
+      condition: OKR和路线图已在前序阶段完成时
+  special_cases: []
 模式: 🤖
 ```
 

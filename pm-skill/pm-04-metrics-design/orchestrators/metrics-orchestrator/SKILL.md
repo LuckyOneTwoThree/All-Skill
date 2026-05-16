@@ -121,14 +121,21 @@ Skill: metrics-dashboard
 下游衔接:
   primary:
     target: monitoring-orchestrator
-    reason: 度量设计完成，建议进入监控预警阶段，将指标体系和埋点方案落地为监控配置
+    reason: 度量设计完成，将指标体系和埋点方案落地为监控配置
     input_mapping:
       metrics_output: "output/pm-metrics-design/metrics-system/ → monitoring-pipeline输入"
       tracking_output: "output/pm-metrics-design/tracking-plan/ → 开发阶段埋点实现"
   alternatives:
     - target: design-orchestrator
-      reason: 如度量设计发现PRD功能点遗漏，需回溯补充设计
-      condition: 指标体系设计中发现PRD功能点覆盖不完整时
+      reason: 度量设计发现PRD功能点遗漏，需回溯补充
+      condition: 指标体系设计中发现PRD功能点覆盖率<80%时
+    - target: growth-orchestrator
+      reason: 度量体系已就绪，启动增长策略
+      condition: 产品已上线且度量体系已就绪，需驱动增长时
+  special_cases:
+    - target: tracking-plan
+      reason: 仅需生成埋点方案，无需完整度量设计
+      condition: 指标体系已建立，仅需更新埋点方案时
 模式: 🤖
 ```
 

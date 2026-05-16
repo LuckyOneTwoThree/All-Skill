@@ -122,13 +122,20 @@ Skill: market-competitor-analysis
 下游衔接:
   primary:
     target: opportunity-orchestrator
-    reason: 市场分析完成，建议进入机会识别与定义阶段，基于市场规模和竞品格局定义产品机会
+    reason: 市场分析完成，基于市场规模和竞品格局定义产品机会
     input_mapping:
       market_outputs: "output/pm-discovery/market-tam-som/ + market-competitor-analysis/ → opportunity-definition输入"
   alternatives:
     - target: insight-orchestrator
-      reason: 如需用户洞察补充市场分析结论
-      condition: 市场数据缺乏用户视角验证时
+      reason: 市场数据缺乏用户视角，需用户洞察补充
+      condition: 市场分析结论缺乏用户需求验证时
+    - target: positioning-orchestrator
+      reason: 市场格局已清晰，直接进入定位策略
+      condition: 竞品分析已充分，需确定差异化定位时
+  special_cases:
+    - target: market-competitor-analysis
+      reason: 仅需竞品情报更新，无需完整市场分析
+      condition: 市场规模已评估，仅需竞品动态追踪时
 模式: 🤖
 ```
 

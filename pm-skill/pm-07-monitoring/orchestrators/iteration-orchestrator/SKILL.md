@@ -91,13 +91,17 @@ Skill: iteration-decision
 下游衔接:
   primary:
     target: design-orchestrator
-    reason: 迭代决策完成，建议进入设计阶段，实现迭代需求变更
+    reason: 迭代决策完成，实现迭代需求变更
     input_mapping:
       iteration_output: "output/pm-monitoring/iteration-decision/ → change-impact-analysis输入"
   alternatives:
+    - target: release-orchestrator
+      reason: 迭代决策为直接发布
+      condition: 迭代决策为紧急修复或小版本发布时
     - target: monitoring-orchestrator
-      reason: 如需发布，推荐进入监控预警阶段
-      condition: 迭代决策为发布相关时
+      reason: 迭代后需加强监控
+      condition: 迭代涉及核心功能变更，需加强上线后监控时
+  special_cases: []
 模式: 🤖
 ```
 
@@ -112,7 +116,9 @@ Skill: iteration-decision
 
 ## 下游衔接
 
-- 如需发布，推荐下一步使用 monitoring-orchestrator
+- 迭代决策完成 → design-orchestrator（实现需求变更）
+- 紧急修复/小版本 → release-orchestrator
+- 核心功能变更需监控 → monitoring-orchestrator
 
 ## 人类决策点
 

@@ -96,13 +96,17 @@ Skill: opportunity-definition
 下游衔接:
   primary:
     target: business-orchestrator
-    reason: 机会定义完成，建议进入商业模式设计阶段，将机会转化为可持续的商业模式
+    reason: 机会定义完成，将机会转化为可持续的商业模式
     input_mapping:
       opportunity_output: "output/pm-discovery/opportunity-definition/ → business-model-canvas输入"
   alternatives:
     - target: design-orchestrator
-      reason: 如已有商业模式，直接进入产品设计
-      condition: 商业模式已确定，无需重新设计时
+      reason: 商业模式已确定，直接进入产品设计
+      condition: 商业模式已在前序阶段确定，无需重新设计时
+    - target: validation-orchestrator
+      reason: 机会假设风险较高，需先验证再投入
+      condition: 机会简报中关键假设风险等级≥高时
+  special_cases: []
 模式: 🤖
 ```
 

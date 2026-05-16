@@ -152,13 +152,20 @@ Skill: validation-usability
 下游衔接:
   primary:
     target: design-orchestrator
-    reason: 方案验证完成，建议进入产品设计阶段，基于验证结论调整设计方案
+    reason: 方案验证完成，基于验证结论调整设计方案
     input_mapping:
       validation_output: "output/pm-design/validation-assumption-map/ + validation-mvp/ → design-prd输入"
   alternatives:
     - target: experiment-orchestrator
-      reason: 如验证结论需要A/B测试进一步确认
-      condition: 验证结果不确定，需要量化实验验证时
+      reason: 验证结论需A/B测试进一步确认
+      condition: 验证结果不确定（置信度<80%），需量化实验验证时
+    - target: ideation-orchestrator
+      reason: 验证否定当前方案，需重新创意发散
+      condition: MVP验证结论为否定，核心假设不成立时
+  special_cases:
+    - target: validation-usability
+      reason: 仅需可用性测试，无需完整验证流程
+      condition: 方案已通过假设验证，仅需用户体验测试时
 模式: 🤖
 ```
 

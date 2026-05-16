@@ -253,17 +253,21 @@ Skill: product-operations-manual
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
 下游衔接:
   primary:
-    target: experiment-orchestrator
-    reason: 增长策略制定完成，建议进入实验验证阶段，量化验证增长方案效果
+    target: acquisition-orchestrator
+    reason: 增长策略制定完成，进入获客优化执行
     input_mapping:
-      growth_output: "output/pm-growth/growth-strategy-report/ → experiment-design输入"
+      growth_output: "output/pm-growth/growth-strategy-report/ → acquisition-analysis输入"
   alternatives:
+    - target: experiment-orchestrator
+      reason: 增长方案需A/B测试验证效果
+      condition: 增长方案涉及重大策略变更需量化验证时
     - target: release-orchestrator
-      reason: 如增长方案已验证，直接全量发布
+      reason: 增长方案已验证，直接全量发布
       condition: 增长方案已有充分数据支撑，无需实验验证时
     - target: growth-orchestrator
-      reason: 如是新产品上市，进入GTM策略阶段（growth-orchestrator内部phase-7）
+      reason: 新产品需上市，进入GTM策略阶段（内部phase-7）
       condition: 增长诊断结论为新产品需上市时
+  special_cases: []
 模式: 🤖
 ```
 

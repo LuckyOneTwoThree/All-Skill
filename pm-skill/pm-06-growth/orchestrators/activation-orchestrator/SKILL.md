@@ -101,13 +101,20 @@ Skill: activation-onboarding
 下游衔接:
   primary:
     target: retention-orchestrator
-    reason: 用户激活优化完成，建议进入留存优化阶段，防止用户流失
+    reason: 用户激活优化完成，防止用户流失
     input_mapping:
       activation_output: "output/pm-growth/activation-aha/ + activation-onboarding/ → retention-management输入"
   alternatives:
     - target: growth-orchestrator
-      reason: 如激活不是当前瓶颈，回退到增长诊断重新评估
-      condition: 激活优化效果不达预期时
+      reason: 激活不是当前瓶颈，回退到增长诊断重新评估
+      condition: 激活率优化效果不达预期或激活非当前最大瓶颈时
+    - target: experiment-orchestrator
+      reason: 激活策略需A/B测试验证
+      condition: Onboarding方案变更需量化验证时
+  special_cases:
+    - target: activation-aha
+      reason: 仅需识别Aha Moment，无需完整激活编排
+      condition: 已有Onboarding方案，仅需确认Aha Moment时
 模式: 🤖
 ```
 

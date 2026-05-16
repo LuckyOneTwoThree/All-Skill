@@ -89,13 +89,17 @@ Skill: ideation-workshop
 下游衔接:
   primary:
     target: design-orchestrator
-    reason: 创意发散完成，建议进入产品设计阶段，将创意方案转化为PRD
+    reason: 创意发散完成，将创意方案转化为PRD
     input_mapping:
       ideation_output: "output/pm-design/ideation-workshop/ → design-prd输入"
   alternatives:
     - target: validation-orchestrator
-      reason: 如需先验证创意假设再进入设计
-      condition: 创意方案存在高风险假设，需先验证时
+      reason: 创意方案存在高风险假设，需先验证
+      condition: 创意方案中关键假设风险等级≥高时
+    - target: opportunity-orchestrator
+      reason: 创意方向不明确，需回溯到机会定义
+      condition: 创意收敛后仍无法形成明确产品方向时
+  special_cases: []
 模式: 🤖
 ```
 

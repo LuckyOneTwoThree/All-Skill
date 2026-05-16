@@ -87,13 +87,17 @@ stages:
 下游衔接:
   primary:
     target: planning-orchestrator
-    reason: 利益相关者分析完成，建议进入战略规划阶段，确保规划对齐关键利益方
+    reason: 利益相关者分析完成，确保规划对齐关键利益方
     input_mapping:
       stakeholder_output: "output/pm-strategy/stakeholder-analysis/ → planning-okr输入"
   alternatives:
     - target: project-planning-orchestrator
-      reason: 如已进入项目执行阶段，直接启动项目规划
+      reason: 已进入项目执行阶段，直接启动项目规划
       condition: 战略规划已完成，需要启动项目时
+    - target: business-orchestrator
+      reason: 利益相关者诉求影响商业模式，需回溯调整
+      condition: 关键利益方诉求与现有商业模式冲突时
+  special_cases: []
 模式: 🤖
 ```
 

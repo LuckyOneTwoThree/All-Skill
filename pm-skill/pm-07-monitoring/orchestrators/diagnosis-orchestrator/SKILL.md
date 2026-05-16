@@ -149,16 +149,23 @@ Skill: product-sunset-plan
 下游衔接:
   primary:
     target: iteration-orchestrator
-    reason: 诊断完成，建议进入迭代决策阶段，根据诊断结论调整迭代计划
+    reason: 诊断完成，根据诊断结论调整迭代计划
     input_mapping:
       diagnosis_output: "output/pm-monitoring/diagnosis-health/ + competitor-monitoring-report/ → iteration-decision输入"
   alternatives:
     - target: monitoring-orchestrator
-      reason: 如需验收，推荐进入监控预警阶段
-      condition: 诊断结论为需质量验收时
-    - target: diagnosis-orchestrator
-      reason: 如诊断结论为产品应下线，进入产品下线阶段（diagnosis-orchestrator内部phase-4）
-      condition: 健康度评分极低且无改善空间时
+      reason: 诊断结论为需建立监控预警
+      condition: 诊断发现产品缺乏有效监控覆盖时
+    - target: growth-orchestrator
+      reason: 诊断结论为增长瓶颈，需增长策略
+      condition: 健康度下降主因为增长乏力时
+    - target: product-sunset-plan
+      reason: 健康度极低且无改善空间，需制定下线方案
+      condition: 健康度评分<30分且连续3个周期无改善时
+  special_cases:
+    - target: diagnosis-health
+      reason: 仅需健康度诊断，无需完整诊断编排
+      condition: 已有竞品数据，仅需产品健康检查时
 模式: 🤖
 ```
 
@@ -177,7 +184,11 @@ Skill: product-sunset-plan
 
 ## 下游衔接
 
-- 如需验收，推荐下一步使用 monitoring-orchestrator
+- 诊断完成 → iteration-orchestrator（调整迭代计划）
+- 缺乏监控覆盖 → monitoring-orchestrator
+- 增长乏力 → growth-orchestrator
+- 健康度极低 → product-sunset-plan
+- 仅需健康检查 → diagnosis-health
 
 ## 人类决策点
 

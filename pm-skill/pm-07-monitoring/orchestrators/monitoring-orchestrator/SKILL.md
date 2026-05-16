@@ -105,16 +105,20 @@ Skill: user-feedback-loop-report
 下游衔接:
   primary:
     target: diagnosis-orchestrator
-    reason: 监控预警建立完成，如发现异常建议进入诊断阶段，定位问题根因
+    reason: 监控预警建立完成，如发现异常进入诊断定位根因
     input_mapping:
       monitoring_output: "output/pm-monitoring/monitoring-pipeline/ → diagnosis-health输入"
   alternatives:
     - target: release-orchestrator
-      reason: 如监控发现需发布修复
-      condition: 监控预警触发发布需求时
+      reason: 监控发现需发布修复
+      condition: 监控预警触发P0/P1级异常需紧急修复时
     - target: iteration-orchestrator
-      reason: 如监控发现需迭代调整
-      condition: 监控数据表明需调整迭代优先级时
+      reason: 监控数据表明需调整迭代优先级
+      condition: 监控指标趋势持续恶化，需调整迭代方向时
+  special_cases:
+    - target: monitoring-pipeline
+      reason: 仅需搭建监控，无需完整监控编排
+      condition: 已有反馈闭环机制，仅需监控预警配置时
 模式: 🤖
 ```
 

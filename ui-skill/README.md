@@ -42,7 +42,9 @@ Skill: ui-orchestrator
 | 设计品味 | page-builder 统一评分体系（audit×0.5+critique×0.5） |
 | PM约束偏离 | page-builder design_decisions 4级记录 |
 | 设计自由度 | ui-orchestrator Stage 1 条件分支（设计探索）+ constraint_review |
-| 质量债务 | page-builder quality_debt.json 追踪 |
+| visual_bans合规 | express模式增强质量检查（检查代码是否包含visual_bans中的模式） |
+| 设计锚点一致性 | express模式增强质量检查（检查色彩/排版是否与锚点方向一致） |
+| 质量债务 | page-builder + stage-4 quality_debt.json 追踪 |
 | 单元测试 | production-ready 覆盖 |
 | E2E测试 | production-ready 覆盖 |
 | API联调 | api-integration 覆盖 |
@@ -111,20 +113,22 @@ project-init → page-builder → api-integration → production-ready
 
 ui-orchestrator（四种执行模式）
      │
-     ├─ express: 选择一个 ext Skill 直接生成 → 最小质量检查 → 输出
+     ├─ express: 生成轻量设计锚点 → 设计方向快选(2-3套) → 结构化prompt → ext Skill生成 → 增强质量检查 → 输出
      │    └─ 适用：单页面/落地页/快速原型/概念验证
      │    └─ 放弃：设计系统一致性、令牌驱动、组件库集成、质量债务追踪、PM↔UI反馈闭环
+     │    └─ 新增(v7.3)：设计方向快选(2-3套差异化方向供用户选择) + 结构化prompt生成
      │
      ├─ prototype: project-init → prototype输出（视觉方向+约束审查，无页面代码）
      │    └─ 适用：需求验证、多方案对比、交互逻辑对齐
      │    └─ 放弃：页面代码、ext增强、质量审计、API集成、生产就绪
      │
-     ├─ project-init（必经，express/prototype模式跳过page-builder）
+     ├─ full: project-init（必经） → page-builder（必经） → api-integration（按需） → production-ready（按需）
      │    └─ 条件分支A: 设计探索（mode=progressive）
      │    └─ 条件分支B: PM约束审查（有PM输入时）
-     ├─ page-builder（必经，消费 design_brief.json）
-     ├─ api-integration（有API需求时执行，否则跳过）
-     └─ production-ready（需上线时执行，否则跳过）
+     │    └─ 新增(v7.2)：强制视觉审查(stage-3后) + visual_direction一致性校验(stage-1)
+     │
+     ├─ progressive: project-init（含设计探索） → page-builder → api-integration → production-ready
+     │    └─ 设计探索阶段生成2-3个视觉方向候选，人类选择后进入约束对齐
 ```
 
 **Pipeline 阶段精简**（v7.0）：9阶段 → 4+2阶段

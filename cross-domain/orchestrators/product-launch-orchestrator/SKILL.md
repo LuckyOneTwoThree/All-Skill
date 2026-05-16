@@ -353,16 +353,17 @@ Skill: agile-orchestrator
 下游衔接:
   primary:
     target: product-iteration-orchestrator
-    reason: 产品上线后进入迭代优化循环，基于监控数据和用户反馈持续改进
+    reason: 产品上线后进入迭代优化循环
     input_mapping:
       launch_output: "output/cross-domain/ → product-iteration-orchestrator输入"
   alternatives:
     - target: growth-orchestrator
-      reason: 产品上线后启动增长策略，驱动用户获取和变现
-      condition: 产品已验证PMF，需要规模化增长时
+      reason: 产品已验证PMF，启动规模化增长
+      condition: 产品已验证产品-市场匹配，需要规模化增长时
     - target: monitoring-orchestrator
-      reason: 持续监控产品运行指标和异常告警
+      reason: 持续监控产品运行指标
       condition: 需要独立建立长期监控体系时
+  special_cases: []
 模式: 🤖
 ```
 

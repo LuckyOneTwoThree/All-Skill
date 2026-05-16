@@ -91,13 +91,20 @@ Skill: insight-analysis
 下游衔接:
   primary:
     target: opportunity-orchestrator
-    reason: 洞察分析完成，建议进入机会识别与定义阶段，将洞察转化为可执行的机会
+    reason: 洞察分析完成，将洞察转化为可执行的机会
     input_mapping:
       insight_analysis_output: "output/pm-discovery/insight-analysis/ → opportunity-definition输入"
   alternatives:
     - target: market-orchestrator
-      reason: 如需补充市场数据支撑洞察结论
-      condition: 洞察结论缺乏市场数据验证时
+      reason: 洞察结论缺乏市场数据验证，需补充市场分析
+      condition: 洞察中市场数据引用率<30%或关键假设缺乏市场验证时
+    - target: user-research-orchestrator
+      reason: 洞察深度不足，需更多用户研究支撑
+      condition: 洞察样本量不足或用户画像不清晰时
+  special_cases:
+    - target: insight-analysis
+      reason: 仅需补充特定维度的需求洞察，无需完整编排流
+      condition: 已有洞察基础，仅需增量更新时
 模式: 🤖
 ```
 

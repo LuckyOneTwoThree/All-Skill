@@ -132,13 +132,17 @@ Skill: business-strategy-report
 下游衔接:
   primary:
     target: positioning-orchestrator
-    reason: 商业模式设计完成，建议进入产品定位阶段，确定差异化定位策略
+    reason: 商业模式设计完成，确定差异化定位策略
     input_mapping:
       business_outputs: "output/pm-strategy/business-model-canvas/ + business-pricing/ → positioning-strategy输入"
   alternatives:
     - target: planning-orchestrator
-      reason: 如定位已明确，直接进入战略规划
+      reason: 定位已明确，直接进入战略规划
       condition: 产品定位已在商业模式设计中确定时
+    - target: design-orchestrator
+      reason: 商业模式和定位均已确定，直接进入设计
+      condition: 商业模式与定位均已完成，需快速进入产品构建时
+  special_cases: []
 模式: 🤖
 ```
 

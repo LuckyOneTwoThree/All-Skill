@@ -143,13 +143,17 @@ Skill: release-notes
 下游衔接:
   primary:
     target: monitoring-orchestrator
-    reason: 发布完成，建议进入监控预警阶段，跟踪发布后指标变化
+    reason: 发布完成，跟踪发布后指标变化
     input_mapping:
       release_output: "output/pm-monitoring/release-gradual/ → monitoring-pipeline输入"
   alternatives:
     - target: agile-orchestrator
-      reason: 如发布后需进入下一Sprint
+      reason: 发布后需进入下一Sprint
       condition: 发布完成需继续迭代时
+    - target: growth-orchestrator
+      reason: 发布后启动增长策略
+      condition: 发布涉及增长相关功能，需驱动用户增长时
+  special_cases: []
 模式: 🤖
 ```
 

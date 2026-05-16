@@ -168,13 +168,17 @@ stages:
 下游衔接:
   primary:
     target: design-orchestrator
-    reason: 战略规划完成，建议进入产品设计阶段，将战略转化为PRD和设计方案
+    reason: 战略规划完成，将战略转化为PRD和设计方案
     input_mapping:
       planning_outputs: "output/pm-strategy/planning-okr/ + planning-roadmap/ → design-prd输入"
   alternatives:
     - target: metrics-orchestrator
-      reason: 如需先设计度量体系再进入设计
-      condition: 需要先确定指标体系再设计产品功能时
+      reason: 需先设计度量体系再进入设计
+      condition: OKR中关键结果缺乏可量化指标支撑时
+    - target: project-planning-orchestrator
+      reason: 路线图已就绪，直接启动项目规划
+      condition: 战略规划已充分，需快速进入项目执行时
+  special_cases: []
 模式: 🤖
 ```
 

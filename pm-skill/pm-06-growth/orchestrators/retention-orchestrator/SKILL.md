@@ -92,13 +92,17 @@ Skill: retention-management
 下游衔接:
   primary:
     target: revenue-orchestrator
-    reason: 留存优化完成，建议进入商业化阶段，优化付费转化
+    reason: 留存优化完成，优化付费转化
     input_mapping:
       retention_output: "output/pm-growth/retention-management/ → revenue-funnel输入"
   alternatives:
     - target: growth-orchestrator
-      reason: 如留存不是当前瓶颈，回退到增长诊断重新评估
-      condition: 留存优化效果不达预期时
+      reason: 留存不是当前瓶颈，回退到增长诊断重新评估
+      condition: 留存率优化效果不达预期或留存非当前最大瓶颈时
+    - target: experiment-orchestrator
+      reason: 留存策略需A/B测试验证
+      condition: 流失干预方案变更需量化验证时
+  special_cases: []
 模式: 🤖
 ```
 

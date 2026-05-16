@@ -152,13 +152,17 @@ Skill: data-analysis-report
 下游衔接:
   primary:
     target: decision-orchestrator
-    reason: 数据分析完成，建议进入数据驱动决策阶段，将分析洞察转化为可执行决策
+    reason: 数据分析完成，将分析洞察转化为可执行决策
     input_mapping:
       analysis_output: "output/pm-metrics-ops/data-analysis-report/ → decision-dace输入"
   alternatives:
     - target: experiment-orchestrator
-      reason: 如分析发现需A/B测试验证的假设
+      reason: 分析发现需A/B测试验证的假设
       condition: 数据分析发现因果关系不确定，需实验验证时
+    - target: iteration-orchestrator
+      reason: 分析结论直接影响迭代优先级
+      condition: 数据分析产出明确的迭代方向建议时
+  special_cases: []
 模式: 🤖
 ```
 

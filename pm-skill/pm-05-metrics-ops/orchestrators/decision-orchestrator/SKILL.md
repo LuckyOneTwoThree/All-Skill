@@ -105,16 +105,20 @@ Skill: decision-culture
 下游衔接:
   primary:
     target: design-orchestrator
-    reason: 决策完成，建议进入产品设计阶段，将决策结论转化为功能变更
+    reason: 决策完成，将决策结论转化为功能变更
     input_mapping:
       decision_output: "output/pm-metrics-ops/decision-dace/ → design-prd输入"
   alternatives:
     - target: experiment-orchestrator
-      reason: 如决策需要A/B测试验证效果
+      reason: 决策需A/B测试验证效果
       condition: 决策结论需要量化验证时
     - target: iteration-orchestrator
-      reason: 如决策涉及迭代优先级调整
+      reason: 决策涉及迭代优先级调整
       condition: 决策结论影响迭代计划时
+  special_cases:
+    - target: decision-dace
+      reason: 仅需DACE决策循环，无需完整决策编排
+      condition: 已有分析结论，仅需快速决策闭环时
 模式: 🤖
 ```
 

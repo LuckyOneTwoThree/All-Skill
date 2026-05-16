@@ -126,17 +126,18 @@ Skill: agile-review
 验证: 阶段总结文档已生成，6项结构（执行概览/关键发现/决策记录/产出清单/风险与待办/下游衔接）均非空
 下游衔接:
   primary:
-    target: agile-orchestrator
-    reason: Sprint完成，建议进入下一Sprint规划，持续迭代
+    target: release-orchestrator
+    reason: Sprint完成且交付物达到发布标准，进入发布流程
     input_mapping:
-      retro_output: "output/pm-project/agile-review/sprint-retro-S{NN}.json → agile-sprint-planning输入"
+      sprint_output: "output/pm-project/agile-review/ → release-orchestrator输入"
   alternatives:
-    - target: release-orchestrator
-      reason: 如Sprint产出已满足发布条件
-      condition: Sprint交付物达到发布标准时
+    - target: agile-orchestrator
+      reason: 进入下一Sprint规划，持续迭代
+      condition: Sprint交付物未达发布标准，需继续迭代时
     - target: monitoring-orchestrator
-      reason: 如Sprint复盘发现需加强监控
-      condition: 复盘发现线上问题频发时
+      reason: Sprint复盘发现需加强监控
+      condition: 复盘发现线上问题频发或监控覆盖不足时
+  special_cases: []
 模式: 🤖
 ```
 

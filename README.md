@@ -144,6 +144,8 @@
 | **用户流程** | pm design-userflow | ui page-builder | 用户流程定义交互状态机 |
 | **原型** | pm design-prototype | ui page-builder | 原型指导组件生成和页面组装 |
 | **设计令牌** | ui project-init | ui api-integration / pm design-prototype | 令牌驱动错误样式和一致性检查 |
+| **设计简报** | ui page-builder | ui-orchestrator stage-2 | 预生成页面级设计决策供编排器调度 |
+| **页面清单** | ui-orchestrator stage-2 | ui page-builder | 预生成页面结构清单指导组件生成 |
 | **目标语言** | 用户指定（默认zh-CN） | ui ui-orchestrator | 全链路传递，影响字体/排版/文案/i18n |
 | **OpenAPI契约** | backend api-design | ui api-integration | API契约是前后端联调的桥梁 |
 | **数据模型** | backend data-architecture | backend api-design(可选) | 数据模型是API设计的基础 |
@@ -198,13 +200,14 @@ All-Skill/
 │   └── docs/                              可视化文档站
 │
 ├── ui-skill/                         ✅ Skill 文件 —— UI设计与前端开发
-│   ├── ui-01-project-init/                模块1：项目初始化
-│   │   └── skills/                            project-init
-│   ├── ui-02-frontend-development/        模块2：前端开发
-│   │   └── skills/                            page-builder
-│   ├── ui-03-frontend-integration/        模块3：前端集成
-│   │   └── skills/                            api-integration / production-ready
-│   ├── orchestrators/                     ui-orchestrator
+│   ├── ui-01-design-system/               模块1：设计系统（项目初始化+视觉风格）
+│   │   └── project-init/                      项目初始化一体化
+│   ├── ui-02-ui-frontend/                 模块2：UI前端（组件+页面+审查）
+│   │   └── page-builder/                      页面构建一体化
+│   ├── ui-03-frontend-integration/        模块3：前端集成（API联调+生产就绪）
+│   │   ├── api-integration/                   API契约消费一体化
+│   │   └── production-ready/                  生产就绪一体化
+│   ├── orchestrators/                     ui-orchestrator（统一编排器）
 │   └── extensions/                        外部 Skill（ext-frontend-design / ext-impeccable / ext-interaction-design / ext-ui-ux-pro-max）
 │
 ├── backend-skill/                     ✅ Skill 文件 —— 后端架构与开发
@@ -335,7 +338,7 @@ All-Skill/
 
 | 编排器 | 作用 | 调度策略 |
 |--------|------|----------|
-| ui-orchestrator | UI 全流程统一编排，按序调度 project-init → page-builder → api-integration → production-ready | 按需跳过：已完成或不需要的阶段可直接跳过，无需强制执行 |
+| ui-orchestrator | UI 全流程统一编排，支持 express/prototype/full/progressive 四种执行模式 | 按需跳过：已完成或不需要的阶段可直接跳过；express模式支持设计方向快选(2-3套)+结构化prompt生成 |
 
 #### Pipeline Skill
 
@@ -350,12 +353,12 @@ All-Skill/
 
 #### 外部扩展
 
-| 扩展 Skill | 作用 | 调用方 |
-|------------|------|--------|
-| ext-frontend-design | 视觉差异化设计 | project-init **必调** |
-| ext-impeccable | colorize/typeset/extract/shape/animate/bolder/quieter/delight/harden/polish/layout/adapt/clarify/onboard/distill/audit/critique/optimize | page-builder / production-ready |
-| ext-interaction-design | 交互动效模式 | page-builder |
-| ext-ui-ux-pro-max | 数据驱动设计推荐 | page-builder |
+| 扩展 Skill | 作用 | 调用方（编排器阶段） |
+|------------|------|---------------------|
+| ext-frontend-design | 视觉差异化设计 | stage-2 **必调**（设计系统建立） / stage-e express模式（visual引擎） |
+| ext-impeccable | colorize/typeset/layout/shape/animate/bolder/quieter/delight/clarify/onboard/distill/audit/critique/harden/polish/optimize | stage-2(colorize/typeset) / stage-4(layout/shape/animate/clarify/onboard/distill/audit/critique) / stage-6(harden/polish/optimize) |
+| ext-interaction-design | 交互动效模式 | stage-4（交互动效增强） / stage-e express模式（motion引擎） |
+| ext-ui-ux-pro-max | 数据驱动设计推荐 | stage-2 --design-system（设计系统推荐） / stage-4 --domain（页面结构推荐） / stage-e express模式（ux引擎） |
 
 > **ext- Skill 调用方式**：外部扩展 Skill 已从描述性表格改为指令性调用块格式。编排器通过 `Skill: ext-xxx` 指令块精确调度，而非依赖描述匹配。例如：`Skill: ext-frontend-design`、`Skill: ext-impeccable`。
 

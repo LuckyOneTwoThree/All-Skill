@@ -123,13 +123,17 @@ Skill: revenue-upsell
 下游衔接:
   primary:
     target: growth-orchestrator
-    reason: 商业化优化完成，建议回到增长诊断，评估整体增长飞轮效果
+    reason: 商业化优化完成，回到增长诊断评估整体增长飞轮效果
     input_mapping:
       revenue_output: "output/pm-growth/revenue-funnel/ + revenue-nrr/ → growth-model输入"
   alternatives:
     - target: experiment-orchestrator
-      reason: 如商业化方案需A/B测试验证
+      reason: 商业化方案需A/B测试验证
       condition: 定价或付费墙策略变更需量化验证时
+    - target: metrics-orchestrator
+      reason: 商业化指标需补充度量设计
+      condition: 付费漏斗关键指标缺乏埋点支撑时
+  special_cases: []
 模式: 🤖
 ```
 

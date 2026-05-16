@@ -239,19 +239,20 @@ Skill: monitoring-orchestrator
 下游衔接:
   primary:
     target: monitoring-orchestrator
-    reason: 迭代发布后进入持续监控，跟踪指标变化和异常告警
+    reason: 迭代发布后进入持续监控
     input_mapping:
       iteration_output: "output/cross-domain/ → monitoring-orchestrator输入"
   alternatives:
     - target: product-iteration-orchestrator
-      reason: 继续下一轮迭代，基于监控数据和用户反馈
+      reason: 继续下一轮迭代
       condition: 有新的迭代需求时
     - target: growth-orchestrator
-      reason: 迭代涉及增长功能时，启动增长策略
+      reason: 迭代涉及增长功能
       condition: 迭代包含获客/激活/留存/变现相关功能时
     - target: agile-orchestrator
       reason: 进入下一Sprint规划
       condition: 采用敏捷开发模式时
+  special_cases: []
 模式: 🤖
 ```
 
