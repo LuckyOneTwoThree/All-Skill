@@ -1,0 +1,9 @@
+id,scenario,sequence,domains
+tpl-1,从0到1做SaaS/B端,insight→market→business→positioning→design→metrics→api-design→data-arch→backend-arch→ui→release,"pm,backend,ui"
+tpl-2,从0到1做C端/移动端,user-research→insight→opportunity→positioning→design→metrics→ui→api-design→release,"pm,ui,backend"
+tpl-3,数据驱动优化,analysis→decision→design→metrics→release→experiment,pm
+tpl-4,增长突破,growth→acquisition/activation/retention/revenue→experiment→release,pm
+tpl-5,功能迭代,design→change-impact→api-design→data-arch→backend-arch→ui→release,"pm,backend,ui"
+tpl-6,后端架构设计,api-design→data-arch→backend-arch,backend
+tpl-7,UI设计与前端,ui,ui
+tpl-8,监控与诊断,monitoring→diagnosis→iteration,pm

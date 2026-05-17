@@ -1,0 +1,16 @@
+domain,lifecycle,description
+pm,discovery,用户研究、市场洞察、机会定义
+pm,strategy,商业模式、定位、规划、利益相关者
+pm,design,PRD、原型、验证、交互规范
+pm,metrics-design,指标体系、埋点方案
+pm,metrics-ops,数据分析、实验、决策
+pm,growth,获客、激活、留存、变现
+pm,monitoring,监控、诊断、迭代、验收发布
+pm,project,项目规划、敏捷、风险管理
+ui,ui-design,设计系统、交互设计
+ui,ui-frontend,前端实现、组件开发
+ui,ui-integration,API集成、前端交付
+backend,api,API规范、接口设计
+backend,data,数据模型、存储设计
+backend,backend-arch,架构设计、技术实现
+cross-domain,cross-domain,跨领域编排与协作

@@ -19,6 +19,9 @@ output/
 # Node
 node_modules/
 
+# WorkBuddy local data
+.workbuddy/
+
 # Logs
 *.log
 npm-debug.log*
