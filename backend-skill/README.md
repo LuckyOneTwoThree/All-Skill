@@ -1,19 +1,26 @@
 # 后端架构与开发 Skill 集
 
-> **9个AI Agent Skill（3编排器+6Pipeline）**，覆盖后端从设计到代码实现的全流程。每个模块采用"设计Skill + 实现Skill"双阶段模式，设计产出经人类审查后再生成代码，确保代码质量。
+> **10个AI Agent Skill（1顶层编排器+3子编排器+6Pipeline）**，覆盖后端从设计到代码实现的全流程。采用"先全量设计、再统一实现"的两阶段模式：设计阶段按架构→数据→API顺序产出设计规范，实现阶段按数据→API→架构顺序生成可运行代码。设计阶段三份设计交叉验证后统一审查，确保一致性。
 
 ## 设计理念
 
-### 设计先行，审查后实现
+### 先全量设计，再统一实现
 
-每个模块拆分为两个阶段：
-1. **设计阶段（-spec）**：产出设计规范（OpenAPI/ER图/ADR等），经人类审查确认
-2. **实现阶段（-impl）**：基于审查通过的设计规范，生成可运行代码
+后端全流程分为两个阶段：
+
+1. **设计阶段（架构→数据→API）**：架构决策先行，约束后续设计；数据模型基于架构边界和业务规则独立建模；API契约基于真实数据模型精确设计
+2. **实现阶段（数据→API→架构）**：数据层先生成Repository；API层基于已存在的Repository生成可编译的Service；架构层整合并验证
 
 这种模式确保：
-- 设计缺陷在代码生成前被发现和修复
-- 编排器在设计和实现之间加入人类审查卡口
-- 每个 Skill 职责单一，AI 不会跳步或浅层生成
+- **架构决策不迟到**：架构决策在最前，约束数据模型和API设计
+- **数据模型质量高**：数据模型由业务规则驱动，而非适配API的denormalized视图
+- **API字段精确**：API字段从ER模型精确投影，不再盲猜
+- **代码步步可编译**：每步impl的产出都可独立编译，无需等待最后一步
+- **统一设计审查**：三份设计交叉验证，避免设计冲突导致代码返工
+
+### 保留子编排器独立性
+
+顶层编排器（backend-orchestrator）协调两阶段流程，但三个子编排器（api-design-orchestrator、data-architecture-orchestrator、backend-architecture-orchestrator）可独立调用，支持渐进式迁移或局部使用场景。
 
 ### 双输出模式
 
@@ -24,21 +31,24 @@
 
 | 模块 | 编排器 | 设计Skill | 实现Skill | 核心定位 |
 |------|--------|----------|----------|----------|
-| API设计 | api-design-orchestrator | api-design-spec | api-design-impl | 契约驱动，安全内建 |
-| 数据架构 | data-architecture-orchestrator | data-architecture-spec | data-architecture-impl | 模型决定上限，缓存决定下限 |
+| 后端全流程 | backend-orchestrator | — | — | 顶层两阶段编排：架构→数据→API设计，数据→API→架构实现 |
+| API设计 | api-design-orchestrator | api-design-spec | api-design-impl | 数据驱动契约，字段有据可依 |
+| 数据架构 | data-architecture-orchestrator | data-architecture-spec | data-architecture-impl | 架构约束先行，模型决定上限 |
 | 后端架构 | backend-architecture-orchestrator | backend-architecture-spec | backend-architecture-impl | 适度架构，按需演进 |
 
 ## 执行流程
 
 ```
-api-design-spec → [人类审查] → api-design-impl
-       ↓                              ↓
-data-architecture-spec → [人类审查] → data-architecture-impl
-       ↓                              ↓
-backend-architecture-spec → [人类审查] → backend-architecture-impl
+═══ 阶段A：全量设计 ═══
+backend-architecture-spec → data-architecture-spec → api-design-spec
+       ↓                                                        ↓
+═══ 阶段B：统一实现 ═══                              统一设计审查
+data-architecture-impl → api-design-impl → backend-architecture-impl
 ```
 
-三个模块按顺序执行：API设计 → 数据架构 → 后端架构。每个模块内部先设计后实现。
+阶段A（设计）：架构设计→数据架构设计→API设计，三份设计产出后进行**统一设计审查**，交叉验证一致性。
+
+阶段B（实现）：数据层→API层→架构层，每步产出可独立编译，最后backend-architecture-impl做统一对齐检查。
 
 ## 代码产出全景
 
@@ -49,14 +59,14 @@ backend-architecture-spec → [人类审查] → backend-architecture-impl
 │   ├── routes/                   ← api-design-impl
 │   │   └── index.ts              ← 路由注册入口，供 app.ts 挂载
 │   ├── controllers/              ← api-design-impl（请求/响应转换）
-│   ├── services/                 ← api-design-impl（业务逻辑+事务+缓存调用）
+│   ├── services/                 ← api-design-impl（业务逻辑+事务+真实Repository调用）
 │   ├── validators/               ← api-design-impl（请求校验）
 │   ├── middleware/               ← api-design-impl（认证/限流/CORS/错误处理）
 │   ├── types/
 │   │   ├── api.ts                ← api-design-impl（API层传输类型）
-│   │   └── mappers.ts            ← api-design-impl（API类型↔Model类型转换）
+│   │   └── mappers.ts            ← api-design-impl（API类型↔Model类型转换，完整实现）
 │   ├── models/                   ← data-architecture-impl（数据层实体）
-│   ├── repositories/             ← data-architecture-impl（CRUD+查询）
+│   ├── repositories/             ← data-architecture-impl（CRUD+查询，供API层调用）
 │   ├── cache/                    ← data-architecture-impl（Redis+CacheRepository）
 │   ├── migrations/               ← data-architecture-impl（Schema迁移）
 │   ├── config/
@@ -85,8 +95,10 @@ backend-architecture-spec → [人类审查] → backend-architecture-impl
 | 人类审查 | ✅ 设计产出审查 | ✅ 代码产出确认 |
 | PRD对齐检查 | ✅ api-design-spec | ✅ api-design-impl |
 | 前端对齐检查 | ✅ api-design-spec | ✅ api-design-impl |
-| API对齐检查 | ✅ data-architecture-spec | ✅ data-architecture-impl |
+| API↔Model对齐检查 | ✅ api-design-spec（质量检查项） | ✅ data-architecture-impl（可选）/ backend-architecture-impl（兜底） |
 | 架构对齐检查 | ✅ backend-architecture-spec | ✅ backend-architecture-impl |
+| 统一设计审查 | ✅ backend-orchestrator（三份设计交叉验证） | — |
+| 统一对齐检查 | — | ✅ backend-architecture-impl（API-Model映射+Repository-Service调用链） |
 | 代码自审 | — | ✅ 三个impl Skill |
 | 测试代码生成 | — | ✅ 三个impl Skill |
 | 代码可编译验证 | — | ✅ npm run build / tsc --noEmit |
@@ -97,11 +109,16 @@ backend-architecture-spec → [人类审查] → backend-architecture-impl
 | 数据契约 | 生产方 | 消费方 |
 |----------|--------|--------|
 | PRD | PM design-prd | api-design-spec / data-architecture-spec / backend-architecture-spec |
-| OpenAPI契约 | api-design-spec | UI api-integration / data-architecture-spec / backend-architecture-spec |
+| 架构方案+拓扑图 | backend-architecture-spec | data-architecture-spec / api-design-spec / backend-architecture-impl |
+| 服务设计 | backend-architecture-spec | api-design-spec / backend-architecture-impl |
+| 服务数据归属 | backend-architecture-spec | data-architecture-spec（核心消费方） |
+| 技术栈决策 | backend-architecture-spec | data-architecture-impl / api-design-impl / backend-architecture-impl（统一消费） |
+| ADR | backend-architecture-spec | backend-architecture-impl |
+| ER模型 | data-architecture-spec | api-design-spec（核心消费方）/ data-architecture-impl / backend-architecture-impl |
+| 缓存策略 | data-architecture-spec | data-architecture-impl / backend-architecture-impl |
+| 数据层实现报告 | data-architecture-impl | api-design-impl（核心消费方，了解Repository方法签名） |
+| OpenAPI契约 | api-design-spec | api-design-impl / backend-architecture-impl |
 | 安全策略 | api-design-spec | api-design-impl |
 | 认证鉴权方案 | api-design-spec | api-design-impl |
-| ER模型 | data-architecture-spec | data-architecture-impl / backend-architecture-spec |
-| 缓存策略 | data-architecture-spec | data-architecture-impl / backend-architecture-spec |
-| 架构方案 | backend-architecture-spec | backend-architecture-impl |
 | 审查报告 | backend-architecture-spec | PM quality-acceptance |
 | API覆盖报告 | api-design-impl | PM quality-acceptance |

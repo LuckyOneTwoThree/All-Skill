@@ -24,6 +24,7 @@ metadata:
 2. **演进式架构**：从简单开始，按需演进，不一步到位
 3. **决策可追溯**：每个架构决策有明确的理由和上下文，自动生成ADR
 4. **技术债可见**：技术债显式登记和管理，不隐藏
+5. **架构约束先行**：架构决策约束后续数据模型和API设计，服务数据归属和技术栈决策必须明确
 
 ## 交互模式
 
@@ -35,12 +36,8 @@ metadata:
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务领域和流程 |
 | PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，供架构审查对齐检查 |
-| 数据模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系 |
-| 业务数据字典 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/data_dictionary.json | 业务数据标准和实体定义，供服务拆分和限界上下文划分参考 |
-| API契约 | YAML/JSON | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 接口定义 |
 | 业务规模 | JSON | 是 | 用户提供 | 用户量、QPS、数据量、团队规模 |
-| 技术约束 | JSON | ○ | 用户提供 | 技术栈、运维能力、预算 |
-| 缓存策略 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/cache_strategy.json | 缓存方案 |
+| 技术约束 | JSON | ○ | 用户提供 | 技术栈偏好、运维能力、预算 |
 
 ## 执行步骤
 
@@ -64,11 +61,17 @@ metadata:
 
 基于领域驱动设计识别限界上下文，设计服务拆分和通信方案。
 
-**阶段卡口**：服务间无循环依赖，数据归属明确
+**新增产出**：
+- **服务数据归属**（service_data_ownership.json）：明确每个服务/限界上下文拥有的数据实体，供 data-architecture-spec 按服务边界划分数据模型
+- **技术栈决策**（tech_stack_decision.json）：统一技术栈决策（语言/框架/ORM/数据库/缓存），供所有 impl Skill 统一消费，避免各自默认不同技术栈
+
+**阶段卡口**：服务间无循环依赖，数据归属明确，技术栈决策完整
 
 ### Step 4: 后端审查
 
 审查性能、安全、可维护性和可扩展性，输出问题清单和修复建议。
+
+**注意**：本阶段不审查API和数据模型的对齐（它们尚未设计），重点审查架构模式选择和服务边界划分的合理性。
 
 **阶段卡口**：P0问题=0，架构决策记录完整
 
@@ -90,6 +93,8 @@ metadata:
 - architecture_decision.json — 架构方案+拓扑图
 - adr.json — 架构决策记录
 - service_design.json — 服务划分+上下文映射
+- service_data_ownership.json — 每个服务/限界上下文拥有的数据实体，供data-architecture-spec消费
+- tech_stack_decision.json — 统一技术栈决策（语言/框架/ORM/数据库/缓存），供所有impl Skill消费
 - review_report.json — 审查问题清单+修复建议
 - tech_debt_register.json — 技术债登记册
 
@@ -117,15 +122,12 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| PRD缺失 | 基于数据模型和API契约推导业务领域 | 服务划分可能不准确 |
-| 数据模型缺失 | 无法设计服务 | 输出为空 |
-| API契约缺失 | 审查范围受限 | 无法做接口级审查 |
-| 业务规模未指定 | 默认中等规模 | 架构模式可能不匹配 |
+| PRD缺失 | 无法设计架构 | 输出为空 |
+| 业务规模未指定 | 默认中等规模（用户量1万，QPS 100，数据量10GB，团队5人） | 架构模式可能不匹配 |
 
 ## 上游变更响应
 
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | PRD业务领域变更 | 服务拆分 | 标注受影响的服务边界，评估是否需要重新划分 |
-| 数据模型变更 | 服务数据归属 | 标注受影响的服务，评估数据迁移需求 |
-| API契约变更 | 审查结果 | 重新评估受影响接口的安全和性能 |
+| PRD业务规模变更 | 架构模式 | 重新评估架构模式是否匹配 |

@@ -36,7 +36,7 @@ metadata:
 
 ```yaml
 pipeline: data-architecture-orchestrator
-version: 4.0
+version: 5.0
 
 post_pipeline:
   - action: stage-summary
@@ -57,7 +57,7 @@ stages:
     skills:
       - data-architecture-impl
     gate:
-      condition: "代码可编译 + Migration可执行 + API数据需求100%覆盖 + 代码自审P0=0 + 人类确认通过"
+      condition: "代码可编译 + Migration可执行 + 代码自审P0=0 + 人类确认通过"
       fail_action: "缺失项补充后重新验证"
 ```
 
@@ -72,8 +72,10 @@ Skill: data-architecture-spec
 输入:
   PRD: output/pm-design/design-prd/prd.md
   PRD结构化数据: output/pm-design/design-prd/prd.json
-  API契约: output/backend-api-design/api-design-spec/openapi.yaml
-  database_type: 用户提供
+  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  服务数据归属: output/backend-architecture/backend-architecture-spec/service_data_ownership.json
+  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  API契约: output/backend-api-design/api-design-spec/openapi.yaml（可选）
   数据量预估: 用户提供（可选）
   并发量预估: 用户提供（可选）
   当前Schema: 用户提供（可选）
@@ -82,8 +84,8 @@ Skill: data-architecture-spec
 模式: 🤖→👤
 内部步骤:
   1. 业务数据字典提取：从PRD提取业务数据实体定义
-  2. 实体识别与关系建模：设计ER图
-  3. 表结构与索引设计：DDL+索引策略
+  2. 实体识别与关系建模：按服务数据归属划分ER图
+  3. 表结构与索引设计：DDL+索引策略+架构约束适配
   4. 缓存策略设计：多级缓存+穿透/击穿/雪崩防护
   5. 数据迁移方案：迁移+回滚脚本
 ```
@@ -100,19 +102,19 @@ Skill: data-architecture-impl
   ER模型: output/backend-data-architecture/data-architecture-spec/er_model.json
   缓存策略: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
   迁移方案: output/backend-data-architecture/data-architecture-spec/migration_plan.json（可选）
-  API契约: output/backend-api-design/api-design-spec/openapi.yaml
+  API契约: output/backend-api-design/api-design-spec/openapi.yaml（可选，用于API对齐检查）
+  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
   project_dir: 用户提供
-  tech_stack: 用户提供
-  database_type: 用户提供
+  tech_stack: 用户提供（可选，tech_stack_decision.json未提供时使用）
 输出: output/backend-data-architecture/data-architecture-impl/ + 代码写入 {project_dir}/src/
-验证: 代码可编译，Migration可执行，API数据需求100%覆盖，代码自审P0=0
+验证: 代码可编译，Migration可执行，代码自审P0=0
 模式: 🤖→👤
 内部步骤:
   1. Model代码生成：models/entities+数据库配置
   2. Migration和种子数据生成：迁移脚本+种子数据
   3. Repository代码生成：CRUD+常用查询
   4. 缓存层代码生成：Redis+CacheRepository
-  5. 对齐检查与代码自审：API对齐+DDL一致性+缓存对齐+N+1检查
+  5. 对齐检查与代码自审：API对齐（可选）+DDL一致性+缓存对齐+N+1检查
   6. 数据层测试代码生成：Model+Repository+Migration测试
 ```
 
@@ -126,7 +128,7 @@ Skill: data-architecture-impl
 | 总结输出路径 | output/phase-reports/backend/data-architecture-orchestrator.md |
 
 下游衔接:
-  primary: backend-architecture-orchestrator（数据架构完成后，进入后端架构设计，基于数据模型和API契约设计服务架构）
+  primary: （设计阶段由backend-orchestrator统一协调，此编排器可单独调用时下游为api-design-impl，数据模型变更需反向通知API设计）
   alternatives:
     - target: api-design-orchestrator
       reason: 数据模型变更需要反向更新API契约
@@ -145,6 +147,7 @@ Skill: data-architecture-impl
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
+| 数据实体与服务归属确认 | data-architecture-spec执行时 | 确认每个数据实体归属的服务/限界上下文，数据归属与架构方案一致 |
 | 范式vs反范式 | data-architecture-spec执行时 | 读写比决定，人类确认平衡点 |
 | 分库分表策略 | data-architecture-spec执行时 | 影响成本和复杂度，人类确认 |
 | 缓存一致性级别 | data-architecture-spec执行时 | 强一致vs最终一致，人类确认 |
@@ -156,7 +159,9 @@ Skill: data-architecture-impl
 
 | 异常类型 | 处理策略 |
 |----------|----------|
-| PRD数据需求不明确 | 基于API契约推断数据实体，标注"推断值" |
+| 架构方案缺失 | 默认单体架构，所有实体同一数据库，标注"架构约束待确认" |
+| 服务数据归属缺失 | 从PRD推导实体归属，标注"服务归属待确认"，人类确认后补充 |
+| PRD数据需求不明确 | 基于服务数据归属推断数据实体，标注"推断值" |
 | 数据量预估缺失 | 使用保守估计值，标注"预估待验证" |
 | 缓存一致性策略冲突 | 标注冲突项，提供强一致和最终一致双方案，人类决策 |
 | 迁移回滚脚本生成失败 | 阻塞迁移执行，必须人工编写回滚脚本 |

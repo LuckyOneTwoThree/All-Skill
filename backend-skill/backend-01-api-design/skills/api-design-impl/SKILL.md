@@ -40,9 +40,12 @@ metadata:
 | 合规检查清单 | JSON | ○ | output/backend-api-design/api-design-spec/compliance-checklist.json | 合规要求 |
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 用于PRD对齐检查 |
 | PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，供代码生成对齐检查 |
+| 数据模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系定义，API类型与Model类型通过mappers转换 |
+| 数据层实现报告 | JSON | 是 | output/backend-data-architecture/data-architecture-impl/impl-report.json | 数据层实现报告，含Repository清单和方法签名，供Service真实调用 |
 | 前端页面数据需求 | JSON | ○ | output/ui-frontend/page-builder/pages.json | 用于前端对齐检查 |
+| 技术栈决策 | JSON | ○ | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | 统一技术栈，决定API框架和中间件风格 |
 | project_dir | string | 是 | 用户提供 | 项目根目录绝对路径 |
-| tech_stack | string | 是 | 用户提供 | 后端技术栈 |
+| tech_stack | string | ○ | 用户提供 | 技术栈决策.json未提供时使用，备用降级 |
 
 ## 执行步骤
 
@@ -57,7 +60,7 @@ metadata:
 | Controller | src/controllers/ | 每个资源一个Controller，负责请求/响应转换和参数校验 |
 | 请求校验 | src/validators/ | 基于OpenAPI schema的请求参数校验 |
 | API类型定义 | src/types/api.ts | API请求/响应TypeScript类型（与OpenAPI对齐），仅定义API层传输结构 |
-| 类型转换层 | src/types/mappers.ts | API类型↔Model类型的转换函数骨架（Model类型由data-architecture-impl生成，此处仅定义接口签名和占位实现，待data-architecture-impl完成后由backend-architecture-impl补全） |
+| 类型转换层 | src/types/mappers.ts | API类型↔Model类型的转换函数**完整实现**（Model类型由data-architecture-impl已生成，此处基于er_model.json和OpenAPI规范生成完整转换逻辑） |
 
 **阶段卡口**：代码可编译（npm run build 或 tsc --noEmit 通过），路由与OpenAPI规范一一对应
 
@@ -74,9 +77,9 @@ metadata:
 **代码质量要求**：
 - Controller方法仅做请求/响应转换+参数校验，不包含业务逻辑
 - Service方法包含完整业务逻辑+错误处理+事务管理+JSDoc注释
-- Service通过Repository+CacheRepository访问数据，不直接操作数据库
+- Service通过**已存在的**Repository+CacheRepository访问数据（Repository方法从impl-report.json获取），代码可编译可运行
 
-**阶段卡口**：每个API端点有对应Service方法，Controller→Service调用链完整
+**阶段卡口**：每个API端点有对应Service方法，Controller→Service→Repository调用链完整，所有Repository调用均引用已实现的方法
 
 ### Step 3: 中间件和安全实现
 
@@ -145,6 +148,9 @@ metadata:
 | 安全策略与代码实现冲突 | 以安全策略为准，调整代码实现 |
 | 前端数据需求缺少API | 自动补充API端点，标注为"前端驱动新增" |
 | 代码自审发现P0问题 | 阻塞输出，自动修复后重新自审 |
+| 数据模型缺失 | 无法生成mappers，报错阻塞 |
+| 数据层实现报告缺失 | 无法调用真实Repository，标注哪些Service方法为骨架，提示待data-architecture-impl完成后可完整实现 |
+| 技术栈决策与用户指定冲突 | 优先使用技术栈决策.json，标注冲突供人类确认 |
 
 ## 质量检查
 
@@ -153,7 +159,8 @@ metadata:
 - [ ] Controller仅做请求/响应转换，不含业务逻辑
 - [ ] Service包含完整业务逻辑+错误处理+事务管理
 - [ ] 中间件按安全级别正确匹配
-- [ ] API类型与Model类型通过mappers.ts转换，不直接引用（mappers.ts为骨架实现，完整转换待data-architecture-impl完成后由backend-architecture-impl补全）
+- [ ] mappers.ts API↔Model类型转换完整实现（非骨架）
+- [ ] Service调用的Repository方法在impl-report.json中存在
 - [ ] PRD功能点100%有API端点覆盖
 - [ ] 前端页面数据需求100%有API对应（有前端输入时）
 - [ ] 代码自审P0问题=0
@@ -163,16 +170,21 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
+| 数据模型缺失 | 无法生成mappers，报错阻塞 | 无法生成API代码 |
+| 数据层实现报告缺失 | Service调用Repository处生成骨架代码，标注"待data-architecture-impl完成后补全" | Service无法完整实现，代码无法编译 |
+| 技术栈决策缺失 | 使用tech_stack参数（用户提供），无则默认Express+TypeScript | 代码风格可能不匹配 |
 | 安全策略缺失 | 默认L2认证级别 | 中间件可能不满足安全要求 |
 | 认证鉴权方案缺失 | 默认JWT+RBAC | 认证方案可能不匹配业务需求 |
 | PRD缺失 | 仅基于OpenAPI规范生成代码 | 无法做PRD对齐检查 |
 | 前端页面数据需求缺失 | 仅基于OpenAPI规范生成代码 | 无法做前端对齐检查 |
-| tech_stack未指定 | 默认Node.js/Express | 代码风格可能不匹配项目偏好 |
 
 ## 上游变更响应
 
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | OpenAPI规范变更 | 路由+Controller+Service+类型 | 标注受影响的代码文件，评估修改范围 |
+| 数据模型变更 | mappers.ts+API类型 | 更新API↔Model类型转换逻辑 |
+| 数据层实现变更 | Service中Repository调用 | 更新Repository方法调用，新增查询方法需同步补充 |
 | 安全策略变更 | 中间件配置 | 更新中间件匹配规则 |
 | 认证鉴权方案变更 | 中间件+Service权限检查 | 更新认证和权限逻辑 |
+| 技术栈决策变更 | 技术栈相关配置 | 更新框架和中间件配置 |

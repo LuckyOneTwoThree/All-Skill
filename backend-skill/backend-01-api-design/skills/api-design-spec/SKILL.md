@@ -1,6 +1,6 @@
 ---
 name: api-design-spec
-description: 当需要设计API规范时使用。API设计规范产出，从PRD自动设计RESTful/GraphQL接口契约、安全策略和认证鉴权方案，生成OpenAPI 3.0规范。内建合规检查确保API安全合规。产出经人类审查后，交由api-design-impl生成代码。关键词：API设计、接口契约、OpenAPI、RESTful、GraphQL、API安全、认证鉴权、JWT、OAuth2、RBAC、写接口、接口文档。
+description: 当需要设计API规范时使用。API设计规范产出，基于已确认的数据模型和服务边界设计RESTful/GraphQL接口契约、安全策略和认证鉴权方案，生成OpenAPI 3.0规范。数据驱动契约，API字段从ER模型精确投影。内建合规检查确保API安全合规。产出经人类审查后，交由api-design-impl生成代码。关键词：API设计、接口契约、OpenAPI、RESTful、GraphQL、API安全、认证鉴权、JWT、OAuth2、RBAC、写接口、接口文档。
 metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
@@ -21,7 +21,7 @@ metadata:
 
 ## 核心原则
 
-1. **契约先行**：API契约在设计阶段确定，前后端基于契约并行开发
+1. **数据驱动契约**：API契约基于已确认的数据模型和服务边界设计，字段定义有据可依
 2. **安全内建**：安全策略和认证鉴权与接口设计同步，不事后补丁
 3. **合规默认**：隐私合规检查内建，确保API设计满足GDPR/等保等要求
 4. **RESTful优先**：优先使用RESTful风格，复杂查询场景考虑GraphQL
@@ -37,7 +37,11 @@ metadata:
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 产品需求文档 |
 | PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含features[]/entities[]，供API设计编程式消费 |
-| 数据模型 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系定义（API设计阶段通常未就绪，从PRD推导） |
+| 数据模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 数据实体和关系定义，API字段从Model精确投影 |
+| 业务数据字典 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/data_dictionary.json | 业务数据标准和实体定义，供字段命名和类型对齐 |
+| 架构方案 | JSON | 是 | output/backend-architecture/backend-architecture-spec/architecture_decision.json | 架构模式，决定API按服务拆分还是统一入口 |
+| 服务设计 | JSON | 是 | output/backend-architecture/backend-architecture-spec/service_design.json | 服务划分+限界上下文，决定API按服务分组 |
+| 技术栈决策 | JSON | ○ | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | 统一技术栈，决定API框架和中间件风格 |
 | 业务流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户流程定义 |
 | 安全等级 | string | 是 | 用户提供 | 标准 / 高安全（金融/医疗） |
 | 合规要求 | string | ○ | 用户提供 | GDPR / 等保 / PCI-DSS |
@@ -48,12 +52,14 @@ metadata:
 
 ### Step 1: 资源识别与建模
 
-从PRD和数据模型中识别API资源：
+从ER模型直接映射API资源：
 
 - 每个核心数据实体映射为一个资源（复数名词）
+- API字段从Model字段精确投影，不再凭PRD推导
 - 识别资源间的关系（一对一/一对多/多对多）
 - 确定资源的CRUD操作需求
 - 标注哪些资源需要嵌套资源（子资源）
+- 根据服务设计（service_design.json）按限界上下文分组API资源
 
 **资源命名规范**：
 - 使用复数名词：`/courses` 而非 `/course`
@@ -75,7 +81,12 @@ metadata:
 
 定义统一的请求响应格式、错误码体系和版本策略。
 
-**阶段卡口**：每个资源有CRUD定义+错误码体系
+**服务边界适配**：
+- 微服务架构：API按服务拆分，每个服务生成独立的 OpenAPI tags 或独立文件
+- 单体架构：API统一入口，按限界上下文使用 tags 分组
+- BFF模式：为不同前端（Web/Mobile）设计差异化API
+
+**阶段卡口**：每个资源有CRUD定义+错误码体系+服务归属
 
 ### Step 3: 接口安全设计
 
@@ -136,6 +147,9 @@ metadata:
 ## 质量检查
 
 - [ ] 每个资源有完整的CRUD接口定义
+- [ ] API资源与ER模型实体一一对应
+- [ ] API请求/响应字段100%有Model字段支撑
+- [ ] API分组与服务边界一致
 - [ ] 100%的接口有安全级别标注
 - [ ] L2+接口100%有鉴权要求
 - [ ] 认证方案覆盖全部用户场景
@@ -149,7 +163,10 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| 数据模型缺失 | 从PRD推导核心实体 | 资源定义基于推导，标注"待数据模型确认" |
+| 数据模型缺失 | 从PRD推导核心实体，标注"待数据模型确认" | 资源定义基于推导，字段可能不完整 |
+| 架构方案缺失 | 默认单体架构，API统一入口 | API拆分策略可能不匹配 |
+| 服务设计缺失 | 按资源独立设计API，标注"服务归属待确认" | API分组可能与服务边界不一致 |
+| 技术栈决策缺失 | 默认Express + TypeScript | API框架风格可能不匹配 |
 | 业务流程缺失 | 仅设计CRUD接口 | 缺少跨资源的业务接口 |
 | PRD缺失 | 无法设计API | 输出为空 |
 | 安全等级未指定 | 默认标准等级 | 可能不满足高安全要求 |
@@ -161,6 +178,8 @@ metadata:
 |----------|----------|----------|
 | PRD功能点增删 | API端点增删 | 标注受影响的API端点，生成变更清单 |
 | 数据模型变更 | API请求/响应结构 | 标注受影响的字段，评估向后兼容性 |
+| 架构方案变更 | API分组和入口策略 | 重新评估API按服务拆分策略 |
+| 服务设计变更 | API资源归属 | 重新划分API分组，评估跨服务API调整 |
 
 | API变更类型 | 兼容性 | 通知范围 | 通知方式 |
 |-------------|--------|----------|----------|

@@ -39,11 +39,12 @@ metadata:
 | ADR | JSON | 是 | output/backend-architecture/backend-architecture-spec/adr.json | 架构决策记录 |
 | 审查报告 | JSON | ○ | output/backend-architecture/backend-architecture-spec/review_report.json | 审查问题清单 |
 | 技术债登记册 | JSON | ○ | output/backend-architecture/backend-architecture-spec/tech_debt_register.json | 技术债 |
+| 技术栈决策 | JSON | ○ | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | 统一技术栈，决定ORM和数据库连接配置 |
 | API契约 | YAML | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 用于路由挂载 |
 | 数据模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 用于数据库初始化 |
 | 缓存策略 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/cache_strategy.json | 用于缓存初始化 |
 | project_dir | string | 是 | 用户提供 | 项目根目录绝对路径 |
-| tech_stack | string | 是 | 用户提供 | 后端技术栈 |
+| tech_stack | string | ○ | 用户提供 | 技术栈决策.json未提供时使用，备用降级 |
 
 ## 执行步骤
 
@@ -117,6 +118,7 @@ metadata:
 - 服务间通信方式与架构决策匹配
 - 中间件配置与安全策略匹配
 - app.ts正确挂载所有路由和中间件
+- **统一对齐检查**：检查 API 字段与 Model 字段的完整映射、Repository 方法与 Service 调用的完整匹配（作为最终兜底，确保 api-design-impl 和 data-architecture-impl 的衔接正确）
 
 **代码自审**：
 - 检查app.ts是否正确整合api-design-impl的路由和data-architecture-impl的数据库/缓存初始化
@@ -126,7 +128,7 @@ metadata:
 - 检查CI流水线是否完整（lint+test+build）
 - 发现问题自动修复，P0问题阻塞输出
 
-**阶段卡口**：项目可启动（npm run dev 成功或等效命令验证），健康检查端点可访问（/health返回200），架构决策100%在代码中体现，代码自审P0问题=0
+**阶段卡口**：项目可启动（npm run dev 成功或等效命令验证），健康检查端点可访问（/health返回200），架构决策100%在代码中体现，统一对齐检查通过，代码自审P0问题=0
 
 ### Step 6: 架构测试代码生成
 
@@ -175,14 +177,16 @@ metadata:
 - [ ] CI流水线包含lint+test+build
 - [ ] 代码自审P0问题=0
 - [ ] 健康检查和服务间通信有测试骨架
+- [ ] API-Model映射完整，Repository-Service调用链完整（统一对齐检查）
 
 ## 降级策略
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
+| 技术栈决策缺失 | 使用tech_stack参数（用户提供），无则默认Node.js/Express | 代码风格可能不匹配 |
 | 架构方案缺失 | 默认单体架构 | 架构模式可能不匹配业务需求 |
 | 服务设计缺失 | 按模块目录组织 | 服务拆分可能不合理 |
-| tech_stack未指定 | 默认Node.js/Express | 代码风格可能不匹配 |
+| tech_stack参数缺失 | 默认Node.js/Express | 代码风格可能不匹配 |
 | project_dir缺失 | 无法生成代码 | 仅输出设计文档 |
 
 ## 上游变更响应
@@ -191,4 +195,7 @@ metadata:
 |----------|----------|----------|
 | 架构方案变更 | app.ts+配置+服务层 | 标注受影响的代码文件，评估修改范围 |
 | 服务设计变更 | 服务层+通信层 | 更新Service目录和通信配置 |
+| 技术栈决策变更 | ORM配置+数据库连接 | 更新tech_stack相关配置 |
 | API契约变更 | 路由挂载 | 更新app.ts中的路由注册 |
+| 数据模型变更 | 数据库初始化配置 | 检查是否需要补充Model文件 |
+| API实现或数据层实现变更 | 统一对齐检查 | 检查API-Model映射是否仍然完整 |

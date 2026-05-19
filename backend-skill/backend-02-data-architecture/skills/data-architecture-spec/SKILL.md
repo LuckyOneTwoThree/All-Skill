@@ -1,6 +1,6 @@
 ---
 name: data-architecture-spec
-description: 当需要设计数据架构时使用。数据架构设计规范产出，从PRD和API契约自动设计业务数据字典、ER模型、表结构、索引策略、缓存方案和数据迁移方案。内建业务数据字典提取确保数据标准统一。产出经人类审查后，交由data-architecture-impl生成代码。关键词：数据模型、ER图、表结构、索引、缓存策略、数据迁移、数据字典、建表、数据库设计。
+description: 当需要设计数据架构时使用。数据架构设计规范产出，从PRD和架构约束自动设计业务数据字典、ER模型、表结构、索引策略、缓存方案和数据迁移方案。基于架构方案的服务数据归属划分数据边界，基于业务规则驱动范式建模。内建业务数据字典提取确保数据标准统一。产出经人类审查后，交由data-architecture-impl生成代码。关键词：数据模型、ER图、表结构、索引、缓存策略、数据迁移、数据字典、建表、数据库设计。
 metadata:
   module: "后端架构与开发"
   sub-module: "数据架构"
@@ -21,10 +21,11 @@ metadata:
 
 ## 核心原则
 
-1. **业务数据标准先行**：从PRD提取业务数据字典，确保数据定义统一
-2. **范式与反范式平衡**：写密集场景遵循3NF，读密集场景适度反范式
-3. **缓存有据**：每个缓存项有明确的命中率目标和失效策略
-4. **迁移可回滚**：每个迁移必须有对应的回滚脚本
+1. **架构约束先行**：数据模型在架构边界内设计，每个服务的数据归属由架构决定
+2. **业务数据标准驱动**：从PRD提取业务数据字典，确保数据定义统一
+3. **范式与反范式平衡**：写密集场景遵循3NF，读密集场景适度反范式
+4. **缓存有据**：每个缓存项有明确的命中率目标和失效策略
+5. **迁移可回滚**：每个迁移必须有对应的回滚脚本
 
 ## 交互模式
 
@@ -36,8 +37,10 @@ metadata:
 |--------|------|------|------|------|
 | PRD | markdown | 是 | output/pm-design/design-prd/prd.md | 业务实体和关系需求 |
 | PRD结构化数据 | JSON | 是 | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含entities[]/features[]，供数据模型设计编程式消费 |
-| API契约 | YAML/JSON | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 接口数据结构定义 |
-| database_type | string | 是 | 用户提供 | 数据库类型（PostgreSQL/MySQL/MongoDB/SQLite） |
+| 架构方案 | JSON | 是 | output/backend-architecture/backend-architecture-spec/architecture_decision.json | 架构模式+拓扑图，决定数据库拆分策略 |
+| 服务数据归属 | JSON | 是 | output/backend-architecture/backend-architecture-spec/service_data_ownership.json | 每个服务拥有的数据实体，决定数据模型边界 |
+| 技术栈决策 | JSON | 是 | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | 统一技术栈（含数据库类型），替代用户单独提供database_type |
+| API契约 | YAML/JSON | ○ | output/backend-api-design/api-design-spec/openapi.yaml | 接口数据结构定义（API尚未设计时为空，正常情况） |
 | 数据量预估 | JSON | ○ | 用户提供 | 核心表数据量级和增长速度 |
 | 并发量预估 | JSON | ○ | 用户提供 | QPS/TPS峰值和均值 |
 | 当前Schema | SQL/JSON | ○ | 用户提供 | 现有数据库表结构（增量项目必填） |
@@ -57,9 +60,10 @@ metadata:
 
 ### Step 2: 实体识别与关系建模
 
-从PRD、API契约和数据字典中提取数据实体：
+从PRD、服务数据归属和数据字典中提取数据实体：
 
 - 识别核心业务实体（名词提取）
+- 按服务数据归属（service_data_ownership.json）将实体分组到对应限界上下文
 - 确定实体间关系（1:1 / 1:N / N:M）
 - 标注关系的基数和可选性
 - 生成ER图
@@ -72,6 +76,11 @@ metadata:
 ### Step 3: 表结构与索引设计
 
 为每个实体设计表结构（主键、外键、时间戳、软删除、状态字段等通用字段规范），设计索引策略和分库分表方案。
+
+**架构约束适配**：
+- 微服务架构：按服务数据归属决定是否需要 database-per-service
+- 单体架构：所有实体在同一数据库，按限界上下文使用 schema 前缀分组
+- Serverless：考虑使用 DynamoDB 等非关系型数据库的表设计
 
 **阶段卡口**：ER图+DDL+数据字典完整
 
@@ -122,15 +131,19 @@ metadata:
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
-| API契约缺失 | 从PRD推导数据结构 | 数据模型可能不完整 |
+| 架构方案缺失 | 默认单体架构，所有实体同一数据库 | 数据库拆分策略可能不匹配 |
+| 服务数据归属缺失 | 从PRD推导实体归属，标注"服务归属待确认" | 数据模型边界可能不准确 |
+| 技术栈决策缺失 | 默认PostgreSQL + Prisma | SQL方言和ORM可能不匹配 |
+| API契约缺失 | 正常情况，API尚未设计，数据模型基于PRD+服务数据归属独立设计 | 无API对齐覆盖报告 |
 | PRD缺失 | 无法设计数据架构 | 输出为空 |
 | 当前Schema缺失 | 仅设计新表结构，不生成迁移脚本 | 无迁移方案 |
 | 并发量预估缺失 | 按中等并发设计缓存 | 缓存方案可能不足或过度 |
-| database_type未指定 | 默认PostgreSQL | SQL方言可能不兼容 |
 
 ## 上游变更响应
 
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | PRD实体增删 | 数据模型+数据字典 | 标注受影响的实体，生成变更清单 |
+| 架构方案变更 | 数据库拆分策略 | 重新评估 database-per-service 需求，调整数据模型边界 |
+| 服务数据归属变更 | 实体分组+表结构 | 重新划分实体归属，评估跨服务数据迁移需求 |
 | API契约变更 | 表结构和索引 | 标注受影响的字段，评估迁移需求 |

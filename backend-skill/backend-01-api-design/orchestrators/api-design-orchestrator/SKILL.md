@@ -36,7 +36,7 @@ metadata:
 
 ```yaml
 pipeline: api-design-orchestrator
-version: 4.0
+version: 5.0
 
 post_pipeline:
   - action: stage-summary
@@ -57,7 +57,7 @@ stages:
     skills:
       - api-design-impl
     gate:
-      condition: "代码可编译 + PRD功能点100%覆盖 + 代码自审P0=0 + 人类确认通过"
+      condition: "代码可编译 + PRD功能点100%覆盖 + mappers完整实现 + 代码自审P0=0 + 人类确认通过"
       fail_action: "缺失项补充后重新验证"
 ```
 
@@ -72,7 +72,11 @@ Skill: api-design-spec
 输入:
   PRD: output/pm-design/design-prd/prd.md
   PRD结构化数据: output/pm-design/design-prd/prd.json
-  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json（可选）
+  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
+  业务数据字典: output/backend-data-architecture/data-architecture-spec/data_dictionary.json（可选）
+  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  服务设计: output/backend-architecture/backend-architecture-spec/service_design.json
+  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json（可选）
   业务流程: output/pm-design/design-userflow/userflow.json（可选）
   安全等级: 用户提供
   合规要求: 用户提供（可选）
@@ -82,8 +86,8 @@ Skill: api-design-spec
 验证: API契约+安全策略+认证鉴权方案完整，合规检查无P0问题
 模式: 🤖→👤
 内部步骤:
-  1. 资源识别与建模：从PRD识别API资源
-  2. 接口与规范设计：设计CRUD接口+错误码+版本策略
+  1. 资源识别与建模：从ER模型直接映射API资源，字段从Model精确投影
+  2. 接口与规范设计：设计CRUD接口+错误码+版本策略+服务边界分组
   3. 接口安全设计：L1-L4分级+限流+数据安全
   4. 认证鉴权设计：认证方案+权限模型+会话管理
   5. 合规检查：隐私合规评估
@@ -104,17 +108,20 @@ Skill: api-design-impl
   合规检查清单: output/backend-api-design/api-design-spec/compliance-checklist.json（可选）
   PRD: output/pm-design/design-prd/prd.md
   PRD结构化数据: output/pm-design/design-prd/prd.json
+  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
+  数据层实现报告: output/backend-data-architecture/data-architecture-impl/impl-report.json
   前端页面数据需求: output/ui-frontend/page-builder/pages.json（可选）
+  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json（可选）
   project_dir: 用户提供
-  tech_stack: 用户提供
+  tech_stack: 用户提供（可选，tech_stack_decision.json未提供时使用）
 输出: output/backend-api-design/api-design-impl/ + 代码写入 {project_dir}/src/
-验证: 代码可编译，PRD功能点100%覆盖，前端数据需求100%对应，代码自审P0=0
+验证: 代码可编译，PRD功能点100%覆盖，mappers完整实现，Service调用真实Repository，代码自审P0=0
 模式: 🤖→👤
 内部步骤:
-  1. 代码骨架生成：routes/controllers/validators/types/mappers
-  2. Service业务逻辑实现：业务逻辑+事务管理+缓存调用
+  1. 代码骨架生成：routes/controllers/validators/types/mappers完整实现
+  2. Service业务逻辑实现：业务逻辑+事务管理+真实Repository调用（代码可编译）
   3. 中间件和安全实现：认证/限流/CORS/错误处理
-  4. 对齐检查与代码自审：PRD对齐+前端对齐+安全自审
+  4. 对齐检查与代码自审：PRD对齐+前端对齐+安全自审+Repository调用链验证
   5. API测试代码生成：集成测试骨架
 ```
 
@@ -128,7 +135,7 @@ Skill: api-design-impl
 | 总结输出路径 | output/phase-reports/backend/api-design-orchestrator.md |
 
 下游衔接:
-  primary: data-architecture-orchestrator（API契约完成后，进入数据架构设计，基于API数据需求设计ER模型和表结构）
+  primary: （设计阶段由backend-orchestrator统一协调，此编排器可单独调用时下游为data-architecture-impl）
   alternatives:
     - target: ui-orchestrator
       reason: API契约可供UI前端并行开发消费
@@ -147,6 +154,7 @@ Skill: api-design-impl
 
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
+| API资源与数据实体映射确认 | api-design-spec执行时 | 确认每个API资源有对应ER模型实体，字段100%有Model字段支撑 |
 | API风格选择 | api-design-spec执行时 | RESTful vs GraphQL，人类确认 |
 | 安全等级确认 | api-design-spec执行时 | 标准vs高安全，影响限流/加密/审计策略 |
 | 权限模型选择 | api-design-spec执行时 | RBAC vs ABAC，影响权限管理复杂度 |

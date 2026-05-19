@@ -37,10 +37,10 @@ metadata:
 | ER模型 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/er_model.json | 实体关系和DDL定义 |
 | 缓存策略 | JSON | 是 | output/backend-data-architecture/data-architecture-spec/cache_strategy.json | 缓存方案 |
 | 迁移方案 | JSON | ○ | output/backend-data-architecture/data-architecture-spec/migration_plan.json | 迁移方案（增量项目） |
-| API契约 | YAML | 是 | output/backend-api-design/api-design-spec/openapi.yaml | 用于API对齐检查 |
+| API契约 | YAML | ○ | output/backend-api-design/api-design-spec/openapi.yaml | 用于API对齐检查（API尚未实现时为空，正常情况） |
+| 技术栈决策 | JSON | 是 | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | 统一技术栈，含语言/ORM/数据库类型 |
 | project_dir | string | 是 | 用户提供 | 项目根目录绝对路径 |
-| tech_stack | string | 是 | 用户提供 | 后端技术栈（Node.js/Prisma、Node.js/TypeORM、Python/SQLAlchemy、Python/Django ORM、Go/GORM、Java/JPA） |
-| database_type | string | 是 | 用户提供 | 数据库类型 |
+| tech_stack | string | ○ | 用户提供 | tech_stack_decision.json未提供时使用，备用降级 |
 
 ## 执行步骤
 
@@ -105,9 +105,10 @@ metadata:
 
 ### Step 5: 对齐检查与代码自审
 
-**API对齐检查**：
+**API对齐检查**（可选，有API契约时执行）：
 - 逐条对照API契约中的请求/响应结构，确保Model字段覆盖所有API需求
 - 缺失字段标注并自动补充
+- 无API契约时跳过此检查，标注"API对齐待api-design-impl完成后由backend-architecture-impl统一检查"
 
 **代码自审**：
 - 检查Model字段与DDL是否一致
@@ -117,7 +118,7 @@ metadata:
 - 检查索引是否覆盖高频查询场景
 - 发现问题自动修复，P0问题阻塞输出
 
-**阶段卡口**：API数据需求100%有Model字段覆盖，代码自审P0问题=0
+**阶段卡口**：Model字段与DDL一致，代码自审P0问题=0
 
 ### Step 6: 数据层测试代码生成
 
@@ -152,6 +153,7 @@ metadata:
 | 缓存策略与代码实现冲突 | 以缓存策略为准，调整代码实现 |
 | 代码自审发现P0问题 | 阻塞输出，自动修复后重新自审 |
 | Repository查询有N+1问题 | 改用JOIN或批量查询 |
+| 技术栈决策与用户指定冲突 | 优先使用技术栈决策.json，标注冲突供人类确认 |
 
 ## 质量检查
 
@@ -162,19 +164,19 @@ metadata:
 - [ ] 软删除/分页/排序统一封装
 - [ ] 缓存层与缓存策略设计对齐
 - [ ] Model仅定义数据层结构，API类型由api-design-impl的types/api.ts定义
-- [ ] API数据需求100%有Model字段覆盖
 - [ ] 代码自审P0问题=0
 - [ ] 每个Model和Repository有测试骨架
+- [ ] API字段覆盖（API契约存在时必做，不存在时标注待验证）
 
 ## 降级策略
 
 | 缺失的上游输入 | 降级方案 | 输出影响 |
 |---------------|---------|---------|
+| 技术栈决策缺失 | 使用tech_stack参数（用户提供），无则默认Node.js/Prisma | 代码风格可能不匹配 |
 | 缓存策略缺失 | 不生成缓存层代码 | 无缓存层，Service直接访问Repository |
 | 迁移方案缺失 | 不生成迁移脚本 | 无迁移方案 |
-| API契约缺失 | 仅基于ER模型生成代码 | 无法做API对齐检查 |
-| tech_stack未指定 | 默认Node.js/Prisma | 代码风格可能不匹配 |
-| database_type未指定 | 默认PostgreSQL | SQL方言可能不兼容 |
+| API契约缺失 | 正常情况，仅基于ER模型生成代码，API对齐检查降级为可选 | API字段覆盖待api-design-impl完成后验证 |
+| tech_stack参数缺失 | 默认Node.js/Prisma | 代码风格可能不匹配 |
 
 ## 上游变更响应
 
@@ -182,4 +184,5 @@ metadata:
 |----------|----------|----------|
 | ER模型变更 | Model+Migration+Repository | 标注受影响的代码文件，评估修改范围 |
 | 缓存策略变更 | 缓存层代码 | 更新CacheRepository和缓存配置 |
+| 技术栈决策变更 | 技术栈相关配置 | 更新ORM配置和数据库连接代码 |
 | API契约变更 | Repository查询方法 | 评估是否需要新增或修改查询方法 |
