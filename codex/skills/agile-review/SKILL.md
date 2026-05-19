@@ -945,7 +945,3 @@ The core value of retrospectives lies in driving continuous improvement loops. T
 4. **Closed-loop check**: During next Sprint retrospective, check whether improvement experiments fed back from previous Sprint were executed; unexecuted ones escalated to team discussion items
 
 ---
-
-## Version History
-
-- v1.0: Initial version (merged agile-review + sprint-retrospective-report + retrospective-auto, including Sprint review, retrospective report generation, and release retrospective)

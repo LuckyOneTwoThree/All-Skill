@@ -129,14 +129,3 @@ Skill: opportunity-definition
 | Brief上游数据大量缺失 | 基于已有数据生成Brief，缺失字段标注"数据缺失"，证据摘要和关键假设置信度降级，建议人类补充数据后重新生成 |
 | 所有上游数据全部缺失 | 降级为轻量版流程：用户口述问题 → 基于描述生成Problem Statement → 基于Problem Statement生成HMW → 输出轻量版Brief，全流程标注"数据缺失" |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: description触发词优化
-- v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格和人类决策点表格
-- v4.0: 统一阶段执行计划为表格格式，移除数据流转图
-- v5.0: 核心原则重写为4条编排理念；移除通用4条执行步骤原则；新增异常处理表
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义；阶段执行计划改为调用指令格式
-- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；异常处理新增阶段总结生成失败策略
-- v8.0: 合并opportunity-scoring/opportunity-problem-statement/opportunity-hmw/opportunity-brief为opportunity-definition，Pipeline stages从4阶段简化为1阶段调用

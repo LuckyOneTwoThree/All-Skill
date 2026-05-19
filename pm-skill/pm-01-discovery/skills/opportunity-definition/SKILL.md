@@ -522,7 +522,3 @@ metadata:
 |-----------|----------|----------|----------|
 | 决策层/利益相关方 | `brief.title` / `scoring.opportunities[].weighted_total` | Brief核心结论变更后 | 通知机会简报标题和评分变化，提示需重新审阅 |
 | 后续阶段（解决方案探索） | `brief.recommended_next_step` / `brief.key_assumptions` | 推荐行动或假设变更后 | 通知下一步行动调整及需验证的假设变化 |
-
-## 变更记录
-
-- v3.0: 合并 opportunity-scoring + opportunity-problem-statement + opportunity-hmw + opportunity-brief 为 opportunity-definition，整合4步骤为统一流程

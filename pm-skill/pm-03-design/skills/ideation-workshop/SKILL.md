@@ -771,7 +771,3 @@ Markdown格式的创意工作坊报告，包含：
 | 收敛方案深化内容变更 | design-prd | 标记深化内容变更，触发PRD功能规格更新 |
 | 对比矩阵评分变更 | design-prd | 标记评分变更，触发PRD优先级调整 |
 | MVP范围变更 | validation-mvp | 标记MVP范围变更，触发MVP界定更新 |
-
-## 变更记录
-
-- v3.0: 合并ideation-hmw、ideation-scamper、ideation-inversion、ideation-convergence四件套为ideation-workshop创意工作坊；Step 1 HMW问题重构、Step 2 并行发散（SCAMPER+反转思维）、Step 3 创意收敛；输出合并为ideation-workshop.json（含hmw_ideas+scamper_ideas+inversion_ideas+converged_ideas）+ ideation-workshop.md

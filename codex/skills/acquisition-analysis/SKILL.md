@@ -414,7 +414,3 @@ When upstream files are missing, users need to provide the following information
 |------------|----------|----------|----------|
 | activation-aha | Activation stage drop-off rate change | Write to output file | Registration->Activation conversion rate and drop-off analysis |
 | acquisition-orchestrator | Channel assessment and funnel optimization complete | Output file update | Channel grading and funnel optimization completion status and key conclusions |
-
-## Version History
-
-- v1.0: Merged acquisition-channel + acquisition-optimize

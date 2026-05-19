@@ -158,7 +158,3 @@ Next Steps:
 | competitor-analysis quadrant empty | Annotate "no competitors identified in this quadrant", suggest human provide clues, mark quadrant coverage incomplete in report |
 | All upstream data missing | Degrade to lightweight flow: user provides category keywords -> generate brief competitor analysis report based on AI knowledge base |
 | Stage summary generation failure | Generate partial summary based on completed sub-Skill output, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

@@ -376,7 +376,3 @@ When api-integration executes, replace page-builder generated fallback data laye
 | Auth configuration change | production-ready | Auth-related test and dependency change | auth_config change |
 | Cache strategy change | production-ready | Data layer related test change | cache_config change |
 | Error handling change | production-ready | Error handling related test change | error_handling change |
-
-## Changelog
-
-- v1.0: Adapted from v2.0 -- Full restructure with 4 steps replacing 3; added auth scheme/error handling strategy/cache strategy; output schema refined; quality checks P0/P1 graded

@@ -753,7 +753,3 @@ When upstream files are missing, obtain necessary data through the following met
 |---------------------|------------------------|---------------------|----------------------|
 | monitoring-orchestrator | Monitoring & alerting full workflow completed | Output file update | Build completion status and key configuration |
 | iteration-decision | P0 alert triggered | Write to output file | Emergency alert and escalation details |
-
-## Version History
-
-- v3.0: Merged monitoring-system + monitoring-anomaly + monitoring-dashboard + monitoring-escalation

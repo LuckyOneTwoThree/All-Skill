@@ -611,7 +611,3 @@ escalation_rules:
 | 升级规则变更 | 后续所有升级判断 | 更新risk-management.json，通知规则维护者 |
 
 ---
-
-## 版本历史
-
-- v3.0: 合并 risk-monitoring + risk-escalation，Step 1风险监控（指标追踪、状态更新、新风险识别、预警触发、应对效果追踪），Step 2升级处理（必要性判断、路径确定、通知发送、状态追踪）

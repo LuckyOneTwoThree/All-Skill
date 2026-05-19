@@ -279,7 +279,3 @@ Downstream connections:
 | Pure UI change but design tokens need adjustment | Handled by ui-orchestrator for unified design token update and frontend development |
 | Pure backend change but affects existing API | Must execute api-design-orchestrator to evaluate API compatibility |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

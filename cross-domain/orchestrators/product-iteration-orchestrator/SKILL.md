@@ -280,13 +280,3 @@ Skill: monitoring-orchestrator
 | 纯UI变更但设计令牌需调整 | 由ui-orchestrator统一处理设计令牌更新与前端开发 |
 | 纯后端变更但影响已有API | 必须执行api-design-orchestrator评估API兼容性 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v7.0: Pipeline精简——合并Phase-1(design-prd)+Phase-2(design-orchestrator)为Phase-1(需求与设计)，直接调用design-orchestrator；将change-impact-analysis从自动执行改为显式调用子Skill作为Phase-2；合并后端三阶段(API/数据/后端)为Phase-3(后端变更)；UI变更为Phase-4与后端变更可并行；Phase-8(交付上线)简化为调用monitoring-orchestrator+quality-acceptance+release-gradual+release-notes；Pipeline从8阶段精简为5阶段；阶段卡口从8项减少为6项；人类决策点从5个减少为3个
-- v6.0: UI子编排器合并——将design-system-orchestrator、ui-frontend-orchestrator、frontend-integration-orchestrator三个阶段合并为ui-development阶段，统一调用ui-orchestrator；更新Pipeline、阶段执行计划、输出路径、人类决策点、异常处理
-- v5.0: UI阶段增加 project_dir 传递，代码直接写入已有项目目录
-- v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
-- v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加子编排器调度协议和命令式调度指令
-- v1.0: 初始版本

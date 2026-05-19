@@ -170,7 +170,3 @@ Next Steps:
 | Revenue model selection | Stage 1 business-model-canvas generates multiple revenue model options | Human selects final revenue model plan |
 | Pricing number final decision | Stage 3 business-pricing provides pricing analysis and plans | Human decides specific pricing numbers and package structure |
 | Business strategy direction confirmation | Stage 4 business-strategy-report recommends strategic directions | Human confirms final strategic choice |
-
-## Changelog
-
-- v1.0: Initial version

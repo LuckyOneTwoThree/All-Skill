@@ -675,7 +675,3 @@ This Skill requires a competitor list or category keywords. Please provide via o
 | Significant market size change | opportunity-orchestrator | New market size data, reason for change | TAM/SAM/SOM change magnitude > 20% |
 | Moat assessment change | insight-orchestrator | Competitor name, old level -> new level | Core competitor moat level crosses tier |
 | Positioning map blank area change | design-orchestrator | Blank area change description | Blank area disappeared or new blank appeared |
-
-## Changelog
-
-- v1.0: Merged market-competitor-intel, market-competitor-quadrant, market-competitor-report into comprehensive competitor analysis Skill, integrating intelligence collection, four-quadrant positioning, and competitor reporting into a three-step Pipeline

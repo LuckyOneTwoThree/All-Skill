@@ -576,7 +576,3 @@ This Skill requires user feedback and behavior analysis data. Please provide via
 |-----------|----------|----------|----------|
 | opportunity-definition | `jtbd.jobs` / `requirement_layers` | After JTBD or requirement layering changes | Notify Job additions/removals and requirement decomposition changes |
 | design-orchestrator | `priority_scoring.priority_list` | After priority ranking changes | Notify requirements with ranking changes; recommend re-evaluating development schedule |
-
-## Changelog
-
-- v1.0: Merged insight-jtbd + insight-requirement-layers + insight-5whys + insight-kano + insight-priority-scoring into insight-analysis, integrating 4 steps into a unified process

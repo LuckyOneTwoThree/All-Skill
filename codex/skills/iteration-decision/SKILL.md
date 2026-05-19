@@ -741,7 +741,3 @@ When upstream files are missing, obtain necessary data through the following met
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
 |---------------------|------------------------|---------------------|----------------------|
 | iteration-orchestrator | Iteration decision full workflow completed | Output file update | Decision completion status and key conclusions |
-
-## Version History
-
-- v3.0: Merged iteration-backlog + iteration-prioritization + iteration-retrospective

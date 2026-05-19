@@ -459,14 +459,3 @@ P1（建议通过，不通过则标注"待修复"）：
 | 令牌变更 | page-builder | 受影响的令牌类别 | 令牌值变更 |
 | 组件库变更 | page-builder | 组件复用关系 | 组件库选择或主题变更 |
 | PRODUCT.md/DESIGN.md变更 | ext-impeccable | 上下文文件内容变更 | PRODUCT.md或DESIGN.md内容变更 |
-
-## 变更记录
-
-- v1.7: 新增visual_direction语义一致性校验（6条维度间逻辑约束），矛盾项标注为P0问题
-- v1.6: 新增anchor_overrides（页面级锚点覆盖机制），允许特定页面打破全局视觉锚点实现差异化，含覆盖规则和典型场景
-- v1.5: 质量检查P0/P1分级，P0不通过阻断输出
-- v1.4: 移除handoff-spec输入（PM不应定义UI决策）；PRD消费规则替代handoff-spec消费规则；PRD说明增加"含功能区域和组件需求"
-- v1.3: ext-impeccable两阶段调用策略（解决PRODUCT.md/DESIGN.md循环依赖）；Step 1-2使用内联上下文替代Setup；Step 5完成后执行完整Setup确认；colorize/typeset调用块增加内联上下文指令
-- v1.2: handoff-spec消费规则从"约束"改为"意图约束"；组件需求从"必须包含"改为"必须包含或提供合理替代方案"；令牌覆盖从"所有变量"改为"所有变量意图"
-- v1.1: visual_direction扩展至10维度（新增tension_level/visual_narrative）；ext-frontend-design输出自动写入visual_bans；ext-impeccable Setup统一引用extensions/README.md；输入新增handoff-spec（设计交接文档）含消费规则和职责边界；降级策略新增handoff-spec缺失处理；质量检查新增handoff-spec覆盖验证
-- v1.0: 合并 project-scaffold + design-system；新增视觉风格定义步骤；新增PRODUCT.md/DESIGN.md生成；ext-frontend-design改为必调；新增组件库分支路径（轻量/完整）

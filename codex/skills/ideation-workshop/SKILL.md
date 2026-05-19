@@ -769,7 +769,3 @@ Markdown format creative workshop report, including:
 | Converged solution deepening content change | design-prd | Mark deepening content change, trigger PRD feature specification update |
 | Comparison matrix scoring change | design-prd | Mark scoring change, trigger PRD priority adjustment |
 | MVP scope change | validation-mvp | Mark MVP scope change, trigger MVP definition update |
-
-## Changelog
-
-- v3.0: Merged ideation-hmw, ideation-scamper, ideation-inversion, ideation-convergence four-piece set into ideation-workshop creative workshop; Step 1 HMW problem reframing, Step 2 parallel divergence (SCAMPER + reverse thinking), Step 3 creative convergence; output merged into ideation-workshop.json (containing hmw_ideas + scamper_ideas + inversion_ideas + converged_ideas) + ideation-workshop.md

@@ -120,7 +120,3 @@ Next Steps:
 | Sub-Skill execution failure | Handle per sub-Skill internal degradation strategy; pause at orchestrator level and escalate to human |
 | All upstream data missing | Degrade to lightweight flow: user describes requirements -> invoke insight-analysis for decomposition -> score based on description |
 | Stage summary generation failure | Generate partial summary based on completed sub-Skill output, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

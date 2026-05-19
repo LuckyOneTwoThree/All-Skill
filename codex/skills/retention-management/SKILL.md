@@ -490,7 +490,3 @@ When upstream files are missing, users need to provide the following information
 - Avoid over-intervention that disturbs users and degrades user experience
 - High-value user intervention priority and resource investment should be higher
 - Establish intervention feedback mechanism to continuously optimize intervention strategies
-
-## Version History
-
-- v1.0: Merged retention-churn + retention-engagement

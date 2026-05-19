@@ -747,7 +747,3 @@ improvement_suggestions:
 | 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
 |------------|----------|----------|----------|
 | iteration-orchestrator | 迭代决策全流程完成 | 输出文件更新 | 决策完成状态和关键结论 |
-
-## 版本历史
-
-- v3.0: 合并 iteration-backlog + iteration-prioritization + iteration-retrospective

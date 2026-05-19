@@ -451,7 +451,3 @@ AI扫描竞品分析数据，识别：
 | 差异化评分变更 | business-strategy-report | 输出文件版本号+变更摘要 |
 | 排他决策变更 | business-strategy-report、business-pricing | 输出文件版本号+变更摘要 |
 | 市场缩减评估变更 | business-pricing | 输出文件版本号+变更摘要 |
-
-## 变更记录
-
-- v3.0: 合并positioning-statement、positioning-value-curve、positioning-differentiation、positioning-exclusion为产品定位策略制定Skill，整合定位陈述、价值曲线分析、差异化评估和排除策略为四步Pipeline

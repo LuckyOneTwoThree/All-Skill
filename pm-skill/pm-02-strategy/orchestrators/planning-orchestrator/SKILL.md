@@ -212,16 +212,3 @@ stages:
 | 战略方向选择 | 阶段2 strategic-analysis 生成战略结论 | 人类选择最终战略方向和增长路径 |
 | 目标设定确认 | 阶段3 planning-north-star生成北极星候选后人类选择，planning-okr生成OKR候选后人类确认 | 人类选择北极星指标并确认OKR |
 | 路线图优先级 | 阶段4 planning-roadmap 计算RICE评分并排序 | 人类决定最终优先级和资源分配 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: 结构优化
-- v3.0: 新增 product-proposal（产品提案），新增 Stage 0 产品立项审批决策点
-- v4.0: 优化为子Skill执行协议+阶段执行计划模式，增加子Skill定义读取路径和输入输出规范
-- v5.0: 核心原则替换为编排理念原则，新增异常处理表
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义；阶段执行计划改为调用指令格式
-- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；异常处理新增阶段总结生成失败策略
-- v8.0: 合并phase-2的planning-swot + planning-porter-five-forces为strategic-analysis，Pipeline phase-2从并行2个子Skill简化为1个strategic-analysis调用
-- v9.0: 修复phase-3并行/串行矛盾——planning-okr输入依赖planning-north-star输出，不可并行；拆分phase-3为两个串行阶段：phase-3北极星指标→phase-4 OKR设定；阶段卡口和人类决策点同步调整顺序
-- v10.0: 合并Phase-3(北极星指标)和Phase-4(OKR设定)为Phase-3(目标设定)，顺序执行planning-north-star→planning-okr；Pipeline stages从5减少为4；人类决策点从5减少为4；阶段卡口相应合并

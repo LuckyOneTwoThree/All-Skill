@@ -429,16 +429,3 @@ Follows the general stage gate standard in [orchestrator-protocol.md](../../code
 | stage-6 build failure | Fix and retry | -- |
 | stage-6 ext invocation failure | Mark as pending optimization, does not block | low |
 | Stage summary generation failed | Generate partial summary from completed outputs | |
-
-## Changelog
-
-- v7.3: express mode added design direction quick select (2-3 differentiated directions for user selection) + structured prompt generation (specific color values/fonts/layouts/bans replacing vague descriptions) + manual mode prompt enhancement (auto-append anchor constraints); added express_skip_scheme parameter; human decision points added design direction quick select + page manifest completeness confirmation; exception handling table supplemented with 5 items (stage-e manual timeout/stage-1 consistency check/stage-2 write-back verification/stage-4 unbalanced threshold); visual_review_result persistence; quality_debt severity unified to high + stage-4 reads existing debt; ext Skill invocation supplemented required fields (design_brief/register/query); Consumer Mapping fix (ext-frontend-design supplemented token replacement mapping + ext-ui-ux-pro-max field name aligned with Output Contract + ext-interaction-design field name fix); degradation classification table fix (core enhancement blocking/optional enhancement marking); stage-6 optional_depends_on description
-- v7.2: express mode added lightweight design anchor (express_design_anchor) + enhanced quality checks (5 items); full mode added mandatory visual review (after stage-3) + visual_direction consistency check (stage-1) + critique expanded design aesthetics dimensions + quality_score weight adjusted to 50:50 + single item minimum threshold; Stage dependency chain fix (stage-5/6 depends on stage-4); page_manifest generation moved up to stage-2; ext degradation strategy classification (core enhancement blocking/optional enhancement marking); prototype-report Schema added; checkpoint added mode field
-- v7.1: Split main file -- Schema extracted to schemas/ (4 files), stage execution plans extracted to stages/ (7 files), main file streamlined from 955 lines to ~350 lines
-- v7.0: Added express mode (4 engine options + auto/manual prompt source); Merged Stage 0/0.5/1.5 into Stage 1 conditional branch; Merged Stage 4+5 into "enhancement+audit integration"; Merged Stage 7+8 into Stage 6; Added page manifest completeness guarantee (page_manifest.json)
-- v6.0: Added three execution modes (prototype/full/progressive); Added Stage 0 design exploration + Stage 0.5 constraint alignment + Stage 1.5 PM constraint review; Added design_brief.json generation mechanism; Added ext Skill conflict resolution priority; Unified scoring system; quality_debt.json tracking
-- v5.0: ext Skill invocation dependency declaration; Write-back verification V1-V5
-- v4.0: page-builder integrated refactoring
-- v3.0: ext Skill architecture introduced
-- v2.0: Design system enhancement stage
-- v1.0: Initial version

@@ -132,12 +132,3 @@ Downstream connections:
 | Sub-Skill output validation not passed | Roll back to current stage and re-execute, max 1 retry; if still fails, mark as exception and escalate to human |
 | Upstream/downstream data format incompatible | Map fields per downstream sub-Skill input Schema and fill default values, record mapping relationships |
 | Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version
-- v2.0: Description trigger word optimization
-- v3.0: Orchestrator optimization -- task scheduling changed to stage execution plan, added sub-Skill execution protocol, scheduling rules changed to execution mode, stage gates and human decision points changed to tables
-- v4.0: Execution steps replaced with orchestration philosophy, added exception handling table
-- v5.0: Orchestration protocol optimization -- changed "read sub-Skill definition and proxy execute" to "use Skill tool for explicit invocation"; added Pipeline definition (YAML declarative execution graph); stage execution plan changed to invocation instruction format; scheduling rules merged into orchestration protocol
-- v6.1: Stage summary enhancement -- Pipeline added post_pipeline definition; invocation rule 6 changed to mandatory; stage execution plan added stage summary execution instruction; stage gates added stage summary validation; exception handling added stage summary generation failure strategy

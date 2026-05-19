@@ -197,16 +197,3 @@ Skill: product-sunset-plan
 | 子Skill输出校验未通过 | 回退至当前阶段重新执行，最多重试1次；仍失败则标记异常并上报人类 |
 | 上下游数据格式不兼容 | 按下游子Skill输入Schema做字段映射和默认值填充，记录映射关系 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: 结构优化
-- v3.0: 新增 competitor-monitoring-report（竞品监控报告）、product-sunset-plan（产品下线方案）
-- v4.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
-- v5.0: 执行步骤替换为编排理念，新增异常处理表
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
-- v7.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v8.0: 更新子Skill下游引用——monitoring-anomaly/monitoring-dashboard/monitoring-escalation → monitoring-pipeline，iteration-backlog/iteration-prioritization → iteration-decision
-- v9.0: 新增 quality-acceptance（质量验收）——从pm-05迁移；Pipeline新增quality-acceptance触发阶段；阶段执行计划新增quality-acceptance调用；阶段卡口新增质量验收报告已审核；人类决策点新增质量验收放行决策
-- v10.0: 移除 quality-acceptance——统一归属 monitoring-orchestrator，消除跨编排器重复调度；Pipeline移除quality-acceptance触发阶段；阶段执行计划移除quality-acceptance调用；阶段卡口新增质量验收转交说明；新增下游衔接推荐

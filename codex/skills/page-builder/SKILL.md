@@ -614,7 +614,3 @@ P1 (Recommended, mark as "pending fix" if not):
 | quality_debt change | production-ready | New/upgraded critical/high level debt | debt_items severity change or new open status items |
 | Data flow change | api-integration | API requirement change | Data fetching method change |
 | design_feedback generated | ui-orchestrator -> design-orchestrator | PM output modification suggestion | design_feedback.json exists and suggestions non-empty |
-
-## Changelog
-
-- v1.0: Adapted from v2.0 -- Core architecture upgrade; added design brief driven mode (design_brief.json); ext Skill outputs upgraded from suggestions to executable design specifications; added PM constraint deviation recording with 4-level severity grading; added design_feedback.json (UI->PM reverse feedback channel)

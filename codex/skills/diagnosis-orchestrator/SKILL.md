@@ -196,7 +196,3 @@ Downstream connections:
 | Sub-skill output validation failed | Roll back to current stage and re-execute, max 1 retry; if still fails, mark exception and escalate to human |
 | Upstream/downstream data format incompatible | Map fields and fill default values per downstream sub-skill input schema, record mapping relationships |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

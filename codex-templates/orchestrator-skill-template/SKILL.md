@@ -174,7 +174,3 @@ Downstream Handoff:
 | Upstream data missing | {Handling strategy} |
 | Key decision point not confirmed by human | Pause orchestration, output pending confirmation list, wait for human confirmation before continuing |
 | Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs; mark missing items as "data missing"; do not block orchestrator completion |
-
-## Changelog
-
-- v1.0: Initial version

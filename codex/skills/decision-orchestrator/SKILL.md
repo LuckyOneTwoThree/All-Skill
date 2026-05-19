@@ -146,13 +146,3 @@ Downstream connections:
 | Decision boundary labeling conflict | Mark conflicting items, pause auto-execution, submit to human adjudication |
 | Culture report system data source interrupted | Skip affected reports, mark "data source interrupted", other reports generate normally |
 | Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version
-- v2.0: Description trigger word optimization
-- v3.0: Orchestrator optimization -- task scheduling changed to stage execution plan, added sub-Skill execution protocol, scheduling rules changed to execution mode, stage gates and human decision points changed to tables
-- v4.0: Execution step principles replaced with orchestration philosophy, added exception handling table
-- v5.0: Orchestration protocol optimization -- changed "read sub-Skill definition and proxy execute" to "use Skill tool for explicit invocation"; added Pipeline definition (YAML declarative execution graph); stage execution plan changed to invocation instruction format; scheduling rules merged into orchestration protocol
-- v6.0: Stage summary enhancement -- Pipeline added post_pipeline definition; invocation rule 6 changed to mandatory; stage execution plan added stage summary execution instruction; stage gates added stage summary validation; exception handling added stage summary generation failure strategy
-- v7.0: Merged decision-insight into decision-dace, removed decision-insight stage, updated orchestration philosophy to DACE loop as main thread + insights embedded, updated decision-culture input source from decision-insight to decision-dace

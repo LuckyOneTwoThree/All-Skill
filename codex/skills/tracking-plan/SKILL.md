@@ -908,5 +908,3 @@ When any of the following conditions are met, escalate to manual handling:
 ```
 
 ---
-
-## Changelog

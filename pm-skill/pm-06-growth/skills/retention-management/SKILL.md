@@ -492,7 +492,3 @@ trigger_rules:
 - 避免过度干预打扰用户，降低用户体验
 - 高价值用户的干预优先级和投入资源应更高
 - 建立干预反馈机制，持续优化干预策略
-
-## 版本历史
-
-- v3.0: 合并 retention-churn + retention-engagement

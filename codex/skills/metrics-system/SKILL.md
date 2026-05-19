@@ -658,14 +658,3 @@ When any of the following conditions are met, escalate to manual handling:
 ```
 
 ---
-
-## Changelog
-
-## Alignment with prd.json Data Contract
-
-| This Skill Output Field | Corresponding prd.json Field | Alignment Rule |
-|-------------------------|------------------------------|----------------|
-| north_star.metric_name | prd.json.goals[].success_metrics[].metric_name | North Star metric name consistent with PRD primary metric |
-| l1_metrics[].name | prd.json.goals[].success_metrics[].metric_name | L1 metrics cover all PRD success_metrics |
-| actionable_metrics[].events | prd.json non-functional requirements.observability.Metrics | Actionable metric events aligned with PRD observability requirements |
-| vanity_alerts | prd.json.goals[].success_metrics | Vanity metric alerts must not include PRD-defined success metrics

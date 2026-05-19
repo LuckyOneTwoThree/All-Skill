@@ -169,10 +169,3 @@ Downstream connections:
 | Design review not passed | Adjust design based on human feedback, re-review |
 | Code self-audit P0 issues | Auto-fix and re-audit, block output if unfixable |
 | Stage summary generation failed | Generate partial summary from completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v4.0: Split backend-architecture into backend-architecture-spec (design) + backend-architecture-impl (implementation), added design review gate
-- v3.0: Added code generation capability (project scaffold/Docker/CI), implemented design+code dual output mode
-- v2.0: Merged architecture-pattern, service-design, backend-review into single backend-architecture skill
-- v1.0: Initial version

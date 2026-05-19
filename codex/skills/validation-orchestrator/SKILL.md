@@ -177,11 +177,3 @@ Downstream connections:
 | MVP scope confirmation | MVP scope definition complete, MVP ratio > 60% or Must Have items disputed | Human approves and determines final MVP scope |
 | Experiment plan review | Experiment plan design complete | Human reviews and approves experiment plan |
 | Validation conclusion decision | Usability testing complete, validation data organized | Human makes final product solution decision |
-
-## Changelog
-
-- v1.0: Initial version
-- v2.0: Description trigger word optimization
-- v3.0: Orchestrator optimization -- added sub-Skill execution protocol, task scheduling changed to stage execution plan, scheduling rules changed to execution mode, stage gates and human decision points changed to tables, added sub-Skill input/output paths
-- v5.0: Orchestration protocol refactoring -- sub-Skill execution protocol changed to orchestration protocol, added Pipeline definition, stage execution plan changed to invocation instruction format, removed scheduling rules
-- v6.1: Stage summary enhancement -- Pipeline added post_pipeline definition; invocation rule 6 changed to mandatory; stage execution plan added stage summary execution instruction; stage gates added stage summary validation; exception handling added stage summary generation failure strategy

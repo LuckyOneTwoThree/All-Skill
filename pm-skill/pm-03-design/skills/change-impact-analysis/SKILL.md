@@ -547,8 +547,3 @@ metadata:
   "quality_checks_passed": true
 }
 ```
-
-## 变更记录
-
-- v2.0: 初始版本
-- v2.1: 修复输出校验规则——替换与实际Schema不匹配的review_result字段，对齐output_id/change_id/classification/impact_analysis/review_needed/review_decision/version_updates/summary；修复上游变更响应——对齐变更影响分析场景而非代码审查场景；修复下游通知机制——对齐实际通知场景并新增版本规划调整通知

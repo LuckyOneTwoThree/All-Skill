@@ -250,8 +250,3 @@ Reference UI Skill output paths instead of inlining UI implementation details:
 | Page/route change | Development team, QA team | Mark change impact scope, trigger route and page structure re-confirmation |
 | Functional requirement change | Development team, QA team | Mark requirement change, trigger feature implementation and test case updates |
 | Interaction intent change | Development team | Mark interaction change, trigger interaction implementation update |
-
-## Changelog
-
-- v3.0: Repositioned as development handoff summary (removed token/component/interaction/responsive UI decisions, replaced with references to UI output); removed reverse dependency on UI output (no longer requires design-system.json as input); output schema simplified
-- v2.1: Initial version

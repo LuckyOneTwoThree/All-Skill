@@ -449,7 +449,3 @@ metadata:
 | planning-okr | `strategic_conclusions.integrated_recommendations` | 战略结论变更后 | 通知战略方向调整及优先级变化 |
 | planning-roadmap | `strategic_conclusions.integrated_recommendations` | 战略结论变更后 | 通知战略方向调整 |
 | business-strategy-report | `swot.strategies` / `ansoff.growth_paths` / `porter.industry_attractiveness` | 各框架分析变更后 | 通知分析结果变化 |
-
-## 变更记录
-
-- v3.0: 合并 planning-swot + planning-ansoff + planning-porter-five-forces 为 strategic-analysis，新增框架自动选择逻辑和战略结论整合步骤

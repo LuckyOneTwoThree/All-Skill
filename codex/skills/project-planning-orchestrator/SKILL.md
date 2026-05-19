@@ -152,7 +152,3 @@ Downstream connections:
 | Key decision point not confirmed by human (e.g., charter approval) | Pause entering resource planning stage, continue waiting for approval, escalate reminder after timeout |
 | All upstream data missing | Mark "all data missing" status, output minimal template (metadata and empty structure only), set overall confidence to 0.3, force human confirmation on whether to continue. After human confirmation, generate based on user-provided information and AI knowledge base inference, all inferred content marked with confidence <= 0.5 and needs_human_validation: true |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

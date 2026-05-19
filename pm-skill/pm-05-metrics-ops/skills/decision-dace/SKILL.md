@@ -837,8 +837,3 @@ output/pm-metrics-ops/decision-dace/
 | Analyze | 持续 | 定时+事件 |
 | Conclude | 按需 | 分析完成 |
 | Execute | 持续 | 决策批准 |
-
-## 版本历史
-
-- v1.0: 初始版本（decision-dace）
-- v2.0: 合并 decision-dace + decision-insight，Analyze阶段融合洞察转化能力，新增故事化叙述、决策边界标注、置信度评估

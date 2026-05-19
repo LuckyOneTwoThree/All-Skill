@@ -694,10 +694,3 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 | 优先级调整 | change-impact-analysis | 标记优先级变更，触发影响评估 |
 | 目标指标变更 | metrics-system、tracking-plan | 标记指标变更，触发度量体系更新 |
 | 商业逻辑变更 | business-model-canvas、business-strategy-report | 标记商业逻辑变更，触发战略文档更新 |
-
-## 变更记录
-
-- v3.0: 将PRD完整9节结构、输入Schema、输出Schema拆分到Reference文件夹，SKILL.md保留核心逻辑和概览表格
-- v3.1: 需求管理内建——输入新增insight_analysis和opportunity_definition引用（替代原requirements-collection/understanding/prioritization输入）；标注需求收集、理解和优先级排序已内建于Step 1-3；上游消费新增洞察分析和机会定义；降级策略新增insight_analysis/opportunity_definition缺失方案；数据流向图更新
-- v3.2: 新增prd.json结构化输出——包含features[]/pages[]/entities[]/user_flows[]/goals[]/traceability[]，供Backend/UI编程式消费；下游驱动表新增消费来源列；输出校验规则新增prd.json完整性和引用一致性检查
-- v3.3: prd.json补全——non_functional_requirements的availability/security/observability从空数组补全为完整Schema；新增tracking_plan数据埋点结构；input-schema.md补充insight_analysis/opportunity_definition字段；删除重复的质量检查和决策规则章节；prd-structure.md PRD-L/X调整规则具体化；OKR对齐格式与prd.json goals[]结构对齐

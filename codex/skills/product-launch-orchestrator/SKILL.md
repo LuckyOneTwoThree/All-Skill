@@ -391,7 +391,3 @@ Downstream connections:
 | Integration test environment unavailable | Degrade to local integration verification, mark "integration environment pending verification" |
 | Parallel construction branch failure | Do not block the other branch; failed branch fixes and enters integration separately |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

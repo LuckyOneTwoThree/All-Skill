@@ -255,10 +255,3 @@ P1（建议通过，不通过则标注"待修复"）：
 | 构建产物体积超标 | page-builder | 组件需拆分或懒加载 | 单chunk>300KB |
 | TypeScript类型错误 | page-builder / api-integration | 类型定义缺失或不一致 | 构建失败且原因为类型错误 |
 | 无障碍测试不通过 | page-builder | 组件缺少ARIA属性或键盘导航 | axe-core检测到WCAG AA违规 |
-
-## 变更记录
-
-- v1.3: 修复输入路径混淆（代码路径vs元数据路径）；输出Schema细化；新增安全审计步骤；质量检查增加安全项
-- v1.2: ext-impeccable调用增加Setup前置检查（确保单独调用production-ready时也能正常工作）
-- v1.1: 补充上游变更响应和向上游反馈机制；ext-impeccable Setup统一引用
-- v1.0: 合并 frontend-build-deploy + frontend-performance + frontend-test；构建+测试+性能一体化

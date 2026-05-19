@@ -757,8 +757,3 @@ Must需求通过率：{X}%
   "notifications_sent": ["dev_lead", "product_manager"]
 }
 ```
-
-## 版本历史
-
-- v3.1: 迁移至产品监控与迭代模块
-- v3.0: 合并 quality-auto-acceptance + quality-acceptance-report

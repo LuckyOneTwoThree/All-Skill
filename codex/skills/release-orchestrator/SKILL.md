@@ -179,7 +179,3 @@ Downstream connections:
 | Upstream/downstream data format incompatible | Map fields and fill default values per downstream sub-skill input schema, record mapping relationships |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
 | Monitoring alert requirement | Transfer to monitoring-orchestrator for handling |
-
-## Changelog
-
-- v1.0: Initial version

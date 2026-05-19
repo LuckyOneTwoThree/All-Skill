@@ -487,7 +487,3 @@ metadata:
 | 策略调整 | business-strategy-report | 输出文件版本号+变更摘要 |
 | 风险预案更新 | business-strategy-report | 输出文件版本号+变更摘要 |
 | 简报内容变更 | 无特定下游 | 输出文件版本号+变更摘要 |
-
-## 变更记录
-
-- v3.0: 合并stakeholder-map、stakeholder-strategy-doc、stakeholder-brief为利益相关者分析Skill，整合利益相关者地图、沟通策略和战略简报为三步Pipeline

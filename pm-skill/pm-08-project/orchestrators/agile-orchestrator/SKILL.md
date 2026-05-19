@@ -159,15 +159,3 @@ Skill: agile-review
 | 关键决策点未获人类确认（如Sprint Goal） | 暂停进入下一阶段，持续等待确认，超时后升级提醒 |
 | 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板（仅含元信息和空结构），整体置信度设为0.3，强制人类确认是否继续。人类确认后基于用户提供信息和AI知识库推断生成，所有推断内容标注confidence≤0.5和needs_human_validation:true |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: 结构优化
-- v3.0: 新增 sprint-retrospective-report（Sprint复盘报告）
-- v4.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
-- v5.0: 核心原则替换为编排理念原则，新增异常处理表
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
-- v7.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v8.0: 合并 agile-review + sprint-retrospective-report → agile-review；移除sprint-retrospective-report阶段；agile-review新增daily_sync_records输入依赖agile-daily-sync；更新Pipeline为3阶段；更新阶段卡口和验证条件
-- v9.0: agile-review 合并 retrospective-auto 自动回顾能力——从pm-05迁移；agile-review新增team_feedback输入；验证条件新增回顾洞察已生成且协作模式已识别；阶段卡口更新；核心原则更新复盘闭环改进描述

@@ -116,7 +116,3 @@ Next Steps:
 | Upstream data missing | Annotate missing data items, fill with reasonable assumptions (annotate confidence <= 0.3), continue execution and highlight annotations in output |
 | Key decision point not human-confirmed | Pause orchestration, output pending confirmation list, wait for human confirmation before continuing |
 | Stage summary generation failure | Generate partial summary based on completed sub-Skill output, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

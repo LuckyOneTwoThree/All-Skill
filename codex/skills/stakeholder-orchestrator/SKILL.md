@@ -117,7 +117,3 @@ Next Steps:
 |--------|----------|----------|
 | Influence assessment calibration | Stage 1 stakeholder-analysis evaluates influence scores | Human calibrates final results involving interpersonal judgment |
 | Strategic document review | Stage 1 stakeholder-analysis assembles strategic documents | Human reviews content accuracy and expression style |
-
-## Changelog
-
-- v1.0: Initial version

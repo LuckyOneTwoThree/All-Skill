@@ -128,7 +128,3 @@ Next Steps:
 | Brief upstream data largely missing | Generate Brief based on available data, mark missing fields as "data missing", degrade evidence summary and key assumption confidence, suggest human supplement data and regenerate |
 | All upstream data missing | Degrade to lightweight flow: user describes problem -> generate Problem Statement based on description -> generate HMW based on Problem Statement -> output lightweight Brief, entire flow annotated as "data missing" |
 | Stage summary generation failure | Generate partial summary based on completed sub-Skill output, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

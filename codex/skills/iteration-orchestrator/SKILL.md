@@ -122,7 +122,3 @@ Downstream connections:
 | Sub-skill execution failed | Roll back to current stage and re-execute, max 1 retry; if still fails, mark exception and escalate to human |
 | Upstream data missing | Mark missing data items, fill with reasonable assumptions, continue execution and highlight in output |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

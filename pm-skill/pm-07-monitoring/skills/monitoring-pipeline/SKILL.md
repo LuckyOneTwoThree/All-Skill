@@ -758,7 +758,3 @@ oncall_report:
 |------------|----------|----------|----------|
 | monitoring-orchestrator | 监控预警全流程完成 | 输出文件更新 | 构建完成状态和关键配置 |
 | iteration-decision | P0告警触发 | 写入输出文件 | 紧急告警和升级详情 |
-
-## 版本历史
-
-- v3.0: 合并 monitoring-system + monitoring-anomaly + monitoring-dashboard + monitoring-escalation

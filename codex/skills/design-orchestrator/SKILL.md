@@ -291,7 +291,3 @@ Next Steps:
 | IA plan selection | IA generates 2-3 candidate plans | Select final IA plan |
 | Design spec violation confirmation | Design spec consistency < 85% | Judge whether to accept violations |
 | Interaction spec confirmation | Interaction design spec generation complete | Confirm state machine, animation, and gesture specs |
-
-## Changelog
-
-- v1.0: Initial version

@@ -165,7 +165,3 @@ Downstream connections:
 | Design review not passed | Adjust design per human feedback, re-review |
 | Code self-review P0 issues | Auto-fix and re-review, if unfixable then block output |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

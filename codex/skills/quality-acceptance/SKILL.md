@@ -752,8 +752,3 @@ When upstream files are missing, user needs to provide the following information
   "notifications_sent": ["dev_lead", "product_manager"]
 }
 ```
-
-## Version History
-
-- v3.1: Migrated to Product Monitoring & Iteration module
-- v3.0: Merged quality-auto-acceptance + quality-acceptance-report

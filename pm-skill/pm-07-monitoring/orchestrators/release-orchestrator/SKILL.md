@@ -180,7 +180,3 @@ Skill: release-notes
 | 上下游数据格式不兼容 | 按下游子Skill输入Schema做字段映射和默认值填充，记录映射关系 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
 | 监控预警需求 | 转交 monitoring-orchestrator 处理 |
-
-## 变更记录
-
-- v1.0: 从 monitoring-orchestrator v8.0 拆分创建；包含 quality-acceptance、release-auto-checklist、release-gradual、release-notes 四个阶段

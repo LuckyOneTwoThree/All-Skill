@@ -378,9 +378,3 @@ export async function getUser(id: string) {
 | 认证配置变更 | production-ready | 认证相关测试和依赖变更 | auth_config变更 |
 | 缓存策略变更 | production-ready | 数据层相关测试变更 | cache_config变更 |
 | 错误处理变更 | production-ready | 错误处理相关测试变更 | error_handling变更 |
-
-## 变更记录
-
-- v2.0: 全面重构——4步骤替代3步骤；增加认证方案/错误处理策略/缓存策略；ext-impeccable audit/critique调用迁移到编排器统一调度；输出Schema细化；质量检查P0/P1分级；交互模式改为ai_suggest_human_approve
-- v1.1: 补充上游变更响应和下游通知机制
-- v1.0: 基于api-contract-consume调整

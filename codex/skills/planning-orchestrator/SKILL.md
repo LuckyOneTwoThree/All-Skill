@@ -211,7 +211,3 @@ Next Steps:
 | Strategic direction selection | Stage 2 strategic-analysis generates strategic conclusions | Human selects final strategic direction and growth path |
 | Goal setting confirmation | Stage 3 planning-north-star generates north star candidates for human selection, planning-okr generates OKR candidates for human confirmation | Human selects north star metric and confirms OKR |
 | Roadmap priorities | Stage 4 planning-roadmap calculates RICE scores and ranks | Human decides final priorities and resource allocation |
-
-## Changelog
-
-- v1.0: Initial version

@@ -123,16 +123,3 @@ Skill: iteration-decision
 | 子Skill执行失败 | 回退至当前阶段重新执行，最多重试1次；仍失败则标记异常并上报人类 |
 | 上游数据缺失 | 标注缺失数据项，使用合理假设填充，继续执行并在输出中高亮标注 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: description触发词优化
-- v3.0: 改造为子Skill执行协议+阶段执行计划模式，增加命令式调度规则
-- v4.0: 执行步骤替换为编排理念，新增异常处理表
-- v5.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义（YAML声明式执行图）；阶段执行计划改为调用指令格式；调度规则合并入编排协议
-- v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v7.0: 合并 iteration-backlog + iteration-prioritization + iteration-retrospective → iteration-decision；3阶段Pipeline简化为1阶段；更新所有引用和输出路径
-- v8.0: 新增 release-gradual、release-auto-checklist、release-notes——从pm-05迁移；Pipeline新增3个触发阶段；阶段执行计划新增3个子Skill调用；阶段卡口新增3项；人类决策点新增灰度发布策略确认
-- v9.0: 移除 release-gradual、release-auto-checklist、release-notes——统一归属 monitoring-orchestrator，消除跨编排器重复调度；Pipeline移除3个触发阶段；阶段执行计划移除3个子Skill调用；阶段卡口新增发布与验收转交说明；新增下游衔接推荐
-- v10.0: 透传编排器改造——description标注透传编排器；Pipeline阶段卡口精简为"输出文件已生成"和"阶段总结已生成"；人类决策点保持1个；异常处理精简；编排协议后增加透传说明

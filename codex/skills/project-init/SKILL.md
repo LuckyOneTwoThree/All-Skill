@@ -457,7 +457,3 @@ P1 (Recommended, mark as "pending fix" if not):
 | Token change | page-builder | Affected token categories | Token value change |
 | Component library change | page-builder | Component reuse relationships | Component library selection or theme change |
 | PRODUCT.md/DESIGN.md change | ext-impeccable | Context file content change | PRODUCT.md or DESIGN.md content change |
-
-## Changelog
-
-- v1.0: Adapted from v1.7 -- Added visual_direction semantic consistency validation (6 inter-dimension logical constraints), contradictory items marked as P0 issues

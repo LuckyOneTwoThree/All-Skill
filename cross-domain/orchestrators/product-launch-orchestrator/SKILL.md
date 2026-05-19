@@ -392,12 +392,3 @@ Skill: agile-orchestrator
 | 集成测试环境不可用 | 降级为本地联调验证，标注"集成环境待验证" |
 | 并行构建某分支失败 | 不阻塞另一分支，失败分支修复后单独进入集成 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v6.0: UI阶段合并——将design-system-orchestrator、ui-frontend-orchestrator、frontend-integration-orchestrator三个UI子编排器合并为ui-orchestrator；Pipeline从3个UI阶段（ui-design/ui-impl/integration）合并为1个ui-development阶段；输出路径统一为output/cross-domain/ui-orchestrator/；project scaffold路径更新为output/ui-project-init/project-init.json；阶段卡口和人类决策点同步更新
-- v5.0: UI阶段增加 project_dir 传递，代码直接写入可运行项目目录；design-system-orchestrator 增加 project-scaffold 初始化阶段；集成验证增加项目可运行性校验
-- v3.0: 统一优化为编排协议+Pipeline+调用指令模式，删除子Skill执行协议和调度规则
-- v4.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v2.0: 优化为子Skill执行协议+阶段执行计划模式，增加子编排器调度协议和命令式调度指令
-- v1.0: 初始版本

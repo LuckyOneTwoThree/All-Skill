@@ -416,7 +416,3 @@ success_criteria:
 |------------|----------|----------|----------|
 | activation-aha | 激活阶段流失率变更 | 写入输出文件 | 注册→激活转化率和流失分析 |
 | acquisition-orchestrator | 渠道评估与漏斗优化完成 | 输出文件更新 | 渠道分级和漏斗优化完成状态与关键结论 |
-
-## 版本历史
-
-- v3.0: 合并 acquisition-channel + acquisition-optimize

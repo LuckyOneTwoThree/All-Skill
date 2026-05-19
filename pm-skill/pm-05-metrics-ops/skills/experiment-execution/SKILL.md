@@ -628,8 +628,3 @@ ab_test_result:
 - **结果分析**：达到终止条件时触发
 - **报告生成**：结果分析完成后自动触发
 - **自动告警**：P0问题立即触发
-
-## 版本历史
-
-- v1.0: 初始版本（experiment-execution）
-- v2.0: 合并 experiment-execution + experiment-report，新增A/B测试报告生成步骤

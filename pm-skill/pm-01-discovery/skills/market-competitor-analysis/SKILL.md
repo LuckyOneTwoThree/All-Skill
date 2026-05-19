@@ -678,7 +678,3 @@ quadrantChart
 | 市场规模显著变化 | opportunity-orchestrator | 新市场规模数据、变化原因 | TAM/SAM/SOM变化幅度>20% |
 | 护城河评估变更 | insight-orchestrator | 竞品名称、旧等级→新等级 | 核心竞品护城河等级跨档变化 |
 | 定位图空白区域变化 | design-orchestrator | 空白区域变化描述 | 空白区域消失或新空白出现 |
-
-## 变更记录
-
-- v3.0: 合并market-competitor-intel、market-competitor-quadrant、market-competitor-report为综合竞品分析Skill，整合情报采集、四象限定位和竞品报告为三步Pipeline

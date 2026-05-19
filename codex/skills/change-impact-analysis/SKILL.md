@@ -545,8 +545,3 @@ When upstream files are missing, users need to provide the following information
   "quality_checks_passed": true
 }
 ```
-
-## Changelog
-
-- v2.0: Initial version
-- v2.1: Fixed output validation rules -- replaced review_result field that didn't match actual Schema, aligned with output_id/change_id/classification/impact_analysis/review_needed/review_decision/version_updates/summary; fixed upstream change response -- aligned with change impact analysis scenarios instead of code review scenarios; fixed downstream notification mechanism -- aligned with actual notification scenarios and added version planning adjustment notification

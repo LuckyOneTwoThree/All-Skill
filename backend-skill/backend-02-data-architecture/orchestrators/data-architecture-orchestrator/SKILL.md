@@ -164,10 +164,3 @@ Skill: data-architecture-impl
 | 设计审查不通过 | 根据人类修改意见调整设计，重新审查 |
 | 代码自审P0问题 | 自动修复后重新自审，无法修复则阻塞输出 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v4.0: 拆分data-architecture为data-architecture-spec（设计）+data-architecture-impl（实现），增加设计审查卡口
-- v3.0: 新增代码生成能力（models/migrations/repositories），实现设计+代码双输出模式
-- v2.0: 合并data-model、cache-strategy、data-migration为data-architecture单一Skill
-- v1.0: 初始版本

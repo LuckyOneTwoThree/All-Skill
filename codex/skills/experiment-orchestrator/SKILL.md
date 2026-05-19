@@ -146,14 +146,3 @@ Downstream connections:
 | Experiment report human review not passed | Return to execution stage for supplementary analysis, do not pass downstream |
 | Multiple experiment traffic conflicts | Queue by priority, lower-priority experiments paused, mark "traffic conflict" |
 | Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version
-- v2.0: Structure optimization
-- v3.0: Added experiment-report
-- v4.0: Orchestrator optimization -- task scheduling changed to stage execution plan, added sub-Skill execution protocol, scheduling rules changed to execution mode, stage gates and human decision points changed to tables
-- v5.0: Execution step principles replaced with orchestration philosophy, added exception handling table
-- v6.0: Orchestration protocol optimization -- changed "read sub-Skill definition and proxy execute" to "use Skill tool for explicit invocation"; added Pipeline definition (YAML declarative execution graph); stage execution plan changed to invocation instruction format; scheduling rules merged into orchestration protocol
-- v7.0: Stage summary enhancement -- Pipeline added post_pipeline definition; invocation rule 6 changed to mandatory; stage execution plan added stage summary execution instruction; stage gates added stage summary validation; exception handling added stage summary generation failure strategy
-- v8.0: Merged experiment-report into experiment-execution, removed experiment-report stage, updated orchestration philosophy to design -> execution two-stage model

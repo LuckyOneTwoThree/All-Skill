@@ -431,16 +431,3 @@ stages:
 | stage-6 构建失败 | 修复后重试 | — |
 | stage-6 ext调用失败 | 标注待优化项，不阻塞 | low |
 | 阶段总结生成失败 | 基于已完成的输出生成部分总结 |
-
-## 变更记录
-
-- v7.3: express模式新增设计方向快选(2-3套差异化方向供用户选择)+结构化prompt生成(具体色值/字体/布局/禁忌替代模糊描述)+manual模式prompt增强(自动附加锚点约束)；新增express_skip_scheme参数；人类决策点增加设计方向快选+页面清单完整性确认；异常处理表补充5项(stage-e manual超时/stage-1一致性校验/stage-2回写验证/stage-4偏科门槛)；visual_review_result持久化；quality_debt severity统一为high+stage-4读取已有债务；ext Skill调用补充必填字段(design_brief/register/query)；Consumer Mapping修正(ext-frontend-design补充token替换映射+ext-ui-ux-pro-max字段名对齐Output Contract+ext-interaction-design字段名修正)；降级分类表修正(核心增强类阻断/可选增强类标注)；stage-6 optional_depends_on说明
-- v7.2: express模式新增轻量设计锚点(express_design_anchor)+增强质量检查(5项)；full模式新增强制视觉审查(stage-3后)+visual_direction一致性校验(stage-1)+critique扩展设计美学维度+quality_score权重调整为50:50+单项最低门槛；Stage依赖链修正(stage-5/6依赖stage-4)；page_manifest生成提前到stage-2；ext降级策略分类(核心增强类阻断/可选增强类标注)；prototype-report Schema新增；checkpoint增加mode字段
-- v7.1: 拆分主文件——Schema抽取到schemas/(4文件)，阶段执行计划抽取到stages/(7文件)，主文件从955行精简至~350行
-- v7.0: 新增express模式(4引擎可选+auto/manual prompt来源)；合并Stage 0/0.5/1.5为Stage 1条件分支；合并Stage 4+5为"增强+审计一体化"；合并Stage 7+8为Stage 6；新增页面清单完整性保障(page_manifest.json)
-- v6.0: 新增三种执行模式(prototype/full/progressive)；新增Stage 0设计探索+Stage 0.5约束对齐+Stage 1.5 PM约束审查；新增design_brief.json生成机制；新增ext Skill冲突消解优先级；统一评分体系；quality_debt.json追踪
-- v5.0: ext Skill调用依赖声明；回写验证V1-V5
-- v4.0: page-builder一体化重构
-- v3.0: ext Skill架构引入
-- v2.0: 设计系统增强阶段
-- v1.0: 初始版本

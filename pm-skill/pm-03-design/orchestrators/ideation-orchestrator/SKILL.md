@@ -107,12 +107,3 @@ Skill: ideation-workshop
 | 决策点 | 触发条件 | 决策内容 |
 |--------|----------|----------|
 | 方案最终选择 | 创意工作坊收敛完成，对比矩阵已生成 | 人类做最终方案选择，可接受AI推荐、调整优先级、组合方案或否决 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: description触发词优化
-- v3.0: 编排器优化——新增子Skill执行协议、任务调度改为阶段执行计划、调度规则改为执行模式、阶段卡口和人类决策点改为表格、增加子Skill输入输出路径
-- v5.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
-- v6.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v7.0: 子Skill合并——ideation-hmw/ideation-scamper/ideation-inversion/ideation-convergence合并为ideation-workshop；Pipeline stages从4个阶段简化为1个阶段；阶段执行计划、阶段卡口、人类决策点相应更新

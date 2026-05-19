@@ -585,7 +585,3 @@ metadata:
 |-----------|----------|----------|----------|
 | opportunity-definition | `jtbd.jobs` / `requirement_layers` | JTBD或需求分层变更后 | 通知Job增删和需求拆解变化 |
 | design-orchestrator | `priority_scoring.priority_list` | 优先级排序变更后 | 通知排名变化的需求，建议重新评估开发排期 |
-
-## 变更记录
-
-- v3.0: 合并 insight-jtbd + insight-requirement-layers + insight-5whys + insight-kano + insight-priority-scoring 为 insight-analysis，整合4步骤为统一流程

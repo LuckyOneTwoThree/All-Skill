@@ -292,16 +292,3 @@ Skill: change-impact-analysis
 | IA方案选择 | IA生成2-3个候选方案 | 选择最终IA方案 |
 | 设计规范violation确认 | 设计规范一致性<85% | 判断是否接受violation |
 | 交互规范确认 | 交互设计规范生成完成 | 确认状态机、动画和手势规范 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: 结构优化
-- v3.0: 新增 requirements-srs（需求规格说明书）、design-handoff-spec（设计交接文档）
-- v4.0: 新增 interaction-spec（交互设计规范）
-- v5.0: 编排器优化——新增子Skill执行协议、任务调度改为阶段执行计划、调度规则改为执行模式、阶段卡口和人类决策点改为表格、增加子Skill输入输出路径
-- v7.0: 编排协议重构——子Skill执行协议改为编排协议、新增Pipeline定义、阶段执行计划改为调用指令格式、删除调度规则
-- v8.1: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；阶段执行计划新增阶段总结执行指令；阶段卡口新增阶段总结校验；异常处理新增阶段总结生成失败策略
-- v9.0: 移除requirements-srs——需求管理功能（需求收集、理解、优先级排序、需求规格）已由design-prd覆盖；Pipeline移除requirements-srs阶段；阶段执行计划移除requirements-srs调用；阶段卡口移除SRS生成完成；人类决策点移除SRS需求确认
-- v10.0: 新增change-impact-analysis（变更影响分析）——从pm-05迁移；PRD变更时触发，评估对下游设计（IA/用户流程/原型）的波及范围；Pipeline新增change-impact-analysis触发阶段；阶段执行计划新增change-impact-analysis调用；阶段卡口新增变更影响分析完成
-- v10.1: 新增phase-0（UI反馈处理），接收UI→PM反向反馈通道的design_feedback.json；核心原则新增"双向反馈闭环"；人类决策点新增UI反馈处理确认

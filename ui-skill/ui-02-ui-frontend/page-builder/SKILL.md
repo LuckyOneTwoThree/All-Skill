@@ -669,16 +669,3 @@ P1（建议通过，不通过则标注"待修复"）：
 | quality_debt变更 | production-ready | 新增/升级的critical/high级债务 | debt_items中severity变更或新增open状态项 |
 | 数据流变更 | api-integration | API需求变更 | 数据获取方式变更 |
 | design_feedback生成 | ui-orchestrator → design-orchestrator | PM产出修改建议 | design_feedback.json存在且suggestions非空 |
-
-## 变更记录
-
-- v2.0: 核心架构升级——新增设计简报驱动模式（design_brief.json），ext Skill产出从建议升级为可执行设计规范；核心原则新增"设计简报驱动"为第一优先级；Step 1新增设计简报消费规则（8维度强约束）；Step 2新增设计简报驱动的组件生成；移除"ext skill增强由编排器在后续阶段统一调用"声明
-- v1.8: P0/P1分类修正——间距Token引用升级P0、空状态/错误状态升级P0、组件来源降级P1；aesthetic_score明确计算规则（audit×0.5+critique×0.5）；P0检查列表同步更新
-- v1.7: 新增探索阶段设计决策输入（design_decisions.json from Stage 1 条件分支），作为design_decisions初始值；PM约束偏离记录增加探索阶段决策消费规则
-- v1.6: 新增design_feedback.json（UI→PM反向反馈通道），当major/critical级别偏离时必须生成；下游通知机制增加design_feedback回传
-- v1.5: 新增design_decisions（PM约束偏离记录），含4级严重度分级（minor/moderate/major/critical）和对应处理规则；视觉锚点消费增加页面级覆盖机制（anchor_overrides）
-- v1.4: PM输入精简（移除prototype_spec/userflow/handoff_spec，PM不应定义UI决策）；PRD消费规则替代原型规格消费规则（含功能区域覆盖）；interaction-spec消费规则精简（只消费意图不消费具体数值；合并userflow异常路径；增加无障碍交互要求）；动画意图消费表改为意图→实现决策映射
-- v1.3: ext-frontend-design调用改用结构化输入/输出契约（Input Contract/Output Contract）；新增输出消费映射规则；验证条件改为可程序化检查
-- v1.2: PM输入消费规则改为意图约束模式（interaction-spec从"必须一致/以PM为准"改为"必须覆盖/PM定义意图UI决定实现"；原型规格新增消费规则"功能区域必须覆盖/视觉布局UI决定"；userflow确认为完整性约束无需修改）
-- v1.1: audit/critique改为必经步骤（设计品味评分≥80分）；新增美学验证检查5项；视觉节奏扩展至6维度（新增tension_level/visual_narrative）；bolder/delight增加视觉自评触发条件；输出Schema新增visual_direction和aesthetic_score；ext-impeccable Setup统一引用；输入新增userflow（用户流程）和interaction-spec（交互规范）含消费规则和降级策略
-- v1.0: 合并 ui-component-gen + page-assembly + ui-review；新增视觉方向消费；新增视觉节奏设计；审查改为内建质量门禁；组件改为页面上下文生成

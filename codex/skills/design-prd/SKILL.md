@@ -692,10 +692,3 @@ When PRD itself changes, downstream notification mechanism:
 | Priority adjustment | change-impact-analysis | Mark priority change, trigger impact assessment |
 | Goal metric change | metrics-system, tracking-plan | Mark metric change, trigger metrics system update |
 | Business logic change | business-model-canvas, business-strategy-report | Mark business logic change, trigger strategy document update |
-
-## Changelog
-
-- v3.0: Split PRD complete 9-section structure, input Schema, and output Schema into Reference folder; SKILL.md retains core logic and overview tables
-- v3.1: Built-in requirements management -- Input added insight_analysis and opportunity_definition references (replacing original requirements-collection/understanding/prioritization inputs); marked requirements collection, understanding, and prioritization as built into Step 1-3; upstream consumption added insight analysis and opportunity definition; degradation strategy added insight_analysis/opportunity_definition missing plans; data flow diagram updated
-- v3.2: Added prd.json structured output -- includes features[]/pages[]/entities[]/user_flows[]/goals[]/traceability[], for Backend/UI programmatic consumption; downstream driving table added consumption source column; output validation rules added prd.json completeness and reference consistency checks
-- v3.3: prd.json completion -- non_functional_requirements availability/security/observability filled from empty arrays to complete Schema; added tracking_plan data tracking structure; input-schema.md added insight_analysis/opportunity_definition fields; removed duplicate quality check and decision rule sections; prd-structure.md PRD-L/X adjustment rules made concrete; OKR alignment format aligned with prd.json goals[] structure

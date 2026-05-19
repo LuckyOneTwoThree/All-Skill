@@ -253,7 +253,3 @@ P1 (Recommended, mark as "pending fix" if not):
 | Build artifact size exceeds limit | page-builder | Component needs splitting or lazy loading | Single chunk >300KB |
 | TypeScript type error | page-builder / api-integration | Type definition missing or inconsistent | Build fails due to type errors |
 | Accessibility test failure | page-builder | Component missing ARIA attributes or keyboard navigation | axe-core detects WCAG AA violation |
-
-## Changelog
-
-- v1.0: Adapted from v1.3 -- Fixed input path confusion (code path vs metadata path); refined output schema; added security audit step; added security items to quality checks

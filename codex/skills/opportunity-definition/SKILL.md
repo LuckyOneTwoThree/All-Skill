@@ -519,7 +519,3 @@ This Skill requires user research, market analysis, and competitor analysis data
 |-----------|----------|----------|----------|
 | Decision makers/stakeholders | `brief.title` / `scoring.opportunities[].weighted_total` | After Brief core conclusions change | Notify opportunity brief title and scoring changes; prompt re-review needed |
 | Subsequent stages (solution exploration) | `brief.recommended_next_step` / `brief.key_assumptions` | After recommended action or assumptions change | Notify next step action adjustments and assumption changes requiring validation |
-
-## Changelog
-
-- v1.0: Merged opportunity-scoring + opportunity-problem-statement + opportunity-hmw + opportunity-brief into opportunity-definition, integrating 4 steps into a unified process

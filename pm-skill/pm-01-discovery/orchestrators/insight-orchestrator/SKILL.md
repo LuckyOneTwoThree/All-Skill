@@ -121,15 +121,3 @@ Skill: insight-analysis
 | 子Skill执行失败 | 按子Skill内部降级策略处理，编排器层面暂停并上报人类 |
 | 上游数据全部缺失 | 降级为轻量版流程：用户口述需求 → 调用insight-analysis拆解 → 基于描述评分 |
 | 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-
-## 变更记录
-
-- v1.0: 初始版本
-- v2.0: description触发词优化
-- v3.0: 新增子Skill执行协议，将描述性调度改为命令式可执行步骤；新增阶段执行计划含读取路径、输入输出、验证条件；新增阶段卡口表格
-- v4.0: 统一阶段执行计划为表格格式，移除数据流转图
-- v5.0: 核心原则重写为编排理念；新增异常处理表；阶段4验证条件新增base_score/kano_bonus
-- v6.0: 编排协议优化——将"读取子Skill定义并代理执行"改为"使用Skill工具显式调用子Skill"；新增Pipeline定义；阶段执行计划改为调用指令格式
-- v7.0: 阶段总结强化——Pipeline新增post_pipeline定义；调用规则第6条改为强制执行；异常处理新增阶段总结生成失败策略
-- v8.0: 合并insight-jtbd/insight-requirement-layers/insight-5whys/insight-kano/insight-priority-scoring为insight-analysis，Pipeline stages从4阶段简化为1阶段调用
-- v9.0: 透传编排器改造——description标注透传编排器；Pipeline阶段卡口精简为"输出文件已生成"和"阶段总结已生成"；人类决策点从3个精简为2个（KANO边界判定、优先级权重确认）；异常处理精简；编排协议后增加透传说明

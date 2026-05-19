@@ -220,7 +220,3 @@ Next Steps:
 | interview-assist interview not executed (human did not complete interview) | interview-insights.json annotated "interview not executed", report generated based on VOC + behavior data + modeling data, annotated "lacks interview validation" |
 | All upstream data missing | Degrade to lightweight flow: user describes user portrait -> generate hypothetical Persona based on description -> generate exploratory report |
 | Stage summary generation failure | Generate partial summary based on completed sub-Skill output, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v1.0: Initial version

@@ -608,7 +608,3 @@ When upstream files are missing, obtain necessary data through the following met
 | Escalation rule change | All subsequent escalation judgments | Update risk-management.json, notify rule maintainers |
 
 ---
-
-## Version History
-
-- v1.0: Merged risk-monitoring + risk-escalation, Step 1 risk monitoring (indicator tracking, status update, new risk identification, alert triggering, response effectiveness tracking), Step 2 escalation handling (necessity judgment, path determination, notification sending, status tracking)

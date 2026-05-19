@@ -163,10 +163,3 @@ Downstream connections:
 | Design review not passed | Adjust design based on human feedback, re-review |
 | Code self-audit P0 issues | Auto-fix and re-audit, block output if unfixable |
 | Stage summary generation failed | Generate partial summary from completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
-
-## Changelog
-
-- v4.0: Split data-architecture into data-architecture-spec (design) + data-architecture-impl (implementation), added design review gate
-- v3.0: Added code generation capability (models/migrations/repositories), implemented design+code dual output mode
-- v2.0: Merged data-model, cache-strategy, data-migration into single data-architecture skill
-- v1.0: Initial version
