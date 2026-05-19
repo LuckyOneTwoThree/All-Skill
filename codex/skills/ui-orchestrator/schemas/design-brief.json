@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "design-brief",
+  "description": "Design brief -- executable design specification produced by ext Skills, for page-builder to directly consume",
+  "type": "object",
+  "required": ["brief_id", "generated_at", "color_specifications", "typography_specifications", "layout_instructions", "brand_color_strategy", "visual_bans", "differentiation_direction"],
+  "properties": {
+    "brief_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "color_specifications": {
+      "type": "object",
+      "description": "Specific CSS color value specifications, replacing token-derived values",
+      "properties": {
+        "background_primary": {"type": "string", "description": "Primary background color (e.g., oklch(99% 0.002 60))"},
+        "background_secondary": {"type": "string", "description": "Secondary background color"},
+        "surface_elevated": {"type": "string", "description": "Elevated surface background color"},
+        "text_primary": {"type": "string", "description": "Primary text color"},
+        "text_secondary": {"type": "string", "description": "Secondary text color"},
+        "brand_primary": {"type": "string", "description": "Brand primary color"},
+        "brand_secondary": {"type": "string", "description": "Brand secondary color"},
+        "accent": {"type": "string", "description": "Accent color"},
+        "success": {"type": "string", "description": "Success color"},
+        "warning": {"type": "string", "description": "Warning color"},
+        "error": {"type": "string", "description": "Error color"},
+        "border": {"type": "string", "description": "Border color"},
+        "gradient_hero": {"type": "string", "description": "Hero area gradient (e.g., linear-gradient(...))"}
+      }
+    },
+    "typography_specifications": {
+      "type": "object",
+      "description": "Specific typography specifications",
+      "properties": {
+        "font_families": {
+          "type": "object",
+          "properties": {
+            "heading": {"type": "string", "description": "Heading font (e.g., 'DM Sans')"},
+            "body": {"type": "string", "description": "Body font"},
+            "mono": {"type": "string", "description": "Monospace font"}
+          }
+        },
+        "type_scale_values": {
+          "type": "object",
+          "properties": {
+            "h1": {"type": "string", "description": "e.g., 48px/700/1.1"},
+            "h2": {"type": "string"},
+            "h3": {"type": "string"},
+            "body_large": {"type": "string"},
+            "body": {"type": "string"},
+            "body_small": {"type": "string"},
+            "caption": {"type": "string"}
+          }
+        }
+      }
+    },
+    "layout_instructions": {
+      "type": "array",
+      "description": "Page layout instructions",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "name"],
+        "properties": {
+          "page_id": {"type": "string", "description": "Page unique identifier, must match page_manifest.json.pages[].page_id"},
+          "name": {"type": "string", "description": "Page name (human-readable)"},
+          "layout_type": {"type": "string", "enum": ["asymmetric-hero", "sidebar-main", "fullscreen-cta", "dashboard-grid", "content-flow", "split-view"], "description": "Layout type"},
+          "visual_focus": {"type": "string", "description": "Visual focus area"},
+          "grid_config": {"type": "string", "description": "Grid configuration (e.g., 12col/240px-sidebar/1fr)"},
+          "breakpoints": {"type": "object", "description": "Responsive breakpoint configuration"}
+        }
+      }
+    },
+    "component_specifications": {
+      "type": "array",
+      "description": "Component-level design specifications",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page_id": {"type": "string", "description": "Owning page identifier (linked to page_manifest.json.pages[].page_id)"},
+          "component": {"type": "string", "description": "Component name"},
+          "variant": {"type": "string", "description": "Variant (e.g., primary/secondary/ghost)"},
+          "structure": {"type": "string", "description": "Component structure description"},
+          "states": {"type": "array", "items": {"type": "string"}, "description": "States that must be implemented"},
+          "specific_values": {"type": "object", "description": "Specific CSS values (e.g., border-radius: 12px, padding: 16px 24px)"}
+        }
+      }
+    },
+    "animation_specifications": {
+      "type": "array",
+      "description": "Animation specifications",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page_id": {"type": "string", "description": "Owning page identifier (linked to page_manifest.json.pages[].page_id)"},
+          "element": {"type": "string", "description": "Element to apply animation to"},
+          "trigger": {"type": "string", "description": "Trigger condition"},
+          "animation": {"type": "string", "description": "Animation description (e.g., fade-in-up 0.4s ease-out)"},
+          "duration": {"type": "string", "description": "Duration (e.g., 300ms)"},
+          "easing": {"type": "string", "description": "Easing function (e.g., cubic-bezier(0.16, 1, 0.3, 1))"},
+          "delay": {"type": "string", "description": "Delay (e.g., 100ms stagger)"}
+        }
+      }
+    },
+    "brand_color_strategy": {
+      "type": "object",
+      "description": "Brand color distribution strategy",
+      "properties": {
+        "usage_mode": {"type": "string", "enum": ["accent", "spotlight", "flood"], "description": "Brand color usage mode"},
+        "target_percentage": {"type": "number", "description": "Target percentage of brand color on page area"},
+        "distribution": {"type": "array", "items": {"type": "object", "properties": {"area": {"type": "string"}, "usage": {"type": "string"}}}, "description": "Brand color usage per area"}
+      }
+    },
+    "visual_bans": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Absolutely prohibited visual patterns (e.g., 'uniform card grid'/'blue-purple gradient on white'/'Inter font')"
+    },
+    "differentiation_direction": {
+      "type": "string",
+      "description": "Differentiation direction description (e.g., 'warm tones + large font size jumps + asymmetric layout')"
+    }
+  }
+}

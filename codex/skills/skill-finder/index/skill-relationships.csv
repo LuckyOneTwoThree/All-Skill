@@ -1,0 +1,129 @@
+source,target,rel,contract
+acquisition-orchestrator,acquisition-analysis,orch,Channel Evaluation & Funnel Optimization
+activation-orchestrator,activation-aha,orch,Aha Moment Identification
+activation-orchestrator,activation-onboarding,orch,Onboarding Design
+agile-orchestrator,agile-sprint-planning,orch,Sprint Planning
+agile-orchestrator,agile-daily-sync,orch,Daily Sync
+agile-orchestrator,agile-review,orch,Sprint Review & Retrospective
+analysis-orchestrator,analysis-anomaly,orch,Anomaly Detection
+analysis-orchestrator,analysis-funnel,orch,Funnel Analysis
+analysis-orchestrator,analysis-retention,orch,Retention Analysis
+analysis-orchestrator,data-analysis-report,orch,Data Analysis Report
+business-orchestrator,business-model-canvas,orch,Business Model Canvas
+business-orchestrator,business-value-fit,orch,Value Fit Validation
+business-orchestrator,business-pricing,orch,Pricing Strategy
+business-orchestrator,business-strategy-report,orch,Business Strategy Report
+decision-orchestrator,decision-dace,orch,DACE Decision Cycle
+decision-orchestrator,decision-culture,orch,Data Culture Development
+design-orchestrator,design-prd,orch,UI Feedback Processing
+design-orchestrator,design-ia,orch,Information Architecture Design
+design-orchestrator,design-userflow,orch,User Flow Design
+design-orchestrator,design-prototype,orch,Prototype Design
+design-orchestrator,interaction-spec,orch,Interaction Design Specification
+design-orchestrator,design-handoff-spec,orch,Design Handoff Specification
+design-orchestrator,change-impact-analysis,orch,Change Impact Analysis
+diagnosis-orchestrator,diagnosis-health,orch,Health Diagnosis
+diagnosis-orchestrator,diagnosis-competition,orch,Competitor Tracking
+diagnosis-orchestrator,competitor-monitoring-report,orch,Competitor Monitoring Report
+diagnosis-orchestrator,product-sunset-plan,orch,Product Sunset Plan
+experiment-orchestrator,experiment-design,orch,Experiment Design
+experiment-orchestrator,experiment-execution,orch,Experiment Execution
+growth-orchestrator,growth-model,orch,Growth Model Diagnosis
+growth-orchestrator,acquisition-orchestrator,orch,Acquisition Optimization
+growth-orchestrator,activation-orchestrator,orch,Activation Optimization
+growth-orchestrator,retention-orchestrator,orch,Retention Optimization
+growth-orchestrator,revenue-orchestrator,orch,Monetization Optimization
+growth-orchestrator,growth-strategy-report,orch,Growth Strategy Report
+growth-orchestrator,gtm-strategy,orch,GTM Strategy
+growth-orchestrator,product-operations-manual,orch,Operations Manual
+ideation-orchestrator,ideation-workshop,orch,Ideation Workshop
+insight-orchestrator,insight-analysis,orch,Requirement Insight Analysis
+iteration-orchestrator,iteration-decision,orch,Iteration Decision
+market-orchestrator,market-competitor-analysis,orch,Parallel Collection
+metrics-orchestrator,metrics-system,orch,Metrics System
+metrics-orchestrator,tracking-plan,orch,Tracking Plan
+metrics-orchestrator,metrics-dashboard,orch,Dashboard Configuration
+monitoring-orchestrator,monitoring-pipeline,orch,Monitoring & Alerting Pipeline
+monitoring-orchestrator,user-feedback-loop-report,orch,User Feedback Loop
+opportunity-orchestrator,opportunity-definition,orch,Opportunity Identification & Definition
+planning-orchestrator,product-proposal,orch,Product Proposal
+planning-orchestrator,strategic-analysis,orch,Strategic Analysis
+positioning-orchestrator,positioning-strategy,orch,Positioning Strategy
+product-iteration-orchestrator,design-orchestrator,orch,Requirements & Design
+product-iteration-orchestrator,change-impact-analysis,orch,Change Impact Analysis
+product-iteration-orchestrator,api-design-orchestrator,orch,API Design
+product-iteration-orchestrator,data-architecture-orchestrator,orch,Backend Implementation
+product-iteration-orchestrator,backend-architecture-orchestrator,orch,Backend Implementation
+product-iteration-orchestrator,ui-orchestrator,orch,UI Changes
+product-iteration-orchestrator,release-orchestrator,orch,Delivery & Release
+product-iteration-orchestrator,monitoring-orchestrator,orch,Delivery & Release
+product-launch-orchestrator,insight-orchestrator,orch,Insight Analysis
+product-launch-orchestrator,market-orchestrator,orch,Market Analysis
+product-launch-orchestrator,business-orchestrator,orch,Business Model
+product-launch-orchestrator,positioning-orchestrator,orch,Positioning Strategy
+product-launch-orchestrator,design-orchestrator,orch,Product Design
+product-launch-orchestrator,metrics-orchestrator,orch,Metrics System
+product-launch-orchestrator,api-design-orchestrator,orch,API Design
+product-launch-orchestrator,ui-orchestrator,orch,UI Development
+product-launch-orchestrator,data-architecture-orchestrator,orch,Backend Implementation
+product-launch-orchestrator,backend-architecture-orchestrator,orch,Backend Implementation
+product-launch-orchestrator,release-orchestrator,orch,Delivery & Release
+product-launch-orchestrator,monitoring-orchestrator,orch,Delivery & Release
+product-launch-orchestrator,iteration-orchestrator,orch,Delivery & Release
+product-launch-orchestrator,agile-orchestrator,orch,Delivery & Release
+project-planning-orchestrator,planning-project-charter,orch,Project Charter
+project-planning-orchestrator,planning-resource,orch,Resource Locking
+project-planning-orchestrator,planning-kickoff,orch,Kickoff
+release-orchestrator,quality-acceptance,orch,Quality Acceptance
+release-orchestrator,release-auto-checklist,orch,Release Checklist
+release-orchestrator,release-gradual,orch,Gradual Rollout
+release-orchestrator,release-notes,orch,Release Notes
+retention-orchestrator,retention-management,orch,Churn Warning & User Segmentation
+revenue-orchestrator,revenue-funnel,orch,Payment Funnel
+revenue-orchestrator,revenue-nrr,orch,NRR Tracking
+revenue-orchestrator,revenue-upsell,orch,Upgrade Conversion
+risk-orchestrator,risk-identification,orch,Risk Identification
+risk-orchestrator,risk-management,orch,Risk Monitoring & Escalation
+stakeholder-orchestrator,stakeholder-analysis,orch,Stakeholder Analysis
+ui-orchestrator,ext-frontend-design,orch,Rapid Generation
+ui-orchestrator,ext-ui-ux-pro-max,orch,Rapid Generation
+ui-orchestrator,ext-impeccable,orch,Rapid Generation
+ui-orchestrator,ext-interaction-design,orch,Rapid Generation
+ui-orchestrator,project-init,orch,Prototype Output
+ui-orchestrator,ext-ui-ux-pro-max,orch,Design Enhancement & Brief Generation
+ui-orchestrator,ext-impeccable,orch,Design Enhancement & Brief Generation
+ui-orchestrator,ext-frontend-design,orch,Design Enhancement & Brief Generation
+ui-orchestrator,page-builder,orch,Page & Component Construction
+ui-orchestrator,ext-ui-ux-pro-max,orch,Page Enhancement & Quality Audit
+ui-orchestrator,ext-impeccable,orch,Page Enhancement & Quality Audit
+ui-orchestrator,ext-interaction-design,orch,Page Enhancement & Quality Audit
+ui-orchestrator,api-integration,orch,API Integration
+ui-orchestrator,production-ready,orch,Production Ready & Optimization
+ui-orchestrator,ext-impeccable,orch,Production Ready & Optimization
+user-research-orchestrator,user-research-report,orch,Parallel Collection
+validation-orchestrator,validation-assumption-map,orch,Assumption Map
+validation-orchestrator,validation-mvp,orch,MVP Scope Definition
+validation-orchestrator,validation-experiment,orch,Experiment Design
+validation-orchestrator,validation-usability,orch,Usability Testing
+design-prd,api-design-spec,feed,PRD
+design-prd,change-impact-analysis,feed,PRD
+api-design-spec,data-architecture-spec,feed,API Contract
+data-architecture-spec,backend-architecture-impl,feed,Data Architecture
+design-prototype,design-handoff-spec,feed,Prototype Draft
+metrics-system,tracking-plan,feed,Metrics System
+metrics-system,analysis-anomaly,feed,Metrics System
+analysis-anomaly,analysis-funnel,comp,
+analysis-funnel,analysis-retention,comp,
+growth-model,acquisition-analysis,feed,Growth Model
+growth-model,retention-management,feed,Growth Model
+business-model-canvas,business-pricing,feed,Business Model
+positioning-strategy,design-prototype,feed,Positioning
+experiment-design,experiment-execution,feed,Experiment Plan
+validation-mvp,validation-experiment,feed,MVP Results
+risk-identification,risk-management,feed,Risk Register
+quality-acceptance,release-gradual,feed,Acceptance Report
+release-gradual,release-notes,feed,Release Record
+planning-okr,planning-roadmap,feed,OKR
+diagnosis-health,iteration-decision,feed,Health Report
+user-research-report,insight-analysis,feed,Research Report
+opportunity-definition,business-value-fit,feed,Opportunity Definition

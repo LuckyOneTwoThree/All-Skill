@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ui-orchestrator-checkpoint",
+  "description": "UI orchestrator checkpoint for resumable execution",
+  "type": "object",
+  "required": ["mode", "completed_stages", "pending_stages", "skipped_stages", "stage_outputs", "ext_enhancement_applied", "last_updated"],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["express", "prototype", "full", "progressive"],
+      "description": "Current execution mode. Updated to new mode on mode switch; previous_mode retains original mode for reference"
+    },
+    "previous_mode": {
+      "type": "string",
+      "enum": ["express", "prototype", "full", "progressive"],
+      "description": "Execution mode before switch (exists only on mode switch, e.g., prototype->full)"
+    },
+    "completed_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of successfully completed stage IDs (e.g., ['stage-1', 'stage-2'])"
+    },
+    "pending_stages": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of pending stage IDs (e.g., ['stage-3', 'stage-4'])"
+    },
+    "skipped_stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "reason": {"type": "string"}
+        }
+      },
+      "description": "Skipped stages and reasons"
+    },
+    "stage_outputs": {
+      "type": "object",
+      "description": "Output file paths for each completed stage; key is stage ID, value is output path"
+    },
+    "ext_enhancement_applied": {
+      "type": "object",
+      "description": "ext stage execution status; key is stage ID, value is summary of ext Skill invocation results for that stage",
+      "properties": {
+        "stage-1": {"type": "object", "description": "Design system establishment results (including conditional branches: design exploration/PM constraint review)"},
+        "stage-e": {"type": "object", "description": "Express generation results (express mode)"},
+        "stage-p": {"type": "object", "description": "Prototype output results (prototype mode)"},
+        "stage-2": {"type": "object", "description": "Design enhancement + brief generation results"},
+        "stage-3": {"type": "object", "description": "Page & component construction results (including design_feedback propagation status)"},
+        "stage-4": {"type": "object", "description": "Page enhancement + quality audit results"},
+        "stage-5": {"type": "object", "description": "API integration results"},
+        "stage-6": {"type": "object", "description": "Production readiness + optimization results"}
+      }
+    },
+    "last_updated": {"type": "string", "description": "Last update time (ISO 8601)"}
+  }
+}

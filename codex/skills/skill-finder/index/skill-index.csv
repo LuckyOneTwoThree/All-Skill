@@ -1,0 +1,123 @@
+name,type,domain,lifecycle,triggers,keywords
+pm-00-guide,guide,pm,guide,,Product Methodology|Product Process|Product Planning|Zero to One|Full Product Lifecycle
+acquisition-orchestrator,orchestrator,pm,growth,Evaluate acquisition channels|Optimize acquisition funnel,User Acquisition|Acquisition Channels|Funnel Optimization|Channel Evaluation|Acquisition Strategy
+activation-orchestrator,orchestrator,pm,growth,Find Aha Moment|Design onboarding flow,User Activation|Aha Moment|Onboarding|New User Onboarding|Beginner Guide
+agile-orchestrator,orchestrator,pm,project,Plan a Sprint|Run a daily standup,Agile Execution|Sprint Planning|Daily Standup|Sprint Review|Agile Management
+analysis-orchestrator,orchestrator,pm,metrics-ops,Help me analyze the data|Data anomaly detected investigate it,Data Analysis|Anomaly Detection|Funnel Analysis|Retention Analysis|Aha Moment
+api-design-orchestrator,orchestrator,backend,backend,Design API interfaces|Define API specifications,API Design|Interface Contract|API Security|Authentication & Authorization|Interface Design
+backend-architecture-orchestrator,orchestrator,backend,backend,Design backend architecture|Choose architecture pattern,Backend Architecture|Architecture Pattern|Service Design|Architecture Review|Technical Architecture
+business-orchestrator,orchestrator,pm,strategy,Help me design a business model|How does the product make money,Business Model|Business Model Canvas|Pricing Strategy|Business Strategy Report|Monetization
+data-architecture-orchestrator,orchestrator,backend,backend,Design data models|Plan data architecture,Data Architecture|Data Model|Data Migration|Caching Strategy|Database Design
+decision-orchestrator,orchestrator,pm,metrics-ops,Make data-driven decisions|Establish data-driven decision mechanism,Data Decision|DACE Cycle|Data Insight|Decision Framework|Data Culture
+design-orchestrator,orchestrator,pm,design,Help me write a PRD|Generate product requirements document,Product Design|PRD|Information Architecture|Prototype|Interaction Specification
+diagnosis-orchestrator,orchestrator,pm,monitoring,Diagnose product health|Track competitor dynamics,Intelligent Diagnosis|Health Score|Competitor Tracking|Issue Attribution|MTTR
+experiment-orchestrator,orchestrator,pm,metrics-ops,Design an A/B test|Validate solution effectiveness,A/B Testing|Experiment Design|Statistical Significance|Experiment Execution|Effect Validation
+growth-orchestrator,orchestrator,pm,growth,Help me develop a growth strategy|User growth has hit a bottleneck,Growth Strategy|Growth Model|AARRR|Growth Flywheel|Growth System
+ideation-orchestrator,orchestrator,pm,design,Help me brainstorm ideas|Ideate solutions,Divergent Thinking|HMW|SCAMPER|Solution Ideation|Product Ideas
+insight-orchestrator,orchestrator,pm,discovery,Help me analyze user needs|Too many requirements help me prioritize,Requirement Analysis Process|Requirement Insight Orchestration|Requirement Prioritization Workflow|JTBD|5Whys
+iteration-orchestrator,orchestrator,pm,monitoring,Plan the next iteration|Adjust priorities,Iteration Decision|Backlog Optimization|Priority Adjustment|Iteration Retrospective|Iteration Planning
+market-orchestrator,orchestrator,pm,discovery,Help me analyze the market|See what competitors are doing,Market Analysis|Competitor Analysis|PEST|Competitive Intelligence|Four-Quadrant Matrix
+metrics-orchestrator,orchestrator,pm,metrics-design,Help me design a metrics system|Plan data tracking instrumentation,Metrics Design|Metrics System|Tracking Plan|Data Metrics|KPI Design
+monitoring-orchestrator,orchestrator,pm,monitoring,Establish product monitoring system|Production anomaly alert,Monitoring & Alerting|Anomaly Detection|Alert Severity|Monitoring System|Health Monitoring
+opportunity-orchestrator,orchestrator,pm,discovery,Help me evaluate this product opportunity|Identify product opportunities,Opportunity Identification|Opportunity Scoring|HMW|Product Opportunity|Opportunity Assessment
+planning-orchestrator,orchestrator,pm,strategy,Help me initiate a product|Define strategic planning,Product Initiation|Strategic Planning|SWOT|OKR|Roadmap
+positioning-orchestrator,orchestrator,pm,strategy,Help me define product positioning|Analyze differentiation advantages,Product Positioning|Differentiation|Value Curve|Competitive Strategy|Brand Positioning
+product-iteration-orchestrator,orchestrator,cross-domain,cross-domain,Add a payment feature to an existing product|Requirements changed need to adjust,Feature Iteration|Requirement Change|Incremental Update|Cross-Domain|Product Optimization
+product-launch-orchestrator,orchestrator,cross-domain,cross-domain,I want to build a marketplace system|We want to build a SaaS product from scratch,Product Launch|Zero to One|New Product|Full Lifecycle|Cross-Domain
+project-planning-orchestrator,orchestrator,pm,project,Start a new project|Do project planning,Project Planning|Project Charter|Resource Planning|Kickoff|Project Initiation
+release-orchestrator,orchestrator,pm,monitoring,Release the product|Gradual rollout,Product Release|Go Live|Grayscale|Release Checklist|Release Notes
+retention-orchestrator,orchestrator,pm,growth,Severe user churn|Improve user retention rate,User Retention|Churn Warning|Segmented Operations|Engagement|Retention Strategy
+revenue-orchestrator,orchestrator,pm,growth,Optimize payment conversion rate|Increase product revenue,Monetization|Payment Funnel|NRR|Upsell Strategy|Revenue Optimization
+risk-orchestrator,orchestrator,pm,project,Identify project risks|Monitor project risks,Risk Management|Risk Identification|Risk Monitoring|Risk Escalation|Risk Register
+stakeholder-orchestrator,orchestrator,pm,strategy,Help me manage stakeholders|Write a strategic communication document,Strategic Document|Strategic Communication|Stakeholders|Stakeholder Management|Alignment Communication
+ui-orchestrator,orchestrator,ui,ui,Build UI|Write frontend code,UI Design|Frontend Development|UI|Frontend|Interface Development
+user-research-orchestrator,orchestrator,pm,discovery,Help me conduct user research|Analyze user feedback,User Research|VOC Analysis|Behavior Analysis|Persona|Interview Assistance
+validation-orchestrator,orchestrator,pm,design,Validate product solution|Define MVP scope,Solution Validation|Hypothesis Validation|MVP|Usability Testing|Experiment Design
+acquisition-analysis,pipeline,pm,growth,Which channel has the best acquisition performance|Help me check ROI across channels,Acquisition Channels|Channel Evaluation|ROI Analysis|Channel Tiering|Acquisition Optimization
+activation-aha,pipeline,pm,growth,When do users find the product delightful|How to find the Aha Moment,Aha Moment|Activation Moment|User Activation|Reach Rate|When Users Find It Useful
+activation-onboarding,pipeline,pm,growth,New user onboarding flow is too long|How to help users get started faster,Onboarding|New User Onboarding|Onboarding Optimization|Personalized Onboarding|User Activation
+agile-daily-sync,pipeline,pm,project,Daily standup takes too much time|How to run standups efficiently,Daily Standup|Daily Sync|Progress Sync|Blocker Tracking|Agile Daily Report
+agile-review,pipeline,pm,project,Sprint is done need a review|How to run an iteration retrospective,Iteration Review|Iteration Retrospective|Agile Retrospective|Review Meeting|Retrospective Report
+agile-sprint-planning,pipeline,pm,project,How to plan the next sprint|Which requirements for this iteration,Sprint Planning|Sprint Plan|Iteration Planning|Story Selection|Capacity Matching
+analysis-anomaly,pipeline,pm,metrics-ops,DAU suddenly dropped 30% today help me investigate|Metric anomaly alert help me with root cause analysis,Anomaly Detection|Data Analysis|Automated Root Cause|Metric Monitoring|Anomaly Report
+analysis-funnel,pipeline,pm,metrics-ops,Registration funnel conversion rate is too low help me analyze|At which step do users drop off the most,Funnel Analysis|Conversion Analysis|Drop-off Point|Conversion Rate|User Path
+analysis-retention,pipeline,pm,metrics-ops,New user 7-day retention is only 15% help me analyze|When do users start churning,Retention Analysis|Cohort Analysis|Aha Moment|Churn Warning|User Stickiness
+api-design-impl,pipeline,backend,backend,Generate API code|Write interface code,Generate API Code|Write Interface Code|Generate Routes|Generate Service|API Code Generation
+api-design-spec,pipeline,backend,backend,Design API interfaces|Write API documentation,API Design|Interface Contract|OpenAPI|RESTful|GraphQL
+api-integration,pipeline,ui,ui,Integrate with backend API|Generate request layer code,API Integration|Interface Debugging|Request Layer|API Client|Frontend-Backend Integration
+backend-architecture-impl,pipeline,backend,backend,Generate project scaffold|Generate app.ts,Generate Project Scaffold|Generate app.ts|Generate Docker Config|Generate CI Config|Project Architecture Code Generation
+backend-architecture-spec,pipeline,backend,backend,Which architecture pattern to choose|Should we adopt microservices,Architecture Pattern|Microservices|Monolithic Architecture|Serverless|Service Design
+business-model-canvas,pipeline,pm,strategy,Help me clarify the business model|How does our business model make money,Business Model Canvas|BMC|Value Proposition|Revenue Model|Cost Structure
+business-pricing,pipeline,pm,strategy,How should we price the product|How to create a pricing plan,Pricing Strategy|Competitor Analysis|Willingness to Pay|Package Design|Unit Economics
+business-strategy-report,pipeline,pm,strategy,Help me write a business strategy plan|Produce a strategy report,Business Strategy Report|Strategic Planning|Business Planning|Strategy Document|Business Analysis Report
+business-value-fit,pipeline,pm,strategy,Is our value proposition right|Do users really need this feature,Value Proposition Fit|Pain Point Coverage|Benefit Validation|Fit Score|User Need Validation
+change-impact-analysis,pipeline,pm,design,Requirements changed check impact scope|Analyze which modules this change affects,Change Impact|Requirement Change|Impact Analysis|Change Review|PRD Change
+competitor-monitoring-report,pipeline,pm,monitoring,What are competitors doing recently|Help me produce a competitor monitoring report,Competitor Monitoring Report|Competitor Dynamics|Feature Tracking|Threat Assessment|Competitor Response
+data-analysis-report,pipeline,pm,metrics-ops,Help me produce this month's data analysis report|Summarize recent data trends,Data Analysis Report|Data Insight Report|Operations Report|Data Report|Analysis Report
+data-architecture-impl,pipeline,backend,backend,Generate Model code|Generate Migration scripts,Generate Model Code|Generate Cache Code|Data Layer Code Generation
+data-architecture-spec,pipeline,backend,backend,Design database tables|Create tables and indexes,Data Model|ER Diagram|Table Structure|Index|Caching Strategy
+decision-culture,pipeline,pm,metrics-ops,Team is not used to looking at data how to drive change|Help me build a data-driven culture,Data Culture|Data-Driven|Decision Culture|Data Literacy|Reporting System
+decision-dace,pipeline,pm,metrics-ops,Help me make a data decision using the DACE method|How to build a complete loop from data to action,DACE Cycle|Data Decision|Decision Loop|Data-Driven|Decision Framework
+design-handoff-spec,pipeline,pm,design,Design is done how to hand off to engineering|Help me generate design handoff documentation,Design Handoff|Design Delivery|Handoff|Developer Handoff|Delivery Document
+design-ia,pipeline,pm,design,How to organize site navigation|Help me structure the information architecture,Information Architecture|IA Design|Navigation Design|Card Sorting|Content Organization
+design-prd,pipeline,pm,design,Help me write a PRD document|Generate product requirements document,PRD Generation|Product Requirements Document|Automated PRD Generation|PRD Management|Write Requirements Document
+design-prototype,pipeline,pm,design,Help me generate a prototype|Quickly produce a design draft,Prototype Design|Low-Fidelity Prototype|Mid-Fidelity Prototype|Design Specification|Prototype Generation
+design-userflow,pipeline,pm,design,How to map user operation flow|Help me structure the user journey,User Flow|User Flow|Task Flow|Flow Design|Path Optimization
+diagnosis-competition,pipeline,pm,monitoring,Competitors updated again what to do|How to respond when competitors add new features,Competitor Tracking|Competitor Analysis|Competitor Monitoring|Feature Change|Competitive Analysis
+diagnosis-health,pipeline,pm,monitoring,Is the product healthy right now|Help me run a health check,Health Score|Product Diagnosis|Multi-Dimensional Scoring|Health Check|Product Health
+experiment-design,pipeline,pm,metrics-ops,I want to validate if the new homepage improves conversion help me design an A/B test|How many samples does this feature change require,A/B Test Design|Experiment Design|Sample Size Calculation|Traffic Split Plan|Hypothesis Testing
+experiment-execution,pipeline,pm,metrics-ops,A/B test is complete help me analyze results|Experiment data looks different is it significant,A/B Test Execution|Statistical Testing|Experiment Analysis|Novelty Effect|Experiment Monitoring
+growth-model,pipeline,pm,growth,,Growth Model|PLG|SLG|Growth Flywheel|Growth Diagnosis
+growth-strategy-report,pipeline,pm,growth,Help me produce a growth strategy report|What to do when growth hits a bottleneck,Growth Strategy Report|Growth Report|AARRR Report|Growth Flywheel|Growth Roadmap
+gtm-strategy,pipeline,pm,growth,New product launching how to promote it|Help me create a go-to-market plan,GTM Strategy|Launch Strategy|Product Launch|Market Entry|Release Strategy
+ideation-workshop,pipeline,pm,design,Help me brainstorm ideas|Innovate using SCAMPER method,Divergent Thinking|Convergent Thinking|HMW|SCAMPER|Reverse Thinking
+insight-analysis,pipeline,pm,discovery,Help me analyze user needs|Too many requirements help me prioritize,Requirement Insight|JTBD|5Whys|KANO|Priority Scoring
+interaction-spec,pipeline,pm,design,How to write interaction specifications|Help me write interaction design documentation,Interaction Design Specification|Interaction Specification|State Machine|Animation Specification|Gesture Interaction
+iteration-decision,pipeline,pm,monitoring,Requirement pool is too messy how to organize|How to prioritize the backlog,Backlog Optimization|Requirement Pool Management|Requirement Linking|Backlog Grooming|Requirement Reorganization
+market-competitor-analysis,pipeline,pm,discovery,Help me do competitor analysis|How to conduct competitor research,Competitor Analysis|Competitor Research|Competitive Intelligence|Four-Quadrant Matrix|Competitors
+market-pest,pipeline,pm,discovery,What changes in the market environment|How do policies affect us,PEST Analysis|Policy & Regulation|Economic Indicators|Social Trends|Technology Trends
+market-tam-som,pipeline,pm,discovery,How big is this market|Help me calculate market size,Market Size|TAM|SAM|SOM|Market Capacity
+metrics-dashboard,pipeline,pm,metrics-design,Help me build a data dashboard|Configure a monitoring panel,Data Dashboard|Metrics Visualization|Alert Configuration|Monitoring Panel|Dashboard Setup
+metrics-system,pipeline,pm,metrics-design,Help me define core product metrics|We need to set a North Star Metric,Metrics System|AARRR Model|North Star Metric|L1/L2 Metrics|OSM Model
+monitoring-pipeline,pipeline,pm,monitoring,How to build a monitoring system|Which metrics need monitoring,Monitoring System|Monitoring Configuration|Health Check|Alert Rules|Monitoring Framework
+opportunity-definition,pipeline,pm,discovery,Help me evaluate this product opportunity|Identify product opportunities,Opportunity Identification|Opportunity Assessment|HMW|Opportunity Brief|Product Opportunity
+page-builder,pipeline,ui,ui,Help me build a page|Generate frontend components,Page Generation|Component Generation|Page Assembly|UI Construction|Build Page
+planning-kickoff,pipeline,pm,project,Project is about to start how to run the meeting|How to prepare for a kickoff meeting,Kickoff|Project Initiation|Kickoff Meeting|Action Items|Project Kickoff
+planning-north-star,pipeline,pm,strategy,What should our core metric be|How to measure product success,North Star Metric|Core Metric|Metric Selection|Product Success Metric|NSM
+planning-okr,pipeline,pm,strategy,Help me set quarterly OKRs|How to break down objectives,OKR|Objective Management|Key Results|Objective Decomposition|OKR Alignment
+planning-project-charter,pipeline,pm,project,How to write a project charter|Help me produce a project charter document,Project Charter|Project Charter|Project Objectives|Project Scope|Success Criteria
+planning-resource,pipeline,pm,project,How many people does the project need|What to do when resources are insufficient,Resource Planning|Resource Allocation|Workforce Planning|Resource Requirements|Capacity Planning
+planning-roadmap,pipeline,pm,strategy,Help me plan the product roadmap|What to include in the next version,Product Roadmap|Release Planning|RICE Scoring|Quarterly Planning|Epic Planning
+positioning-strategy,pipeline,pm,strategy,Help me define product positioning|Write a positioning statement,Product Positioning|Positioning Strategy|Differentiation|Value Curve|Positioning Statement
+product-operations-manual,pipeline,pm,growth,How to write an operations manual|How to standardize daily operations processes,Operations Manual|Operations SOP|Content Operations|User Operations|Campaign Operations
+product-proposal,pipeline,pm,strategy,Help me write a product initiation document|How to write a product proposal,Product Initiation|Product Proposal|Initiation Document|Business Plan|Product Planning Document
+product-sunset-plan,pipeline,pm,monitoring,How to decommission this feature|Product is being shut down how to arrange,Product Sunset|Feature Decommission|Product Retirement|Sunset|Decommission Plan
+production-ready,pipeline,ui,ui,Prepare for launch|Optimize frontend performance,Build & Deploy|Performance Optimization|Frontend Testing|Production Ready|Launch Preparation
+project-init,pipeline,ui,ui,Initialize frontend project|Establish design system,Project Initialization|Design System|Visual Direction|Theme Customization|Project Scaffold
+quality-acceptance,pipeline,pm,monitoring,Run acceptance tests automatically|Help me execute acceptance checks,Acceptance Execution Plan|Acceptance Testing|Quality Gate|Go-Live Check|Acceptance Report
+release-auto-checklist,pipeline,pm,monitoring,Help me create a pre-launch checklist|Generate a release checklist,Go-Live Check|Release Process|Release Tracking|Launch Preparation|Release Checklist
+release-gradual,pipeline,pm,monitoring,Do a gradual rollout start with 1% traffic|Help me validate with small traffic,Gradual Rollout|Progressive Release|Auto Rollback|Release Strategy|Canary Release
+release-notes,pipeline,pm,monitoring,Help me write version release notes|Generate release notes,Version Release Notes|Changelog|Version Update|Update Notes|Release Notes
+retention-management,pipeline,pm,growth,Users keep churning what to do|How to detect at-risk users early,Churn Warning|Churn Intervention|Churn Model|User Retention|User Segmentation
+revenue-funnel,pipeline,pm,growth,Why are users reluctant to pay|How to improve payment conversion rate,Payment Funnel|Payment Conversion|Paywall|Conversion Optimization|Payment Analysis
+revenue-nrr,pipeline,pm,growth,How to calculate net revenue retention|How is the renewal rate for existing customers,NRR|Net Revenue Retention|Revenue Retention|Churn Warning|Expansion Revenue
+revenue-upsell,pipeline,pm,growth,How to get users to upgrade plans|Which users are suitable for upselling,Upgrade Conversion|Upsell|Upsell|Upgrade Strategy|Cross-Sell
+risk-identification,pipeline,pm,project,What risks does the project have|Help me identify risks,Risk Identification|Risk Assessment|Risk Register|Risk Scan|Risk Priority
+risk-management,pipeline,pm,project,How to continuously monitor risks|What is the current risk status,Risk Monitoring|Risk Early Warning|Risk Tracking|Risk Status|Risk Indicators
+stakeholder-analysis,pipeline,pm,strategy,Help me map out stakeholders|Who will influence this project,Stakeholders|Stakeholder Map|Communication Strategy
+strategic-analysis,pipeline,pm,strategy,Help me analyze strengths and weaknesses|What are our opportunities and threats,Strategic Analysis|SWOT|Ansoff Matrix|Porter's Five Forces|Strategic Planning
+tracking-plan,pipeline,pm,metrics-design,This feature needs event tracking|Help me produce a tracking plan,Tracking Plan|Event Design|Property Design|Tracking Specification|Data Collection
+user-feedback-loop-report,pipeline,pm,monitoring,How is user feedback being handled|Help me produce a feedback loop report,User Feedback Loop|Feedback Report|Feedback Tracking|Loop Closure Rate|VOC Loop
+user-research-behavior-analysis,pipeline,pm,discovery,Where are users dropping off|Why is the funnel conversion rate so low,Behavior Analysis|Funnel Analysis|Aha Moment|Feature Usage Analysis|Anomaly Detection
+user-research-interview-assist,pipeline,pm,discovery,Help me prepare an interview guide|How to organize insights after interviews,User Interview|Interview Script|Interview Insights|Semi-Structured Interview|Qualitative Research Assistance
+user-research-report,pipeline,pm,discovery,Help me produce a user research report|How to organize user research findings,User Research Report|User Survey Report|User Insight Report|Research Report|User Analysis Report
+user-research-user-modeling,pipeline,pm,discovery,Help me create user personas|How to map the user journey,User Modeling|Persona Generation|Empathy Map|User Journey Map|User Persona
+user-research-voice-analysis,pipeline,pm,discovery,What are users complaining about|Help me analyze user feedback,Voice of User Analysis|VOC|Sentiment Analysis|Pain Point Extraction|User Feedback Analysis
+validation-assumption-map,pipeline,pm,design,Which product hypotheses remain unvalidated|Help me map out assumptions and risks,Assumption Extraction|Risk Assessment|Assumption Map|Validation Method|Assumption Mapping
+validation-experiment,pipeline,pm,design,How to validate this hypothesis|Help me design an A/B test,Experiment Design|A/B Testing|Sample Size|Validation Method|Validation Plan
+validation-mvp,pipeline,pm,design,What features should the MVP include|How to build a minimum viable product,MVP Scope|Minimum Viable Product|Feature Priority|Resource Constraints|Minimum Product
+validation-usability,pipeline,pm,design,How to conduct usability testing|Help me design test tasks,Usability Testing|Task Script|Recruitment Screening|Issue Clustering|Insight Extraction
+ext-frontend-design,extension,ui,ui,Help me design a landing page|Create a dashboard interface,Frontend Design|Interface Development|Web Design|Component Development|HTML/CSS
+ext-impeccable,extension,ui,ui,Help me optimize this page's design|Audit this interface for UX issues,UI Design|Interface Optimization|Visual Hierarchy|Interaction Design|Motion Design
+ext-interaction-design,extension,ui,ui,Help me design page transition animations|Add some micro-interaction effects,Micro-Interactions|Motion Design|Transition Animation|Loading States|User Feedback
+ext-ui-ux-pro-max,extension,ui,ui,Recommend a color scheme suitable for SaaS|Find UX design guidelines for dashboards,Design System|Color Scheme|Typography Pairing|UX Guidelines|Chart Types

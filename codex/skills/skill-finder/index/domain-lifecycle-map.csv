@@ -1,0 +1,16 @@
+domain,lifecycle,description
+pm,discovery,User Research, Market Insight, Opportunity Definition
+pm,strategy,Business Model, Positioning, Planning, Stakeholders
+pm,design,PRD, Prototype, Validation, Interaction Specification
+pm,metrics-design,Metrics System, Tracking Plan
+pm,metrics-ops,Data Analysis, Experimentation, Decision Making
+pm,growth,Acquisition, Activation, Retention, Monetization
+pm,monitoring,Monitoring, Diagnosis, Iteration, Acceptance & Release
+pm,project,Project Planning, Agile, Risk Management
+ui,ui-design,Design System, Interaction Design
+ui,ui-frontend,Frontend Implementation, Component Development
+ui,ui-integration,API Integration, Frontend Delivery
+backend,api,API Specification, Interface Design
+backend,data,Data Model, Storage Design
+backend,backend-arch,Architecture Design, Technical Implementation
+cross-domain,cross-domain,Cross-Domain Orchestration & Collaboration

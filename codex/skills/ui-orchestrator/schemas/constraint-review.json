@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "constraint-review",
+  "description": "PM constraint review results -- UI-side review of PM output reasonableness from a design perspective, safeguarding design freedom",
+  "type": "object",
+  "required": ["review_id", "generated_at", "dimensions", "findings"],
+  "properties": {
+    "review_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "source_artifacts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of PM output files reviewed (e.g., ['prd.json', 'ia_proposals.json'])"
+    },
+    "dimensions": {
+      "type": "array",
+      "description": "5-dimension review results",
+      "items": {
+        "type": "object",
+        "required": ["dimension", "assessment", "rationale"],
+        "properties": {
+          "dimension": {"type": "string", "enum": ["page_division", "functional_areas", "component_selection", "navigation_structure", "interaction_complexity"]},
+          "assessment": {"type": "string", "enum": ["reasonable", "minor_concern", "major_concern", "critical_concern"]},
+          "rationale": {"type": "string", "description": "Assessment rationale"},
+          "suggestion": {"type": "string", "description": "Improvement suggestion (provided only for concern levels)"}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Specific issues found",
+      "items": {
+        "type": "object",
+        "required": ["id", "dimension", "severity", "description", "recommendation"],
+        "properties": {
+          "id": {"type": "string", "description": "Finding unique identifier"},
+          "dimension": {"type": "string", "enum": ["page_division", "functional_areas", "component_selection", "navigation_structure", "interaction_complexity"]},
+          "severity": {"type": "string", "enum": ["minor", "moderate", "major", "critical"]},
+          "description": {"type": "string", "description": "Issue description"},
+          "affected_artifact": {"type": "string", "description": "Affected PM output file and field path"},
+          "recommendation": {"type": "string", "description": "Recommended modification plan"},
+          "design_freedom_impact": {"type": "string", "description": "Impact assessment on design freedom"}
+        }
+      }
+    },
+    "summary": {"type": "string", "description": "Review summary (one-sentence summary of core findings)"}
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "prototype-report",
+  "description": "Prototype report -- prototype mode output, including visual direction summary, key page layout descriptions, and component selection summary",
+  "type": "object",
+  "required": ["report_id", "generated_at", "visual_direction_summary", "key_pages", "component_selection_summary"],
+  "properties": {
+    "report_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "visual_direction_summary": {
+      "type": "object",
+      "description": "Visual direction summary",
+      "required": ["aesthetic_direction", "color_strategy", "typography_strategy"],
+      "properties": {
+        "aesthetic_direction": {"type": "string", "description": "Aesthetic direction description"},
+        "color_strategy": {"type": "string", "description": "Color strategy summary"},
+        "typography_strategy": {"type": "string", "description": "Typography strategy summary"},
+        "visual_bans": {"type": "array", "items": {"type": "string"}, "description": "Visual bans list"},
+        "differentiation_direction": {"type": "string", "description": "Differentiation direction"}
+      }
+    },
+    "key_pages": {
+      "type": "array",
+      "description": "Key page layout descriptions",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "name", "layout_description"],
+        "properties": {
+          "page_id": {"type": "string", "description": "Page unique identifier"},
+          "name": {"type": "string", "description": "Page name"},
+          "route": {"type": "string", "description": "Route path"},
+          "layout_description": {"type": "string", "description": "Layout description (e.g., full-width hero at top + three-column feature cards + bottom CTA)"},
+          "visual_focus": {"type": "string", "description": "Visual focus area"},
+          "key_components": {"type": "array", "items": {"type": "string"}, "description": "Key components list"}
+        }
+      }
+    },
+    "component_selection_summary": {
+      "type": "array",
+      "description": "Component selection summary",
+      "items": {
+        "type": "object",
+        "required": ["component", "type", "rationale"],
+        "properties": {
+          "component": {"type": "string", "description": "Component name"},
+          "type": {"type": "string", "description": "Component type (e.g., layout/navigation/data_display/form/feedback)"},
+          "rationale": {"type": "string", "description": "Selection rationale"},
+          "alternatives": {"type": "array", "items": {"type": "string"}, "description": "Alternative options"}
+        }
+      }
+    },
+    "constraint_review_highlights": {
+      "type": "array",
+      "description": "PM constraint review highlights (included only when constraint_review.json exists)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dimension": {"type": "string"},
+          "assessment": {"type": "string"},
+          "finding": {"type": "string"}
+        }
+      }
+    },
+    "next_steps": {
+      "type": "string",
+      "description": "Next steps suggestion (e.g., confirm visual direction then switch to full mode starting from stage-2)"
+    }
+  }
+}

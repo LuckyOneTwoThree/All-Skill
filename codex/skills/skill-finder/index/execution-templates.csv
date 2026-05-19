@@ -1,0 +1,9 @@
+id,scenario,sequence,domains
+tpl-1,Build SaaS/B2B from Zero to One,insight->market->business->positioning->design->metrics->api-design->data-arch->backend-arch->ui->release,"pm,backend,ui"
+tpl-2,Build Consumer/Mobile Product from Zero to One,user-research->insight->opportunity->positioning->design->metrics->ui->api-design->release,"pm,ui,backend"
+tpl-3,Data-Driven Optimization,analysis->decision->design->metrics->release->experiment,pm
+tpl-4,Growth Breakthrough,growth->acquisition/activation/retention/revenue->experiment->release,pm
+tpl-5,Feature Iteration,design->change-impact->api-design->data-arch->backend-arch->ui->release,"pm,backend,ui"
+tpl-6,Backend Architecture Design,api-design->data-arch->backend-arch,backend
+tpl-7,UI Design & Frontend,ui,ui
+tpl-8,Monitoring & Diagnosis,monitoring->diagnosis->iteration,pm

@@ -1,0 +1,48 @@
+user_expression,mapped_trigger,mapped_domain
+Users inactive,Retention decline/User churn,growth
+Poor data,Data anomaly/Metric anomaly,metrics-ops
+No one using it,Low retention/Low activation rate,growth
+Revenue declining,Low monetization efficiency/NRR decline,growth
+Slow response,System performance/Add caching,backend
+Slow queries,Database optimization/Indexing,data
+System down,Production incident/Monitoring alert,monitoring
+Cannot open,Availability/Monitoring alert,monitoring
+Poor payment conversion,Monetization funnel/Revenue conversion,growth
+Users not renewing,NRR decline/Low renewal rate,growth
+Do competitor analysis,Competitor research/Competitive analysis,strategy
+Create user personas,Persona/User modeling,discovery
+Event tracking,Event tracking/tracking,metrics-design
+Write API docs,API design/OpenAPI,api
+Create prototype,Interactive prototype/UI design,design
+Produce design mockup,UI design/Design system,ui-design
+Add feature,Requirement change/Feature iteration,design
+Change requirements,Requirement change/Change impact,design
+Run campaign,Operational campaign/GTM,growth
+Estimate market,TAM/SAM/SOM,strategy
+Set pricing,Pricing strategy/Monetization,strategy
+Set OKRs,Goal setting/OKR,project
+Schedule,Project planning/Sprint,project
+Do retrospective,Iteration retrospective/Review,project
+Go live,Gradual rollout/Version release,monitoring
+Run A/B test,Experiment design/Effect validation,metrics-ops
+Look at data,Data analysis/Metric analysis,metrics-ops
+Build funnel,Funnel analysis/Conversion analysis,metrics-ops
+Retention analysis,User retention/Retention curve,metrics-ops
+Anomaly detection,Data anomaly/Monitoring alert,monitoring
+Database design,Data architecture/Data model,data
+Technology selection,Architecture design/Technical solution,backend-arch
+Frontend development,UI frontend/Component development,ui-frontend
+Design specification,Design system/Token,ui-design
+Build business model,Business model canvas/Business model,strategy
+Competitor monitoring,Competitive tracking/Competitor report,monitoring
+Risk investigation,Risk identification/Risk management,project
+Requirement priority,Requirement ranking/Iteration decision,design
+Product decommission,Product retirement/Sunset,monitoring
+DAU dropped,DAU decline/User churn,growth
+GMV,Transaction volume/Revenue analysis,growth
+Low conversion rate,Funnel conversion/Conversion optimization,metrics-ops
+High acquisition cost,CAC analysis/Acquisition efficiency,growth
+LTV,User lifetime value/Monetization,growth
+MVP,Minimum viable product/Validation,design
+PRD,Product requirements document/Requirement analysis,design
+SLA,Service level agreement/Monitoring,monitoring

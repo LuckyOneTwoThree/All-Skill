@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "quality-debt",
+  "description": "Quality debt tracking -- unified record of degraded/flagged/pending-fix issues",
+  "type": "object",
+  "required": ["debt_items"],
+  "properties": {
+    "debt_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "stage", "description", "severity", "status", "created_at"],
+        "properties": {
+          "id": {"type": "string"},
+          "stage": {"type": "string", "description": "Stage that generated the debt (e.g., stage-2)"},
+          "description": {"type": "string", "description": "Debt description"},
+          "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+          "status": {"type": "string", "enum": ["open", "resolved", "deferred", "applied"]},
+          "created_at": {"type": "string"},
+          "resolved_at": {"type": "string"},
+          "resolution": {"type": "string"}
+        }
+      }
+    }
+  }
+}

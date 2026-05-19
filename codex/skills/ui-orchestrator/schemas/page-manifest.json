@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "page-manifest",
+  "description": "Page manifest -- orchestrator-generated unified page list, preventing page omissions",
+  "type": "object",
+  "required": ["manifest_id", "generated_at", "source", "pages"],
+  "properties": {
+    "manifest_id": {"type": "string"},
+    "generated_at": {"type": "string"},
+    "source": {"type": "string", "enum": ["prd.json", "ia_proposals.json", "both", "user_input"], "description": "Page manifest source"},
+    "pages": {
+      "type": "array",
+      "description": "List of pages that must be generated",
+      "items": {
+        "type": "object",
+        "required": ["page_id", "name", "route"],
+        "properties": {
+          "page_id": {"type": "string", "description": "Page unique identifier (from prd.json)"},
+          "name": {"type": "string", "description": "Page name"},
+          "route": {"type": "string", "description": "Route path"},
+          "description": {"type": "string", "description": "Page functional description"},
+          "functional_areas": {"type": "array", "items": {"type": "string"}, "description": "Functional areas that must be covered"},
+          "depth": {"type": "integer", "description": "Navigation level depth (from ia_proposals)"},
+          "cross_validated": {"type": "boolean", "description": "Whether cross-validated with prd.json and ia_proposals"}
+        }
+      }
+    },
+    "cross_validation_issues": {
+      "type": "array",
+      "description": "Inconsistencies found during cross-validation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string", "enum": ["missing_in_prd", "missing_in_ia", "route_mismatch", "name_mismatch"]},
+          "prd_value": {"type": "string"},
+          "ia_value": {"type": "string"},
+          "resolution": {"type": "string", "description": "Resolution strategy (use prd as authoritative / use ia as authoritative / requires human confirmation)"}
+        }
+      }
+    }
+  }
+}
