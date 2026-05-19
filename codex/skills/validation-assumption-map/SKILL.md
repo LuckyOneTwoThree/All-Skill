@@ -10,6 +10,10 @@ metadata:
     - "What product assumptions haven't been validated"
     - "Help me map out assumptions and risks"
     - "Which assumptions might not hold"
+execution_depth:
+  default: standard
+  quick_description: "Output core assumptions and validation priorities"
+  deep_description: "Full assumption map + validation experiment design + risk quantification assessment + assumption evolution tracking"
 ---
 
 # Assumption Map Auto-Generation
@@ -60,7 +64,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Assumption Extraction
+### Step 1: Assumption Extraction [Core]
 
 For each feature point, extract the following four types of assumptions:
 
@@ -73,7 +77,7 @@ For each feature point, extract the following four types of assumptions:
 
 **Rule**: Each feature point -> at least 1 assumption
 
-### Step 2: Assumption Risk Assessment
+### Step 2: Assumption Risk Assessment [Core]
 
 Assess risk for each assumption:
 
@@ -90,7 +94,7 @@ Assess risk for each assumption:
 | Medium Risk | 8-14 | is_max_risk = false |
 | Low Risk | 1-7 | is_max_risk = false |
 
-### Step 3: Validation Method Recommendation
+### Step 3: Validation Method Recommendation [Conditional]
 
 Recommend validation methods based on assumption type:
 
@@ -100,6 +104,14 @@ Recommend validation methods based on assumption type:
 | Feasibility Assumption | Technical prototype, cost estimation, expert review |
 | Usability Assumption | Prototype test, usability test, task completion rate analysis |
 | Growth Assumption | A/B test, data analysis, user behavior tracking |
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | core assumptions and validation priorities | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full assumption map + validation experiment design + risk quantification assessment + assumption evolution tracking | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -159,23 +171,31 @@ Recommend validation methods based on assumption type:
 
 ## Quality Checks
 
-| Check Item | Pass Condition | Result |
-|-----------|---------------|--------|
-| Feature point coverage | All feature points have at least 1 assumption | pass/fail |
-| Assumption risk assessment | Each assumption has impact and uncertainty scores | pass/fail |
-| Validation method matching | Validation methods correspond to assumption types | pass/fail |
-| Maximum risk identification | Highest risk score assumption identified | pass/fail |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Feature point coverage (All feature points have at least 1 assumption)
+- [ ] Assumption risk assessment (Each assumption has impact and uncertainty scores)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Validation method matching (Validation methods correspond to assumption types)
+- [ ] Maximum risk identification (Highest risk score assumption identified)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| Solution design data missing | User provides solution description, extract assumptions | Lacks structured solution data, assumption coverage may be incomplete |
-| PRD document missing | User provides solution description, extract assumptions | Lacks PRD data, assumptions may be disconnected from requirements |
-| Both solution design and PRD missing | User provides solution description, extract assumptions | Overall confidence reduced, assumptions may be less complete |
-| All upstream files missing | Prompt user to execute prior stages first, or extract assumptions based on user solution description | Output is only basic assumption list |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| Solution design data missing | User provides solution description, extract assumptions | Lacks structured solution data, assumption coverage may be incomplete | Request user to describe solution features and design decisions, or upload solution-design.json |
+| PRD document missing | User provides solution description, extract assumptions | Lacks PRD data, assumptions may be disconnected from requirements | Request user to provide feature requirements, or upload prd.json |
+| Both solution design and PRD missing | User provides solution description, extract assumptions | Overall confidence reduced, assumptions may be less complete | Request user to describe solution and requirements, or execute design-prd and ideation-workshop first |
+| All upstream files missing | Prompt user to execute prior stages first, or extract assumptions based on user solution description | Output is only basic assumption list | Request user to describe solution and key decisions, or execute design-prd and ideation-workshop first |
 
 ## Output Validation Rules
 

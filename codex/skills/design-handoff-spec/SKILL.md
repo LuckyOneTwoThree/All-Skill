@@ -10,6 +10,10 @@ metadata:
     - "Design is done, how to hand off to development"
     - "Generate a design handoff document for me"
     - "How to produce a dev coordination document"
+execution_depth:
+  default: standard
+  quick_description: "Output design handoff specifications"
+  deep_description: "Full spec + interaction state machine + responsive breakpoint specs + accessibility design specs"
 ---
 
 # Development Handoff Summary Auto-Generation
@@ -36,7 +40,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Page Inventory and Route Mapping
+### Step 1: Page Inventory and Route Mapping [Core]
 
 Based on IA and PRD, generate a complete page inventory:
 
@@ -60,7 +64,7 @@ Based on IA and PRD, generate a complete page inventory:
 /profile             -> Profile
 ```
 
-### Step 2: Functional Requirements Summary
+### Step 2: Functional Requirements Summary [Core]
 
 Based on PRD, extract functional requirements for each page:
 
@@ -71,7 +75,7 @@ Based on PRD, extract functional requirements for each page:
 | Shopping Cart | Manage cart items | Delete needs confirmation/Quantity changes take effect immediately | Empty cart/Price changes |
 | Checkout | Fill in shipping info, select payment | Form validation needs real-time feedback | Invalid address/Payment failure |
 
-### Step 3: UI Output References
+### Step 3: UI Output References [Core]
 
 Reference UI Skill output paths instead of inlining UI implementation details:
 
@@ -86,7 +90,7 @@ Reference UI Skill output paths instead of inlining UI implementation details:
 
 > Note: The above paths are where UI Skill outputs will be located after execution. If UI Skill has not yet been executed, mark as "Pending UI Skill output".
 
-### Step 4: Pending Items and Open Questions
+### Step 4: Pending Items and Open Questions [Core]
 
 **Pending Items**:
 
@@ -101,7 +105,7 @@ Reference UI Skill output paths instead of inlining UI implementation details:
 |----|----------|-------------|--------|
 | O1 | Is offline mode needed | Global interaction | Open |
 
-### Step 5: Document Assembly
+### Step 5: Document Assembly [Core]
 
 **Handoff Document Structure**:
 
@@ -134,6 +138,14 @@ Reference UI Skill output paths instead of inlining UI implementation details:
 ## Appendix
 - Changelog
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | design handoff specifications | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full spec + interaction state machine + responsive breakpoint specs + accessibility design specs | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -218,20 +230,30 @@ Reference UI Skill output paths instead of inlining UI implementation details:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Page inventory and routes are complete
 - [ ] Each page has a functional requirements summary
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Each page has interaction intents and exception scenarios
 - [ ] UI output reference paths are correct
 - [ ] Pending items are listed
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| IA missing | Page inventory derived from PRD | Route structure may be incomplete |
-| PRD missing | Functional requirements derived from IA | Functional requirements may be less complete |
-| Interaction spec missing | Interaction intents derived from PRD | Interaction intents may be less detailed |
-| Both IA and PRD missing | Derived from user description | Overall confidence reduced |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| IA missing | Page inventory derived from PRD | Route structure may be incomplete | Request user to describe page structure and routes, or upload ia.json |
+| PRD missing | Functional requirements derived from IA | Functional requirements may be less complete | Request user to provide feature list and requirements, or upload prd.json |
+| Interaction spec missing | Interaction intents derived from PRD | Interaction intents may be less detailed | Request user to describe interaction behaviors, or upload interaction-spec.json |
+| Both IA and PRD missing | Derived from user description | Overall confidence reduced | Request user to describe features and page structure, or execute design-prd and design-ia first |
 
 ## Upstream Change Response
 

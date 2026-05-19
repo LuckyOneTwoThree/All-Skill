@@ -10,6 +10,10 @@ metadata:
     - "Is the product healthy right now"
     - "Help me do a health check"
     - "How is the product status"
+execution_depth:
+  default: standard
+  quick_description: "Output health score and issue list"
+  deep_description: "Full diagnosis + health trend analysis + root cause deep inference + improvement priority roadmap"
 ---
 
 # Product Health Auto-Diagnosis AI
@@ -36,7 +40,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Data Collection & Standardization
+### Step 1: Data Collection & Standardization [Core]
 
 **Goal**: Collect and standardize data across dimensions
 
@@ -78,7 +82,7 @@ raw_data:
     freshness: {minutes}
 ```
 
-### Step 2: Dimension Scoring
+### Step 2: Dimension Scoring [Core]
 
 **Goal**: Calculate scores for each health dimension
 
@@ -136,7 +140,7 @@ scores_by_dimension:
         score: 105
 ```
 
-### Step 3: Trend Prediction
+### Step 3: Trend Prediction [Core]
 
 **Goal**: Predict future health trends based on historical data
 
@@ -167,7 +171,7 @@ trend_analysis:
       risk_alert: true | false
 ```
 
-### Step 4: Bottleneck Identification
+### Step 4: Bottleneck Identification [Core]
 
 **Goal**: Identify key bottlenecks affecting overall health
 
@@ -199,7 +203,7 @@ bottlenecks:
     recommendation: "Optimize payment flow"
 ```
 
-### Step 5: Comprehensive Report
+### Step 5: Comprehensive Report [Core]
 
 **Goal**: Generate comprehensive health diagnosis report
 
@@ -209,6 +213,14 @@ bottlenecks:
 3. Trend Analysis
 4. Bottleneck List
 5. Improvement Recommendations
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | health score and issue list | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full diagnosis + health trend analysis + root cause deep inference + improvement priority roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -286,12 +298,22 @@ health_diagnosis:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Data collection completeness >= 90%
 - [ ] Score calculation accuracy (sample verification)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Trend prediction deviation +/-10%
 - [ ] Bottleneck identification coverage >= 90%
 - [ ] Recommendation executability >= 80%
 - [ ] Report generation timeliness (< 5 minutes)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

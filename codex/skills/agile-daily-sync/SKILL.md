@@ -10,6 +10,10 @@ metadata:
     - "Daily standups take too much time"
     - "How to run standups efficiently"
     - "Help me prepare today's standup content"
+execution_depth:
+  default: standard
+  quick_description: "Output blocker list and daily priorities"
+  deep_description: "Full sync + blocker root cause analysis + risk trend tracking + team collaboration optimization suggestions"
 ---
 
 # Daily Sync Automation
@@ -46,7 +50,7 @@ metadata:
 
 ### Pre-meeting AI: Preparation Phase
 
-#### Step 1: Progress Auto-summary
+#### Step 1: Progress Auto-summary [Core]
 
 **Actions**:
 - Scan all Stories for status updates
@@ -86,7 +90,7 @@ metadata:
 }
 ```
 
-#### Step 2: Blocker Auto-identification
+#### Step 2: Blocker Auto-identification [Conditional]
 
 **Actions**:
 - Check active blockers in blocker_log
@@ -115,7 +119,7 @@ metadata:
 }
 ```
 
-#### Step 3: Daily Work Item Suggestions
+#### Step 3: Daily Work Item Suggestions [Deep]
 
 **Actions**:
 - Generate today's work suggestions based on progress and blockers
@@ -146,7 +150,7 @@ metadata:
 
 ### Post-meeting AI: Follow-up Phase
 
-#### Step 4: Meeting Notes Auto-generation
+#### Step 4: Meeting Notes Auto-generation [Core]
 
 **Actions**:
 - Compile sync meeting content
@@ -175,7 +179,7 @@ metadata:
 }
 ```
 
-#### Step 5: Action Items Auto-extraction
+#### Step 5: Action Items Auto-extraction [Conditional]
 
 **Actions**:
 - Identify action items from meeting content
@@ -196,7 +200,7 @@ metadata:
 }
 ```
 
-#### Step 6: Risk Flag Auto-update
+#### Step 6: Risk Flag Auto-update [Deep]
 
 **Actions**:
 - Update risk status based on Daily Sync
@@ -224,6 +228,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | blocker list and daily priorities | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full sync + blocker root cause analysis + risk trend tracking + team collaboration optimization suggestions | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -287,10 +299,20 @@ metadata:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Progress summary covers all in-progress Stories
 - [ ] Blocker items have clear status and follow-up owners
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Risk flags are timely and accurate
 - [ ] Sync materials generated before meeting
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

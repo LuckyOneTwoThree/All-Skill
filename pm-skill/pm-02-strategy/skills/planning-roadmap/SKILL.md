@@ -11,6 +11,10 @@ metadata:
     - "帮我规划产品路线图"
     - "下个版本做什么"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出路线图和里程碑"
+  deep_description: "完整路线图 + 依赖关系分析 + 风险缓冲设计 + 多场景路线图"
 ---
 
 # 路线图自动规划
@@ -36,7 +40,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 战略主题提取
+### Step 1: 战略主题提取 [核心]
 
 从OKR和SWOT中提取3-5个战略主题：
 
@@ -49,7 +53,7 @@ metadata:
 - 支撑的OKR
 - 战略意义
 
-### Step 2: Epic级别规划
+### Step 2: Epic级别规划 [核心]
 
 将战略主题分解为季度Epic：
 
@@ -73,7 +77,7 @@ epic:
     - "关键假设2"
 ```
 
-### Step 3: Now/Next/Later分层
+### Step 3: Now/Next/Later分层 [核心]
 
 根据RICE评分和时间维度分层：
 
@@ -92,7 +96,7 @@ epic:
 - 需进一步验证的假设
 - 低优先级或探索性项目
 
-### Step 4: RICE评分计算
+### Step 4: RICE评分计算 [核心]
 
 RICE公式：
 ```
@@ -105,13 +109,21 @@ RICE Score = (Reach × Impact × Confidence) ÷ Effort
 - **Confidence (信心)**：对数据和假设的信心度 (0.5-1)
 - **Effort (工作量)**：完成所需的人月数
 
-### Step 5: 风险标注
+### Step 5: 风险标注 [核心]
 
 识别并标注风险：
 - 技术风险
 - 资源风险
 - 依赖风险
 - 市场风险
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 路线图和里程碑 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整路线图 + 依赖关系分析 + 风险缓冲设计 + 多场景路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -126,15 +138,32 @@ RICE Score = (Reach × Impact × Confidence) ÷ Effort
 | roadmap.strategic_themes | array | 是 | 3-5个战略主题 |
 | roadmap.strategic_themes[].theme | string | 是 | 主题名称 |
 | roadmap.strategic_themes[].okr_reference | string | 是 | 关联OKR |
+| roadmap.strategic_themes[].priority | number | 否 | 主题优先级排序 |
 | roadmap.quarterly_epics | array | 是 | 季度Epic列表 |
 | roadmap.quarterly_epics[].quarter | string | 是 | 季度标识 |
+| roadmap.quarterly_epics[].epics | array | 是 | Epic列表 |
+| roadmap.quarterly_epics[].epics[].name | string | 是 | Epic名称，不可为空 |
+| roadmap.quarterly_epics[].epics[].success_metric | string | 否 | 成功指标 |
 | roadmap.quarterly_epics[].epics[].rice_score | number | 是 | RICE评分 |
 | roadmap.quarterly_epics[].epics[].effort | number | 是 | 工作量（人月） |
+| roadmap.quarterly_epics[].epics[].dependencies | array | 否 | 依赖项列表 |
 | roadmap.quarterly_epics[].epics[].risks | array | 是 | 风险列表 |
+| roadmap.quarterly_epics[].epics[].risks[].risk | string | 是 | 风险描述 |
+| roadmap.quarterly_epics[].epics[].risks[].likelihood | string | 是 | 可能性，枚举：high/medium/low |
+| roadmap.quarterly_epics[].epics[].risks[].mitigation | string | 否 | 缓解措施 |
 | roadmap.now_next_later | object | 是 | 三层分层 |
 | roadmap.now_next_later.now | array | 是 | 当前季度Epic |
+| roadmap.now_next_later.now[].epic | string | 是 | Epic名称 |
+| roadmap.now_next_later.now[].quarter | string | 否 | 季度标识 |
+| roadmap.now_next_later.now[].rationale | string | 否 | 分层理由 |
 | roadmap.now_next_later.next | array | 是 | 下一季度Epic |
+| roadmap.now_next_later.next[].epic | string | 是 | Epic名称 |
+| roadmap.now_next_later.next[].quarter | string | 否 | 季度标识 |
+| roadmap.now_next_later.next[].rationale | string | 否 | 分层理由 |
 | roadmap.now_next_later.later | array | 是 | 远期Epic |
+| roadmap.now_next_later.later[].epic | string | 是 | Epic名称 |
+| roadmap.now_next_later.later[].quarter | string | 否 | 季度标识 |
+| roadmap.now_next_later.later[].rationale | string | 否 | 分层理由 |
 
 ```yaml
 roadmap:
@@ -196,12 +225,22 @@ roadmap:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] Epic有明确的成功指标
 - [ ] 所有Epic有依赖关系标注
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] Now/Next/Later分层已完成
 - [ ] RICE评分已计算
 - [ ] 风险已识别并有缓解措施
 - [ ] 资源估算合理
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -209,14 +248,14 @@ roadmap:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| okr.json | 用户提供目标列表 → 直接规划路线图 | 缺乏OKR结构化数据，战略主题与OKR对齐度不足 |
-| strategic-analysis.json | 用户提供目标列表 → 直接规划路线图 | 缺乏战略分析数据，战略主题可能偏离战略方向 |
-| 需求优先级数据（insight-analysis / design-prd） | 用户提供目标列表 → 直接规划路线图 | 缺乏需求优先级数据，RICE评分缺乏输入依据 |
-| okr.json + strategic-analysis.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图 | 整体置信度降低，Epic排序缺乏数据锚定 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 | 整体置信度显著降低，路线图仅为通用规划参考 |
-| 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 | 缺乏资源约束，Epic工作量估算可能不切实际 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| okr.json | 用户提供目标列表 → 直接规划路线图 | 缺乏OKR结构化数据，战略主题与OKR对齐度不足 | 要求用户提供业务目标和关键结果或上传okr.json文件 |
+| strategic-analysis.json | 用户提供目标列表 → 直接规划路线图 | 缺乏战略分析数据，战略主题可能偏离战略方向 | 要求用户提供战略方向和优先级描述或上传strategic-analysis.json文件 |
+| 需求优先级数据（insight-analysis / design-prd） | 用户提供目标列表 → 直接规划路线图 | 缺乏需求优先级数据，RICE评分缺乏输入依据 | 要求用户提供功能需求列表和优先级排序或上传insight-analysis.json文件 |
+| okr.json + strategic-analysis.json + 需求优先级 | 用户提供目标列表 → 直接规划路线图 | 整体置信度降低，Epic排序缺乏数据锚定 | 要求用户提供业务目标、战略方向和功能优先级 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的目标列表直接规划路线图 | 整体置信度显著降低，路线图仅为通用规划参考 | 要求用户提供业务目标、功能需求和优先级排序 |
+| 资源约束条件（用户提供） | 若用户未提供资源约束条件，提示用户提供或跳过该输入相关步骤 | 缺乏资源约束，Epic工作量估算可能不切实际 | 要求用户提供团队规模、技术栈和可用工期等资源约束信息 |
 
 ## 数据获取说明
 

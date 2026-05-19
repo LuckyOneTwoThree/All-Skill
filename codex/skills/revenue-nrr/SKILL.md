@@ -10,6 +10,10 @@ metadata:
     - "How to calculate net revenue retention rate"
     - "How is existing customer renewal going"
     - "How to read revenue retention trends"
+execution_depth:
+  default: standard
+  quick_description: "Output NRR analysis and retention strategies"
+  deep_description: "Full analysis + customer health scoring + churn prediction model + upsell opportunity identification"
 ---
 
 # NRR Auto-Tracking and Alerting
@@ -56,7 +60,7 @@ Where:
 
 ## Execution Steps
 
-### Step 1: NRR Auto-Calculation
+### Step 1: NRR Auto-Calculation [Core]
 
 #### Revenue Data Processing
 1. Calculate starting revenue: Month-start MRR
@@ -78,7 +82,7 @@ nrr = (start_mrr - churned_mrr + expansion_mrr) / start_mrr
 - Calculate NRR by user size
 - Calculate NRR by industry
 
-### Step 2: NRR Trend Analysis
+### Step 2: NRR Trend Analysis [Core]
 
 #### Trend Metrics
 | Metric | Description |
@@ -99,7 +103,7 @@ Based on historical trends, predict future NRR:
 - Baseline forecast
 - Pessimistic forecast
 
-### Step 3: Churn Warning
+### Step 3: Churn Warning [Core]
 
 #### Churn Risk Signals
 | Signal Type | Specific Signal | Risk Weight |
@@ -135,7 +139,7 @@ warning_rules:
     action: "feedback_followup"
 ```
 
-### Step 4: Expansion Opportunity Identification
+### Step 4: Expansion Opportunity Identification [Core]
 
 #### Expansion Signals
 | Signal Type | Specific Signal | Expansion Potential |
@@ -162,6 +166,14 @@ expansion_score = (
 | Upgrade | Usage reaching limit | Upgrade guidance + discount |
 | Seat expansion | Team size growing | Seat addition recommendation |
 | Extension | New business needs | New product line recommendation |
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | NRR analysis and retention strategies | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + customer health scoring + churn prediction model + upsell opportunity identification | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -242,11 +254,35 @@ expansion_score = (
 | current_nrr | number | Yes | Current NRR, must be >0 |
 | nrr_breakdown | object | Yes | NRR breakdown, must contain expansion_revenue_ratio/contraction_revenue_ratio/churned_revenue_ratio |
 | nrr_breakdown.expansion_revenue_ratio | number | Yes | Expansion revenue ratio, must be >=0 |
+| nrr_breakdown.contraction_revenue_ratio | number | No | Contraction revenue ratio |
 | nrr_breakdown.churned_revenue_ratio | number | Yes | Churned revenue ratio, must be >=0 |
 | trend | array | No | NRR trend data, each item must contain month/nrr |
+| trend[].month | string | Yes | Month identifier |
+| trend[].nrr | number | Yes | NRR value |
+| trend[].expansion | number | No | Expansion revenue |
+| trend[].contraction | number | No | Contraction revenue |
+| trend[].churn | number | No | Churn revenue |
 | churn_warnings | array | No | Churn warning list, each item must contain user_id/risk_signals/risk_level |
+| churn_warnings[].user_id | string | Yes | User ID |
+| churn_warnings[].company_name | string | No | Company name |
+| churn_warnings[].monthly_revenue | number | No | Monthly revenue |
+| churn_warnings[].risk_signals | string[] | Yes | Risk signal list |
+| churn_warnings[].risk_level | string | Yes | Risk level, enum: high/medium/low |
+| churn_warnings[].recommended_action | string | No | Recommended action |
 | expansion_opportunities | array | No | Expansion opportunity list, each item must contain user_id/expansion_signals/recommended_upgrade |
+| expansion_opportunities[].user_id | string | Yes | User ID |
+| expansion_opportunities[].company_name | string | No | Company name |
+| expansion_opportunities[].current_plan | string | No | Current plan |
+| expansion_opportunities[].expansion_signals | string[] | Yes | Expansion signal list |
+| expansion_opportunities[].recommended_upgrade | string | Yes | Recommended upgrade plan |
+| expansion_opportunities[].expected_revenue_increase | number | No | Expected revenue increase |
 | summary | object | No | Revenue summary, must contain total_active_revenue |
+| summary.total_active_revenue | number | Yes | Total active revenue |
+| summary.expansion_this_month | number | No | Expansion revenue this month |
+| summary.churn_this_month | number | No | Churn revenue this month |
+| summary.net_new_revenue | number | No | Net new revenue |
+| summary.at_risk_revenue | number | No | At-risk revenue |
+| summary.expansion_pipeline | number | No | Expansion pipeline |
 
 ## Decision Rules
 
@@ -259,28 +295,31 @@ expansion_score = (
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] NRR calculation includes expansion, contraction, churn three components
 - [ ] Churn warning covers activity, feature, financial, organizational 4 signal types
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Expansion opportunity identification has scoring and recommended strategy
 - [ ] Dimensional NRR calculation covers user segments and product lines
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| Revenue data missing | User provides revenue and churn data -> calculate NRR | NRR calculation based on user-provided summary data |
-| Account data missing | Skip account-level NRR analysis, calculate overall NRR only | Cannot identify high churn risk accounts |
-| Revenue data + account data both missing | User provides revenue and churn data -> calculate NRR | Output basic NRR calculation, account-level analysis marked "to be supplemented" |
-- If user has not provided user behavior data, prompt user to provide or skip steps related to that input
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Revenue data**: Month-start MRR, expansion MRR, contraction MRR, churned MRR
-- **Churn data** (optional): Churned customer count and churned MRR
-- **Customer segmentation** (optional): Customer distribution by size or value
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| Revenue data missing | User provides revenue and churn data -> calculate NRR | NRR calculation based on user-provided summary data | Request user to provide month-start MRR, expansion MRR, contraction MRR, and churned MRR, or upload revenue_data.json |
+| Account data missing | Skip account-level NRR analysis, calculate overall NRR only | Cannot identify high churn risk accounts | Request user to provide account-level revenue data, or upload account_data.json |
+| Revenue data + account data both missing | User provides revenue and churn data -> calculate NRR | Output basic NRR calculation, account-level analysis marked "to be supplemented" | Request user to provide revenue and churn data, or execute revenue-funnel first |
+| User behavior data not provided | Prompt user to provide or skip steps related to that input | Cannot perform behavior-based churn prediction | Prompt user to provide user behavior data for churn risk scoring |
 
 ## Upstream Change Response
 

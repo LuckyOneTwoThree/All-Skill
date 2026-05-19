@@ -10,6 +10,10 @@ metadata:
     - "When do users find the product useful"
     - "How to find the aha moment"
     - "How long for new users to experience core value"
+execution_depth:
+  default: standard
+  quick_description: "Output Aha moment and activation path"
+  deep_description: "Full strategy + Aha moment quantified validation + activation path optimization + activation funnel deep analysis"
 ---
 
 # Aha Moment Auto-Engineering
@@ -40,7 +44,7 @@ The Aha Moment is the critical moment when a user first experiences the core val
 
 ## Execution Steps
 
-### Step 1: Aha Moment Candidate Search
+### Step 1: Aha Moment Candidate Search [Core]
 
 #### Candidate Behavior Enumeration
 Scan all user behaviors to find those highly correlated with retention:
@@ -68,7 +72,7 @@ Scan all user behaviors to find those highly correlated with retention:
 - Reach rate >= 10%
 - Retention lift >= 15%
 
-### Step 2: Reach Rate Measurement
+### Step 2: Reach Rate Measurement [Core]
 
 Analyze the actual reach status of each candidate Aha Moment:
 
@@ -79,7 +83,7 @@ Analyze the actual reach status of each candidate Aha Moment:
 | Path analysis | Path from registration to this behavior |
 | Drop-off points | Drop-off points before users reach this behavior |
 
-### Step 3: Shortest Path Identification
+### Step 3: Shortest Path Identification [Core]
 
 Analyze how to get users to the Aha Moment fastest:
 
@@ -87,7 +91,7 @@ Analyze how to get users to the Aha Moment fastest:
 2. **Friction identification**: Find friction points and drop-off points in the path
 3. **Optimization recommendations**: Design shorter reach paths
 
-### Step 4: Onboarding Optimization Recommendations
+### Step 4: Onboarding Optimization Recommendations [Deep]
 
 Based on Aha Moment analysis, generate Onboarding optimization recommendations:
 
@@ -102,6 +106,14 @@ Based on Aha Moment analysis, generate Onboarding optimization recommendations:
 #### Education Strategy
 - Strengthen Aha Moment value demonstration
 - Provide value preview before reaching Aha Moment
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | Aha moment and activation path | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full strategy + Aha moment quantified validation + activation path optimization + activation funnel deep analysis | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -190,13 +202,25 @@ Candidate Aha Moment Analysis:
 |----------|------|------|------|
 | candidates | array | Yes | Aha Moment candidate list, at least 1 candidate |
 | candidates[].behavior | string | Yes | Behavior description, cannot be empty |
+| candidates[].behavior_type | string | No | Behavior type, enum: action/completion/social/discovery |
 | candidates[].correlation | number | Yes | Correlation coefficient, range 0-1 |
 | candidates[].reach_rate | number | Yes | Reach rate, range 0-1 |
+| candidates[].time_to_aha | string | No | Time to reach Aha |
 | candidates[].retention_lift | number | Yes | Retention lift, must be >0 |
+| candidates[].recommendation | string | No | Recommended action |
 | primary_aha | object | Yes | Primary Aha Moment, must contain behavior/reach_rate/retention_lift/confidence |
+| primary_aha.behavior | string | Yes | Aha behavior description, cannot be empty |
+| primary_aha.reach_rate | number | Yes | Reach rate, range 0-1 |
+| primary_aha.retention_lift | number | Yes | Retention lift, must be >0 |
 | primary_aha.confidence | number | Yes | Confidence, range 0-1 |
 | secondary_ahas | array | No | Secondary Aha Moment list |
+| secondary_ahas[].behavior | string | Yes | Aha behavior description, cannot be empty |
+| secondary_ahas[].reach_rate | number | Yes | Reach rate, range 0-1 |
+| secondary_ahas[].retention_lift | number | No | Retention lift |
 | onboarding_optimization | object | No | Onboarding optimization recommendations, must contain target_behaviors |
+| onboarding_optimization.target_behaviors | array | Yes | Target behavior list |
+| onboarding_optimization.target_behaviors[].behavior | string | Yes | Behavior description |
+| onboarding_optimization.expected_activation_lift | string | No | Expected activation lift |
 
 ## Decision Rules
 
@@ -209,28 +233,31 @@ Candidate Aha Moment Analysis:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Aha candidates pass correlation screening (>=0.5) and significance testing
 - [ ] Reach rate analysis includes time distribution and path analysis
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Shortest path identification includes friction point analysis
 - [ ] Onboarding optimization recommendations are directly executable
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| Retention data missing | User provides user behavior list -> infer Aha Moment candidates | Aha Moment based on inference rather than data validation |
-| Behavior data missing | User provides user behavior list -> infer Aha Moment candidates | Cannot perform behavior-retention correlation analysis |
-| Retention data + behavior data both missing | User provides user behavior list -> infer Aha Moment candidates | Output Aha Moment candidate list, marked "pending data validation" |
-- If user has not provided user segment data, prompt user to provide or skip steps related to that input
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **User behavior list**: Core behaviors users can perform in the product
-- **Retention rate data** (optional): Retention rate differences for users with different behaviors
-- **New user typical path** (optional): Most common operation sequence for new users
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| Retention data missing | User provides user behavior list -> infer Aha Moment candidates | Aha Moment based on inference rather than data validation | Request user to provide retention rate data for different user behaviors, or upload retention-analysis.json |
+| Behavior data missing | User provides user behavior list -> infer Aha Moment candidates | Cannot perform behavior-retention correlation analysis | Request user to list core user behaviors (e.g., "completed profile", "sent first message"), or upload behavior_data.json |
+| Retention data + behavior data both missing | User provides user behavior list -> infer Aha Moment candidates | Output Aha Moment candidate list, marked "pending data validation" | Request user to describe core user behaviors and new user typical path, or execute analysis-retention first |
+| User segment data not provided | Prompt user to provide or skip steps related to that input | Aha Moment analysis lacks segment differentiation | Prompt user to specify user segments for Aha Moment analysis |
 
 ## Upstream Change Response
 

@@ -12,6 +12,10 @@ metadata:
     - "Analyze differentiation advantages"
     - "How do we differ from competitors"
     - "Is our differentiation sustainable"
+execution_depth:
+  default: standard
+  quick_description: "Output positioning statement and differentiation strategy"
+  deep_description: "Full strategy + positioning validation plan + differentiation quantified assessment + positioning evolution roadmap"
 ---
 
 # Product Positioning Strategy Development
@@ -51,7 +55,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Positioning Statement
+### Step 1: Positioning Statement [Core]
 
 #### Positioning Element Extraction
 Extract positioning elements from input data:
@@ -92,7 +96,7 @@ Based on quality gate check results, recommend and rank positioning statements:
 - Partially passed ones labeled with improvement suggestions
 - Failed ones labeled with elimination reasons
 
-### Step 2: Value Curve Analysis
+### Step 2: Value Curve Analysis [Core]
 
 #### Competitive Factor Extraction
 Extract 5-8 competitive factors from user research data:
@@ -168,7 +172,7 @@ Differentiation Strength = Area difference between our curve and competitor aver
 - Strength 0.5-0.7: Moderate differentiation
 - Strength < 0.5: Weak differentiation (triggers warning)
 
-### Step 3: Differentiation Assessment
+### Step 3: Differentiation Assessment [Core]
 
 #### Feature Differentiation Assessment
 Assess product feature differentiation degree:
@@ -252,7 +256,7 @@ Based on 5 dimension scores, recommend the most sustainable differentiation sour
 2. Analyze sustainability rationale
 3. Provide specific action recommendations
 
-### Step 4: Exclusion Strategy
+### Step 4: Exclusion Strategy [Core]
 
 #### AI Analysis - Competitor Coverage Scan
 AI scans competitor analysis data to identify:
@@ -281,6 +285,14 @@ Product owner decides based on AI analysis suggestions:
 - Exclusion is for focus, not simple abandonment
 - Each exclusion should have a clear strategic rationale
 - Exclusion decisions must align with long-term product vision
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | positioning statement and differentiation strategy | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full strategy + positioning validation plan + differentiation quantified assessment + positioning evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -384,8 +396,13 @@ Product owner decides based on AI analysis suggestions:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] 3-5 positioning statements generated
 - [ ] Each statement uses positioning formula
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] 5 quality checks completed
 - [ ] Recommendation ranking reasonable
 - [ ] Differentiation sources diversified
@@ -403,29 +420,26 @@ Product owner decides based on AI analysis suggestions:
 - [ ] Exclusion statement clearly communicable to team
 - [ ] Alternative recommendations provided for excluded users
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ---
 
 ## Degradation Strategy
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| evaluation_report.json (value proposition fit) | User provides product value description -> Generate positioning statements | Lacks value fit data, core value may not be precise enough |
-| competitor-analysis.json (competitor analysis) | User provides product value description -> Generate positioning statements | Lacks competitor data, differentiation points and competitor references lack basis |
-| evaluation_report.json + competitor-analysis.json | User provides product value description -> Generate positioning statements | Overall confidence reduced, positioning statements lack data anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or generate positioning statements based on user-provided product value description | Overall confidence significantly reduced, positioning statements are assumption-based only |
-| User insight data | If user insight data is missing, prompt user to provide or skip related steps | Target user definition may not be precise enough |
-| bmc.json | User provides competitor information -> Draw value curve | Lacks BMC data, our scoring lacks value proposition anchoring |
-| Self-capability assessment (user provided) | If user has not provided self-capability assessment, prompt user to provide or skip related steps | Feature and scenario differentiation assessment lacks internal data support |
-
-## Data Acquisition Instructions
-
-This Skill requires value proposition fit and competitor analysis data, please provide via one of the following methods:
-  1. Directly describe product value, target users, and competitor differences
-  2. Upload evaluation_report.json / competitor-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| evaluation_report.json (value proposition fit) | User provides product value description -> Generate positioning statements | Lacks value fit data, core value may not be precise enough | Request user to describe product value propositions and user pain points, or upload evaluation_report.json |
+| competitor-analysis.json (competitor analysis) | User provides product value description -> Generate positioning statements | Lacks competitor data, differentiation points and competitor references lack basis | Request user to provide competitor names and their positioning, or upload competitor-analysis.json |
+| evaluation_report.json + competitor-analysis.json | User provides product value description -> Generate positioning statements | Overall confidence reduced, positioning statements lack data anchoring | Request user to describe product value and competitive differences, or upload evaluation_report.json / competitor-analysis.json |
+| All upstream files missing | Prompt user to execute prior phases first, or generate positioning statements based on user-provided product value description | Overall confidence significantly reduced, positioning statements are assumption-based only | Request user to describe product value and target users, or execute business-value-fit and market-competitor-analysis first |
+| User insight data | If user insight data is missing, prompt user to provide or skip related steps | Target user definition may not be precise enough | Request user to describe target user characteristics and needs, or upload persona.json / voice-analysis.json |
+| bmc.json | User provides competitor information -> Draw value curve | Lacks BMC data, our scoring lacks value proposition anchoring | Request user to describe business model and value propositions, or upload bmc.json |
+| Self-capability assessment (user provided) | If user has not provided self-capability assessment, prompt user to provide or skip related steps | Feature and scenario differentiation assessment lacks internal data support | Prompt user to describe team capabilities, technical assets, and competitive advantages |
 
 ## Upstream Change Response
 

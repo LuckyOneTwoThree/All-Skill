@@ -10,6 +10,10 @@ metadata:
     - "Competitors updated again, what to do"
     - "Competitor added a new feature, how to respond"
     - "How to track competitor dynamics"
+execution_depth:
+  default: standard
+  quick_description: "Output competitor diagnosis and feature comparison"
+  deep_description: "Full diagnosis + competitor strategy simulation + differentiation opportunity identification + competitive response roadmap"
 ---
 
 # Competitor Dynamics Tracking & Response AI
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Feature Change Monitoring
+### Step 1: Feature Change Monitoring [Core]
 
 **Goal**: Identify recent competitor feature changes
 
@@ -73,7 +77,7 @@ feature_changes:
     priority: P0 | P1 | P2
 ```
 
-### Step 2: Advantage Dynamic Assessment
+### Step 2: Advantage Dynamic Assessment [Core]
 
 **Goal**: Assess changes in competitive advantage relative to competitors
 
@@ -116,7 +120,7 @@ advantage_changes:
       impact_level: high | medium | low
 ```
 
-### Step 3: Response Strategy Generation
+### Step 3: Response Strategy Generation [Core]
 
 **Goal**: Generate response strategies based on competitor dynamics
 
@@ -161,7 +165,7 @@ response_strategy:
       milestones: [...]
 ```
 
-### Step 4: Effectiveness Tracking
+### Step 4: Effectiveness Tracking [Conditional]
 
 **Goal**: Track execution effectiveness of response strategies
 
@@ -190,6 +194,14 @@ effect_tracking:
     competitive_position:
       status_change: improved | unchanged | declined
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | competitor diagnosis and feature comparison | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full diagnosis + competitor strategy simulation + differentiation opportunity identification + competitive response roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -261,12 +273,22 @@ competition_response:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Competitor coverage completeness >= 90%
 - [ ] Feature change identification timeliness <= 7 days
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Advantage assessment consistent with actual market feedback
 - [ ] Strategy executability >= 80%
 - [ ] Effectiveness tracking coverage 100%
 - [ ] Report completeness (all dimensions)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

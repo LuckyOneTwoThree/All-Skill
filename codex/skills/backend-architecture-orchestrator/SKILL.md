@@ -169,3 +169,50 @@ Downstream connections:
 | Design review not passed | Adjust design based on human feedback, re-review |
 | Code self-audit P0 issues | Auto-fix and re-audit, block output if unfixable |
 | Stage summary generation failed | Generate partial summary from completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through backend-orchestrator orchestration), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests "Design backend architecture" or "Select architecture pattern"
+- Triggered as a standalone skill by an external system
+- Upstream orchestrators have not been executed, but the user only needs backend architecture design capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Acquire from user dialog | Last Resort: AI inference |
+|----------|------------------------|------------------------|----------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user to provide PRD document or describe requirements verbally | Infer requirements document from user description (⚠️ Low confidence, mark "PRD is AI-inferred") |
+| PRD structured data (prd.json) | Read output/pm-design/design-prd/prd.json | Ask user to provide structured requirements | Extract structured data from PRD document (⚠️ Low confidence) |
+| Business scale | — | Ask user to provide business scale (user volume, QPS, data volume, team size) | Default to medium scale: 10K users, QPS 100, 10GB data, 5-person team (⚠️ Low confidence, mark "Scale pending confirmation") |
+| project_dir | — | Ask user to provide project directory path | Cannot infer, must be provided by user |
+| tech_stack | — | Ask user to provide tech stack | Default to common tech stack (⚠️ Low confidence, mark "Tech stack pending confirmation") |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest the user execute upstream orchestrators in the following priority order:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|----------|---------------------|------|
+| PRD + PRD structured data | pm-design related orchestrators | PRD is the business basis for architecture design; missing it will result in architecture pattern selection and service decomposition without business foundation |
+
+Backtracking suggestion output format:
+```
+⚠️ Critical input missing detected. It is recommended to execute upstream orchestrators first:
+1. [Priority] pm-design related orchestrators → Produces PRD
+Continue with AI-inferred values? (Inferred values have confidence ≤ 0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, the following additional checks must pass before executing the Pipeline:
+
+| Gate Item | Check Content | Action if Not Passed |
+|--------|----------|------------|
+| PRD existence | prd.md or equivalent requirements document is accessible | Block execution, suggest user execute pm-design orchestrator or provide PRD |
+| Business scale clarity | Business scale parameters have been obtained | Degrade execution, use default medium scale, mark "Scale pending confirmation" |
+| project_dir validity | User provides a valid project directory path | Block execution, user must provide a valid project_dir |
+| Input confidence assessment | All required input acquisition methods are determined, overall confidence ≥ 0.5 | If confidence < 0.5, force human confirmation on whether to continue execution |
+
+Gate execution order: PRD existence → project_dir validity → Business scale clarity → Input confidence assessment

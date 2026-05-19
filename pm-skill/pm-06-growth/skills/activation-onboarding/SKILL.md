@@ -12,6 +12,10 @@ metadata:
     - "怎么让用户更快上手"
     - "新手引导怎么做更好"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出Onboarding流程和激活策略"
+  deep_description: "完整策略 + 激活漏斗深度分析 + 个性化Onboarding设计 + A/B测试方案"
 ---
 
 # Onboarding自动优化
@@ -73,7 +77,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 当前Onboarding效果分析
+### Step 1: 当前Onboarding效果分析 [核心]
 
 #### 整体效果评估
 - Onboarding完成率
@@ -91,7 +95,7 @@ metadata:
 - 不同用户分群的Onboarding差异
 - 与行业基准对比
 
-### Step 2: 分群Onboarding策略生成
+### Step 2: 分群Onboarding策略生成 [核心]
 
 基于用户分群，设计差异化Onboarding策略：
 
@@ -110,7 +114,7 @@ metadata:
 | 企业型 | 专业全面 | 完整培训，强调协作 |
 | 个人型 | 轻量快速 | 最小步骤，立即体验 |
 
-### Step 3: 个性化引导内容生成
+### Step 3: 个性化引导内容生成 [核心]
 
 基于分群策略，生成个性化引导内容：
 
@@ -127,7 +131,7 @@ metadata:
 - 价值导向，强调收益
 - 进度感知，让用户知道还剩多少
 
-### Step 4: A/B测试设计
+### Step 4: A/B测试设计 [核心]
 
 为Onboarding优化设计A/B测试：
 
@@ -140,6 +144,14 @@ metadata:
 - **主要指标**: Onboarding完成率、激活率
 - **次要指标**: Onboarding时长、用户满意度
 - **护栏指标**: 后续留存率、付费转化率
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | Onboarding流程和激活策略 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整策略 + 激活漏斗深度分析 + 个性化Onboarding设计 + A/B测试方案 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -240,12 +252,26 @@ success_criteria:
 |----------|------|------|------|
 | current_effectiveness | object | 是 | 当前效果评估，须含overall_completion_rate/drop_off_points |
 | current_effectiveness.overall_completion_rate | number | 是 | 整体完成率，范围0-1 |
+| current_effectiveness.stage_completion_rates | object | 否 | 各阶段完成率 |
 | current_effectiveness.drop_off_points | array | 是 | 流失点列表，每项须含stage/drop_off_rate |
+| current_effectiveness.drop_off_points[].stage | string | 是 | 流失阶段名称 |
+| current_effectiveness.drop_off_points[].drop_off_rate | number | 是 | 流失率，范围0-1 |
 | segment_strategies | array | 是 | 分群策略列表，至少1个分群策略 |
 | segment_strategies[].segment | string | 是 | 分群名称 |
+| segment_strategies[].size | number | 否 | 分群用户占比 |
+| segment_strategies[].characteristics | string[] | 否 | 分群特征描述 |
 | segment_strategies[].strategy | string | 是 | 策略描述 |
+| segment_strategies[].expected_improvement | string | 否 | 预期提升效果 |
 | personalized_content | array | 否 | 个性化内容列表，每项须含segment/content_type/content/trigger |
+| personalized_content[].segment | string | 是 | 目标分群 |
+| personalized_content[].content_type | string | 是 | 内容类型，枚举：step_by_step_guide/video/tooltip/checklist |
+| personalized_content[].content | string | 是 | 内容描述，不可为空 |
+| personalized_content[].trigger | string | 是 | 触发条件，不可为空 |
 | ab_tests | array | 否 | A/B测试列表，每项须含test_id/hypothesis |
+| ab_tests[].test_id | string | 是 | 测试ID，不可为空 |
+| ab_tests[].hypothesis | string | 是 | 测试假设，不可为空 |
+| ab_tests[].target_segment | string | 否 | 目标分群 |
+| ab_tests[].expected_lift | string | 否 | 预期提升 |
 
 ## 决策规则
 
@@ -258,21 +284,31 @@ success_criteria:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] Onboarding阶段定义完整（欢迎→激活完成）
 - [ ] 流失分析覆盖各阶段和用户分群
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 个性化引导与用户分群匹配
 - [ ] A/B测试包含护栏指标（后续留存、付费转化）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| Onboarding数据缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 优化建议基于定性描述而非数据驱动 |
-| Aha Moment缺失 | 跳过Aha Moment引导优化，基于通用最佳实践 | Onboarding优化缺乏Aha Moment锚点 |
-| Onboarding数据 + Aha Moment均缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 输出基于最佳实践的优化建议，标注"待数据验证" |
-- 若用户未提供用户分群数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| Onboarding数据缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 优化建议基于定性描述而非数据驱动 | 要求用户提供当前Onboarding流程步骤和各步骤完成率数据 |
+| Aha Moment缺失 | 跳过Aha Moment引导优化，基于通用最佳实践 | Onboarding优化缺乏Aha Moment锚点 | 要求用户提供Aha Moment定义或上传activation-aha输出文件 |
+| Onboarding数据 + Aha Moment均缺失 | 用户描述当前Onboarding流程 → 生成优化建议 | 输出基于最佳实践的优化建议，标注"待数据验证" | 要求用户提供当前Onboarding流程描述和核心用户行为 |
+| 用户分群数据缺失 | 跳过分群Onboarding优化，仅输出通用引导方案 | 无法为不同用户群体定制差异化Onboarding | 要求用户提供用户分群标签和各群体特征数据 |
 
 ### 数据获取说明
 

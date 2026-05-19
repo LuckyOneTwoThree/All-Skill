@@ -18,19 +18,59 @@ const OUTPUT_PATH_MAP = {
     "pm-growth",
     "pm-monitoring",
     "pm-project",
+    "approvals",
     "phase-reports",
   ],
-  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui", "ui-project-init", "checkpoints", "phase-reports"],
+  "ui-skill": ["ui-design-system", "ui-frontend", "ui-frontend-integration", "ui", "ui-project-init", "checkpoints", "approvals", "phase-reports"],
   "backend-skill": [
     "backend-api-design",
     "backend-data-architecture",
     "backend-architecture",
+    "backend-design-review",
+    "approvals",
     "phase-reports",
   ],
-  "cross-domain": ["cross-domain", "phase-reports"],
+  "cross-domain": ["cross-domain", "phase-reports", "approvals"],
 };
 
 const ALL_VALID_OUTPUT_PREFIXES = Object.values(OUTPUT_PATH_MAP).flat();
+
+const ALLOWED_CROSS_DOMAIN_OUTPUT_REFS = {
+  "pm-skill": [
+    "backend-api-design",
+    "backend-architecture",
+    "ui-project-init",
+    "ui-frontend",
+  ],
+  "ui-skill": [
+    "pm-strategy",
+    "pm-design",
+    "backend-api-design",
+  ],
+  "backend-skill": [
+    "pm-design",
+    "ui-frontend",
+  ],
+  "cross-domain": [
+    "pm-discovery",
+    "pm-strategy",
+    "pm-design",
+    "pm-metrics-design",
+    "pm-metrics-ops",
+    "pm-growth",
+    "pm-monitoring",
+    "pm-project",
+    "ui-design-system",
+    "ui-frontend",
+    "ui-frontend-integration",
+    "ui",
+    "ui-project-init",
+    "backend-api-design",
+    "backend-data-architecture",
+    "backend-architecture",
+    "backend-design-review",
+  ],
+};
 
 function parseFrontmatter(content) {
   const cleaned = content.replace(/^\uFEFF/, '');
@@ -359,7 +399,10 @@ function validateOutputPathConsistency(content, domain) {
         "output-path",
         `Output path 'output/${prefix}/' is not a recognized output path prefix. Valid prefixes: ${ALL_VALID_OUTPUT_PREFIXES.join(", ")}`,
       ]);
-    } else if (!ownPrefixes.includes(prefix)) {
+    } else if (
+      !ownPrefixes.includes(prefix) &&
+      !(ALLOWED_CROSS_DOMAIN_OUTPUT_REFS[domain] || []).includes(prefix)
+    ) {
       warnings.push([
         "output-path-cross-domain",
         `Output path 'output/${prefix}/' belongs to another domain (cross-domain data contract reference). This is valid but verify the dependency is intentional.`,

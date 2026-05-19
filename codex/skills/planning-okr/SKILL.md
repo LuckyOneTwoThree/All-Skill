@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Help me set quarterly OKRs"
     - "How to decompose objectives"
+execution_depth:
+  default: standard
+  quick_description: "Output OKRs and key results"
+  deep_description: "Full OKR + alignment verification + progress tracking mechanism + quarterly review template"
 ---
 
 # OKR Auto-Generation
@@ -34,7 +38,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Objective Generation
+### Step 1: Objective Generation [Core]
 
 Generate 2-3 Objective candidates
 
@@ -49,7 +53,7 @@ Objective template:
 O: [Verb] + [What] + [Achieve What]
 ```
 
-### Step 2: Key Results Generation
+### Step 2: Key Results Generation [Core]
 
 Generate 3-5 Key Results per Objective
 
@@ -76,7 +80,7 @@ Achievement probability < 0.3 KRs labeled needs_human_validation: true, recommen
 
 **North Star Metric Consumption**: Extract core metrics and drill-down metrics from input North Star metric, ensure at least 1 KR's metric is directly linked to the North Star metric, label north_star_alignment: true.
 
-### Step 3: KR Feasibility Assessment
+### Step 3: KR Feasibility Assessment [Core]
 
 Conduct feasibility assessment for each KR:
 
@@ -108,7 +112,7 @@ achievability_score = w1 x resource_fit + w2 x historical_trend + w3 x dependenc
 achievability_score < 0.4 labeled as high-risk KR, needs_human_validation: true
 ```
 
-### Step 4: OKR Alignment Check
+### Step 4: OKR Alignment Check [Core]
 
 Check alignment relationships between OKRs:
 - Aligned with company strategy
@@ -125,6 +129,14 @@ Check alignment relationships between OKRs:
 | North Star alignment | At least 1 KR's metric is directly linked to North Star metric | north_star_alignment=true KRs >=1 | Label North Star alignment gap, recommend adding linked KR |
 | Quantifiable verifiability | Each KR includes numeric target value and deadline | All KRs include metric+target+deadline | Label unverifiable KRs, recommend adding quantifiable metrics |
 | Resource feasibility | achievability_score >= 0.4 | All KRs' achievability >= 0.4 | Label high-risk KRs, recommend adjusting target or increasing resources |
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | OKRs and key results | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full OKR + alignment verification + progress tracking mechanism + quarterly review template | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -210,12 +222,22 @@ okr_candidates:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Each O contains 1-sentence description <=30 characters
 - [ ] Each KR contains >=1 numeric target value (metric+target)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Each KR contains deadline field (ISO8601 format)
 - [ ] north_star_alignment=true KRs >=1, O-KR consistency check 100% passed
 - [ ] All KRs' achievability_score calculated and KRs with >=0.4 account for >=60%
 - [ ] Strategic consistency verified
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -223,22 +245,14 @@ okr_candidates:
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| strategic-analysis.json | User provides business objectives -> Directly generate OKR candidates | Lacks strategic analysis data support, O-strategic direction alignment may be insufficient |
-| north-star.json | User provides business objectives -> Directly generate OKR candidates | Lacks North Star metric alignment, KRs may be disconnected from core metrics |
-| bmc.json | User provides business objectives -> Directly generate OKR candidates | Lacks BMC data, OKR-business model correlation may be weak |
-| strategic-analysis.json + north-star.json + bmc.json | User provides business objectives -> Directly generate OKR candidates | Overall confidence reduced, OKRs lack strategic and metric anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or directly generate OKR candidates based on user-provided business objectives | Overall confidence significantly reduced, OKRs are generic target references only |
-| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip related steps | Lacks baseline data, KR target values lack reference |
-
-## Data Acquisition Instructions
-
-This Skill requires strategic analysis, North Star metric, and BMC data, please provide via one of the following methods:
-  1. Directly describe business objectives and key result expectations
-  2. Upload strategic-analysis.json / north-star.json / bmc.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| strategic-analysis.json | User provides business objectives -> Directly generate OKR candidates | Lacks strategic analysis data support, O-strategic direction alignment may be insufficient | Request user to describe strategic direction and priorities, or upload strategic-analysis.json |
+| north-star.json | User provides business objectives -> Directly generate OKR candidates | Lacks North Star metric alignment, KRs may be disconnected from core metrics | Request user to provide North Star metric and sub-metrics, or upload north-star.json |
+| bmc.json | User provides business objectives -> Directly generate OKR candidates | Lacks BMC data, OKR-business model correlation may be weak | Request user to describe business model and revenue streams, or upload bmc.json |
+| strategic-analysis.json + north-star.json + bmc.json | User provides business objectives -> Directly generate OKR candidates | Overall confidence reduced, OKRs lack strategic and metric anchoring | Request user to provide business objectives and key metrics, or upload strategic-analysis.json / north-star.json / bmc.json |
+| All upstream files missing | Prompt user to execute prior phases first, or directly generate OKR candidates based on user-provided business objectives | Overall confidence significantly reduced, OKRs are generic target references only | Request user to describe business objectives and expected key results, or execute strategic-analysis and planning-north-star first |
+| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip related steps | Lacks baseline data, KR target values lack reference | Prompt user to provide current metric values and target expectations |
 
 ---
 

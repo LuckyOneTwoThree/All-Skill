@@ -13,6 +13,10 @@ metadata:
     - "Too many solutions, which to choose"
     - "Let's brainstorm"
     - "Creative workshop"
+execution_depth:
+  default: standard
+  quick_description: "Output top ideas and evaluation matrix only"
+  deep_description: "Full workshop + concept validation + feasibility assessment + innovation roadmap"
 ---
 
 # Creative Workshop
@@ -104,7 +108,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: HMW Problem Reframing
+### Step 1: HMW Problem Reframing [Core]
 
 Based on problem statement and user research data, batch generate HMW statements from 6 dimensions, with quality checks and scoring.
 
@@ -211,7 +215,7 @@ Score divergence potential (1-5) for HMW statements that pass quality check:
 
 ---
 
-### Step 2: Parallel Divergence (SCAMPER + Reverse Thinking)
+### Step 2: Parallel Divergence (SCAMPER + Reverse Thinking) [Core]
 
 Based on Step 1 HMW output, execute SCAMPER structured divergence and reverse thinking analysis in parallel to maximize creative output.
 
@@ -395,7 +399,7 @@ Each design constraint must have a clear verification method.
 
 ---
 
-### Step 3: Creative Convergence
+### Step 3: Creative Convergence [Core]
 
 From SCAMPER solution list and reverse thinking constraints, filter high-quality candidates, and provide support for human decision-making through deepening and comparison matrix.
 
@@ -562,6 +566,14 @@ AI provides recommendations based on weighted total score method, dimension-opti
 
 ---
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | top ideas and evaluation matrix only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full workshop + concept validation + feasibility assessment + innovation roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-design/ideation-workshop/`
@@ -712,42 +724,50 @@ Markdown format creative workshop report, including:
 
 ## Quality Checks
 
-| Check Item | Standard | Non-Compliance Handling |
-|-----------|----------|------------------------|
-| HMW dimension coverage | All 6 dimensions covered | Mark "Dimension missing", supplement HMW statements for missing dimensions |
-| HMW count | At least 6 HMW statements per dimension | Mark "Insufficient count", supplement HMW generation for insufficient dimensions |
-| HMW data support | Each HMW has user research data support | Mark "Lacks data support", link existing data or return to input stage to supplement |
-| HMW divergence potential scoring | All HMWs have completed divergence potential scoring | Mark "Scoring missing", supplement scoring and re-rank |
-| HMW broadness | No overly broad HMWs | Mark "Too broad", narrow problem scope and regenerate |
-| HMW solution-presuming | No solution-presuming HMWs | Mark "Solution-presuming", rephrase as open-ended question format |
-| SCAMPER dimension coverage | All 7 SCAMPER dimensions covered | Mark "Dimension missing", supplement solutions for missing dimensions |
-| SCAMPER solution count | At least 3 solutions per dimension, at least 10 total | Mark "Insufficient count", supplement generation for insufficient dimensions |
-| SCAMPER deduplication | Solution deduplication complete, no obvious duplicates | Mark "Duplicates exist", execute semantic deduplication |
-| SCAMPER clustering | All solutions have cluster attribution | Mark "Clustering missing", supplement cluster attribution |
-| Reverse thinking failure path count | 10-15 failure paths generated | Mark "Insufficient paths" or "Too many paths", supplement or streamline |
-| Reverse thinking failure path scoring | Each failure path has severity and likelihood scores | Mark "Scoring missing", supplement scoring and recalculate priorities |
-| Reverse thinking success condition correspondence | Each failure path has a corresponding success condition | Mark "Condition missing", reverse-transform to supplement success conditions |
-| Reverse thinking design constraint actionability | Each design constraint is specific and actionable | Mark "Constraint vague", transform abstract constraints into specific actionable descriptions |
-| Reverse thinking constraint verification method | Design constraints have clear verification methods | Mark "Verification missing", define verification method for each constraint |
-| Converged solution filtering | Exclude solutions with feasibility < 2 and constraint conflicts | Mark "Filtering incomplete", supplement filtering |
-| Converged solution deepening | Top 5 solutions deepened, including all 6 dimensions | Mark "Insufficient deepening", supplement missing dimensions |
-| Converged comparison matrix | 6 dimensions complete, scoring standards unified | Mark "Matrix incomplete", supplement missing dimensions |
-| Unique IDs | All entries have unique IDs | Mark "ID missing", supplement unique identifiers |
-| Output format | Output format complies with specification | Mark "Format anomaly", correct to standard output format |
-| Statistical accuracy | Statistical data is accurate | Mark "Statistics error", recalculate statistical data |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] HMW dimension coverage (All 6 dimensions covered)
+- [ ] HMW count (At least 6 HMW statements per dimension)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] HMW data support (Each HMW has user research data support)
+- [ ] HMW divergence potential scoring (All HMWs have completed divergence potential scoring)
+- [ ] HMW broadness (No overly broad HMWs)
+- [ ] HMW solution-presuming (No solution-presuming HMWs)
+- [ ] SCAMPER dimension coverage (All 7 SCAMPER dimensions covered)
+- [ ] SCAMPER solution count (At least 3 solutions per dimension, at least 10 total)
+- [ ] SCAMPER deduplication (Solution deduplication complete, no obvious duplicates)
+- [ ] SCAMPER clustering (All solutions have cluster attribution)
+- [ ] Reverse thinking failure path count (10-15 failure paths generated)
+- [ ] Reverse thinking failure path scoring (Each failure path has severity and likelihood scores)
+- [ ] Reverse thinking success condition correspondence (Each failure path has a corresponding success condition)
+- [ ] Reverse thinking design constraint actionability (Each design constraint is specific and actionable)
+- [ ] Reverse thinking constraint verification method (Design constraints have clear verification methods)
+- [ ] Converged solution filtering (Exclude solutions with feasibility < 2 and constraint conflicts)
+- [ ] Converged solution deepening (Top 5 solutions deepened, including all 6 dimensions)
+- [ ] Converged comparison matrix (6 dimensions complete, scoring standards unified)
+- [ ] Unique IDs (All entries have unique IDs)
+- [ ] Output format (Output format complies with specification)
+- [ ] Statistical accuracy (Statistical data is accurate)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| Problem Statement missing | User describes problem, generate HMW directly | Lacks structured Problem Statement, HMW may be less focused |
-| User research data missing | User describes problem, generate HMW directly | Lacks user research data support, HMW may deviate from user needs |
-| Both Problem Statement and user research data missing | User describes problem, generate HMW directly | Overall confidence reduced, HMW may be too broad |
-| Current solution description missing | Generate solutions directly based on HMW, no improvement baseline | Lacks current solution reference, substitute/modify dimension solutions may be less precise |
-| Competitor solution data missing | Skip competitor borrowing, generate based on HMW and current solution | Lacks competitor solution reference, adapt dimension solutions may be less rich |
-| All upstream files missing | Prompt user to execute prior stages first, or generate directly based on user verbal description | Output is only basic HMW list and solution framework |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| Problem Statement missing | User describes problem, generate HMW directly | Lacks structured Problem Statement, HMW may be less focused | Request user to describe the core problem and context, or upload problem-statement.json |
+| User research data missing | User describes problem, generate HMW directly | Lacks user research data support, HMW may deviate from user needs | Request user to describe user needs and pain points, or upload persona.json / voice-analysis.json |
+| Both Problem Statement and user research data missing | User describes problem, generate HMW directly | Overall confidence reduced, HMW may be too broad | Request user to describe problem and user context, or execute user-research and opportunity-definition first |
+| Current solution description missing | Generate solutions directly based on HMW, no improvement baseline | Lacks current solution reference, substitute/modify dimension solutions may be less precise | Request user to describe current solution and its limitations |
+| Competitor solution data missing | Skip competitor borrowing, generate based on HMW and current solution | Lacks competitor solution reference, adapt dimension solutions may be less rich | Request user to provide competitor names and their solutions, or upload competitor-analysis.json |
+| All upstream files missing | Prompt user to execute prior stages first, or generate directly based on user verbal description | Output is only basic HMW list and solution framework | Request user to describe problem, users, and current solutions, or execute pm-01-discovery skills first |
 
 ## Upstream Change Response
 

@@ -12,6 +12,10 @@ metadata:
     - "哪些用户适合推增购"
     - "交叉销售怎么做"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出增购策略和机会清单"
+  deep_description: "完整策略 + 增购触发器设计 + 客户分层增购模型 + 增购实验方案"
 ---
 
 # 升级转化自动化
@@ -70,7 +74,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 升级信号识别
+### Step 1: 升级信号识别 [核心]
 
 #### 信号检测规则
 ```yaml
@@ -117,7 +121,7 @@ upgrade_score = (
 | P2 | 0.4-0.6 | 部分升级信号 | 场景化升级引导 |
 | P3 | <0.4 | 潜在升级需求 | 持续培育 |
 
-### Step 2: 升级内容个性化
+### Step 2: 升级内容个性化 [核心]
 
 #### 个性化要素
 | 要素 | 内容来源 | 说明 |
@@ -146,7 +150,7 @@ upgrade_score = (
 [立即升级] [了解更多]
 ```
 
-### Step 3: 触达时机优化
+### Step 3: 触达时机优化 [核心]
 
 #### 最佳触达时机
 | 时机 | 触发条件 | 效果 |
@@ -164,7 +168,7 @@ upgrade_score = (
 | 低活跃用户 | 邮件+短信 | 强化 |
 | 高价值用户 | 邮件+电话 | 全渠道 |
 
-### Step 4: A/B测试设计
+### Step 4: A/B测试设计 [核心]
 
 #### 测试类型
 | 测试类型 | 测试内容 | 目标 |
@@ -202,6 +206,14 @@ success_criteria:
   - primary_metric_lift: ">=10%"
   - guardrail_metrics: "无显著下降"
 ```
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 增购策略和机会清单 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整策略 + 增购触发器设计 + 客户分层增购模型 + 增购实验方案 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -290,12 +302,28 @@ success_criteria:
 | 字段路径 | 类型 | 必填 | 说明 |
 |----------|------|------|------|
 | upgrade_signals | array | 是 | 升级信号用户列表，至少1个用户 |
+| upgrade_signals[].user_id | string | 否 | 用户ID |
+| upgrade_signals[].current_plan | string | 否 | 当前套餐 |
 | upgrade_signals[].overall_score | number | 是 | 升级评分，范围0-1 |
+| upgrade_signals[].signal_type | string | 否 | 信号类型，枚举：usage/feature/behavior/intent |
+| upgrade_signals[].strength | string | 否 | 信号强度，枚举：strong/medium/weak |
+| upgrade_signals[].description | string | 否 | 信号描述 |
 | upgrade_signals[].recommended_plan | string | 是 | 推荐套餐，不可为空 |
 | personalized_offers | array | 是 | 个性化方案列表，至少1个 |
+| personalized_offers[].offer_type | string | 否 | 方案类型，枚举：upgrade/addon/trial_discount |
+| personalized_offers[].headline | string | 否 | 方案标题 |
 | personalized_offers[].value_proposition | string | 是 | 价值主张，不可为空 |
+| personalized_offers[].incentive | string | 否 | 激励内容 |
+| personalized_offers[].cta_text | string | 否 | 行动号召文案 |
 | ab_tests | array | 否 | A/B测试列表，每项须含test_id/hypothesis |
+| ab_tests[].test_id | string | 是 | 测试ID |
+| ab_tests[].test_name | string | 否 | 测试名称 |
+| ab_tests[].hypothesis | string | 是 | 测试假设 |
+| ab_tests[].variants | array | 否 | 变体列表 |
+| ab_tests[].primary_metric | string | 否 | 主要指标 |
 | tracking | object | 否 | 效果追踪，须含upgrade_conversion_rate/roi |
+| tracking.upgrade_conversion_rate | number | 否 | 升级转化率 |
+| tracking.roi | number | 否 | 升级ROI |
 
 ## 决策规则
 
@@ -308,21 +336,31 @@ success_criteria:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 升级信号识别覆盖4类信号（用量/功能/行为/意向）
 - [ ] 个性化内容包含用户名、用量、收益3个要素
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] A/B测试设计包含护栏指标
 - [ ] 升级ROI计算包含触达成本
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 用户行为数据缺失 | 用户描述付费用户特征 → 生成升级策略 | 升级信号基于用户描述，缺乏行为数据验证 |
-| 付费历史缺失 | 跳过付费模式分析，使用通用升级触发规则 | 升级时机判断基于通用规则 |
-| 用户行为 + 付费历史均缺失 | 用户描述付费用户特征 → 生成升级策略 | 输出基于描述的升级策略，标注"待数据验证" |
-- 若用户未提供产品使用数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 用户行为数据缺失 | 用户描述付费用户特征 → 生成升级策略 | 升级信号基于用户描述，缺乏行为数据验证 | 要求用户提供付费用户的使用行为和功能使用频率 |
+| 付费历史缺失 | 跳过付费模式分析，使用通用升级触发规则 | 升级时机判断基于通用规则 | 要求用户提供历史套餐分布和付费周期数据 |
+| 产品使用数据缺失 | 跳过功能使用详情分析，升级信号仅基于行为和付费数据 | 升级信号缺少功能维度，升级推荐精准度降低 | 要求用户提供功能使用详情和用量统计数据 |
+| 用户行为 + 付费历史均缺失 | 用户描述付费用户特征 → 生成升级策略 | 输出基于描述的升级策略，标注"待数据验证" | 要求用户提供付费用户特征描述、产品层级和升级障碍 |
 
 ### 数据获取说明
 

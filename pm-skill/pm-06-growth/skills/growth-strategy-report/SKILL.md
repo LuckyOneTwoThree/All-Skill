@@ -12,6 +12,10 @@ metadata:
     - "增长遇到瓶颈怎么办"
     - "怎么制定增长计划"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出增长策略和优先动作"
+  deep_description: "完整报告 + 增长模型推演 + 渠道组合优化 + 增长实验路线图"
 ---
 
 # 增长策略报告生成
@@ -39,7 +43,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：增长模式评估
+### Step 1：增长模式评估 [核心]
 
 从增长模式诊断结果提炼核心判断：
 
@@ -48,7 +52,7 @@ metadata:
 3. **瓶颈定位**：当前最大瓶颈环节及量化依据
 4. **增长阶段判断**：冷启动 / 起飞 / 规模化 / 成熟期
 
-### Step 2：AARRR 漏斗诊断
+### Step 2：AARRR 漏斗诊断 [核心]
 
 整合各环节分析结果，构建全链路漏斗视图：
 
@@ -57,7 +61,7 @@ metadata:
 3. **留存曲线**：D1/D7/D30留存率，留存曲线形态（幂律/指数/对数）
 4. **变现漏斗**：免费→试用→付费→续费→增购，各环节ARPU贡献
 
-### Step 3：杠杆策略整合
+### Step 3：杠杆策略整合 [核心]
 
 基于瓶颈定位和各环节方案，整合杠杆策略：
 
@@ -66,7 +70,7 @@ metadata:
 3. **防御策略**（防止下滑）：风险缓解 + 预警指标
 4. **策略优先级矩阵**：按影响×可行性排序
 
-### Step 4：执行路线图
+### Step 4：执行路线图 [核心]
 
 将策略转化为可执行的路线图：
 
@@ -75,9 +79,17 @@ metadata:
 3. **长期投资**（8周+）：飞轮加速的基础设施建设
 4. **里程碑与指标**：每个阶段的关键里程碑和验收指标
 
-### Step 5：报告组装
+### Step 5：报告组装 [核心]
 
 将以上内容组装为完整报告。
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 增长策略和优先动作 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整报告 + 增长模型推演 + 渠道组合优化 + 增长实验路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -187,21 +199,64 @@ metadata:
 | product_name | string | 是 | 产品名称，不可为空 |
 | growth_model | object | 是 | 增长模式评估，须含type/flywheel/bottleneck |
 | growth_model.type | string | 是 | 增长模式类型，仅允许PLG/SLG/MLG/hybrid |
+| growth_model.evidence | string | 否 | 模式判定依据 |
 | growth_model.flywheel.nodes | array | 是 | 飞轮节点，至少3个 |
+| growth_model.flywheel.nodes[].node_name | string | 是 | 节点名称，不可为空 |
+| growth_model.flywheel.edges | array | 否 | 飞轮因果关系，至少2条 |
+| growth_model.flywheel.edges[].from | string | 是 | 起始节点 |
+| growth_model.flywheel.edges[].to | string | 是 | 目标节点 |
+| growth_model.flywheel.edges[].description | string | 否 | 因果关系描述 |
 | growth_model.bottleneck | string | 是 | 瓶颈描述，不可为空 |
+| aarrr_funnel | object | 否 | AARRR漏斗数据 |
+| aarrr_funnel.acquisition | object | 否 | 获客环节 |
+| aarrr_funnel.acquisition.current_rate | number | 否 | 当前获客率 |
+| aarrr_funnel.activation | object | 否 | 激活环节 |
+| aarrr_funnel.activation.current_rate | number | 否 | 当前激活率 |
+| aarrr_funnel.retention | object | 否 | 留存环节 |
+| aarrr_funnel.retention.current_rate | number | 否 | 当前留存率 |
+| aarrr_funnel.referral | object | 否 | 推荐环节 |
+| aarrr_funnel.referral.current_rate | number | 否 | 当前推荐率 |
+| aarrr_funnel.revenue | object | 否 | 收入环节 |
+| aarrr_funnel.revenue.current_rate | number | 否 | 当前付费率 |
 | leverage_strategies | object | 是 | 杠杆策略，须含high/medium/defensive |
 | leverage_strategies.high | array | 是 | 高杠杆策略，至少1条 |
+| leverage_strategies.high[].strategy | string | 是 | 策略描述，不可为空 |
+| leverage_strategies.high[].expected_impact | string | 否 | 预期影响 |
+| leverage_strategies.medium | array | 是 | 中杠杆策略，至少1条 |
+| leverage_strategies.medium[].strategy | string | 是 | 策略描述，不可为空 |
+| leverage_strategies.defensive | array | 否 | 防御策略 |
+| leverage_strategies.defensive[].strategy | string | 是 | 策略描述，不可为空 |
 | roadmap | object | 是 | 执行路线图，须含quick_wins/core_optimization/long_term |
+| roadmap.quick_wins | array | 是 | 快速收益项，至少1条 |
+| roadmap.quick_wins[].action | string | 是 | 行动描述 |
+| roadmap.quick_wins[].timeline | string | 否 | 时间线 |
+| roadmap.core_optimization | array | 是 | 核心优化项，至少1条 |
+| roadmap.core_optimization[].action | string | 是 | 行动描述 |
+| roadmap.core_optimization[].timeline | string | 否 | 时间线 |
+| roadmap.long_term | array | 否 | 长期投资项 |
+| roadmap.long_term[].action | string | 是 | 行动描述 |
+| roadmap.long_term[].timeline | string | 否 | 时间线 |
 | risks_and_assumptions | array | 否 | 风险与假设列表 |
+| risks_and_assumptions[].type | string | 是 | 类型，枚举：risk/assumption |
+| risks_and_assumptions[].description | string | 是 | 描述，不可为空 |
+| risks_and_assumptions[].impact | string | 否 | 影响评估 |
 
 ## 质量检查
 
-| 检查项 | 标准 | 不通过处理 |
-|--------|------|------------|
-| 飞轮模型完整性 | 至少3个节点+2条因果关系 | 补充飞轮节点或标注"待验证" |
-| 策略与瓶颈一致 | 高杠杆策略直接针对核心瓶颈 | 调整策略或补充瓶颈分析 |
-| 路线图可执行 | 每项行动有负责人、时间、验收指标 | 补充执行细节 |
-| 漏斗数据完整 | AARRR至少3个环节有数据 | 标注缺失环节为"待补充" |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] 飞轮模型完整性（至少3个节点+2条因果关系）
+- [ ] 策略与瓶颈一致（高杠杆策略直接针对核心瓶颈）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] 路线图可执行（每项行动有负责人、时间、验收指标）
+- [ ] 漏斗数据完整（AARRR至少3个环节有数据）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 决策规则
 
@@ -214,12 +269,12 @@ metadata:
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 无增长模式诊断 | 基于各环节方案反推增长模式，标注"模式待确认" | 增长模式为推断结论，需后续验证 |
-| 仅有部分环节方案 | 仅覆盖已有数据的环节，缺失环节标注"待补充" | 报告覆盖不完整，缺失环节无策略建议 |
-| 无任何上游输入 | 基于用户提供的产品信息生成增长策略框架，标注"需数据验证" | 报告为框架级，所有结论需数据验证 |
-- 若用户未提供业务目标，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 无增长模式诊断 | 基于各环节方案反推增长模式，标注"模式待确认" | 增长模式为推断结论，需后续验证 | 要求用户提供增长模式描述或执行growth-model技能 |
+| 仅有部分环节方案 | 仅覆盖已有数据的环节，缺失环节标注"待补充" | 报告覆盖不完整，缺失环节无策略建议 | 要求用户提供缺失环节的策略摘要或执行对应前序技能 |
+| 无任何上游输入 | 基于用户提供的产品信息生成增长策略框架，标注"需数据验证" | 报告为框架级，所有结论需数据验证 | 要求用户提供产品信息、增长目标和核心指标 |
+| 业务目标缺失 | 提示用户提供业务目标，否则无法确定策略聚焦方向 | 策略缺乏目标导向 | 要求用户提供业务目标（如提升DAU、提高付费转化率等） |
 
 ## 上游变更响应
 

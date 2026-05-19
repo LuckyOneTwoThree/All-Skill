@@ -10,6 +10,10 @@ metadata:
     - "Help me build a data dashboard"
     - "Configure a monitoring panel"
     - "Create a Dashboard to display all key metrics"
+execution_depth:
+  default: standard
+  quick_description: "Output core metrics dashboard design"
+  deep_description: "Full dashboard + drill-down analysis design + alert rule system + data governance specs"
 ---
 
 # Dashboard Auto-Configuration
@@ -52,7 +56,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Dashboard Structure Design
+### Step 1: Dashboard Structure Design [Core]
 
 **Task**: Design Dashboard structure based on metric hierarchy
 
@@ -68,7 +72,7 @@ AI->Human AI suggests, human approves
 
 ---
 
-### Step 2: Metric Auto-Assignment
+### Step 2: Metric Auto-Assignment [Core]
 
 **Task**: Automatically assign metrics to each Dashboard
 
@@ -85,7 +89,7 @@ AI->Human AI suggests, human approves
 
 ---
 
-### Step 3: Alert Rule Configuration
+### Step 3: Alert Rule Configuration [Core]
 
 **Task**: Configure alert rules for key metrics
 
@@ -101,7 +105,7 @@ AI->Human AI suggests, human approves
 
 ---
 
-### Step 4: Dashboard Configuration Generation
+### Step 4: Dashboard Configuration Generation [Core]
 
 **Task**: Generate Dashboard configurations for each platform
 
@@ -116,6 +120,14 @@ AI->Human AI suggests, human approves
 3. Configure Dashboard layout and theme
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | core metrics dashboard design | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full dashboard + drill-down analysis design + alert rule system + data governance specs | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -239,18 +251,25 @@ When Dashboard configuration itself changes, notification mechanism to downstrea
 
 ## Quality Checks
 
-### Automated Checklist
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] All metrics assigned to Dashboards
 - [ ] Each Dashboard has at least 1 Widget
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] North Star metric appears in Strategic Dashboard
 - [ ] Alert rules configured completely
 - [ ] Dashboard configuration parses correctly
-
-### Manual Review Checklist
 - [ ] Dashboard layout reasonableness
 - [ ] Alert threshold setting reasonableness
 - [ ] Access permission configuration
 - [ ] Navigation structure clarity
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -258,20 +277,13 @@ When Dashboard configuration itself changes, notification mechanism to downstrea
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Metric system missing | Prompt user to provide core metric list, generate basic Dashboard configuration based on metric list | Dashboard hierarchy simplified, no strategic/tactical/operational layering |
-| Tracking plan missing | Skip data source marking step, Widget data source marked as "pending configuration" | Cannot confirm data collection feasibility |
-| Metric system + Tracking plan both missing | User provides core metric list -> generate basic Dashboard configuration | Output basic Dashboard configuration, data source and refresh frequency marked as "to be confirmed" |
-| user_roles missing | If user does not provide user_roles, prompt user to provide or skip related steps | Dashboard role layering missing, use default role configuration |
-| dashboard_platform missing | If user does not provide dashboard_platform, prompt user to provide or skip related steps | Use generic JSON configuration format, platform-specific configuration marked as "to be specified" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Core metric list**: Key metric names and definitions to monitor
-- **Target user roles** (optional): Primary Dashboard user roles (Management/PM/Operations)
-- **Dashboard platform** (optional): Visualization platform used (Amplitude/Grafana/Datadog, etc.)
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Metric system missing | Prompt user to provide core metric list, generate basic Dashboard configuration based on metric list | Dashboard hierarchy simplified, no strategic/tactical/operational layering | Request user to provide core metric names and definitions, or upload metrics-system.json |
+| Tracking plan missing | Skip data source marking step, Widget data source marked as "pending configuration" | Cannot confirm data collection feasibility | Request user to provide tracking event list, or upload tracking-plan.json |
+| Metric system + Tracking plan both missing | User provides core metric list -> generate basic Dashboard configuration | Output basic Dashboard configuration, data source and refresh frequency marked as "to be confirmed" | Request user to provide core metric list and target user roles, or execute metrics-system and tracking-plan first |
+| user_roles missing | If user does not provide user_roles, prompt user to provide or skip related steps | Dashboard role layering missing, use default role configuration | Prompt user to specify Dashboard user roles (Management/PM/Operations) |
+| dashboard_platform missing | If user does not provide dashboard_platform, prompt user to provide or skip related steps | Use generic JSON configuration format, platform-specific configuration marked as "to be specified" | Prompt user to specify visualization platform (Amplitude/Grafana/Datadog, etc.) |
 
 ---
 

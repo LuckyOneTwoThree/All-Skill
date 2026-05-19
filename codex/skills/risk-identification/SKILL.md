@@ -10,6 +10,10 @@ metadata:
     - "What are the project risks"
     - "Help me identify risks"
     - "What could go wrong"
+execution_depth:
+  default: standard
+  quick_description: "Output risk list and priority ranking"
+  deep_description: "Full identification + risk quantification assessment + correlated risk analysis + risk response roadmap"
 ---
 
 # Risk Auto-identification & Assessment
@@ -45,7 +49,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Risk Source Auto-scanning
+### Step 1: Risk Source Auto-scanning [Core]
 
 **Actions**:
 - Scan technical risk sources (architecture, technical debt, dependencies)
@@ -89,7 +93,7 @@ metadata:
 }
 ```
 
-### Step 2: Risk Auto-assessment
+### Step 2: Risk Auto-assessment [Core]
 
 **Actions**:
 - Assess occurrence probability (P) for each identified risk
@@ -115,7 +119,7 @@ metadata:
 }
 ```
 
-### Step 3: Risk Priority Auto-ranking
+### Step 3: Risk Priority Auto-ranking [Core]
 
 **Actions**:
 - Sort by risk score in descending order
@@ -144,7 +148,7 @@ metadata:
 }
 ```
 
-### Step 4: Risk Response Strategy Auto-suggestion
+### Step 4: Risk Response Strategy Auto-suggestion [Core]
 
 **Actions**:
 - Suggest response strategies based on risk type and characteristics
@@ -172,7 +176,7 @@ metadata:
 }
 ```
 
-### Step 5: Risk Register Auto-maintenance
+### Step 5: Risk Register Auto-maintenance [Core]
 
 **Actions**:
 - Merge newly identified risks
@@ -199,6 +203,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | risk list and priority ranking | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full identification + risk quantification assessment + correlated risk analysis + risk response roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -299,10 +311,20 @@ metadata:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Risks cover technical, resource, schedule, and external dimensions
 - [ ] Each risk has impact and probability assessment
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Risk priority ranking is reasonable
 - [ ] High-priority risks have response strategies
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

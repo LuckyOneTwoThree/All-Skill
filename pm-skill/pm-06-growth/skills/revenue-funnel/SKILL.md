@@ -12,6 +12,10 @@ metadata:
     - "付费转化率怎么提升"
     - "付费墙放在哪最合适"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出付费漏斗和转化瓶颈"
+  deep_description: "完整分析 + 漏斗优化模拟 + 定价弹性测试 + 收入预测模型"
 ---
 
 # 付费漏斗自动分析
@@ -66,7 +70,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 付费漏斗各层转化分析
+### Step 1: 付费漏斗各层转化分析 [核心]
 
 #### 漏斗计算
 计算每层的转化率和流失率：
@@ -88,7 +92,7 @@ metadata:
 - 月同比变化
 - 异常波动检测
 
-### Step 2: 付费障碍识别
+### Step 2: 付费障碍识别 [核心]
 
 #### 定性障碍分析
 | 障碍类型 | 表现 | 原因推断 |
@@ -105,7 +109,7 @@ metadata:
 - 问卷/访谈分析：用户反馈汇总
 - 竞品对比分析：与竞品差异
 
-### Step 3: 转化优化建议
+### Step 3: 转化优化建议 [深度]
 
 #### 优化方向矩阵
 | 障碍类型 | 优化策略 | 实施方案 |
@@ -123,7 +127,7 @@ metadata:
 优先级 = 影响系数 × 预期提升 / 实施难度
 ```
 
-### Step 4: 付费墙时机优化
+### Step 4: 付费墙时机优化 [核心]
 
 #### 付费墙类型
 | 类型 | 特点 | 适用场景 |
@@ -143,6 +147,14 @@ metadata:
 - 试用时长：7天 vs 14天 vs 30天
 - 试用功能：全功能 vs 核心功能
 - 试用触发：注册即试用 vs 行为触发试用
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 付费漏斗和转化瓶颈 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 漏斗优化模拟 + 定价弹性测试 + 收入预测模型 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -213,10 +225,28 @@ metadata:
 |----------|------|------|------|
 | funnel | object | 是 | 付费漏斗数据，须含stages/overall_conversion_rate |
 | funnel.stages | array | 是 | 各阶段数据，每项须含name/count |
+| funnel.stages[].name | string | 是 | 阶段名称，不可为空 |
+| funnel.stages[].count | number | 是 | 阶段用户数，须≥0 |
+| funnel.stages[].percentage | number | 否 | 占比 |
 | funnel.overall_conversion_rate | number | 是 | 整体转化率，范围0-1 |
+| funnel.avg_time_to_pay | string | 否 | 平均付费转化周期 |
 | bottlenecks | array | 是 | 瓶颈列表，每项须含from_stage/to_stage/drop_off_rate/impact_score |
+| bottlenecks[].from_stage | string | 是 | 流失起始阶段 |
+| bottlenecks[].to_stage | string | 是 | 流失目标阶段 |
+| bottlenecks[].drop_off_rate | number | 是 | 流失率，范围0-1 |
+| bottlenecks[].impact_score | number | 是 | 影响评分，范围0-1 |
+| bottlenecks[].likely_cause | string | 否 | 可能原因 |
 | optimization_suggestions | array | 否 | 优化建议列表，每项须含target_stage/problem/solution |
+| optimization_suggestions[].target_stage | string | 是 | 目标阶段 |
+| optimization_suggestions[].problem | string | 是 | 问题描述 |
+| optimization_suggestions[].solution | string | 是 | 解决方案 |
+| optimization_suggestions[].expected_improvement | string | 否 | 预期提升效果 |
+| optimization_suggestions[].priority | number | 否 | 优先级 |
 | paywall_timing | object | 否 | 付费墙时机，须含optimal_timing/optimal_paywall_type |
+| paywall_timing.optimal_timing | string | 是 | 最优触发时机 |
+| paywall_timing.optimal_paywall_type | string | 是 | 最优付费墙类型 |
+| paywall_timing.recommended_trial_period | string | 否 | 推荐试用期 |
+| paywall_timing.expected_conversion_lift | string | 否 | 预期转化提升 |
 
 ## 决策规则
 
@@ -229,21 +259,31 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 付费漏斗覆盖注册到复购全链路
 - [ ] 障碍识别区分定性和定量分析
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 优化建议按影响系数×实施难度排序
 - [ ] 付费墙时机建议基于用户行为数据
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 注册到付费全链路数据缺失 | 用户提供付费转化数据 → 分析漏斗 | 漏斗分析仅覆盖用户提供的数据节点 |
-| 历史付费数据缺失 | 跳过付费趋势分析，仅基于当前数据分析 | 无法评估付费转化趋势 |
-| 全链路数据 + 历史付费数据均缺失 | 用户提供付费转化数据 → 分析漏斗 | 输出基础付费漏斗分析，优化建议标注"待验证" |
-- 若用户未提供用户特征数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 注册到付费全链路数据缺失 | 用户提供付费转化数据 → 分析漏斗 | 漏斗分析仅覆盖用户提供的数据节点 | 要求用户提供各付费漏斗阶段的用户数和转化率 |
+| 历史付费数据缺失 | 跳过付费趋势分析，仅基于当前数据分析 | 无法评估付费转化趋势 | 要求用户提供历史付费转化率和付费用户数趋势 |
+| 用户特征数据缺失 | 跳过多维度拆分分析，仅输出整体漏斗 | 无法按用户分群拆分漏斗，障碍归因精度降低 | 要求用户提供用户画像和分群标签数据 |
+| 全链路数据 + 历史付费数据均缺失 | 用户提供付费转化数据 → 分析漏斗 | 输出基础付费漏斗分析，优化建议标注"待验证" | 要求用户提供各阶段转化数据、定价方案和付费用户特征 |
 
 ### 数据获取说明
 

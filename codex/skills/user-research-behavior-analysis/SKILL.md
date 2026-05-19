@@ -10,6 +10,10 @@ metadata:
     - "Where are users dropping off"
     - "Why is funnel conversion rate so low"
     - "What behavioral anomalies exist among users"
+execution_depth:
+  default: standard
+  quick_description: "Output behavior patterns and usage insights"
+  deep_description: "Full analysis + behavior sequence mining + user segmentation deep analysis + behavior prediction model"
 ---
 
 # Behavior Data Auto-Analysis
@@ -78,7 +82,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 
 ## Execution Steps
 
-### Step 1: Funnel Health Diagnosis
+### Step 1: Funnel Health Diagnosis [Core]
 
 - Calculate conversion rate for each funnel step
 - Identify steps with abnormally low conversion rates (below industry benchmark or 1 standard deviation below historical average)
@@ -86,7 +90,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Calculate overall funnel health score (0-100)
 - Output: Funnel diagnosis report, including conversion rates, churn analysis, and health score for each step
 
-### Step 2: Behavioral Path Analysis
+### Step 2: Behavioral Path Analysis [Core]
 
 - Extract actual user behavioral paths (not preset paths)
 - Identify high-frequency paths and anomalous paths
@@ -94,7 +98,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Identify user "lost" behaviors (bouncing between multiple pages repeatedly)
 - Output: Behavioral path diagram, annotating high-frequency paths, detours, and lost points
 
-### Step 3: Feature Usage Depth Analysis
+### Step 3: Feature Usage Depth Analysis [Core]
 
 - Calculate usage rate for each feature (users reached / active users)
 - Analyze feature usage depth (discovery only -> trial -> deep use -> paid conversion)
@@ -102,7 +106,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Identify low-value but high-usage features (potentially misleading users)
 - Output: Feature usage matrix (usage rate x value score)
 
-### Step 4: Anomaly Detection
+### Step 4: Anomaly Detection [Core]
 
 - Perform time-series anomaly detection on key behavioral metrics
 - Detection dimensions: DAU, retention, core feature usage rate, conversion rate
@@ -111,6 +115,14 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Output: Anomaly event list, including anomaly type, impact scope, possible causes, confidence
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | behavior patterns and usage insights | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + behavior sequence mining + user segmentation deep analysis + behavior prediction model | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -139,21 +151,42 @@ Output file: `output/pm-discovery/user-research-behavior-analysis/behavior-analy
 |----------|------|------|------|
 | funnel_health.overall_score | number | Yes | Overall funnel health score, 0-100 |
 | funnel_health.steps | array | Yes | Funnel step data; each must include step_name, conversion_rate, drop_off_rate, confidence |
+| funnel_health.steps[].step_name | string | Yes | Step name, must not be empty |
+| funnel_health.steps[].conversion_rate | number | Yes | Conversion rate, 0-1 |
+| funnel_health.steps[].drop_off_rate | number | Yes | Drop-off rate, 0-1 |
 | funnel_health.steps[].is_anomaly | boolean | Yes | Whether this step is anomalous |
 | funnel_health.steps[].confidence | number | Yes | Step confidence, 0-1 |
 | funnel_health.trend | string | Yes | Trend enum: improving/stable/declining |
 | aha_moment_candidates | array | Yes | Aha Moment candidate list; each must include behavior_pattern, correlation_with_retention, predictive_power, confidence |
+| aha_moment_candidates[].behavior_pattern | string | Yes | Behavior pattern description, must not be empty |
 | aha_moment_candidates[].correlation_with_retention | number | Yes | Correlation with retention; < 0.3 marked "insufficient predictive power" |
 | aha_moment_candidates[].predictive_power | number | Yes | Predictive power score, 0-1 |
 | aha_moment_candidates[].confidence | number | Yes | Candidate confidence, 0-1 |
 | feature_usage | array | Yes | Feature usage list; each must include feature_name, adoption_rate, value_score, usage_vs_value_quadrant, confidence |
+| feature_usage[].feature_name | string | Yes | Feature name, must not be empty |
+| feature_usage[].adoption_rate | number | Yes | Adoption rate, 0-1 |
+| feature_usage[].value_score | number | Yes | Value score, 0-1 |
 | feature_usage[].usage_vs_value_quadrant | string | Yes | Quadrant enum: high_value_high_use/high_value_low_use/low_value_high_use/low_value_low_use |
 | feature_usage[].confidence | number | Yes | Feature confidence, 0-1 |
 | behavior_paths.top_paths | array | No | High-frequency path list |
+| behavior_paths.top_paths[].path | string[] | Yes | Path step sequence |
+| behavior_paths.top_paths[].user_count | number | Yes | User count for this path |
+| behavior_paths.top_paths[].avg_completion_time | number | Yes | Average completion time (seconds) |
 | behavior_paths.detour_patterns | array | No | Detour pattern list |
+| behavior_paths.detour_patterns[].description | string | Yes | Detour description, must not be empty |
+| behavior_paths.detour_patterns[].affected_user_ratio | number | Yes | Affected user ratio, 0-1 |
+| behavior_paths.detour_patterns[].possible_cause | string | Yes | Possible cause |
 | behavior_paths.lost_patterns | array | No | Lost pattern list |
+| behavior_paths.lost_patterns[].description | string | Yes | Lost description, must not be empty |
+| behavior_paths.lost_patterns[].affected_user_ratio | number | Yes | Affected user ratio, 0-1 |
+| behavior_paths.lost_patterns[].loop_pages | string[] | Yes | Loop navigation page list |
 | anomalies | array | No | Anomaly event list; each must include metric, anomaly_type, detected_date, magnitude, possible_causes, confidence |
+| anomalies[].metric | string | Yes | Anomaly metric name, must not be empty |
 | anomalies[].anomaly_type | string | Yes | Anomaly type enum: spike/gradual/cyclical |
+| anomalies[].detected_date | string | Yes | Detection date, ISO 8601 format |
+| anomalies[].magnitude | number | Yes | Change magnitude |
+| anomalies[].possible_causes | string[] | Yes | Possible cause list |
+| anomalies[].impact_scope | string | No | Impact scope |
 | anomalies[].confidence | number | Yes | Anomaly confidence, 0-1 |
 | metadata.analysis_timestamp | string | Yes | Analysis timestamp |
 | metadata.data_quality_flags | string[] | Yes | Data quality flags |
@@ -264,14 +297,22 @@ Output file: `output/pm-discovery/user-research-behavior-analysis/behavior-analy
 
 ## Quality Checks
 
-| Check Item | Standard | Non-compliance Handling |
-|--------|------|-----------|
-| Funnel data completeness | All steps have data | Missing steps marked "data missing", health score annotated "incomplete" |
-| Aha Moment candidates have predictive power validation | Correlation with retention >= 0.3 | Candidates below 0.3 marked "insufficient predictive power" |
-| Behavioral path sample size | >= 1000 paths | When insufficient, mark "insufficient sample size", conclusions downgraded |
-| Anomaly detection false positive control | Anomaly events must have human-understandable cause hypotheses | Anomalies without cause hypotheses marked "pending confirmation" |
-| All outputs annotated with confidence | 100% | Fields missing confidence filled with default value 0.3 and flagged |
-| Heatmap data timeliness | Within last 30 days | Overdue marked "data expired" |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Funnel data completeness (All steps have data)
+- [ ] Aha Moment candidates have predictive power validation (Correlation with retention >= 0.3)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Behavioral path sample size (>= 1000 paths)
+- [ ] Anomaly detection false positive control (Anomaly events must have human-understandable cause hypotheses)
+- [ ] All outputs annotated with confidence (100%)
+- [ ] Heatmap data timeliness (Within last 30 days)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -279,21 +320,13 @@ Output file: `output/pm-discovery/user-research-behavior-analysis/behavior-analy
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| All data sources missing | Prompt user to provide behavioral data first, or execute analysis directly based on user-provided event/funnel data | funnel_health, feature_usage fields empty, confidence reduced to 0 |
-| If user does not provide event_data | Prompt user to provide behavioral event logs; otherwise lacking core behavioral data source | aha_moment_candidates and behavior_paths cannot be generated, feature usage analysis missing |
-| If user does not provide funnel_data | Prompt user to provide funnel data; otherwise cannot execute funnel health diagnosis | funnel_health field annotated "data missing", overall health score unavailable |
-| If user does not provide heatmap_data | Skip input-related steps; heatmap data not included in analysis | Behavioral path analysis lacks heatmap dimension, page-level insights missing |
-| If user does not provide analysis_config | Skip input-related steps; use default analysis configuration | Default configuration used; anomaly detection sensitivity and funnel granularity may be suboptimal |
-
-## Data Acquisition Instructions
-
-This Skill requires behavioral data (event logs, funnel data, heatmap data). Please provide via one of the following methods:
-  1. Directly paste event data or funnel step data
-  2. Upload CSV/Excel/JSON files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| All data sources missing | Prompt user to provide behavioral data first, or execute analysis directly based on user-provided event/funnel data | funnel_health, feature_usage fields empty, confidence reduced to 0 | Request user to paste event data or funnel step data, or upload CSV/Excel/JSON behavioral data files |
+| If user does not provide event_data | Prompt user to provide behavioral event logs; otherwise lacking core behavioral data source | aha_moment_candidates and behavior_paths cannot be generated, feature usage analysis missing | Prompt user to provide event log data (e.g., user_id, event_name, timestamp, properties) or upload event_data.json |
+| If user does not provide funnel_data | Prompt user to provide funnel data; otherwise cannot execute funnel health diagnosis | funnel_health field annotated "data missing", overall health score unavailable | Prompt user to provide funnel step names and conversion counts, or upload funnel_data.json |
+| If user does not provide heatmap_data | Skip input-related steps; heatmap data not included in analysis | Behavioral path analysis lacks heatmap dimension, page-level insights missing | Request user to provide heatmap data (page clicks, scroll depth) or upload heatmap_data.json |
+| If user does not provide analysis_config | Skip input-related steps; use default analysis configuration | Default configuration used; anomaly detection sensitivity and funnel granularity may be suboptimal | Prompt user to provide analysis config (anomaly sensitivity, funnel granularity) or accept defaults |
 
 ---
 

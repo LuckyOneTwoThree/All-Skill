@@ -10,6 +10,10 @@ metadata:
     - "What features should the MVP include"
     - "How to build a minimal product"
     - "Which features can be deferred"
+execution_depth:
+  default: standard
+  quick_description: "Output MVP scope and validation plan"
+  deep_description: "Full plan + MVP scope optimization + validation metrics system + iteration evolution roadmap"
 ---
 
 # MVP Scope Auto-Definition
@@ -66,7 +70,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Core Hypothesis Extraction and Must Have Identification
+### Step 1: Core Hypothesis Extraction and Must Have Identification [Core]
 
 **Definition**: Features directly related to maximum risk assumptions = Must include
 
@@ -97,7 +101,7 @@ AI->Human AI suggests, human approves
 }
 ```
 
-### Step 2: Cut Feature Identification
+### Step 2: Cut Feature Identification [Core]
 
 **Definition**: Features that interfere with core hypothesis validation = Exclude
 
@@ -121,7 +125,7 @@ AI->Human AI suggests, human approves
 }
 ```
 
-### Step 3: Nice to Have Classification
+### Step 3: Nice to Have Classification [Core]
 
 **Definition**: Features that are neither Must Have nor cut features
 
@@ -143,7 +147,7 @@ AI->Human AI suggests, human approves
 }
 ```
 
-### Step 4: MVP Size Assessment
+### Step 4: MVP Size Assessment [Core]
 
 **Calculation Formula**:
 
@@ -161,7 +165,7 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
 | 40-60% | [!] Acceptable | Review whether Nice to Have can be further streamlined |
 | > 60% | [ALERT] Needs review | Escalate to human judgment, confirm whether to adjust |
 
-### Step 5: Timeline Planning
+### Step 5: Timeline Planning [Core]
 
 **Definition**: Based on MVP feature effort and resource constraints, create timeline plan
 
@@ -187,7 +191,7 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
 }
 ```
 
-### Step 6: Resource Estimation
+### Step 6: Resource Estimation [Core]
 
 **Definition**: Based on MVP feature effort and timeline plan, estimate required resources
 
@@ -213,7 +217,7 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
 }
 ```
 
-### Step 7: Success Criteria and Risk Mitigation
+### Step 7: Success Criteria and Risk Mitigation [Core]
 
 **Definition**: Define MVP validation success criteria, and identify risks and mitigation measures
 
@@ -248,7 +252,7 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
 }
 ```
 
-### Step 8: Go/No-Go Decision Framework
+### Step 8: Go/No-Go Decision Framework [Core]
 
 **Definition**: Build Go/No-Go decision framework based on success criteria; metrics directly reference quantifiable metrics from success_criteria
 
@@ -277,6 +281,14 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
   }
 }
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | MVP scope and validation plan | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full plan + MVP scope optimization + validation metrics system + iteration evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -322,28 +334,36 @@ MVP Ratio = Must Have effort / Full solution effort x 100%
 
 ## Quality Checks
 
-| Check Item | Pass Condition | Result |
-|-----------|---------------|--------|
-| Core hypotheses | core_hypothesis non-empty and linked to must_have | pass/fail |
-| Assumption linkage | Must Have features all have assumption linkage | pass/fail |
-| Exclusion rationale | cut_features all have sufficient rationale | pass/fail |
-| Ratio calculation | MVP ratio calculated | pass/fail |
-| Priority completeness | Nice to Have all have priorities | pass/fail |
-| Time red line | timeline.total_weeks <= 2 | pass/fail |
-| Success criteria quantifiable | success_criteria includes quantifiable metrics and target values | pass/fail |
-| Go/No-Go complete | go_no_go includes at least 2 metrics and corresponding thresholds | pass/fail |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Core hypotheses (core_hypothesis non-empty and linked to must_have)
+- [ ] Assumption linkage (Must Have features all have assumption linkage)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Exclusion rationale (cut_features all have sufficient rationale)
+- [ ] Ratio calculation (MVP ratio calculated)
+- [ ] Priority completeness (Nice to Have all have priorities)
+- [ ] Time red line (timeline.total_weeks <= 2)
+- [ ] Success criteria quantifiable (success_criteria includes quantifiable metrics and target values)
+- [ ] Go/No-Go complete (go_no_go includes at least 2 metrics and corresponding thresholds)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| Assumption map missing | User describes key assumptions, define MVP | Lacks structured assumption data, MVP scope may be less precise |
-| Solution design data missing | User describes solution, define MVP | Lacks solution data, feature cutting may be less reasonable |
-| Resource constraint data missing | User describes resource constraints, define MVP | Lacks resource constraint data, timeline may be less reasonable |
-| Assumption map + solution design + resource constraints all missing | User describes assumptions and solution, define MVP | Overall confidence reduced, MVP scope may be less complete |
-| All upstream files missing | Prompt user to execute prior stages first, or define MVP based on user description | Output is only basic MVP framework |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| Assumption map missing | User describes key assumptions, define MVP | Lacks structured assumption data, MVP scope may be less precise | Request user to describe key assumptions and risks, or upload assumption-map.json |
+| Solution design data missing | User describes solution, define MVP | Lacks solution data, feature cutting may be less reasonable | Request user to describe solution features and priorities, or upload solution-design.json |
+| Resource constraint data missing | User describes resource constraints, define MVP | Lacks resource constraint data, timeline may be less reasonable | Prompt user to provide team size, budget, and timeline constraints |
+| Assumption map + solution design + resource constraints all missing | User describes assumptions and solution, define MVP | Overall confidence reduced, MVP scope may be less complete | Request user to describe assumptions, solution, and constraints, or execute validation-assumption-map and ideation-workshop first |
+| All upstream files missing | Prompt user to execute prior stages first, or define MVP based on user description | Output is only basic MVP framework | Request user to describe core hypothesis and must-have features, or execute validation-assumption-map and ideation-workshop first |
 
 ## Output Validation Rules
 

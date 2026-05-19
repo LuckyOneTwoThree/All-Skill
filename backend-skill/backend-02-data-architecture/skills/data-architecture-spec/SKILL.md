@@ -5,7 +5,7 @@ metadata:
   module: "后端架构与开发"
   sub-module: "数据架构"
   type: "pipeline"
-  version: "4.0"
+  version: "5.0"
   domain_tags: ["电商", "金融", "SaaS", "通用"]
   trigger_examples:
     - "设计数据库表"
@@ -88,6 +88,35 @@ metadata:
 
 识别需要缓存的数据访问模式，设计多级缓存架构、一致性策略和穿透/击穿/雪崩防护。
 
+**缓存决策矩阵**：
+
+| 场景 | 读写比 | 一致性要求 | 推荐缓存策略 | 一致性方案 | TTL建议 |
+|------|--------|-----------|-------------|-----------|---------|
+| 用户资料 | 读>>写 | 强一致 | cache-aside | 写失效（更新DB后删缓存） | 5min |
+| 商品/课程列表 | 读>>>写 | 最终一致 | cache-aside + TTL | 写失效 + 短TTL兜底 | 1-5min |
+| 商品/课程详情 | 读>>>写 | 最终一致 | cache-aside | 写失效 | 5-10min |
+| 库存/余额 | 读≈写 | 强一致 | write-through | 写穿透（同步写DB+缓存） | 无TTL |
+| 热门排行榜 | 读>>>>写 | 最终一致 | cache-aside + 预热 | 定时刷新 | 1min |
+| 配置/字典 | 读>>>>>>写 | 弱一致 | cache-aside + 长TTL | 手动失效 + 长TTL | 30min |
+| 会话/Token | 读>>写 | 强一致 | 分布式缓存 | 写穿透 + 短TTL | 与Token过期一致 |
+| 搜索结果 | 读>>>写 | 弱一致 | 本地缓存 + 分布式缓存 | 定时刷新 | 30s-2min |
+
+**缓存层级选择**：
+
+| 数据量 | 访问频率 | 推荐层级 |
+|--------|---------|---------|
+| <100MB | 极高（>10K QPS） | 本地缓存 + 分布式缓存 |
+| 100MB-1GB | 高（1K-10K QPS） | 分布式缓存 |
+| >1GB | 中低 | 分布式缓存 + 按需加载 |
+
+**穿透/击穿/雪崩防护**：
+
+| 问题 | 成因 | 防护方案 |
+|------|------|---------|
+| 缓存穿透 | 查询不存在的数据 | 布隆过滤器 + 空值缓存（TTL 30s） |
+| 缓存击穿 | 热点Key过期瞬间大量请求 | 互斥锁（只允许一个请求回源） + 永不过期（异步刷新） |
+| 缓存雪崩 | 大量Key同时过期 | TTL加随机偏移（±10%） + 多级缓存过期时间错开 |
+
 **阶段卡口**：穿透/击穿/雪崩防护全覆盖
 
 ### Step 5: 数据迁移方案
@@ -106,6 +135,73 @@ metadata:
 - cache_strategy.json — 缓存方案
 - migration_plan.json — 迁移方案（增量项目）
 - data-coverage.json — API对齐覆盖报告
+
+**er_model.json Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["entities", "relationships"],
+  "properties": {
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "table_name", "bounded_context", "fields"],
+        "properties": {
+          "name": { "type": "string" },
+          "table_name": { "type": "string" },
+          "bounded_context": { "type": "string" },
+          "fields": { "type": "array", "items": { "type": "object", "required": ["name", "type", "nullable"], "properties": { "name": { "type": "string" }, "type": { "type": "string" }, "nullable": { "type": "boolean" }, "default": {}, "constraints": { "type": "array", "items": { "type": "string" } } } } },
+          "indexes": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "fields": { "type": "array", "items": { "type": "string" } }, "unique": { "type": "boolean" }, "query_scenario": { "type": "string" } } } },
+          "ddl": { "type": "string" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "type": { "type": "string", "enum": ["1:1", "1:N", "N:M"] },
+          "through": { "type": "string" },
+          "foreign_key": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+```
+
+**cache_strategy.json Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["strategies"],
+  "properties": {
+    "strategies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["entity", "cache_type", "ttl", "invalidation"],
+        "properties": {
+          "entity": { "type": "string" },
+          "cache_type": { "type": "string", "enum": ["local", "distributed", "multi-level"] },
+          "ttl": { "type": "string" },
+          "invalidation": { "type": "string", "enum": ["write-through", "write-behind", "cache-aside"] },
+          "penetration_protection": { "type": "boolean" },
+          "breakdown_protection": { "type": "boolean" },
+          "avalanche_protection": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
+```
 
 ## 决策规则
 
@@ -147,3 +243,9 @@ metadata:
 | 架构方案变更 | 数据库拆分策略 | 重新评估 database-per-service 需求，调整数据模型边界 |
 | 服务数据归属变更 | 实体分组+表结构 | 重新划分实体归属，评估跨服务数据迁移需求 |
 | API契约变更 | 表结构和索引 | 标注受影响的字段，评估迁移需求 |
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| ER模型变更 | api-design-spec, data-architecture-impl, backend-architecture-impl | 标注受影响的实体和字段，更新er_model.json |
+| 缓存策略变更 | data-architecture-impl, backend-architecture-impl | 标注受影响的缓存配置，更新cache_strategy.json |
+| 数据字典变更 | api-design-spec | 标注受影响的字段命名和类型，更新data_dictionary.json |

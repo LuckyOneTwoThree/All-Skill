@@ -11,6 +11,10 @@ metadata:
     - "我们的核心指标该选什么"
     - "怎么衡量产品成功"
   interaction_mode: "human_ai_collaborate"
+execution_depth:
+  default: standard
+  quick_description: "直接输出推荐北极星指标和输入变量"
+  deep_description: "完整分析 + 指标相关性矩阵 + 操纵风险评估 + 指标演进路线"
 ---
 
 # 北极星指标选择
@@ -35,7 +39,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 候选指标生成
+### Step 1: 候选指标生成 [核心]
 
 基于输入数据生成3-5个北极星指标候选：
 
@@ -44,7 +48,7 @@ metadata:
 - 从业务现状数据中提取现有指标，评估是否适合作为北极星
 - 每个候选指标必须包含：指标名称、计算公式、数据来源、更新频率
 
-### Step 2: 四维度评分
+### Step 2: 四维度评分 [核心]
 
 对每个候选指标按4个维度进行1-5分评分：
 
@@ -57,20 +61,36 @@ metadata:
 
 **综合得分 = 0.3×价值关系 + 0.3×商业相关 + 0.2×可操作性 + 0.2×可衡量性**
 
-### Step 3: 推荐与备选
+### Step 3: 推荐与备选 [核心]
 
 - 综合得分≥4.0的指标作为推荐北极星指标
 - 综合得分3.0-4.0的指标作为备选指标
 - 综合得分<3.0的指标标注淘汰原因
 - 推荐指标需与BMC价值主张和OKR对齐验证
 
-### Step 4: 输入变量定义
+### Step 4: 输入变量定义 [核心]
 
 为推荐指标定义3个关键输入变量（驱动因素）：
 
 - 每个输入变量必须可量化、可追踪、可影响
 - 输入变量与北极星指标的因果关系需明确
 - 标注每个输入变量的数据来源和采集方式
+
+### Step 5: 驱动功能映射 [核心]
+
+为推荐指标定义2-4个可直接影响该指标的功能候选：
+
+- 每个功能需标注优先级(P0/P1/P2)和预期提升
+- 功能需基于用户研究和战略分析推导，不可凭空设定
+- 功能描述应为占位符，等待 design-prd 生成具体 feature_id
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 推荐北极星指标和输入变量 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 指标相关性矩阵 + 操纵风险评估 + 指标演进路线 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -89,6 +109,10 @@ metadata:
 | north_star_metric.recommended.measurement.data_source | string | 是 | 数据来源 |
 | north_star_metric.recommended.measurement.calculation | string | 是 | 计算公式 |
 | north_star_metric.recommended.measurement.frequency | string | 是 | 更新频率 |
+| north_star_metric.recommended.drives_features | array | 是 | 驱动的功能列表 |
+| north_star_metric.recommended.drives_features[].feature_priority | string | 是 | 对应该功能的优先级(P0/P1/P2) |
+| north_star_metric.recommended.drives_features[].feature_description | string | 是 | 功能描述（占位，等待design-prd生成具体ID） |
+| north_star_metric.recommended.drives_features[].expected_lift | string | 是 | 该功能对指标的预期提升 |
 | north_star_metric.alternatives | array | 是 | 至少2个备选指标 |
 | north_star_metric.alternatives[].fit_score | number | 是 | 备选指标适配评分0-1 |
 | north_star_metric.analysis_summary.recommendation_rationale | string | 是 | 推荐理由 |
@@ -106,19 +130,32 @@ north_star_metric:
       calculation: "COUNT(DISTINCT user_id WHERE last_active <= 7 days)"
       frequency: "每日更新"
       owner: "增长团队"
+    drives_features:
+      - feature_priority: "P0"
+        feature_description: "个性化推荐首页"
+        expected_lift: "15% WAU提升"
+      - feature_priority: "P0"
+        feature_description: "每日签到体系"
+        expected_lift: "8% WAU提升"
+      - feature_priority: "P1"
+        feature_description: "内容分享功能"
+        expected_lift: "5% WAU提升"
   alternatives:
     - metric_name: "Daily Active Users (DAU)"
       pros: "实时性强，响应快"
       cons: "波动大，稳定性差"
       fit_score: 0.75
+      drives_features: []
     - metric_name: "Monthly Active Users (MAU)"
       pros: "稳定性好，反映长期用户基础"
       cons: "响应慢，难以及时发现问题"
       fit_score: 0.70
+      drives_features: []
     - metric_name: "User Engagement Score"
       pros: "综合反映用户参与度"
       cons: "定义主观，难以标准化"
       fit_score: 0.65
+      drives_features: []
   analysis_summary:
     recommendation_rationale: "WAU平衡了实时性和稳定性，与用户价值和产品商业成功都有强关联，且团队有明确的提升路径"
     implementation_notes: "需要建立用户ID体系和7天活跃计算逻辑，建议与DAU并行监测"
@@ -169,12 +206,24 @@ AI应该提供以下分析支撑：
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 至少3个指标候选已分析
 - [ ] 每个候选有5个维度评估
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 相关性分析已完成
 - [ ] 风险评估已提供
 - [ ] 最终选择有人类确认记录
 - [ ] 选择理由已记录
+- [ ] drives_features[]非空且至少包含2个P0/P1功能
+- [ ] 每个驱动功能有预期提升描述
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -182,13 +231,13 @@ AI应该提供以下分析支撑：
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| 用户价值数据（voice-analysis / persona） | 用户提供产品描述 → 推荐北极星候选 | 缺乏用户价值数据，指标与用户价值关联度可能偏弱 |
-| bmc.json | 用户提供产品描述 → 推荐北极星候选 | 缺乏BMC数据，指标与商业模型关联度可能偏弱 |
-| 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选 | 整体置信度降低，指标缺乏价值-商业双锚定 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 | 整体置信度显著降低，推荐仅为行业通用参考 |
-| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，无法评估指标现状 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| 用户价值数据（voice-analysis / persona） | 用户提供产品描述 → 推荐北极星候选 | 缺乏用户价值数据，指标与用户价值关联度可能偏弱 | 要求用户提供用户核心价值描述或上传persona.json/voice-analysis.json文件 |
+| bmc.json | 用户提供产品描述 → 推荐北极星候选 | 缺乏BMC数据，指标与商业模型关联度可能偏弱 | 要求用户提供商业模式描述或上传bmc.json文件 |
+| 用户价值数据 + bmc.json | 用户提供产品描述 → 推荐北极星候选 | 整体置信度降低，指标缺乏价值-商业双锚定 | 要求用户提供产品核心价值和商业模式描述 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述推荐北极星候选 | 整体置信度显著降低，推荐仅为行业通用参考 | 要求用户提供产品描述、核心价值和商业模式信息 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，无法评估指标现状 | 要求用户提供当前核心指标数值（如DAU、留存率、收入等） |
 
 ## 数据获取说明
 
@@ -214,6 +263,7 @@ AI应该提供以下分析支撑：
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| 北极星指标变更 | planning-okr、planning-roadmap | 输出文件版本号+变更摘要 |
+| 北极星指标变更 | planning-okr、planning-roadmap、design-prd | 输出文件版本号+变更摘要 |
 | 输入变量定义变更 | planning-okr | 输出文件版本号+变更摘要 |
 | 候选指标评分变更 | planning-okr | 输出文件版本号+变更摘要 |
+| drives_features变更 | design-prd | 输出文件版本号+变更摘要 |

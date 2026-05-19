@@ -39,3 +39,10 @@ jobs:
           done
 
           exit $FAILED
+
+      - name: Validate source manifest and orchestrator references
+        run: |
+          node scripts/build-source-manifest.js
+          node scripts/validate-source-manifest.js
+          node scripts/validate-orchestrators.js
+          node scripts/validate-contracts.js

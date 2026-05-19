@@ -12,6 +12,10 @@ metadata:
     - "怎么找到aha moment"
     - "新用户多久能体验到核心价值"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出Aha时刻和激活路径"
+  deep_description: "完整策略 + Aha时刻量化验证 + 激活路径优化 + 激活漏斗深度分析"
 ---
 
 # Aha Moment自动工程化
@@ -42,7 +46,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 
 ## 执行步骤
 
-### Step 1: Aha Moment候选搜索
+### Step 1: Aha Moment候选搜索 [核心]
 
 #### 候选行为穷举
 扫描所有用户行为，寻找与留存高度相关的行为：
@@ -70,7 +74,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 - 到达率 ≥ 10%
 - 留存提升 ≥ 15%
 
-### Step 2: 到达率测量
+### Step 2: 到达率测量 [核心]
 
 分析每个候选Aha Moment的实际到达情况：
 
@@ -81,7 +85,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 | 路径分析 | 用户从注册到该行为的路径 |
 | 流失节点 | 用户在到达该行为前的流失点 |
 
-### Step 3: 最短路径识别
+### Step 3: 最短路径识别 [核心]
 
 分析如何让用户最快到达Aha Moment：
 
@@ -89,7 +93,7 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 2. **摩擦识别**: 找出路径中的摩擦点和流失点
 3. **优化建议**: 设计更短的到达路径
 
-### Step 4: Onboarding优化建议
+### Step 4: Onboarding优化建议 [深度]
 
 基于Aha Moment分析，生成Onboarding优化建议：
 
@@ -104,6 +108,14 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 #### 教育策略
 - 强化Aha Moment的价值展示
 - 在到达Aha Moment前提供价值预览
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | Aha时刻和激活路径 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整策略 + Aha时刻量化验证 + 激活路径优化 + 激活漏斗深度分析 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -192,13 +204,25 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 |----------|------|------|------|
 | candidates | array | 是 | Aha Moment候选列表，至少1个候选 |
 | candidates[].behavior | string | 是 | 行为描述，不可为空 |
+| candidates[].behavior_type | string | 否 | 行为类型，枚举：action/completion/social/discovery |
 | candidates[].correlation | number | 是 | 相关性系数，范围0-1 |
 | candidates[].reach_rate | number | 是 | 到达率，范围0-1 |
+| candidates[].time_to_aha | string | 否 | 到达Aha所需时间 |
 | candidates[].retention_lift | number | 是 | 留存提升，须>0 |
+| candidates[].recommendation | string | 否 | 推荐行动 |
 | primary_aha | object | 是 | 主Aha Moment，须含behavior/reach_rate/retention_lift/confidence |
+| primary_aha.behavior | string | 是 | Aha行为描述，不可为空 |
+| primary_aha.reach_rate | number | 是 | 到达率，范围0-1 |
+| primary_aha.retention_lift | number | 是 | 留存提升，须>0 |
 | primary_aha.confidence | number | 是 | 置信度，范围0-1 |
 | secondary_ahas | array | 否 | 次要Aha Moment列表 |
+| secondary_ahas[].behavior | string | 是 | Aha行为描述，不可为空 |
+| secondary_ahas[].reach_rate | number | 是 | 到达率，范围0-1 |
+| secondary_ahas[].retention_lift | number | 否 | 留存提升 |
 | onboarding_optimization | object | 否 | Onboarding优化建议，须含target_behaviors |
+| onboarding_optimization.target_behaviors | array | 是 | 目标行为列表 |
+| onboarding_optimization.target_behaviors[].behavior | string | 是 | 行为描述 |
+| onboarding_optimization.expected_activation_lift | string | 否 | 预期激活提升 |
 
 ## 决策规则
 
@@ -211,21 +235,31 @@ Aha Moment是用户首次体验到产品核心价值的关键时刻。当用户�
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] Aha候选通过相关性筛选（≥0.5）和显著性检验
 - [ ] 到达率分析包含时间分布和路径分析
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 最短路径识别包含摩擦点分析
 - [ ] Onboarding优化建议可直接执行
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 留存数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | Aha Moment基于推断而非数据验证 |
-| 行为数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 无法进行行为-留存相关性分析 |
-| 留存数据 + 行为数据均缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 输出Aha Moment候选列表，标注"待数据验证" |
-- 若用户未提供用户分群数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 留存数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | Aha Moment基于推断而非数据验证 | 要求用户提供不同行为用户的留存率差异数据 |
+| 行为数据缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 无法进行行为-留存相关性分析 | 要求用户提供用户行为事件日志（含事件名、时间戳、用户ID） |
+| 留存数据 + 行为数据均缺失 | 用户提供用户行为列表 → 推断Aha Moment候选 | 输出Aha Moment候选列表，标注"待数据验证" | 要求用户提供用户行为列表和留存率数据 |
+| 用户分群数据缺失 | 跳过分群对比分析，仅输出整体Aha Moment | 无法识别不同用户群体的差异化Aha Moment | 要求用户提供用户分群标签和各群体行为特征 |
 
 ### 数据获取说明
 

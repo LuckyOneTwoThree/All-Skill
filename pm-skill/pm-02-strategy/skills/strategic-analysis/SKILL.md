@@ -1,6 +1,6 @@
 ---
 name: strategic-analysis
-description: 战略分析，根据产品阶段和行业特征自动选择适用的战略框架（SWOT/Ansoff/波特五力）。关键词：战略分析、SWOT、Ansoff矩阵、波特五力、战略规划。
+description: 当需要进行产品战略分析、竞争战略判断或战略框架选择时使用。根据产品阶段和行业特征自动选择适用的战略框架（SWOT/Ansoff/波特五力）。关键词：战略分析、SWOT、Ansoff矩阵、波特五力、战略规划。
 metadata:
   module: "产品商业与战略"
   sub-module: "战略规划与路线图"
@@ -16,6 +16,10 @@ metadata:
     - "分析一下行业竞争格局"
     - "做一下战略分析"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出战略分析结论和建议"
+  deep_description: "完整分析 + 战略推演 + 竞争格局模拟 + 战略路线图"
 ---
 
 # Strategic Analysis — 战略分析
@@ -49,7 +53,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 框架选择
+### Step 1: 框架选择 [核心]
 
 根据输入的产品阶段和行业特征，自动选择1-2个最适用的战略框架。
 
@@ -72,7 +76,7 @@ metadata:
 4. 默认推荐：SWOT（通用性最强）
 5. 最多选择2个框架（避免分析过度），若3个均适用则优先SWOT + Ansoff
 
-### Step 2: 执行分析
+### Step 2: 执行分析 [核心]
 
 按选择的框架执行战略分析。
 
@@ -195,7 +199,7 @@ metadata:
 
 评估因素：竞争者数量和规模、行业增长率、产品差异化程度、退出壁垒高低、竞争策略多样性
 
-### Step 3: 战略结论整合
+### Step 3: 战略结论整合 [核心]
 
 将各框架的分析结论进行整合，生成统一的战略建议。
 
@@ -205,6 +209,14 @@ metadata:
 2. 波特五力行业吸引力 + Ansoff路径可行性：行业吸引力低时，增长路径风险需上调
 3. SWOT优势 + 波特五力竞争壁垒：优势是否构成竞争壁垒，壁垒是否可维持
 4. 生成整合后的战略建议列表，按优先级排序
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 战略分析结论和建议 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 战略推演 + 竞争格局模拟 + 战略路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -388,22 +400,30 @@ metadata:
 
 ## 质量检查
 
-| 检查项 | 通过条件 |
-|--------|----------|
-| 框架选择合理 | selected_frameworks非空且选择理由充分 |
-| SWOT每项分析有数据支撑 | evidence字段非空 |
-| SWOT 4种战略方向都已生成 | strategies包含SO/ST/WO/WT |
-| SWOT置信度评估已完成 | 每项有confidence值 |
-| Ansoff 4个象限都已分析 | 当前定位已确定 |
-| Ansoff 1-2条增长路径已推荐 | growth_paths非空 |
-| Ansoff 每条路径有风险等级标注 | risk_level非空 |
-| Ansoff 可行性评估已完成 | feasibility非空 |
-| 波特五力5种力量都已评估 | 5个force均有score |
-| 波特五力评分有数据依据 | key_factors非空 |
-| 波特五力行业吸引力总评已完成 | industry_attractiveness非空 |
-| 战略结论已整合 | integrated_recommendations非空 |
-| 跨框架交叉验证已完成 | cross_validation_notes非空 |
-| 人类决策项已列出 | human_decisions_needed非空 |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] 框架选择合理（selected_frameworks非空且选择理由充分）
+- [ ] SWOT每项分析有数据支撑（evidence字段非空）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] SWOT 4种战略方向都已生成（strategies包含SO/ST/WO/WT）
+- [ ] SWOT置信度评估已完成（每项有confidence值）
+- [ ] Ansoff 4个象限都已分析（当前定位已确定）
+- [ ] Ansoff 1-2条增长路径已推荐（growth_paths非空）
+- [ ] Ansoff 每条路径有风险等级标注（risk_level非空）
+- [ ] Ansoff 可行性评估已完成（feasibility非空）
+- [ ] 波特五力5种力量都已评估（5个force均有score）
+- [ ] 波特五力评分有数据依据（key_factors非空）
+- [ ] 波特五力行业吸引力总评已完成（industry_attractiveness非空）
+- [ ] 战略结论已整合（integrated_recommendations非空）
+- [ ] 跨框架交叉验证已完成（cross_validation_notes非空）
+- [ ] 人类决策项已列出（human_decisions_needed非空）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -411,15 +431,15 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|----------|
-| exploration_outputs（persona / opportunity-definition等） | 用户提供产品现状描述 → 基于描述生成分析 | 缺乏探索阶段数据，O/T可能缺乏用户端实证 |
-| competitor-analysis.json | 用户提供产品/行业现状描述 → 基于描述生成分析 | 缺乏竞品分析数据，T和部分O缺乏竞品参照，波特五力同业竞争评分可能不够精准 |
-| bmc.json | 用户提供产品现状描述 → 基于描述生成分析 | 缺乏BMC数据，S/W与商业模型关联度可能偏弱 |
-| 市场数据（tam-som / pest） | 用户提供行业信息 → 基于AI知识评估 | 缺乏市场数据，行业吸引力评估缺乏量化依据 |
-| 内部能力评估（用户提供） | 提示用户提供或跳过该输入相关步骤 | S/W缺乏内部数据支撑，可能偏主观 |
-| 当前产品/市场定义 | 用户提供产品现状 → 定位Ansoff象限 | 缺乏结构化产品市场定义，象限定位可能不够精准 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状描述直接生成分析 | 整体置信度显著降低，分析主要为AI推断 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|----------|------------|
+| exploration_outputs（persona / opportunity-definition等） | 用户提供产品现状描述 → 基于描述生成分析 | 缺乏探索阶段数据，O/T可能缺乏用户端实证 | 要求用户提供用户画像和机会定义描述或上传persona.json/opportunity-definition.json文件 |
+| competitor-analysis.json | 用户提供产品/行业现状描述 → 基于描述生成分析 | 缺乏竞品分析数据，T和部分O缺乏竞品参照，波特五力同业竞争评分可能不够精准 | 要求用户提供竞品名称、定位和差异化描述或上传competitor-analysis.json文件 |
+| bmc.json | 用户提供产品现状描述 → 基于描述生成分析 | 缺乏BMC数据，S/W与商业模型关联度可能偏弱 | 要求用户提供商业模式关键要素或上传bmc.json文件 |
+| 市场数据（tam-som / pest） | 用户提供行业信息 → 基于AI知识评估 | 缺乏市场数据，行业吸引力评估缺乏量化依据 | 要求用户提供市场规模和行业趋势数据或上传tam-som.json/pest.json文件 |
+| 内部能力评估（用户提供） | 提示用户提供或跳过该输入相关步骤 | S/W缺乏内部数据支撑，可能偏主观 | 要求用户提供团队能力、技术栈和资源约束等内部评估信息 |
+| 当前产品/市场定义 | 用户提供产品现状 → 定位Ansoff象限 | 缺乏结构化产品市场定义，象限定位可能不够精准 | 要求用户提供当前产品定位和目标市场描述 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品现状描述直接生成分析 | 整体置信度显著降低，分析主要为AI推断 | 要求用户提供产品现状、行业信息和内部能力评估 |
 
 ## 数据获取说明
 

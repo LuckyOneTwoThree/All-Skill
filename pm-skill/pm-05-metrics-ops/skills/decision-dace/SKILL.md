@@ -15,6 +15,10 @@ metadata:
     - "把分析结果变成能讲的故事"
     - "数据太干了，帮我转化成可执行的建议"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "仅输出决策建议和关键依据"
+  deep_description: "完整分析 + 决策树 + 敏感性分析 + 反事实推理"
 ---
 
 # DACE循环自动化（含洞察转化）
@@ -77,7 +81,7 @@ metadata:
 └────────────────────────────────────────────────────────┘
 ```
 
-### Step 1: Define（定义）🤖
+### Step 1: Define（定义）🤖 [核心]
 
 自动建立OKR追踪体系：
 
@@ -131,13 +135,13 @@ define:
       guardrail: ["user_satisfaction", "app_crash_rate"]
 ```
 
-### Step 2: Analyze（洞察生成）🤖
+### Step 2: Analyze（洞察生成）🤖 [核心]
 
 故事化洞察转化、决策建议、决策边界、置信度评估
 
 融合原 decision-insight 的洞察转化能力，将分析结果转化为故事化洞察。
 
-#### 2.1 数据收集与分析
+#### 2.1 数据收集与分析 [核心]
 
 自动收集和分析数据：
 
@@ -180,7 +184,7 @@ analyze:
           critical_drop: "step_1_to_2"
 ```
 
-#### 2.2 从数字到故事
+#### 2.2 从数字到故事 [核心]
 
 ```
 数据分析 → 业务叙事
@@ -215,7 +219,7 @@ narrative_template: |
   基于数据，我们建议[具体行动]。
 ```
 
-#### 2.3 决策建议生成
+#### 2.3 决策建议生成 [条件]
 
 生成多个可执行的决策选项：
 
@@ -278,7 +282,7 @@ action_options:
         - "Android效果不显著"
 ```
 
-#### 2.4 决策边界标注
+#### 2.4 决策边界标注 [深度]
 
 区分不同类型的决策：
 
@@ -312,7 +316,7 @@ decision_boundary:
     deadline: "3 business days"
 ```
 
-#### 2.5 洞察汇总
+#### 2.5 洞察汇总 [条件]
 
 ```yaml
 insights_gathered:
@@ -329,7 +333,7 @@ insights_gathered:
     source: "retention_analysis"
 ```
 
-### Step 3: Conclude（决策选项）🤖→👤
+### Step 3: Conclude（决策选项）🤖→👤 [核心]
 
 AI辅助人类决策
 
@@ -374,7 +378,7 @@ conclude:
       - "时间规划"
 ```
 
-### Step 4: Execute（执行追踪）🤖
+### Step 4: Execute（执行追踪）🤖 [条件]
 
 追踪执行效果：
 
@@ -563,6 +567,14 @@ funnel_insight:
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/decision-dace/`
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 决策建议 + 关键依据 | 核心结论 + 最小可行产物，仅输出Define结论和Conclude推荐选项 |
+| standard | 完整决策分析（当前默认） | 完整产物，包含DACE四阶段全部输出 |
+| deep | 完整分析 + 扩展分析 | 完整产物 + 决策树 + 敏感性分析 + 反事实推理 + 决策记录 + 风险评估 |
 
 **输出文件**：dace_status.json、okr_tracking.json、action_log.json、dace_cycle_report.md、decision_insight.json、insight_library.json
 
@@ -798,14 +810,25 @@ output/pm-metrics-ops/decision-dace/
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] Define阶段目标可量化、有基线
 - [ ] Analyze阶段覆盖所有数据源
 - [ ] Conclude阶段提供至少2个决策选项
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] Execute阶段设置监控和回滚机制
 - [ ] 洞察叙述使用业务语言而非数据术语
 - [ ] 每个洞察至少提供2个决策选项
-- [ ] 决策边界标注正确（auto/reference/human）
 - [ ] 推荐行动有明确的下一步和负责人
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 决策边界标注正确（auto/reference/human）
+- [ ] 决策树已生成（各选项分支及概率评估）
+- [ ] 敏感性分析已完成（关键变量对决策结论的影响程度）
+- [ ] 反事实推理已完成（若选择其他选项的预期结果推演）
 
 ## 降级策略
 

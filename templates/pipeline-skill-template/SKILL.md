@@ -26,11 +26,16 @@ metadata:
 
 🤖→👤 AI建议人类审批
 
+## 执行深度控制
+
+遵循 [Execution Depth Protocol](../execution-depth-protocol.md)。默认 `execution_depth=standard`；快速草稿使用 `quick`，完整审计或高风险决策使用 `deep`。
+
 ## 输入
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | {输入名} | {JSON/markdown/string} | {是/否} | {上游Skill输出路径 / 用户提供} | {说明} |
+| execution_depth | enum | 否 | 用户提供 / 编排器传入 | quick / standard / deep，默认 standard |
 
 ### Input JSON 示例结构
 

@@ -12,6 +12,10 @@ metadata:
     - "这期迭代做哪些需求"
     - "sprint计划怎么排"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出Sprint计划和Story分配"
+  deep_description: "完整计划 + 风险缓冲设计 + 依赖关系分析 + 容量优化建议"
 ---
 
 # Sprint Planning自动化
@@ -46,7 +50,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: Sprint Goal自动建议
+### Step 1: Sprint Goal自动建议 [核心]
 
 **动作**：
 - 分析Product Backlog中的高优先级Stories
@@ -66,7 +70,7 @@ metadata:
 }
 ```
 
-### Step 2: Story自动选取
+### Step 2: Story自动选取 [核心]
 
 **动作**：
 - 按优先级排序Backlog Stories
@@ -94,7 +98,7 @@ metadata:
 }
 ```
 
-### Step 3: 工作量自动估算
+### Step 3: 工作量自动估算 [核心]
 
 **动作**：
 - 为每个选入的Story估算Story Points
@@ -119,7 +123,7 @@ metadata:
 }
 ```
 
-### Step 4: 容量匹配验证
+### Step 4: 容量匹配验证 [核心]
 
 **动作**：
 - 计算团队可用容量（人天 × 团队人数）
@@ -148,7 +152,7 @@ metadata:
 }
 ```
 
-### Step 5: Sprint计划文档生成
+### Step 5: Sprint计划文档生成 [核心]
 
 **动作**：
 - 整合以上步骤的输出
@@ -185,6 +189,14 @@ metadata:
 ```
 
 ---
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | Sprint计划和Story分配 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整计划 + 风险缓冲设计 + 依赖关系分析 + 容量优化建议 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -278,12 +290,22 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] Sprint Goal明确且包含≥1个可量化验收标准
 - [ ] 选取的Stories总点数≤团队可用容量×1.1（预留10%缓冲）
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 100%的跨团队依赖已识别并有解决方案或时间表
 - [ ] 每个Story估算经≥2名团队成员确认
 - [ ] Sprint包含≥1个技术债务或改进项（如有积压）
 - [ ] 无P0级风险未纳入Sprint考量
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 

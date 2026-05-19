@@ -10,6 +10,10 @@ metadata:
     - "Help me create user personas"
     - "How to map user journeys"
     - "What do our users look like"
+execution_depth:
+  default: standard
+  quick_description: "Output user models and behavioral characteristics"
+  deep_description: "Full modeling + behavior sequence analysis + model validation plan + user evolution tracking"
 ---
 
 # User Modeling Auto-Generation
@@ -65,7 +69,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 
 ## Execution Steps
 
-### Step 1: User Clustering
+### Step 1: User Clustering [Core]
 
 - Integrate user segments from voice-analysis with behavioral segments from behavior-analysis
 - Use cross-validation to determine optimal cluster count (2-6 Personas)
@@ -73,7 +77,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Evaluate cohesion and separation of each cluster
 - Output: Clustering results, core characteristic description for each cluster
 
-### Step 2: Characteristic Profile Extraction
+### Step 2: Characteristic Profile Extraction [Core]
 
 - Extract key characteristics for each cluster:
   - **Behavioral characteristics**: Core usage scenarios, usage frequency, feature preferences, Aha Moments
@@ -84,7 +88,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Annotate data source (voice / behavior / survey / inferred)
 - Output: Characteristic profile for each cluster
 
-### Step 3: Persona Document Generation
+### Step 3: Persona Document Generation [Core]
 
 - Generate Persona document for each cluster, including:
   - **Name**: Memorable label (e.g., "Efficiency Pioneer", "Experience Explorer")
@@ -97,7 +101,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Annotate inferred content (characteristics without direct data support)
 - Output: persona.json
 
-### Step 4: Empathy Map Generation
+### Step 4: Empathy Map Generation [Core]
 
 - Generate Empathy Map for each Persona, including four quadrants:
   - **Says**: What the user said (quotes from voice-analysis)
@@ -107,7 +111,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Annotate data source and confidence for each quadrant entry
 - Output: empathy-map.json
 
-### Step 5: Journey Map Generation
+### Step 5: Journey Map Generation [Core]
 
 - Generate Journey Map for each Persona, including:
   - **Stages**: Awareness -> Consideration -> Usage -> Deep Usage -> Churn/Retention
@@ -120,7 +124,7 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Annotate confidence of emotion curve (behavioral data support vs. inference)
 - Output: journey-map.json
 
-### Step 6: Confidence Assessment
+### Step 6: Confidence Assessment [Core]
 
 - Assess overall confidence for each Persona
 - Assess confidence for each output field
@@ -129,6 +133,14 @@ AI->Human **AI suggests, human approves** -- AI generates model drafts; only aft
 - Output: Confidence assessment report
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | user models and behavioral characteristics | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full modeling + behavior sequence analysis + model validation plan + user evolution tracking | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -384,15 +396,23 @@ Output file: `output/pm-discovery/user-research-user-modeling/journey-map.json`
 
 ## Quality Checks
 
-| Check Item | Standard | Non-compliance Handling |
-|--------|------|-----------|
-| At least 1 Persona confidence >= 0.7 | Met | When no high-confidence Persona, mark "insufficient modeling"; recommend supplementing data or conducting interviews |
-| Each Persona has data support | Each field annotated with data source | When inferred field proportion > 50%, mark "insufficient data support" |
-| Inter-Persona differentiation | Characteristic overlap < 70% | When overlap too high, recommend merging or re-clustering |
-| Representative quotes | Each Persona >= 3 quotes | When insufficient, mark "insufficient quote support" |
-| Empathy Map four quadrants complete | Each quadrant >= 2 items | Missing quadrants marked "insufficient data" |
-| Journey Map stages complete | Core stages covered | Missing stages marked "data missing" |
-| All outputs annotated with confidence | 100% | Fields missing confidence filled with default value 0.3 and flagged |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] At least 1 Persona confidence >= 0.7 (Met)
+- [ ] Each Persona has data support (Each field annotated with data source)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Inter-Persona differentiation (Characteristic overlap < 70%)
+- [ ] Representative quotes (Each Persona >= 3 quotes)
+- [ ] Empathy Map four quadrants complete (Each quadrant >= 2 items)
+- [ ] Journey Map stages complete (Core stages covered)
+- [ ] All outputs annotated with confidence (100%)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -400,22 +420,14 @@ Output file: `output/pm-discovery/user-research-user-modeling/journey-map.json`
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| voice-analysis.json | Infer Personas based on user's verbal description of target user characteristics, annotate "lacking voice data support" | Persona voice characteristics and pain points based on inference, representative_quotes missing, core_pain_points confidence reduced |
-| behavior-analysis.json | Infer Personas based on user's verbal description of user behaviors, annotate "lacking behavioral data support" | Persona behavioral characteristics and Aha Moments based on inference, key_behaviors confidence reduced, Journey Map behavioral data missing |
-| voice-analysis.json + behavior-analysis.json | User provides target user descriptions -> infer Personas based on descriptions, overall confidence reduced | personas overall confidence reduced, data_source mostly inferred, low_confidence_fields increased |
-| All upstream files missing | Prompt user to execute prior stages first, or execute lightweight Persona inference based on user's verbal description | Output is purely inferred Personas, confidence_overall ceiling 0.3, all fields annotated inferred |
-| If user does not provide survey_data | Skip input-related steps; Persona demographic information based on inference, annotate "lacking survey data" | Demographic field data_source is inferred, confidence reduced |
-| If user does not provide modeling_config | Skip input-related steps; use default modeling configuration (max Personas: 4, confidence threshold: 0.5) | Default configuration used; Persona count and threshold may be suboptimal |
-
-## Data Acquisition Instructions
-
-This Skill requires user voice analysis and behavior analysis data. Please provide via one of the following methods:
-  1. Directly paste user description text (target user characteristics, behavioral patterns, etc.)
-  2. Upload voice-analysis.json / behavior-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| voice-analysis.json | Infer Personas based on user's verbal description of target user characteristics, annotate "lacking voice data support" | Persona voice characteristics and pain points based on inference, representative_quotes missing, core_pain_points confidence reduced | Request user to describe target user characteristics or upload voice-analysis.json for voice-guided persona creation |
+| behavior-analysis.json | Infer Personas based on user's verbal description of user behaviors, annotate "lacking behavioral data support" | Persona behavioral characteristics and Aha Moments based on inference, key_behaviors confidence reduced, Journey Map behavioral data missing | Request user to describe user behavioral patterns or upload behavior-analysis.json for behavior-driven persona modeling |
+| voice-analysis.json + behavior-analysis.json | User provides target user descriptions -> infer Personas based on descriptions, overall confidence reduced | personas overall confidence reduced, data_source mostly inferred, low_confidence_fields increased | Request user to describe target user characteristics and behaviors, or upload voice-analysis.json / behavior-analysis.json files |
+| All upstream files missing | Prompt user to execute prior stages first, or execute lightweight Persona inference based on user's verbal description | Output is purely inferred Personas, confidence_overall ceiling 0.3, all fields annotated inferred | Request user to describe target users, or execute user-research-voice-analysis and user-research-behavior-analysis first |
+| If user does not provide survey_data | Skip input-related steps; Persona demographic information based on inference, annotate "lacking survey data" | Demographic field data_source is inferred, confidence reduced | Request user to provide survey data (age, gender, occupation distribution) or upload survey_data.json |
+| If user does not provide modeling_config | Skip input-related steps; use default modeling configuration (max Personas: 4, confidence threshold: 0.5) | Default configuration used; Persona count and threshold may be suboptimal | Prompt user to specify modeling config (max Personas, confidence threshold) or accept defaults |
 
 ---
 

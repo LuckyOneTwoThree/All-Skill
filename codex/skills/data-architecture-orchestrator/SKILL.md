@@ -163,3 +163,56 @@ Downstream connections:
 | Design review not passed | Adjust design based on human feedback, re-review |
 | Code self-audit P0 issues | Auto-fix and re-audit, block output if unfixable |
 | Stage summary generation failed | Generate partial summary from completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through backend-orchestrator orchestration), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests "Design data models" or "Plan data architecture"
+- Triggered as a standalone skill by an external system
+- Upstream orchestrators have not been executed, but the user only needs data architecture design capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Acquire from user dialog | Last Resort: AI inference |
+|----------|------------------------|------------------------|----------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user to provide PRD document or describe requirements verbally | Infer requirements document from user description (⚠️ Low confidence, mark "PRD is AI-inferred") |
+| PRD structured data (prd.json) | Read output/pm-design/design-prd/prd.json | Ask user to provide structured requirements | Extract structured data from PRD document (⚠️ Low confidence) |
+| Architecture plan (architecture_decision.json) | Read output/backend-architecture/backend-architecture-spec/architecture_decision.json | Ask user to provide architecture plan | Default to monolithic architecture, all entities in the same database (⚠️ Low confidence, mark "Architecture constraints pending confirmation") |
+| Service data ownership (service_data_ownership.json) | Read output/backend-architecture/backend-architecture-spec/service_data_ownership.json | Ask user to provide service data ownership | Infer entity ownership from PRD (⚠️ Low confidence, mark "Service ownership pending confirmation") |
+| Tech stack decision (tech_stack_decision.json) | Read output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | Ask user to provide tech stack decision | Default to common tech stack (⚠️ Low confidence, mark "Tech stack pending confirmation") |
+| project_dir | — | Ask user to provide project directory path | Cannot infer, must be provided by user |
+| tech_stack | — | Ask user to provide tech stack | Read tech_stack_decision.json or default to common tech stack (⚠️ Low confidence) |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest the user execute upstream orchestrators in the following priority order:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|----------|---------------------|------|
+| PRD + PRD structured data | pm-design related orchestrators | PRD is the business source for data architecture design; missing it will result in data entity identification without basis |
+| Architecture plan + Service data ownership + Tech stack decision | backend-architecture-orchestrator | Architecture plan determines data sharding strategy, service data ownership determines entity partitioning, tech stack determines ORM and database selection |
+
+Backtracking suggestion output format:
+```
+⚠️ Critical input missing detected. It is recommended to execute upstream orchestrators first:
+1. [Priority] backend-architecture-orchestrator → Produces architecture plan, service data ownership, and tech stack decision
+2. [Recommended] pm-design related orchestrators → Produces PRD
+Continue with AI-inferred values? (Inferred values have confidence ≤ 0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, the following additional checks must pass before executing the Pipeline:
+
+| Gate Item | Check Content | Action if Not Passed |
+|--------|----------|------------|
+| PRD existence | prd.md or equivalent requirements document is accessible | Block execution, suggest user execute pm-design orchestrator or provide PRD |
+| Architecture plan existence | architecture_decision.json is accessible or inferable | Degrade execution, default to monolithic architecture, mark "Architecture plan missing, using default monolithic architecture" |
+| Service data ownership existence | service_data_ownership.json is accessible or inferable | Degrade execution, infer entity ownership from PRD, mark "Service ownership pending confirmation" |
+| Tech stack decision existence | tech_stack_decision.json is accessible or inferable | Degrade execution, default to common tech stack, mark "Tech stack pending confirmation" |
+| project_dir validity | User provides a valid project directory path | Block execution, user must provide a valid project_dir |
+| Input confidence assessment | All required input acquisition methods are determined, overall confidence ≥ 0.5 | If confidence < 0.5, force human confirmation on whether to continue execution |
+
+Gate execution order: PRD existence → project_dir validity → Architecture plan existence → Service data ownership existence → Tech stack decision existence → Input confidence assessment

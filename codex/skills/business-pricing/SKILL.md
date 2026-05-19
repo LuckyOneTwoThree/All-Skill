@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "How should we price the product"
     - "How to create a pricing plan"
+execution_depth:
+  default: standard
+  quick_description: "Output pricing model and tier structure only"
+  deep_description: "Full pricing + price elasticity testing + competitive pricing simulation + pricing evolution roadmap"
 ---
 
 # Pricing Strategy Auto-Analysis
@@ -96,7 +100,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Competitor Pricing Matrix Analysis
+### Step 1: Competitor Pricing Matrix Analysis [Conditional]
 
 **Task**: Integrate and systematically analyze competitor pricing strategies.
 
@@ -145,7 +149,7 @@ AI->Human AI suggests, human approves
 - Price range classification clear
 - Market gaps accurately identified
 
-### Step 2: Willingness to Pay Inference
+### Step 2: Willingness to Pay Inference [Core]
 
 **Task**: Infer user willingness to pay based on multiple data sources.
 
@@ -201,7 +205,7 @@ AI->Human AI suggests, human approves
 - Confidence level justified
 - Segment differences analyzed
 
-### Step 3: Pricing Option Generation
+### Step 3: Pricing Option Generation [Conditional]
 
 **Task**: Generate 3 differentiated pricing options.
 
@@ -366,6 +370,14 @@ AI->Human AI suggests, human approves
 }
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | pricing model and tier structure only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full pricing + price elasticity testing + competitive pricing simulation + pricing evolution roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-strategy/business-pricing/`
@@ -377,10 +389,41 @@ AI->Human AI suggests, human approves
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
 | pricing_analysis.competitor_pricing_matrix | object | Yes | Contains premium/mid/budget three-segment analysis |
+| pricing_analysis.competitor_pricing_matrix.premium_segment | object | No | Premium market segment |
+| pricing_analysis.competitor_pricing_matrix.premium_segment.price_range | string | Conditional | Premium price range |
+| pricing_analysis.competitor_pricing_matrix.premium_segment.players | string[] | Conditional | Premium market competitor list |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment | object | No | Mid-market segment |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment.price_range | string | Conditional | Mid-market price range |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment.players | string[] | Conditional | Mid-market competitor list |
+| pricing_analysis.competitor_pricing_matrix.budget_segment | object | No | Budget market segment |
+| pricing_analysis.competitor_pricing_matrix.budget_segment.price_range | string | Conditional | Budget price range |
+| pricing_analysis.competitor_pricing_matrix.budget_segment.players | string[] | Conditional | Budget market competitor list |
 | pricing_analysis.willingness_to_pay | object | Yes | Contains overall range, confidence, segment analysis |
+| pricing_analysis.willingness_to_pay.overall_range | object | Yes | Overall willingness-to-pay range |
+| pricing_analysis.willingness_to_pay.overall_range.floor | string | Yes | Price floor |
+| pricing_analysis.willingness_to_pay.overall_range.ceiling | string | Yes | Price ceiling |
+| pricing_analysis.willingness_to_pay.confidence | number | Yes | Inference confidence, 0-1 |
+| pricing_analysis.willingness_to_pay.segment_analysis | array | No | Willingness-to-pay analysis by segment |
+| pricing_analysis.willingness_to_pay.segment_analysis[].segment_name | string | Yes | Segment name |
+| pricing_analysis.willingness_to_pay.segment_analysis[].price_sensitivity | string | Yes | Price sensitivity, enum: high/medium/low |
 | pricing_analysis.pricing_options.option_a | object | Yes | Penetration pricing option, includes tiers and unit_economics |
+| pricing_analysis.pricing_options.option_a.tiers | array | Yes | Tier list, at least 1 |
+| pricing_analysis.pricing_options.option_a.tiers[].tier_name | string | Yes | Tier name, must not be empty |
+| pricing_analysis.pricing_options.option_a.tiers[].price | number | Yes | Price |
+| pricing_analysis.pricing_options.option_a.tiers[].features | string[] | Yes | Included features list |
+| pricing_analysis.pricing_options.option_a.unit_economics | object | Yes | Unit economics metrics |
 | pricing_analysis.pricing_options.option_b | object | Yes | Value pricing option, includes tiers and unit_economics |
+| pricing_analysis.pricing_options.option_b.tiers | array | Yes | Tier list, at least 1 |
+| pricing_analysis.pricing_options.option_b.tiers[].tier_name | string | Yes | Tier name, must not be empty |
+| pricing_analysis.pricing_options.option_b.tiers[].price | number | Yes | Price |
+| pricing_analysis.pricing_options.option_b.tiers[].features | string[] | Yes | Included features list |
+| pricing_analysis.pricing_options.option_b.unit_economics | object | Yes | Unit economics metrics |
 | pricing_analysis.pricing_options.option_c | object | Yes | Hybrid pricing option, includes tiers and unit_economics |
+| pricing_analysis.pricing_options.option_c.tiers | array | Yes | Tier list, at least 1 |
+| pricing_analysis.pricing_options.option_c.tiers[].tier_name | string | Yes | Tier name, must not be empty |
+| pricing_analysis.pricing_options.option_c.tiers[].price | number | Yes | Price |
+| pricing_analysis.pricing_options.option_c.tiers[].features | string[] | Yes | Included features list |
+| pricing_analysis.pricing_options.option_c.unit_economics | object | Yes | Unit economics metrics |
 | pricing_options.*.unit_economics.ltv_cac_ratio | number | Yes | LTV/CAC ratio, healthy standard >=3 |
 | pricing_options.*.unit_economics.payback_period_months | number | Yes | Payback period (months) |
 | pricing_analysis.recommendation.recommended_option | string | Yes | A/B/C |
@@ -436,27 +479,27 @@ AI->Human AI suggests, human approves
 
 ## Quality Checks
 
-### Self-Check List
+### P0 Checks (must pass for quick/standard/deep)
 
 - [ ] All 3 pricing options generated
 - [ ] Each option has differentiated positioning
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Unit economics calculations correct:
-  - ARPU calculation logic correct
-  - CAC allocation reasonable
-  - LTV calculation includes retention assumptions
-  - Break-even analysis complete
 - [ ] Risks fully labeled
 - [ ] Competitor matrix covers major competitors
 - [ ] Willingness to pay inference methods transparent
-
-### Calculation Validation
-
-**Unit Economics Validation Checklist**:
 - [ ] ARPU = Σ(Tier price x Tier user proportion)
 - [ ] CAC includes acquisition costs (advertising, BD, etc.) allocation
 - [ ] LTV = ARPU x Average lifetime (months)
 - [ ] Payback period = CAC / (ARPU - Marginal cost)
 - [ ] LTV/CAC >= 3 (healthy standard)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -464,21 +507,13 @@ AI->Human AI suggests, human approves
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| bmc.json | User provides product description -> Recommend pricing based on industry benchmarks | Value propositions and cost structure lack BMC data support, pricing may deviate from actual |
-| Competitor pricing data (competitor-analysis.json) | User provides product description -> Recommend pricing based on industry benchmarks | Competitor matrix is empty, market gaps cannot be identified, pricing lacks competitor anchoring |
-| bmc.json + Competitor pricing data | User provides product description and target market -> Recommend pricing based on industry benchmarks | Overall confidence reduced, options lack data anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or recommend pricing based on user-provided product description and industry benchmarks | Overall confidence significantly reduced, options are industry benchmark references only |
-| Willingness to pay inference data (user provided) | If user has not provided willingness to pay inference data, prompt user to provide or skip related steps | Willingness to pay analysis missing, pricing options lack user-side validation |
-
-## Data Acquisition Instructions
-
-This Skill requires BMC and competitor pricing data, please provide via one of the following methods:
-  1. Directly describe product features, target users, and pricing expectations
-  2. Upload bmc.json / competitor-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| bmc.json | User provides product description -> Recommend pricing based on industry benchmarks | Value propositions and cost structure lack BMC data support, pricing may deviate from actual | Request user to describe product features, target users, and cost structure, or upload bmc.json |
+| Competitor pricing data (competitor-analysis.json) | User provides product description -> Recommend pricing based on industry benchmarks | Competitor matrix is empty, market gaps cannot be identified, pricing lacks competitor anchoring | Request user to provide competitor names and pricing tiers, or upload competitor-analysis.json |
+| bmc.json + Competitor pricing data | User provides product description and target market -> Recommend pricing based on industry benchmarks | Overall confidence reduced, options lack data anchoring | Request user to provide product description and competitor pricing info, or upload bmc.json / competitor-analysis.json |
+| All upstream files missing | Prompt user to execute prior phases first, or recommend pricing based on user-provided product description and industry benchmarks | Overall confidence significantly reduced, options are industry benchmark references only | Request user to describe product, target market, and pricing expectations, or execute business-model-canvas and market-competitor-analysis first |
+| Willingness to pay inference data (user provided) | If user has not provided willingness to pay inference data, prompt user to provide or skip related steps | Willingness to pay analysis missing, pricing options lack user-side validation | Prompt user to provide willingness-to-pay data (e.g., survey results, price sensitivity meter) or skip |
 
 ---
 

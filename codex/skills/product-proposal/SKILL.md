@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Help me write a product initiation document"
     - "How to write a product proposal"
+execution_depth:
+  default: standard
+  quick_description: "Output product proposal and core arguments"
+  deep_description: "Full proposal + business feasibility analysis + technical feasibility assessment + risk and mitigation plan"
 ---
 
 # Product Proposal Auto-Generation
@@ -39,7 +43,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Executive Summary Generation
+### Step 1: Executive Summary Generation [Core]
 
 Generate a one-page executive summary including:
 
@@ -56,7 +60,7 @@ Generate a one-page executive summary including:
 | Key risks | Top 3 risks |
 | Decision requests | Items requiring approval |
 
-### Step 2: Product Definition
+### Step 2: Product Definition [Core]
 
 Integrate user research and positioning data:
 
@@ -71,7 +75,7 @@ Integrate user research and positioning data:
 - V2.0 feature planning
 - Feature priorities
 
-### Step 3: Business Analysis
+### Step 3: Business Analysis [Core]
 
 Integrate BMC, pricing, and SWOT data:
 
@@ -91,7 +95,7 @@ Integrate BMC, pricing, and SWOT data:
 - Differentiation advantages
 - Competitive moat
 
-### Step 4: Execution Plan
+### Step 4: Execution Plan [Core]
 
 Integrate OKR and roadmap data:
 
@@ -105,7 +109,7 @@ Integrate OKR and roadmap data:
 - Resource requirements
 - Dependencies
 
-### Step 5: Risk Assessment
+### Step 5: Risk Assessment [Core]
 
 Identify and assess key risks:
 
@@ -116,7 +120,7 @@ Identify and assess key risks:
 | Resource risk | Talent shortage, budget shortfall, time pressure |
 | Execution risk | Team capability, collaboration efficiency, external dependencies |
 
-### Step 6: Document Assembly
+### Step 6: Document Assembly [Core]
 
 **Proposal Structure**:
 
@@ -154,6 +158,14 @@ Identify and assess key risks:
 - Assumptions list
 - Detailed analysis
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | product proposal and core arguments | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full proposal + business feasibility analysis + technical feasibility assessment + risk and mitigation plan | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -335,16 +347,23 @@ Identify and assess key risks:
 
 ## Quality Checks
 
-P0 (must pass, blocks output if not passed):
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] executive_summary field <=500 characters
 - [ ] product_definition contains >=1 target_user and feature_scope.mvp_features >=3
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] business_analysis.market_analysis includes TAM/SAM/SOM and business_model.revenue_model not empty
 - [ ] execution_plan.okr contains >=2 key_results and roadmap.now not empty
 - [ ] risk_assessment.risks covers >=3 categories
-
-P1 (recommended to pass, labeled "pending fix" if not passed):
 - [ ] decision_requests contains >=1 specific approval item
 - [ ] proposal_metadata.data_sources contains >=1 source
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -352,15 +371,15 @@ P1 (recommended to pass, labeled "pending fix" if not passed):
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| User research data | Derive user personas from product description | User definition lacks empirical data, personas may be subjective |
-| bmc.json | Derive business model from product description | Business model lacks 9-block canvas structured support |
-| strategic-analysis.json | Derive strategic posture from product description | Strategic analysis lacks structured basis |
-| okr.json | Derive objectives from product description | OKRs lack strategic alignment, quantifiability may be insufficient |
-| roadmap.json | Derive roadmap from product description | Roadmap lacks RICE ranking basis |
-| Pricing/positioning/stakeholder data | Derive from product description | Corresponding sections lack data anchoring |
-| All upstream files missing | Generate complete proposal based on user-provided product description | Overall confidence significantly reduced, proposal lacks data support |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| User research data | Derive user personas from product description | User definition lacks empirical data, personas may be subjective | Request user to describe target users and their needs, or upload persona.json / voice-analysis.json |
+| bmc.json | Derive business model from product description | Business model lacks 9-block canvas structured support | Request user to describe business model and revenue streams, or upload bmc.json |
+| strategic-analysis.json | Derive strategic posture from product description | Strategic analysis lacks structured basis | Request user to describe strategic direction and competitive position, or upload strategic-analysis.json |
+| okr.json | Derive objectives from product description | OKRs lack strategic alignment, quantifiability may be insufficient | Request user to provide business objectives and key results, or upload okr.json |
+| roadmap.json | Derive roadmap from product description | Roadmap lacks RICE ranking basis | Request user to describe timeline and milestones, or upload roadmap.json |
+| Pricing/positioning/stakeholder data | Derive from product description | Corresponding sections lack data anchoring | Request user to describe pricing, positioning, and key stakeholders, or upload business-pricing.json / positioning-strategy.json |
+| All upstream files missing | Generate complete proposal based on user-provided product description | Overall confidence significantly reduced, proposal lacks data support | Request user to provide comprehensive product description, or execute pm-01-discovery and pm-02-strategy skills first |
 
 ---
 

@@ -10,6 +10,10 @@ metadata:
     - "How to validate this assumption"
     - "Help me design an A/B test"
     - "How to create an experiment plan"
+execution_depth:
+  default: standard
+  quick_description: "Output experiment plan and validation metrics"
+  deep_description: "Full plan + experiment design optimization + statistical power analysis + result interpretation framework"
 ---
 
 # Validation Experiment Auto-Design
@@ -58,7 +62,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Validation Method Selection
+### Step 1: Validation Method Selection [Conditional]
 
 **Decision Tree**:
 
@@ -94,7 +98,7 @@ Wizard MVP / Prototype test / Landing page test
 | Need to quickly validate value assumption | Landing page test |
 | Need to validate technical feasibility | Wizard MVP |
 
-### Step 2: Experiment Plan Design
+### Step 2: Experiment Plan Design [Core]
 
 #### A/B Test Design Plan
 
@@ -154,7 +158,7 @@ Wizard MVP / Prototype test / Landing page test
 }
 ```
 
-### Step 3: Outcome Prediction
+### Step 3: Outcome Prediction [Core]
 
 **Three Scenarios**:
 
@@ -176,6 +180,14 @@ Wizard MVP / Prototype test / Landing page test
   }
 }
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | experiment plan and validation metrics | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full plan + experiment design optimization + statistical power analysis + result interpretation framework | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -222,24 +234,32 @@ Wizard MVP / Prototype test / Landing page test
 
 ## Quality Checks
 
-| Check Item | Pass Condition | Result |
-|-----------|---------------|--------|
-| Method selection justified | Decision tree result explained | pass/fail |
-| Experiment design complete | Contains all necessary parameters | pass/fail |
-| Success criteria clear | Has quantifiable metrics | pass/fail |
-| Scenario prediction complete | All three scenarios present | pass/fail |
-| Stopping criteria clear | Includes significance/power requirements | pass/fail |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Method selection justified (Decision tree result explained)
+- [ ] Experiment design complete (Contains all necessary parameters)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Success criteria clear (Has quantifiable metrics)
+- [ ] Scenario prediction complete (All three scenarios present)
+- [ ] Stopping criteria clear (Includes significance/power requirements)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| Assumption map missing | User describes key assumptions, design experiment | Lacks structured assumption data, experiment may not align with assumptions |
-| Solution design data missing | User describes solution, design experiment | Lacks solution data, experiment design may be less precise |
-| Both assumption map and solution design missing | User describes assumptions and solution, design experiment | Overall confidence reduced, experiment design may be less complete |
-| All upstream files missing | Prompt user to execute prior stages first, or design experiment based on user description | Output is only basic experiment framework |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| Assumption map missing | User describes key assumptions, design experiment | Lacks structured assumption data, experiment may not align with assumptions | Request user to describe key assumptions to validate, or upload assumption-map.json |
+| Solution design data missing | User describes solution, design experiment | Lacks solution data, experiment design may be less precise | Request user to describe solution features and expected outcomes, or upload solution-design.json |
+| Both assumption map and solution design missing | User describes assumptions and solution, design experiment | Overall confidence reduced, experiment design may be less complete | Request user to describe assumptions and solution, or execute validation-assumption-map and ideation-workshop first |
+| All upstream files missing | Prompt user to execute prior stages first, or design experiment based on user description | Output is only basic experiment framework | Request user to describe hypothesis and expected effect, or execute validation-assumption-map first |
 
 ## Output Validation Rules
 

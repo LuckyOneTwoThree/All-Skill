@@ -10,6 +10,10 @@ metadata:
     - "New user D7 retention is only 15%, help me analyze"
     - "When do users start churning"
     - "Help me find the Aha Moment"
+execution_depth:
+  default: standard
+  quick_description: "Output retention analysis and churn causes"
+  deep_description: "Full analysis + retention curve fitting + churn prediction model + retention optimization roadmap"
 ---
 
 # Retention Auto-Analysis
@@ -35,7 +39,7 @@ AI AI auto-execution (data analysis type)
 
 ## Execution Steps
 
-### Step 1: Full Retention Curve
+### Step 1: Full Retention Curve [Core]
 
 ```
 Calculate standard retention curve
@@ -45,7 +49,7 @@ Calculate standard retention curve
 └── Identify curve shape
 ```
 
-### Step 2: Retention Curve Shape Assessment
+### Step 2: Retention Curve Shape Assessment [Core]
 
 | Curve Shape | Characteristics | Implication |
 |------------|----------------|-------------|
@@ -54,7 +58,7 @@ Calculate standard retention curve
 | Steep decline | Rapid continuous decline | Product stickiness insufficient |
 | Smooth | Slow steady decline | Healthy stable user base |
 
-### Step 3: Cohort Auto-Analysis
+### Step 3: Cohort Auto-Analysis [Core]
 
 Analyze retention changes by Cohort (same-period group):
 
@@ -66,7 +70,7 @@ Cohort partitioning
 └── Value Cohort: By first-day value
 ```
 
-### Step 4: Aha Moment Auto-Search
+### Step 4: Aha Moment Auto-Search [Core]
 
 ```
 Identify "aha moment"
@@ -76,7 +80,7 @@ Identify "aha moment"
 └── Verify hypotheses
 ```
 
-### Step 5: Churn Prediction Model
+### Step 5: Churn Prediction Model [Core]
 
 ```
 Churn risk assessment
@@ -85,6 +89,14 @@ Churn risk assessment
 ├── Build churn prediction model
 └── Output high-risk user list
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | retention analysis and churn causes | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + retention curve fitting + churn prediction model + retention optimization roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -371,27 +383,30 @@ When retention analysis itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Retention calculation based on full users not sampling
 - [ ] Cohort analysis covers time, channel, behavior dimensions
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Aha Moment candidates pass significance testing
 - [ ] Churn prediction model accuracy >70%
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| User behavior data missing | User provides retention data -> direct analysis | Cannot perform Aha Moment search and Cohort drilldown |
-| Segment definition missing | Analyze full users without segment differentiation | Cannot perform segment comparison analysis |
-| User behavior data + Segment definition both missing | User provides retention data -> direct analysis | Output basic retention analysis, Cohort and Aha Moment annotated as "to be supplemented" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Retention data**: Retention rate data for each period (D1/D7/D30, etc.)
-- **Cohort data** (optional): Retention rate matrix grouped by time
-- **Key behavior list** (optional): User behaviors potentially related to retention
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| User behavior data missing | User provides retention data -> direct analysis | Cannot perform Aha Moment search and Cohort drilldown | Request user to provide retention rate data (D1/D7/D30) and key behavior list, or upload behavior_data.json |
+| Segment definition missing | Analyze full users without segment differentiation | Cannot perform segment comparison analysis | Request user to provide user segment definitions (e.g., new/active/dormant), or upload segment_definition.json |
+| User behavior data + Segment definition both missing | User provides retention data -> direct analysis | Output basic retention analysis, Cohort and Aha Moment annotated as "to be supplemented" | Request user to provide retention rate data per period and cohort data, or upload retention_data.json |
 
 ## Key Metrics
 

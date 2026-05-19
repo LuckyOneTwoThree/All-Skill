@@ -123,7 +123,7 @@ stages:
 
 This stage executes two sub-Skills sequentially: first invoke planning-north-star to generate north star metric candidates, after human selection, then invoke planning-okr to generate OKR candidates based on the north star metric, for human confirmation.
 
-#### Step 1: planning-north-star
+#### Step 1: planning-north-star [Core]
 
 - **Skill**: planning-north-star
 - **Input**:
@@ -135,7 +135,7 @@ This stage executes two sub-Skills sequentially: first invoke planning-north-sta
 - **Execution Mode**: Human->AI Human executes, AI assists
 - **Gate**: North star metric human-selected -> Failed: Must be human decision; AI only provides analytical support
 
-#### Step 2: planning-okr
+#### Step 2: planning-okr [Core]
 
 - **Skill**: planning-okr
 - **Input**:

@@ -10,6 +10,10 @@ metadata:
     - "Help me list a pre-release checklist"
     - "Generate a release Checklist"
     - "Organize what needs to be checked before going live"
+execution_depth:
+  default: standard
+  quick_description: "Output release checklist and critical checks only"
+  deep_description: "Full checklist + compliance verification + rollback decision tree + release process optimization"
 ---
 
 # Release Checklist Auto-Generation & Tracking
@@ -51,7 +55,7 @@ Trigger Conditions:
 
 ## Execution Steps
 
-### Step 1: Checklist Template Generation
+### Step 1: Checklist Template Generation [Core]
 
 #### 1.1 Template Loading
 
@@ -75,21 +79,29 @@ Trigger Conditions:
 | Release History | Historical issues determine items needing extra attention |
 | Team Configuration | Responsible parties determine notification chain |
 
-### Step 2: Phase-by-Phase Checklist Generation
+### Step 2: Phase-by-Phase Checklist Generation [Core]
 
 Generate checklists for T-7, T-1, T-0, T+24h, and T+72h phases with appropriate check items, priorities, and auto-check configurations per phase.
 
-### Step 3: Item-by-Item Auto-Check
+### Step 3: Item-by-Item Auto-Check [Core]
 
 Execute automated checks for items with auto-check configurations, track results and evidence.
 
-### Step 4: Incomplete Item Alerts
+### Step 4: Incomplete Item Alerts [Core]
 
 Generate alerts for incomplete items based on severity and proximity to release time.
 
-### Step 5: Status Tracking
+### Step 5: Status Tracking [Conditional]
 
 Aggregate completion status across all phases, visualize progress, and identify risk indicators.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | release checklist and critical checks only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full checklist + compliance verification + rollback decision tree + release process optimization | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -160,21 +172,19 @@ Aggregate completion status across all phases, visualize progress, and identify 
 
 ## Quality Checks
 
-### Quality Gates
+### P0 Checks (must pass for quick/standard/deep)
 
-| Check Item | Standard | Failed Action |
-|------------|----------|---------------|
-| P0 item completion rate | 100% | Block release |
-| Alert handling rate | 100% | Delay release |
-| Manual confirmation completeness | All manual items confirmed | Alert |
+- [ ] P0 item completion rate (100%)
+- [ ] Alert handling rate (100%)
 
-### Quality Check List
+### P1 Checks (must pass for standard/deep)
 
-- [ ] All P0 check items completed
-- [ ] All alerts handled
-- [ ] Owners confirmed
-- [ ] Documentation updated
-- [ ] Notifications sent
+- [ ] Manual confirmation completeness (All manual items confirmed)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

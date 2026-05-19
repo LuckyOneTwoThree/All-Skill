@@ -1,6 +1,6 @@
 ---
 name: design-handoff-spec
-description: 当设计阶段完成需要交付给开发团队时使用。开发交接摘要自动生成，整合页面清单、路由结构、功能需求和待确认项，产出面向开发的交接文档。关键词：设计交接、设计交付、Handoff、开发对接、交付文档。
+description: 当需要将设计阶段产物交付给开发团队或生成开发交接文档时使用。开发交接摘要自动生成，整合页面清单、路由结构、功能需求和待确认项，产出面向开发的交接文档。关键词：设计交接、设计交付、Handoff、开发对接、交付文档。
 metadata:
   module: "产品构思与设计"
   sub-module: "设计交付"
@@ -12,6 +12,10 @@ metadata:
     - "帮我生成设计交付文档"
     - "开发对接文档怎么出"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出设计交付规格"
+  deep_description: "完整规格 + 交互状态机 + 响应式断点规范 + 无障碍设计规格"
 ---
 
 # 开发交接摘要自动生成
@@ -38,7 +42,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 页面清单与路由映射
+### Step 1: 页面清单与路由映射 [核心]
 
 基于 IA 和 PRD，生成完整的页面清单：
 
@@ -62,7 +66,7 @@ metadata:
 /profile             → 个人中心
 ```
 
-### Step 2: 功能需求摘要
+### Step 2: 功能需求摘要 [核心]
 
 基于 PRD，提取每个页面的功能需求：
 
@@ -73,7 +77,40 @@ metadata:
 | 购物车 | 管理购物车商品 | 删除需确认/数量调整即时生效 | 空购物车/价格变动 |
 | 结算页 | 填写收货信息、选择支付 | 表单验证需实时反馈 | 地址无效/支付失败 |
 
-### Step 3: UI 产出引用
+### Step 3: 数据绑定与API消费映射 [核心]
+
+基于 PRD 的 pages[].data_requirements 和 entities[]，生成每个页面的数据绑定和API消费清单：
+
+**页面数据绑定表**：
+
+| 页面 | 数据需求 | 关联实体 | 数据操作 | 所需字段 | 数据来源 |
+|------|---------|---------|---------|---------|---------|
+| 首页 | 推荐课程列表 | Course | read | id,title,cover,price,rating | API |
+| 商品详情 | 课程详情 | Course | read | id,title,description,price,syllabus | API |
+| 购物车 | 购物车列表 | CartItem | read,update,delete | id,course_id,quantity,price | API |
+| 结算页 | 创建订单 | Order | create | items[],total,address_id,payment_method | API |
+
+**API消费清单**（供 api-integration Skill 消费）：
+
+| API操作 | 方法 | 路径（建议） | 消费页面 | 关联实体 |
+|---------|------|------------|---------|---------|
+| 获取推荐课程 | GET | /courses/recommended | 首页 | Course |
+| 获取课程详情 | GET | /courses/:id | 商品详情 | Course |
+| 获取购物车 | GET | /cart | 购物车 | CartItem |
+| 更新购物车 | PUT | /cart/items/:id | 购物车 | CartItem |
+| 创建订单 | POST | /orders | 结算页 | Order |
+
+> 注：API路径为建议值，最终路径由 api-design-spec 确定。此清单的目的是让 UI 和 Backend 在设计阶段就对齐数据消费需求。
+
+**状态管理需求**：
+
+| 全局状态 | 类型 | 消费页面 | 数据来源 |
+|----------|------|---------|---------|
+| 用户信息 | 全局 | 所有页面 | API (GET /user/profile) |
+| 购物车数量 | 全局 | 导航栏+购物车页 | API (GET /cart/count) |
+| 认证Token | 全局 | 所有需认证页面 | 登录接口 |
+
+### Step 4: UI 产出引用 [核心]
 
 引用 UI Skill 的产出路径，不内联定义 UI 实现细节：
 
@@ -88,7 +125,7 @@ metadata:
 
 > 注：以上路径为 UI Skill 执行后的产出位置。若 UI Skill 尚未执行，标注"待 UI Skill 产出"。
 
-### Step 4: 待确认项与开放问题
+### Step 5: 待确认项与开放问题 [核心]
 
 **待确认项**：
 
@@ -103,7 +140,7 @@ metadata:
 |------|------|---------|------|
 | O1 | 是否需要离线模式 | 全局交互 | Open |
 
-### Step 5: 文档组装
+### Step 6: 文档组装 [核心]
 
 **交接文档结构**：
 
@@ -123,19 +160,32 @@ metadata:
 ### 3.2 交互意图
 ### 3.3 异常场景
 
-## 4. UI 产出引用
-### 4.1 设计令牌引用
-### 4.2 组件库引用
-### 4.3 视觉方向引用
-### 4.4 交互实现引用
-### 4.5 响应式适配引用
+## 4. 数据绑定与API消费
+### 4.1 页面数据绑定表
+### 4.2 API消费清单
+### 4.3 状态管理需求
 
-## 5. 待确认项
-## 6. 开放问题
+## 5. UI 产出引用
+### 5.1 设计令牌引用
+### 5.2 组件库引用
+### 5.3 视觉方向引用
+### 5.4 交互实现引用
+### 5.5 响应式适配引用
+
+## 6. 待确认项
+## 7. 开放问题
 
 ## 附录
 - 变更记录
 ```
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 设计交付规格 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整规格 + 交互状态机 + 响应式断点规范 + 无障碍设计规格 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -172,6 +222,33 @@ metadata:
       "requirements": [],
       "interaction_intents": [],
       "error_scenarios": []
+    }
+  ],
+  "data_bindings": [
+    {
+      "page": "页面名",
+      "data_name": "数据需求名",
+      "related_entity": "entity_id",
+      "data_operations": ["read | create | update | delete"],
+      "required_fields": [],
+      "data_source": "api | local | cache"
+    }
+  ],
+  "api_consumption": [
+    {
+      "operation": "操作描述",
+      "method": "GET | POST | PUT | DELETE",
+      "suggested_path": "建议路径",
+      "consuming_pages": [],
+      "related_entity": "entity_id"
+    }
+  ],
+  "state_management": [
+    {
+      "state_name": "状态名",
+      "scope": "global | page | component",
+      "consuming_pages": [],
+      "data_source": "数据来源描述"
     }
   ],
   "ui_output_references": {
@@ -220,20 +297,33 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 页面清单与路由完整
 - [ ] 每个页面有功能需求摘要
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 每个页面有交互意图和异常场景
+- [ ] 每个页面有数据绑定和API消费映射
+- [ ] API消费清单覆盖所有页面的数据需求
+- [ ] 全局状态管理需求已识别
 - [ ] UI 产出引用路径正确
 - [ ] 待确认项已列出
 
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
+
 ## 降级策略
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| IA缺失 | 页面清单基于PRD推导 | 路由结构可能不完整 |
-| PRD缺失 | 功能需求基于IA推导 | 功能需求可能不够完整 |
-| 交互规范缺失 | 交互意图基于PRD推导 | 交互意图可能不够细致 |
-| IA+PRD均缺失 | 基于用户描述推导 | 整体置信度降低 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| IA缺失 | 页面清单基于PRD推导 | 路由结构可能不完整 | 要求用户提供页面结构和导航描述或上传IA方案文件 |
+| PRD缺失 | 功能需求基于IA推导 | 功能需求可能不够完整 | 要求用户提供功能需求描述或上传prd.json文件 |
+| 交互规范缺失 | 交互意图基于PRD推导 | 交互意图可能不够细致 | 要求用户提供交互规范描述或上传交互设计文件 |
+| IA+PRD均缺失 | 基于用户描述推导 | 整体置信度降低 | 要求用户提供功能需求和页面结构描述 |
 
 ## 上游变更响应
 

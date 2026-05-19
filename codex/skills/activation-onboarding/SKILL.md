@@ -10,6 +10,10 @@ metadata:
     - "New user onboarding flow is too long"
     - "How to get users onboarded faster"
     - "How to improve new user guidance"
+execution_depth:
+  default: standard
+  quick_description: "Output onboarding flow and activation strategy"
+  deep_description: "Full strategy + activation funnel deep analysis + personalized onboarding design + A/B testing plan"
 ---
 
 # Onboarding Auto-Optimization
@@ -71,7 +75,7 @@ Welcome Page -> Value Demonstration -> Account Setup -> Feature Guidance -> Aha 
 
 ## Execution Steps
 
-### Step 1: Current Onboarding Effectiveness Analysis
+### Step 1: Current Onboarding Effectiveness Analysis [Core]
 
 #### Overall Effectiveness Assessment
 - Onboarding completion rate
@@ -89,7 +93,7 @@ Welcome Page -> Value Demonstration -> Account Setup -> Feature Guidance -> Aha 
 - Onboarding differences across user segments
 - Comparison with industry benchmarks
 
-### Step 2: Segmented Onboarding Strategy Generation
+### Step 2: Segmented Onboarding Strategy Generation [Core]
 
 Based on user segments, design differentiated Onboarding strategies:
 
@@ -108,7 +112,7 @@ Based on user segments, design differentiated Onboarding strategies:
 | Enterprise | Professional and comprehensive | Complete training, emphasize collaboration |
 | Individual | Lightweight and fast | Minimal steps, immediate experience |
 
-### Step 3: Personalized Guidance Content Generation
+### Step 3: Personalized Guidance Content Generation [Core]
 
 Based on segmentation strategy, generate personalized guidance content:
 
@@ -125,7 +129,7 @@ Based on segmentation strategy, generate personalized guidance content:
 - Value-oriented, emphasize benefits
 - Progress awareness, let users know how much is left
 
-### Step 4: A/B Test Design
+### Step 4: A/B Test Design [Core]
 
 Design A/B tests for Onboarding optimization:
 
@@ -138,6 +142,14 @@ Design A/B tests for Onboarding optimization:
 - **Primary metrics**: Onboarding completion rate, activation rate
 - **Secondary metrics**: Onboarding duration, user satisfaction
 - **Guardrail metrics**: Subsequent retention rate, paid conversion rate
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | onboarding flow and activation strategy | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full strategy + activation funnel deep analysis + personalized onboarding design + A/B testing plan | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -238,12 +250,26 @@ success_criteria:
 |----------|------|------|------|
 | current_effectiveness | object | Yes | Current effectiveness assessment, must contain overall_completion_rate/drop_off_points |
 | current_effectiveness.overall_completion_rate | number | Yes | Overall completion rate, range 0-1 |
+| current_effectiveness.stage_completion_rates | object | No | Stage completion rates |
 | current_effectiveness.drop_off_points | array | Yes | Drop-off points list, each item must contain stage/drop_off_rate |
+| current_effectiveness.drop_off_points[].stage | string | Yes | Drop-off stage name |
+| current_effectiveness.drop_off_points[].drop_off_rate | number | Yes | Drop-off rate, range 0-1 |
 | segment_strategies | array | Yes | Segmented strategy list, at least 1 segment strategy |
 | segment_strategies[].segment | string | Yes | Segment name |
+| segment_strategies[].size | number | No | Segment user ratio |
+| segment_strategies[].characteristics | string[] | No | Segment characteristics description |
 | segment_strategies[].strategy | string | Yes | Strategy description |
+| segment_strategies[].expected_improvement | string | No | Expected improvement |
 | personalized_content | array | No | Personalized content list, each item must contain segment/content_type/content/trigger |
+| personalized_content[].segment | string | Yes | Target segment |
+| personalized_content[].content_type | string | Yes | Content type, enum: step_by_step_guide/video/tooltip/checklist |
+| personalized_content[].content | string | Yes | Content description, cannot be empty |
+| personalized_content[].trigger | string | Yes | Trigger condition, cannot be empty |
 | ab_tests | array | No | A/B test list, each item must contain test_id/hypothesis |
+| ab_tests[].test_id | string | Yes | Test ID, cannot be empty |
+| ab_tests[].hypothesis | string | Yes | Test hypothesis, cannot be empty |
+| ab_tests[].target_segment | string | No | Target segment |
+| ab_tests[].expected_lift | string | No | Expected lift |
 
 ## Decision Rules
 
@@ -256,28 +282,31 @@ success_criteria:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Onboarding stage definition complete (Welcome -> Activation Complete)
 - [ ] Drop-off analysis covers all stages and user segments
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Personalized guidance matches user segments
 - [ ] A/B tests include guardrail metrics (subsequent retention, paid conversion)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| Onboarding data missing | User describes current Onboarding flow -> generate optimization recommendations | Optimization recommendations based on qualitative description rather than data-driven |
-| Aha Moment missing | Skip Aha Moment guidance optimization, use general best practices | Onboarding optimization lacks Aha Moment anchor |
-| Onboarding data + Aha Moment both missing | User describes current Onboarding flow -> generate optimization recommendations | Output based on best practice optimization recommendations, marked "pending data validation" |
-- If user has not provided user segment data, prompt user to provide or skip steps related to that input
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Current Onboarding flow**: Steps and content of new user guidance
-- **Completion rate data** (optional): Completion rate at each guidance step
-- **User feedback** (optional): New user feedback on the guidance flow
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| Onboarding data missing | User describes current Onboarding flow -> generate optimization recommendations | Optimization recommendations based on qualitative description rather than data-driven | Request user to describe current onboarding steps and completion rates, or upload onboarding_data.json |
+| Aha Moment missing | Skip Aha Moment guidance optimization, use general best practices | Onboarding optimization lacks Aha Moment anchor | Request user to describe Aha Moment or upload activation-aha.json |
+| Onboarding data + Aha Moment both missing | User describes current Onboarding flow -> generate optimization recommendations | Output based on best practice optimization recommendations, marked "pending data validation" | Request user to describe current onboarding flow and completion rates, or execute activation-aha first |
+| User segment data not provided | Prompt user to provide or skip steps related to that input | Segmented onboarding strategy missing | Prompt user to specify user segments for onboarding optimization |
 
 ## Upstream Change Response
 

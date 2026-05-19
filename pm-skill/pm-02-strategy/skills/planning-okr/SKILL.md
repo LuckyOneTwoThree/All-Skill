@@ -11,6 +11,10 @@ metadata:
     - "帮我制定季度OKR"
     - "目标怎么拆解"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出OKR和关键结果"
+  deep_description: "完整OKR + 对齐验证 + 进度追踪机制 + 季度复盘模板"
 ---
 
 # OKR自动生成
@@ -36,7 +40,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: Objective生成
+### Step 1: Objective生成 [核心]
 
 生成2-3个Objective候选
 
@@ -51,7 +55,7 @@ Objective模板：
 O: [动词] + [什么] + [达成什么]
 ```
 
-### Step 2: Key Results生成
+### Step 2: Key Results生成 [核心]
 
 每个Objective生成3-5个Key Results
 
@@ -78,7 +82,7 @@ KR: [时间] [数量/百分比] [做什么] 达到 [目标值]
 
 **北极星指标消费**：从输入的北极星指标中提取核心指标和下钻指标，确保至少1个KR的metric与北极星指标直接关联，标注 north_star_alignment: true。
 
-### Step 3: KR可行性评估
+### Step 3: KR可行性评估 [核心]
 
 对每个KR进行可行性评估：
 
@@ -110,7 +114,15 @@ achievability_score = w1 × resource_fit + w2 × historical_trend + w3 × depend
 achievability_score < 0.4 标注为高风险KR，needs_human_validation: true
 ```
 
-### Step 4: OKR对齐检查
+### Step 4: 驱动功能映射 [核心]
+
+为每个KR定义1-3个可直接贡献该KR达成的功能候选：
+
+- 每个功能需标注优先级和预期提升
+- 功能需基于北极星指标的 drives_features 进一步细化
+- 功能描述为占位符，等待 design-prd 生成具体 feature_id
+
+### Step 5: OKR对齐检查 [核心]
 
 检查OKR之间的对齐关系：
 - 与公司战略对齐
@@ -127,6 +139,14 @@ achievability_score < 0.4 标注为高风险KR，needs_human_validation: true
 | 北极星对齐 | 至少1个KR的指标与北极星指标直接关联 | north_star_alignment=true的KR≥1 | 标注北极星对齐缺失，建议增加关联KR |
 | 量化可验证 | 每个KR包含数字目标值和截止时间 | 所有KR包含metric+target+deadline | 标注不可验证KR，建议补充量化指标 |
 | 资源可行性 | achievability_score ≥ 0.4 | 所有KR的achievability ≥ 0.4 | 标注高风险KR，建议调整target或增加资源 |
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | OKR和关键结果 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整OKR + 对齐验证 + 进度追踪机制 + 季度复盘模板 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -148,6 +168,9 @@ achievability_score < 0.4 标注为高风险KR，needs_human_validation: true
 | okr_candidates[].key_results[].achievability | number | 是 | 达成概率0-1 |
 | okr_candidates[].key_results[].confidence_level | number | 是 | 置信度0-1 |
 | okr_candidates[].key_results[].deadline | string | 是 | KR截止日期（ISO8601格式） |
+| okr_candidates[].key_results[].drives_features | array | 是 | 该KR驱动的功能列表 |
+| okr_candidates[].key_results[].drives_features[].feature_priority | string | 是 | 功能优先级(P0/P1/P2) |
+| okr_candidates[].key_results[].drives_features[].feature_description | string | 是 | 功能描述(占位) |
 | okr_candidates[].alignment_check.strategic_alignment | boolean | 是 | 战略对齐检查 |
 | okr_candidates[].alignment_check.kr_coherence | boolean | 是 | KR一致性检查 |
 | okr_candidates[].alignment_check.timeline_feasibility | boolean | 是 | 时间线可行性 |
@@ -164,6 +187,14 @@ okr_candidates:
         dimension: "数量"
         confidence_level: 0.85
         deadline: "2026-06-30"
+        north_star_alignment: true
+        drives_features:
+          - feature_priority: "P0"
+            feature_description: "个性化推荐首页"
+            expected_lift: "15% DAU提升"
+          - feature_priority: "P0"
+            feature_description: "每日签到体系"
+            expected_lift: "8% DAU提升"
       - kr: "KR2: 用户次留率达到45%"
         baseline: 35%
         target: 45%
@@ -172,6 +203,13 @@ okr_candidates:
         dimension: "质量"
         confidence_level: 0.80
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P0"
+            feature_description: "新手引导优化"
+            expected_lift: "10%次留提升"
+          - feature_priority: "P1"
+            feature_description: "首次体验优化"
+            expected_lift: "5%次留提升"
       - kr: "KR3: 核心功能使用率达到60%"
         baseline: 40%
         target: 60%
@@ -180,6 +218,10 @@ okr_candidates:
         dimension: "质量"
         confidence_level: 0.75
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P1"
+            feature_description: "功能发现引导"
+            expected_lift: "8%使用率提升"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -195,6 +237,10 @@ okr_candidates:
         dimension: "成本"
         confidence_level: 0.75
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P1"
+            feature_description: "精准投放优化"
+            expected_lift: "12% CAC降低"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -212,12 +258,24 @@ okr_candidates:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 每个O包含1句话描述且≤30字
 - [ ] 每个KR包含≥1个数字目标值(metric+target)
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 每个KR包含deadline字段(ISO8601格式)
 - [ ] north_star_alignment=true的KR≥1，O-KR一致性检查100%通过
 - [ ] 所有KR的achievability_score已计算且≥0.4的KR占比≥60%
 - [ ] 战略一致性已验证
+- [ ] 每个KR的drives_features[]非空且至少1个P0功能
+- [ ] drives_features与北极星指标的功能有逻辑关联
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -225,14 +283,14 @@ okr_candidates:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| strategic-analysis.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏战略分析数据支撑，O与战略方向对齐度可能不足 |
-| north-star.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏北极星指标对齐，KR可能与核心指标脱节 |
-| bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏BMC数据，OKR与商业模型关联度可能偏弱 |
-| strategic-analysis.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 整体置信度降低，OKR缺乏战略和指标锚定 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 | 整体置信度显著降低，OKR仅为通用目标参考 |
-| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，KR目标值缺乏参照 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| strategic-analysis.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏战略分析数据支撑，O与战略方向对齐度可能不足 | 要求用户提供战略方向和关键挑战描述或上传strategic-analysis.json文件 |
+| north-star.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏北极星指标对齐，KR可能与核心指标脱节 | 要求用户提供北极星指标和当前指标值或上传north-star.json文件 |
+| bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 缺乏BMC数据，OKR与商业模型关联度可能偏弱 | 要求用户提供商业模式关键要素或上传bmc.json文件 |
+| strategic-analysis.json + north-star.json + bmc.json | 用户提供业务目标 → 直接生成OKR候选 | 整体置信度降低，OKR缺乏战略和指标锚定 | 要求用户提供战略方向、北极星指标和商业模式描述 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的业务目标直接生成OKR候选 | 整体置信度显著降低，OKR仅为通用目标参考 | 要求用户提供业务目标、关键挑战和核心指标 |
+| 业务现状数据（用户提供） | 若用户未提供业务现状数据，提示用户提供或跳过该输入相关步骤 | 缺乏基线数据，KR目标值缺乏参照 | 要求用户提供当前核心指标数值（如DAU、收入、转化率等） |
 
 ## 数据获取说明
 
@@ -258,8 +316,9 @@ okr_candidates:
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| Objective调整 | planning-roadmap、business-strategy-report | 输出文件版本号+变更摘要 |
-| KR目标值变更 | planning-roadmap | 输出文件版本号+变更摘要 |
+| Objective调整 | planning-roadmap、business-strategy-report、design-prd | 输出文件版本号+变更摘要 |
+| KR目标值变更 | planning-roadmap、design-prd | 输出文件版本号+变更摘要 |
+| drives_features变更 | design-prd | 输出文件版本号+变更摘要 |
 | 对齐检查结果变更 | planning-roadmap | 输出文件版本号+变更摘要 |
 
 ## 与prd.json数据契约对齐

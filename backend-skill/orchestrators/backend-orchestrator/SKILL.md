@@ -1,4 +1,4 @@
----
+﻿---
 name: backend-orchestrator
 description: 当需要完成后端从设计到代码实现的全流程时使用。后端全流程指挥官，协调"先全量设计、再统一实现"的两阶段流程：设计阶段按架构→数据→API顺序产出设计规范，经统一设计审查后，实现阶段按数据→API→架构顺序生成可运行代码。关键词：后端全流程、后端开发、后端设计+实现、后端整体方案。
 metadata:
@@ -16,6 +16,17 @@ metadata:
 
 # 后端全流程指挥官
 
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
+
 ## 核心原则
 
 架构约束先行，数据驱动契约，设计审查闭环，实现步步可编译。
@@ -28,13 +39,50 @@ metadata:
 ## 执行步骤
 
 1. **设计阶段串行**：架构→数据→API，后一步消费前一步产出
-2. **统一设计审查**：三份设计交叉验证，确保一致性后人类统一确认
+2. **统一设计审查**：编排器读取三份设计产出执行交叉验证，确保一致性后人类统一确认
 3. **实现阶段串行**：数据→API→架构，每步可编译
 4. **最终验证**：项目可启动，健康检查通过
 
 ## 编排协议
 
-编排协议遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 统一标准。
+> 协议源头：[orchestrator-protocol.md](../../../templates/orchestrator-protocol.md)（仅供维护者追踪，本文件已内联完整协议内容，可独立使用）
+
+你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
+
+### 调用规则
+
+1. **双模式调用**：平台支持 Skill 工具时，显式调用子Skill；平台不支持时，按子Skill的 `name`、输入契约、输出契约和阶段卡口执行兼容调度。
+2. **不代理扩写**：兼容调度时不得把子Skill内部方法论复制进编排器上下文，也不得改写子Skill逻辑；只传递必要输入、输出路径和验证条件。
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现细节。
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径和 artifact index 传递数据。
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段。
+6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
+7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
+
+### 上下文管理
+
+- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
+- 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
+- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+
+### 阶段卡口标准
+
+编排器的阶段卡口只校验以下3类条件，不深入子Skill内部字段：
+
+| 卡口类型 | 校验内容 | 示例 |
+|----------|----------|------|
+| 输出存在性 | 输出文件已生成且非空 | "api-design-spec输出文件已生成" |
+| 顶层结构完整性 | JSON顶层必填字段存在 | "prd.json包含features/pages/entities" |
+| 人类决策确认 | 关键决策点已获人类确认 | "设计审查人类确认通过" |
+
+### 通用异常处理
+
+| 异常类型 | 处理策略 |
+|----------|----------|
+| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
+| 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
+| 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
+| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板，整体置信度设为0.3，强制人类确认是否继续 |
 
 ## Pipeline 定义
 
@@ -47,68 +95,88 @@ post_pipeline:
     output: output/phase-reports/backend/backend-orchestrator.md
 
 stages:
-  - id: design-phase
-    name: "全量设计阶段"
-    stages:
-      - id: arch-design
-        name: "架构设计"
-        skills:
-          - backend-architecture-spec
-        gate:
-          condition: "架构模式+ADR+服务设计+服务数据归属+技术栈决策完整 + 人类审查通过"
-          fail_action: "缺失项必须补充"
-
-      - id: data-design
-        name: "数据架构设计"
-        depends_on: [arch-design]
-        skills:
-          - data-architecture-spec
-        gate:
-          condition: "ER图+DDL+数据字典+缓存策略+迁移方案完整 + 人类审查通过"
-          fail_action: "缺失项必须补充"
-
-      - id: api-design
-        name: "API设计"
-        depends_on: [data-design]
-        skills:
-          - api-design-spec
-        gate:
-          condition: "API契约+安全策略+认证鉴权方案完整 + 人类审查通过"
-          fail_action: "缺失项必须补充"
-
+  - id: arch-design
+    name: "架构设计"
+    skills:
+      - backend-architecture-spec
     gate:
-      condition: "三份设计产出完整 + 统一设计审查通过（API资源与ER模型对齐 + API分组与服务边界一致 + 技术栈统一） + 人类统一确认"
+      condition: "backend-architecture-spec输出文件已生成且非空 + 人类审查通过"
+      fail_action: "缺失项必须补充"
+
+  - id: data-design
+    name: "数据架构设计"
+    depends_on: [arch-design]
+    skills:
+      - data-architecture-spec
+    gate:
+      condition: "data-architecture-spec输出文件已生成且非空 + 人类审查通过"
+      fail_action: "缺失项必须补充"
+
+  - id: api-design
+    name: "API设计"
+    depends_on: [data-design]
+    skills:
+      - api-design-spec
+    gate:
+      condition: "api-design-spec输出文件已生成且非空 + 人类审查通过"
+      fail_action: "缺失项必须补充"
+
+  - id: design-review
+    name: "统一设计审查"
+    depends_on: [arch-design, data-design, api-design]
+    type: cross-validation
+    validation_rules:
+      - id: api-er-alignment
+        name: "API资源↔ER模型对齐"
+        check: "每个API资源有对应ER模型实体，API字段100%有Model字段支撑"
+        fail_action: "补充缺失的实体或字段"
+      - id: api-service-alignment
+        name: "API分组↔服务边界一致"
+        check: "API按限界上下文分组，与服务设计一致"
+        fail_action: "调整API分组或服务边界"
+      - id: tech-stack-consistency
+        name: "技术栈一致性"
+        check: "三个设计产出引用的技术栈统一"
+        fail_action: "统一技术栈决策"
+      - id: cache-api-alignment
+        name: "缓存策略↔API访问模式对齐"
+        check: "高频API有对应缓存策略"
+        fail_action: "补充缓存策略"
+      - id: data-api-ownership
+        name: "数据归属↔API归属一致"
+        check: "API资源归属的服务与数据归属的服务一致"
+        fail_action: "调整归属关系"
+    output: output/backend-design-review/review-report.json
+    gate:
+      condition: "交叉验证全部通过 + 人类统一确认"
       fail_action: "不一致项必须修正后重新审查"
 
-  - id: impl-phase
-    name: "统一实现阶段"
-    depends_on: [design-phase]
-    stages:
-      - id: data-impl
-        name: "数据层实现"
-        skills:
-          - data-architecture-impl
-        gate:
-          condition: "代码可编译 + Migration可执行 + 代码自审P0=0 + 人类确认通过"
-          fail_action: "缺失项补充后重新验证"
+  - id: data-impl
+    name: "数据层实现"
+    depends_on: [design-review]
+    skills:
+      - data-architecture-impl
+    gate:
+      condition: "data-architecture-impl输出文件已生成且非空 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 
-      - id: api-impl
-        name: "API层实现"
-        depends_on: [data-impl]
-        skills:
-          - api-design-impl
-        gate:
-          condition: "代码可编译 + PRD功能点100%覆盖 + 代码自审P0=0 + 人类确认通过"
-          fail_action: "缺失项补充后重新验证"
+  - id: api-impl
+    name: "API层实现"
+    depends_on: [data-impl]
+    skills:
+      - api-design-impl
+    gate:
+      condition: "api-design-impl输出文件已生成且非空 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 
-      - id: arch-impl
-        name: "架构层实现"
-        depends_on: [api-impl]
-        skills:
-          - backend-architecture-impl
-        gate:
-          condition: "项目可启动 + /health返回200 + 架构决策100%在代码中体现 + 代码自审P0=0 + 人类确认通过"
-          fail_action: "缺失项补充后重新验证"
+  - id: arch-impl
+    name: "架构层实现"
+    depends_on: [api-impl]
+    skills:
+      - backend-architecture-impl
+    gate:
+      condition: "backend-architecture-impl输出文件已生成且非空 + 人类确认通过"
+      fail_action: "缺失项补充后重新验证"
 ```
 
 ## 阶段执行计划
@@ -133,7 +201,7 @@ Skill: backend-architecture-spec
   - adr.json — 架构决策记录
   - review_report.json — 审查问题清单
   - tech_debt_register.json — 技术债登记册
-验证: 架构模式+ADR+服务设计+服务数据归属+技术栈决策完整
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
@@ -158,7 +226,7 @@ Skill: data-architecture-spec
   - er_model.json — ER模型+DDL+索引策略
   - cache_strategy.json — 缓存方案
   - migration_plan.json — 迁移方案（增量项目）
-验证: ER图+DDL+数据字典+缓存策略完整
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
@@ -188,21 +256,35 @@ Skill: api-design-spec
   - auth-scheme.json — 认证鉴权方案
   - compliance-checklist.json — 合规检查清单
   - api-coverage.json — PRD/前端对齐覆盖报告
-验证: API契约+安全策略+认证鉴权方案完整，合规检查无P0问题
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
-⏸ **统一设计审查卡口**：三份设计交叉验证
+#### A4：统一设计审查 → 编排器执行交叉验证
 
-| 交叉验证项 | 验证内容 | 未通过处理 |
-|-----------|---------|-----------|
-| API资源↔ER模型 | 每个API资源有对应ER模型实体，API字段100%有Model字段支撑 | 补充缺失的实体或字段 |
-| API分组↔服务边界 | API按限界上下文分组，与服务设计一致 | 调整API分组或服务边界 |
-| 技术栈一致性 | 三个设计产出引用的技术栈统一 | 统一技术栈决策 |
-| 缓存策略↔API访问模式 | 高频API有对应缓存策略 | 补充缓存策略 |
-| 数据归属↔API归属 | API资源归属的服务与数据归属的服务一致 | 调整归属关系 |
+三份设计产出完成后，编排器读取三份产出执行跨子Skill交叉验证：
 
-→ 人类统一确认三份设计的一致性 → 审查通过后进入实现阶段
+```
+动作: 统一设计审查（编排器协调职责）
+输入:
+  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  服务设计: output/backend-architecture/backend-architecture-spec/service_design.json
+  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  ER模型: output/backend-data-architecture/data-architecture-spec/er_model.json
+  缓存策略: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
+  OpenAPI规范: output/backend-api-design/api-design-spec/openapi.yaml
+输出: output/backend-design-review/review-report.json
+验证规则:
+  - API资源↔ER模型对齐：每个API资源有对应ER模型实体，API字段100%有Model字段支撑
+  - API分组↔服务边界一致：API按限界上下文分组，与服务设计一致
+  - 技术栈一致性：三个设计产出引用的技术栈统一
+  - 缓存策略↔API访问模式对齐：高频API有对应缓存策略
+  - 数据归属↔API归属一致：API资源归属的服务与数据归属的服务一致
+验证: 交叉验证全部通过 + 人类统一确认
+模式: 🤖→👤
+```
+
+⏸ **统一设计审查卡口**：交叉验证全部通过 + 人类统一确认 → 不一致项修正后重新审查
 
 ### 阶段B：统一实现
 
@@ -218,7 +300,7 @@ Skill: data-architecture-impl
   技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
   project_dir: 用户提供
 输出: 代码写入 {project_dir}/src/ + 元数据 output/backend-data-architecture/data-architecture-impl/
-验证: 代码可编译，Migration可执行，代码自审P0=0
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
@@ -239,7 +321,7 @@ Skill: api-design-impl
   技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
   project_dir: 用户提供
 输出: 代码写入 {project_dir}/src/ + 元数据 output/backend-api-design/api-design-impl/
-验证: 代码可编译，PRD功能点100%覆盖，mappers完整实现，代码自审P0=0
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
@@ -259,37 +341,49 @@ Skill: backend-architecture-impl
   技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
   project_dir: 用户提供
 输出: 代码写入 {project_dir}/ + 元数据 output/backend-architecture/backend-architecture-impl/
-验证: 项目可启动，/health返回200，架构决策100%在代码中体现，代码自审P0=0
+验证: 输出文件已生成且非空
 模式: 🤖→👤
 ```
 
 ### 阶段总结（post_pipeline）
 
-遵循 [orchestrator-protocol.md](../../templates/orchestrator-protocol.md) 阶段总结协议。
+所有子Skill执行完成后，必须生成阶段总结文档，写入 `output/phase-reports/backend/backend-orchestrator.md`，包含以下6项结构（均不可为空）：
+
+1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
+2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
+3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
+4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
+5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
+6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
 
 | 参数 | 值 |
 |------|-----|
-| 子Skill输出路径 | output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ |
+| 子Skill输出路径 | output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ + output/backend-design-review/ |
 | 总结输出路径 | output/phase-reports/backend/backend-orchestrator.md |
+| 审批记录路径 | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
 
 下游衔接:
   primary: release-orchestrator（后端全流程完成后，进入质量验收和发布流程）
   alternatives:
     - target: ui-orchestrator
       reason: 后端就绪后启动UI前端开发与集成
-      condition: 前端尚未开发，需要后端API支撑时
+      condition: 前端尚未开发+需要后端API支撑时
+  special_cases:
+    - target: api-design-spec
+      reason: 仅需补充API设计，无需完整后端流程
+      condition: 架构和数据层已就绪，仅需API设计时，无需完整编排流
 
 ## 阶段卡口
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 架构设计完成 | backend-architecture-spec输出文件已生成且非空 | 缺失项必须补充 |
-| 数据架构设计完成 | data-architecture-spec输出文件已生成且非空 | 缺失项必须补充 |
-| API设计完成 | api-design-spec输出文件已生成且非空 | 缺失项必须补充 |
-| 统一设计审查通过 | 三份设计交叉验证通过 + 人类统一确认 | 不一致项修正后重新审查 |
-| 数据层实现完成 | data-architecture-impl输出文件已生成且非空 | 缺失项补充后重新验证 |
-| API层实现完成 | api-design-impl输出文件已生成且非空 | 缺失项补充后重新验证 |
-| 架构层实现完成 | backend-architecture-impl输出文件已生成且非空 | 缺失项补充后重新验证 |
+| 架构设计完成 | backend-architecture-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
+| 数据架构设计完成 | data-architecture-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
+| API设计完成 | api-design-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
+| 统一设计审查通过 | 交叉验证全部通过 + 人类统一确认 | 不一致项修正后重新审查 |
+| 数据层实现完成 | data-architecture-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
+| API层实现完成 | api-design-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
+| 架构层实现完成 | backend-architecture-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
 | 阶段总结已生成 | output/phase-reports/backend/backend-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

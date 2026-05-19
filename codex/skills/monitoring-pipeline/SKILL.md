@@ -12,6 +12,10 @@ metadata:
     - "How to configure alert rules"
     - "Too many alerts, how to analyze"
     - "Metrics suddenly anomalous, what happened"
+execution_depth:
+  default: standard
+  quick_description: "Output monitoring strategy and alert rules only"
+  deep_description: "Full pipeline + anomaly prediction + capacity planning + incident response automation"
 ---
 
 # Monitoring & Alerting Full Pipeline AI
@@ -49,7 +53,7 @@ AI AI auto-execution (system configuration type)
 
 ## Execution Steps
 
-### Step 1: Monitoring System Setup (from monitoring-system)
+### Step 1: Monitoring System Setup (from monitoring-system) [Core]
 
 **Goal**: Establish core path monitoring system, configure metric collection and alert rules
 
@@ -115,7 +119,7 @@ alert_rule:
 - Escalation conditions
 - Related documentation links
 
-### Step 2: Anomaly Detection (from monitoring-anomaly)
+### Step 2: Anomaly Detection (from monitoring-anomaly) [Core]
 
 **Goal**: Real-time detection of metric anomalies, identify trend shifts and sudden fluctuations
 
@@ -248,7 +252,7 @@ remediation:
   estimated_resolution_time: {minutes}
 ```
 
-### Step 3: Dashboard Configuration (from monitoring-dashboard)
+### Step 3: Dashboard Configuration (from monitoring-dashboard) [Core]
 
 **Goal**: Build visual monitoring dashboards, aggregate key metrics and alert status
 
@@ -367,7 +371,7 @@ dashboard_template:
     refresh_interval: 15m
 ```
 
-### Step 4: Alert Escalation (from monitoring-escalation)
+### Step 4: Alert Escalation (from monitoring-escalation) [Core]
 
 **Goal**: Alert severity classification and escalation handling, ensuring critical alerts reach responsible parties in time
 
@@ -537,6 +541,14 @@ oncall_report:
       deadline: {date}
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | monitoring strategy and alert rules only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full pipeline + anomaly prediction + capacity planning + incident response automation | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 
@@ -647,8 +659,13 @@ oncall_report:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Core path coverage >= 95%
 - [ ] Each core path has at least 4 golden signals
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Alert noise rate < 15%
 - [ ] All P0 services have On-Call runbooks
 - [ ] No conflicts or omissions in alert rules
@@ -671,6 +688,11 @@ oncall_report:
 - [ ] SLA response time compliant
 - [ ] On-call report completeness 100%
 - [ ] Escalation chain configuration correct
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

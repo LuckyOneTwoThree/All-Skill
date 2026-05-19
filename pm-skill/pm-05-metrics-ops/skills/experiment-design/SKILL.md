@@ -12,6 +12,10 @@ metadata:
     - "这个功能改动需要多少样本量"
     - "帮我设计一个分流实验方案"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出实验设计和假设"
+  deep_description: "完整设计 + 统计功效计算 + 多变量实验方案 + 结果解读框架"
 ---
 
 # A/B测试自动设计
@@ -37,7 +41,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：假设结构化
+### Step 1：假设结构化 [核心]
 
 将原始假设转化为结构化的Hypothesis：
 
@@ -66,7 +70,7 @@ Because users face less friction
 For all new users on iOS and Android
 ```
 
-### Step 2：指标自动选择
+### Step 2：指标自动选择 [核心]
 
 #### 主指标（Primary Metric）
 
@@ -95,7 +99,7 @@ For all new users on iOS and Android
 - 相关联指标（归因用）
 - 探索性指标（发现用）
 
-### Step 3：样本量自动计算
+### Step 3：样本量自动计算 [核心]
 
 ```
 样本量计算公式：
@@ -127,7 +131,7 @@ sample_size_calculation:
     expected_duration_days: 7
 ```
 
-### Step 4：分流方案设计
+### Step 4：分流方案设计 [核心]
 
 #### 分流原则
 
@@ -157,7 +161,7 @@ Traffic
 | 高不确定性 | 50/25/25 | 多方案对比 |
 | 灰度发布 | 95/5 | 最小流量验证 |
 
-### Step 5：实验配置生成
+### Step 5：实验配置生成 [核心]
 
 生成完整的实验配置：
 
@@ -286,6 +290,14 @@ ab_test_design:
       # ... 同结构可扩展
 ```
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 实验设计和假设 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整设计 + 统计功效计算 + 多变量实验方案 + 结果解读框架 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-metrics-ops/experiment-design/`
@@ -391,10 +403,20 @@ ab_test_design:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 假设已结构化（If-Then-Because-For）
 - [ ] 主指标与假设直接对应
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 护栏指标覆盖留存、收入、技术三个维度
 - [ ] 样本量计算参数有据可依
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 

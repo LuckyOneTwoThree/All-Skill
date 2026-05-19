@@ -10,6 +10,10 @@ metadata:
     - "Analyze user feedback"
     - "What are users complaining about"
     - "Help me extract user pain points"
+execution_depth:
+  default: standard
+  quick_description: "Output voice themes and sentiment distribution"
+  deep_description: "Full analysis + sentiment trend tracking + topic clustering deep analysis + action recommendation roadmap"
 ---
 
 # User Voice Auto-Analysis
@@ -67,14 +71,14 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 
 ## Execution Steps
 
-### Step 1: Data Cleaning and Standardization
+### Step 1: Data Cleaning and Standardization [Core]
 
 - Remove duplicates, spam, and irrelevant content
 - Standardize format (date, language, rating)
 - Data quality assessment: completeness, timeliness, representativeness
 - Output: Cleaned dataset, data quality report
 
-### Step 2: Sentiment Analysis
+### Step 2: Sentiment Analysis [Core]
 
 - Sentiment classification for each piece of feedback: Positive / Neutral / Negative
 - Sentiment intensity scoring (0-5)
@@ -82,7 +86,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Sentiment trend analysis (trend changes over time)
 - Output: Sentiment distribution, sentiment trends
 
-### Step 3: Theme Clustering
+### Step 3: Theme Clustering [Core]
 
 - Extract key themes from feedback content
 - Cluster related feedback under themes
@@ -90,7 +94,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Identify emerging themes (rapidly growing recently)
 - Output: Theme list, theme frequency, theme sentiment
 
-### Step 4: Pain Point Extraction
+### Step 4: Pain Point Extraction [Core]
 
 - Extract specific pain points from negative feedback
 - Pain point severity classification: P0 (blocking usage) / P1 (severe impact) / P2 (inconvenience) / P3 (minor issue)
@@ -98,7 +102,7 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Pain point correlation analysis (which pain points often co-occur)
 - Output: Pain point list, pain point severity, pain point frequency
 
-### Step 5: User Segmentation
+### Step 5: User Segmentation [Core]
 
 - Segment users based on feedback content and behavioral characteristics
 - Segment dimensions: Usage depth / Feature preference / Pain point type / Sentiment tendency
@@ -106,6 +110,14 @@ AI **AI auto-executes** -- No human intervention required, fully automated
 - Output: User segment list, segment characteristics
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | voice themes and sentiment distribution | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + sentiment trend tracking + topic clustering deep analysis + action recommendation roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -132,23 +144,32 @@ Output file: `output/pm-discovery/user-research-voice-analysis/voice-analysis.js
 
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
-| sentiment_distribution.positive | number | Yes | Positive sentiment ratio, 0-1 |
-| sentiment_distribution.neutral | number | Yes | Neutral sentiment ratio, 0-1 |
-| sentiment_distribution.negative | number | Yes | Negative sentiment ratio, 0-1 |
-| sentiment_distribution.total_entries | number | Yes | Total entries analyzed |
-| sentiment_trends | array | No | Sentiment trend list; each must include date, positive, neutral, negative |
-| top_themes | array | Yes | Theme list; each must include theme, frequency, sentiment, confidence; >= 3 themes |
-| top_themes[].confidence | number | Yes | Theme confidence, 0-1 |
-| top_pain_points | array | Yes | Pain point list; each must include pain_point, severity, frequency, confidence |
-| top_pain_points[].severity | string | Yes | Pain point level enum: P0/P1/P2/P3 |
-| top_pain_points[].confidence | number | Yes | Pain point confidence, 0-1 |
-| user_segments | array | No | User segment list; each must include segment_name, size_ratio, key_characteristics, confidence |
-| user_segments[].confidence | number | Yes | Segment confidence, 0-1 |
+| summary.total_feedback_analyzed | number | Yes | Total feedback analyzed, must be > 0 |
+| summary.data_sources_used | string[] | Yes | Data sources actually used, must not be empty |
+| summary.time_range | string | Yes | Data time range |
+| summary.sentiment_distribution.positive | number | Yes | Positive sentiment ratio, 0-1 |
+| summary.sentiment_distribution.negative | number | Yes | Negative sentiment ratio, 0-1 |
+| summary.sentiment_distribution.neutral | number | Yes | Neutral sentiment ratio, 0-1 |
+| summary.sentiment_distribution.mixed | number | Yes | Mixed sentiment ratio, 0-1 |
+| summary.top_themes | array | Yes | Theme list; each must include theme, feedback_count, representative_quotes, confidence; >= 3 themes |
+| summary.top_themes[].theme | string | Yes | Theme name, must not be empty |
+| summary.top_themes[].feedback_count | number | Yes | Feedback count for this theme |
+| summary.top_themes[].representative_quotes | string[] | Yes | >= 2 representative quotes per theme |
+| summary.top_themes[].confidence | number | Yes | Theme confidence, 0-1 |
+| summary.top_pain_points | array | Yes | Pain point list; each must include pain_point, severity, impact_score, representative_quotes, confidence |
+| summary.top_pain_points[].pain_point | string | Yes | Pain point description, must not be empty |
+| summary.top_pain_points[].severity | string | Yes | Pain point level enum: P0/P1/P2/P3 |
+| summary.top_pain_points[].impact_score | number | Yes | Pain point impact score |
+| summary.top_pain_points[].representative_quotes | string[] | Yes | >= 2 representative quotes per pain point |
+| summary.top_pain_points[].confidence | number | Yes | Pain point confidence, 0-1 |
+| summary.emerging_themes | array | No | Emerging theme list |
+| summary.emerging_themes[].confidence | number | Yes | Emerging theme confidence, 0-1 |
+| summary.user_segments | array | Yes | User segment list; each must include segment_name, size_ratio, confidence |
+| summary.user_segments[].segment_name | string | Yes | Segment name, must not be empty |
+| summary.user_segments[].size_ratio | number | Yes | Size ratio, 0-1 |
+| summary.user_segments[].confidence | number | Yes | Segment confidence, 0-1 |
 | metadata.analysis_timestamp | string | Yes | Analysis timestamp |
-| metadata.data_quality | object | Yes | Data quality assessment |
-| metadata.data_quality.completeness | number | Yes | Data completeness, 0-1 |
-| metadata.data_quality.timeliness | string | Yes | Data timeliness |
-| metadata.data_quality.representativeness | number | Yes | Data representativeness, 0-1 |
+| metadata.data_quality_flags | string[] | Yes | Data quality flags |
 | metadata.confidence_overall | number | Yes | Overall confidence, 0-1 |
 
 ```json
@@ -230,13 +251,21 @@ Output file: `output/pm-discovery/user-research-voice-analysis/voice-analysis.js
 
 ## Quality Checks
 
-| Check Item | Standard | Non-compliance Handling |
-|--------|------|-----------|
-| Sentiment distribution completeness | Positive + Neutral + Negative = 100% | Re-normalize |
-| Theme count >= 3 | Met | When insufficient, mark "insufficient theme diversity" |
-| Each pain point has quote support | Met | Pain points without quotes marked "insufficient support" |
-| Data quality assessment complete | Completeness, timeliness, representativeness all scored | Missing dimensions filled with default value 0.3 and flagged |
-| All outputs annotated with confidence | 100% | Fields missing confidence filled with default value 0.3 and flagged |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Sentiment distribution completeness (Positive + Neutral + Negative = 100%)
+- [ ] Theme count >= 3 (Met)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Each pain point has quote support (Met)
+- [ ] Data quality assessment complete (Completeness, timeliness, representativeness all scored)
+- [ ] All outputs annotated with confidence (100%)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -244,22 +273,14 @@ Output file: `output/pm-discovery/user-research-voice-analysis/voice-analysis.js
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| All data sources missing | Prompt user to provide user feedback data first, or execute analysis directly based on user-pasted feedback text | Output based on user-provided data; confidence depends on data volume and quality |
-| If user does not provide app_reviews | Prompt user to provide app review data; otherwise lacking core VOC data source | sentiment_distribution and top_themes may be incomplete |
-| If user does not provide support_tickets | Skip input-related steps; customer support dimension data not included in analysis | Pain point extraction lacks support ticket dimension; may miss technical issues |
-| If user does not provide social_mentions | Skip input-related steps; social media dimension data not included in analysis | Lacking social media sentiment data; sentiment trends may be incomplete |
-| If user does not provide community_posts | Skip input-related steps; community dimension data not included in analysis | Lacking community discussion data; may miss deep user needs |
-| If user does not provide analysis_config | Skip input-related steps; use default analysis configuration (language: auto, time range: last 6 months, minimum review count: 100) | Default configuration used; analysis may not match user's actual needs |
-
-## Data Acquisition Instructions
-
-This Skill requires user feedback data (app reviews, support tickets, social mentions, community posts). Please provide via one of the following methods:
-  1. Directly paste user feedback text
-  2. Upload CSV/Excel/JSON files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| All data sources missing | Prompt user to provide user feedback data first, or execute analysis directly based on user-pasted feedback text | Output based on user-provided data; confidence depends on data volume and quality | Request user to paste user feedback text, or upload CSV/Excel/JSON files containing app reviews, support tickets, social mentions |
+| If user does not provide app_reviews | Prompt user to provide app review data; otherwise lacking core VOC data source | sentiment_distribution and top_themes may be incomplete | Prompt user to provide app review data (e.g., App Store/Google Play reviews) or upload app_reviews.json |
+| If user does not provide support_tickets | Skip input-related steps; customer support dimension data not included in analysis | Pain point extraction lacks support ticket dimension; may miss technical issues | Request user to provide support ticket data (e.g., ticket_id, category, description, sentiment) or upload support_tickets.json |
+| If user does not provide social_mentions | Skip input-related steps; social media dimension data not included in analysis | Lacking social media sentiment data; sentiment trends may be incomplete | Request user to provide social media mention data (e.g., platform, content, sentiment) or upload social_mentions.json |
+| If user does not provide community_posts | Skip input-related steps; community dimension data not included in analysis | Lacking community discussion data; may miss deep user needs | Request user to provide community post data (e.g., forum threads, Q&A posts) or upload community_posts.json |
+| If user does not provide analysis_config | Skip input-related steps; use default analysis configuration (language: auto, time range: last 6 months, minimum review count: 100) | Default configuration used; analysis may not match user's actual needs | Prompt user to specify analysis config (language, time range, minimum review count) or accept defaults |
 
 ---
 

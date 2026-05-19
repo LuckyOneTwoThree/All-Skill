@@ -12,6 +12,10 @@ metadata:
     - "Too many requirements, which to do first"
     - "Need to adjust iteration plan"
     - "Need to insert a requirement, how to prioritize"
+execution_depth:
+  default: standard
+  quick_description: "Output iteration decision and priority actions only"
+  deep_description: "Full decision + impact simulation + alternative analysis + iteration evolution roadmap"
 ---
 
 # Iteration Decision Full Pipeline AI
@@ -60,7 +64,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Backlog Grooming (from iteration-backlog)
+### Step 1: Backlog Grooming (from iteration-backlog) [Core]
 
 **Goal**: Groom and optimize the issue Backlog, complete linkage analysis and restructuring
 
@@ -194,7 +198,7 @@ reorganization_suggestions:
       value_delivered: {description}
 ```
 
-### Step 2: Priority Assessment (from iteration-prioritization)
+### Step 2: Priority Assessment (from iteration-prioritization) [Core]
 
 **Goal**: Assess issue priorities based on data, generate adjustment plans and risk assessments
 
@@ -354,7 +358,7 @@ communication_draft:
       content: "{contact_info}"
 ```
 
-### Step 3: Iteration Retrospective (from iteration-retrospective)
+### Step 3: Iteration Retrospective (from iteration-retrospective) [Core]
 
 **Goal**: Review iteration execution effectiveness, summarize learnings and improvement points
 
@@ -561,6 +565,14 @@ improvement_suggestions:
     recommendation_score: {score}
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | iteration decision and priority actions only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full decision + impact simulation + alternative analysis + iteration evolution roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 
@@ -648,8 +660,13 @@ improvement_suggestions:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Priority scoring coverage 100%
 - [ ] Linkage identification complete
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Technical debt impact assessment accurate
 - [ ] Restructuring suggestions actionable
 - [ ] Sprint capacity matched
@@ -666,6 +683,11 @@ improvement_suggestions:
 - [ ] Suggestion executability >= 75%
 - [ ] Improvement suggestions have clear owners
 - [ ] Comparison with previous iteration complete
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

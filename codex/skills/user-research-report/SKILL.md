@@ -10,6 +10,10 @@ metadata:
     - "Help me produce a user research report"
     - "How to organize user research results"
     - "Generate a user analysis report"
+execution_depth:
+  default: standard
+  quick_description: "Output research conclusions and recommendations"
+  deep_description: "Full report + research methodology reflection + insight deep analysis + action recommendation roadmap"
 ---
 
 # User Research Report Auto-Generation
@@ -38,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Research Background and Objectives
+### Step 1: Research Background and Objectives [Core]
 
 Based on user-provided research objectives and product information, clarify:
 
@@ -47,7 +51,7 @@ Based on user-provided research objectives and product information, clarify:
 - Research scope: Target user groups, product scope, time range
 - Research methodology overview: Methods used (VOC analysis/behavioral analysis/interviews/surveys)
 
-### Step 2: User Persona Integration
+### Step 2: User Persona Integration [Core]
 
 Integrate persona.json data to generate readable user persona sections:
 
@@ -63,7 +67,7 @@ Integrate persona.json data to generate readable user persona sections:
 - 2-4 core Personas
 - Each Persona annotated with representative user quotes (at least 2)
 
-### Step 3: User Journey Integration
+### Step 3: User Journey Integration [Core]
 
 Integrate Journey Map and behavioral data:
 
@@ -87,7 +91,7 @@ Each stage includes:
 - Aha Moment trigger conditions
 - Churn warning signals
 
-### Step 4: Insight Extraction
+### Step 4: Insight Extraction [Core]
 
 Extract core insights from all upstream data:
 
@@ -105,7 +109,7 @@ Extract core insights from all upstream data:
 | Behavioral insight | Actual user behavior vs. expected | "Users who don't complete first operation within 3 days of registration have 87% churn rate" |
 | Opportunity insight | Unmet need space | "40% of users abandon after searching; opportunity for intent understanding" |
 
-### Step 5: Action Recommendations
+### Step 5: Action Recommendations [Deep]
 
 Generate actionable product improvement recommendations based on insights:
 
@@ -122,7 +126,7 @@ Generate actionable product improvement recommendations based on insights:
 - Obstacles affecting retention/engagement -> P1
 - Experience optimization recommendations -> P2
 
-### Step 6: Report Assembly
+### Step 6: Report Assembly [Core]
 
 Assemble all sections into a complete Markdown report:
 
@@ -173,6 +177,14 @@ Assemble all sections into a complete Markdown report:
 - Sample description and limitations
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | research conclusions and recommendations | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + research methodology reflection + insight deep analysis + action recommendation roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage path**: `output/pm-discovery/user-research-report/`
@@ -219,13 +231,20 @@ Assemble all sections into a complete Markdown report:
 | executive_summary.top_recommendation | string | Yes | Top 1 action recommendation |
 | personas | array | Yes | User persona list, 2-4 |
 | personas[].name | string | Yes | User group name |
+| personas[].demographics | object | No | Demographic information |
+| personas[].goals | string[] | No | Goals and motivations list |
+| personas[].pain_points | string[] | No | Core pain points list |
 | personas[].quotes | string[] | Yes | Representative quotes, >= 2 per Persona |
 | journey | object | No | User journey |
 | journey.stages | array | No | Journey stage list |
 | journey.stages[].name | string | Yes | Stage name |
 | journey.stages[].behaviors | string[] | Yes | User behaviors |
+| journey.stages[].touchpoints | string[] | No | Touchpoint list |
+| journey.stages[].emotion_peak | string | No | Emotion peak description |
+| journey.stages[].emotion_valley | string | No | Emotion valley description |
 | journey.stages[].pain_points | string[] | Yes | Pain points |
 | journey.stages[].opportunities | string[] | Yes | Opportunities |
+| journey.stages[].metrics | object | No | Key metrics (conversion rate, retention rate, etc.) |
 | journey.aha_moment | string | No | Aha Moment description |
 | journey.churn_signals | string[] | No | Churn signal list |
 | insights | array | Yes | Core insight list, <= 15 |
@@ -317,24 +336,34 @@ Assemble all sections into a complete Markdown report:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Executive summary contains 3 key findings + Top 1 recommendation
 - [ ] Each Persona has representative user quotes
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] User journey includes emotion curve and key moments
 - [ ] Each insight has observation + evidence + implication triad
 - [ ] At least 3 action recommendations, each with priority and validation method
 - [ ] Data sources and limitations described
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| voice-analysis missing | User personas and pain points based on behavioral data and AI inference | Pain point insights lack user quote support |
-| behavior-analysis missing | Journey and behavioral insights based on VOC and interview data | Behavioral insights lack quantitative data |
-| persona missing | Derive user personas from VOC and behavioral data | Personas may be less refined |
-| interview data missing | Insights based on VOC and behavioral data | Lacking deep qualitative insights |
-| All upstream data missing | Generate based on research objectives and AI knowledge base; overall confidence reduced | Report requires significant human supplementation and validation |
-| If user does not provide research objectives | Prompt user to provide research objectives; otherwise cannot determine report focus | Cannot generate targeted report |
-| If user does not provide product/category information | Skip input-related steps; product-related descriptions in report based on inference | Product background description may be inaccurate |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| voice-analysis missing | User personas and pain points based on behavioral data and AI inference | Pain point insights lack user quote support | Request user to upload voice-analysis.json or provide user feedback text for sentiment extraction |
+| behavior-analysis missing | Journey and behavioral insights based on VOC and interview data | Behavioral insights lack quantitative data | Request user to upload behavior-analysis.json or provide event/funnel data for behavioral analysis |
+| persona missing | Derive user personas from VOC and behavioral data | Personas may be less refined | Request user to upload persona.json or describe target user characteristics |
+| interview data missing | Insights based on VOC and behavioral data | Lacking deep qualitative insights | Request user to provide interview notes or transcript text |
+| All upstream data missing | Generate based on research objectives and AI knowledge base; overall confidence reduced | Report requires significant human supplementation and validation | Request user to provide research objectives and product/category information, or upload voice-analysis.json / behavior-analysis.json / persona.json |
+| If user does not provide research objectives | Prompt user to provide research objectives; otherwise cannot determine report focus | Cannot generate targeted report | Prompt user to specify research objectives (e.g., "understand churn reasons", "evaluate feature satisfaction") |
+| If user does not provide product/category information | Skip input-related steps; product-related descriptions in report based on inference | Product background description may be inaccurate | Prompt user to provide product name and category (e.g., "SaaS CRM", "e-commerce platform") |
 
 ---
 

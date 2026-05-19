@@ -1,6 +1,6 @@
 ---
 name: opportunity-definition
-description: 机会识别与定义，整合机会评分、问题陈述、HMW发散和机会简报。关键词：机会识别、机会评估、HMW、Problem Statement、机会简报、产品机会。
+description: 当需要进行机会识别、机会评估或产品机会定义时使用。整合机会评分、问题陈述、HMW发散和机会简报。关键词：机会识别、机会评估、HMW、Problem Statement、机会简报、产品机会。
 metadata:
   module: "产品探索与发现"
   sub-module: "机会识别"
@@ -15,6 +15,10 @@ metadata:
     - "这个机会值不值得追"
     - "帮我换个角度思考问题"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "执行机会评分和Problem Statement生成，输出机会优先级列表和问题陈述"
+  deep_description: "额外包含HMW四维度发散、机会简报完整组装、关键假设风险分析、人类决策事项清单"
 ---
 
 # Opportunity Definition — 机会识别与定义
@@ -44,7 +48,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 机会评分
+### Step 1: 机会评分 [核心]
 
 对产品机会进行多维度量化评分，确定优先级。
 
@@ -102,7 +106,7 @@ metadata:
 | 2 | 竞品有较好能力但未主导 |
 | 1 | 竞品已领先 |
 
-### Step 2: 问题陈述
+### Step 2: 问题陈述 [核心]
 
 基于评分结果和用户研究数据生成结构化 Problem Statement。
 
@@ -133,7 +137,7 @@ metadata:
 | 是否可验证 | 预期收益可量化或可通过实验验证 | 将模糊收益替换为可量化指标 |
 | 是否避免了解决方案预设 | 问题描述不包含任何具体解决方案 | 移除方案描述，聚焦问题本身 |
 
-### Step 3: HMW发散
+### Step 3: HMW发散 [条件]
 
 基于 Problem Statement 和用户研究数据，从4个维度生成 HMW 陈述，每个维度2-3个：
 
@@ -168,7 +172,7 @@ metadata:
 - 借鉴跨行业创新模式
 - 鼓励突破性思维
 
-### Step 4: 机会简报
+### Step 4: 机会简报 [条件]
 
 将前序所有产出组装为完整的机会简报。
 
@@ -467,19 +471,19 @@ metadata:
 
 | 检查项 | 通过条件 |
 |--------|----------|
-| 机会评分完整 | 5个维度均有 score 值或标记为 needs_human，战略契合度标记为 needs_human |
-| 评分依据完整 | 每个维度的 evidence 字段非空 |
-| 权重一致性 | 5个维度权重之和 = 1.00 |
-| Problem Statement 5项质量检查全部通过 | `quality_check.all_passed === true` |
-| 数据支撑完整 | pain_point_frequency、behavioral_evidence、confidence 均非空 |
-| HMW 4个维度都已覆盖 | `dimension_coverage` 中4个维度均 ≥ 1 |
-| 每个 HMW 有数据支撑 | 每个 HMW 的 `data_source` 非空 |
-| HMW 陈述避免解决方案预设 | 陈述中不包含具体产品功能或技术方案描述 |
-| HMW 总数符合要求 | `total_count` 在8-12范围内 |
-| 所有证据摘要已填充 | `evidence_summary` 的3个子字段均有内容 |
-| 关键假设已列出可验证性 | 每个 `key_assumptions` 的 `testability` 非空 |
-| 人类决策项已明确 | `human_decisions_needed` 非空且每项包含 item/context/urgency |
-| 高风险假设有对应决策项 | `risk_if_wrong` 为"高"的假设在 `human_decisions_needed` 中有对应项 |
+| 机会评分完整（P0） | 5个维度均有 score 值或标记为 needs_human，战略契合度标记为 needs_human |
+| 评分依据完整（P0） | 每个维度的 evidence 字段非空 |
+| 权重一致性（P0） | 5个维度权重之和 = 1.00 |
+| Problem Statement 5项质量检查全部通过（P0） | `quality_check.all_passed === true` |
+| 数据支撑完整（P0） | pain_point_frequency、behavioral_evidence、confidence 均非空 |
+| HMW 4个维度都已覆盖（P1） | `dimension_coverage` 中4个维度均 ≥ 1 |
+| 每个 HMW 有数据支撑（P1） | 每个 HMW 的 `data_source` 非空 |
+| HMW 陈述避免解决方案预设（P1） | 陈述中不包含具体产品功能或技术方案描述 |
+| HMW 总数符合要求（P1） | `total_count` 在8-12范围内 |
+| 所有证据摘要已填充（P1） | `evidence_summary` 的3个子字段均有内容 |
+| 关键假设已列出可验证性（P2） | 每个 `key_assumptions` 的 `testability` 非空 |
+| 人类决策项已明确（P2） | `human_decisions_needed` 非空且每项包含 item/context/urgency |
+| 高风险假设有对应决策项（P2） | `risk_if_wrong` 为"高"的假设在 `human_decisions_needed` 中有对应项 |
 
 ---
 
@@ -487,13 +491,14 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|----------|
-| 用户研究数据（voice-analysis / behavior-analysis） | 用户描述机会 → 基于描述评分和生成Problem Statement | `problem_validity.score` 降为默认值2，`data_support.pain_point_frequency` 为用户估算值，`confidence`<0.5 |
-| 市场分析数据（tam-som） | 用户描述机会 → 市场规模维度基于用户估算评分 | `market_size.score` 基于用户估算，`evidence` 标注"缺乏市场数据" |
-| 竞品分析数据（competitor-analysis） | 用户描述机会 → 竞争壁垒维度基于用户描述评分 | `competitive_moat.score` 基于用户描述，`evidence` 标注"缺乏竞品数据" |
-| 需求洞察数据（persona / insight-analysis） | 基于用户描述直接生成 | `template_elements.target_user` 可能使用泛称，`quality_check.specific_user_group` 可能不通过 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的机会直接执行 | 多个维度使用默认值，`weighted_total` 可信度极低，`quality_check` 多项可能不通过，Brief决策价值大幅降低 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|----------|------------|
+| 用户研究数据（voice-analysis / behavior-analysis） | 用户描述机会 → 基于描述评分和生成Problem Statement | `problem_validity.score` 降为默认值2，`data_support.pain_point_frequency` 为用户估算值，`confidence`<0.5 | 要求用户提供用户反馈文本和行为数据，或上传voice-analysis.json/behavior-analysis.json文件 |
+| 市场分析数据（tam-som） | 用户描述机会 → 市场规模维度基于用户估算评分 | `market_size.score` 基于用户估算，`evidence` 标注"缺乏市场数据" | 要求用户提供市场规模估算数据或上传tam-som.json文件 |
+| 竞品分析数据（competitor-analysis） | 用户描述机会 → 竞争壁垒维度基于用户描述评分 | `competitive_moat.score` 基于用户描述，`evidence` 标注"缺乏竞品数据" | 要求用户提供竞品信息或上传competitor-analysis.json文件 |
+| 需求洞察数据（persona / insight-analysis） | 基于用户描述直接生成 | `template_elements.target_user` 可能使用泛称，`quality_check.specific_user_group` 可能不通过 | 要求用户提供目标用户画像描述或上传persona.json/insight-analysis.json文件 |
+| 技术团队评估数据缺失 | 跳过技术可行性维度评分，标注"待技术评估" | `technical_feasibility.score` 使用默认值，可行性判断缺乏技术依据 | 要求用户提供技术团队能力评估和技术栈信息 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述的机会直接执行 | 多个维度使用默认值，`weighted_total` 可信度极低，`quality_check` 多项可能不通过，Brief决策价值大幅降低 | 要求用户提供机会描述、目标用户、市场估算和竞品信息 |
 
 ## 数据获取说明
 

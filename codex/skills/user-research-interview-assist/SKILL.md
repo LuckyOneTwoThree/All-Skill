@@ -10,6 +10,10 @@ metadata:
     - "Help me prepare interview questions"
     - "How to organize insights after interviews"
     - "How to conduct user interviews"
+execution_depth:
+  default: standard
+  quick_description: "Output interview guide and key questions"
+  deep_description: "Full assist + interview strategy design + follow-up logic tree + data analysis framework"
 ---
 
 # Interview Assistance
@@ -71,7 +75,7 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 
 ### Phase 1: Pre-Interview Preparation (AI generates, human confirms)
 
-#### Step 1: Generate Objective List
+#### Step 1: Generate Objective List [Core]
 
 - Based on research objectives and existing data analysis results, generate interview objective list
 - Each objective annotated with:
@@ -81,7 +85,7 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 - Identify contradictions in existing data, list as key validation objectives
 - Output: Interview objective list
 
-#### Step 2: Generate Semi-Structured Interview Script
+#### Step 2: Generate Semi-Structured Interview Script [Core]
 
 - Based on objective list, generate semi-structured script including:
   - **Opening**: Icebreaker questions, build rapport
@@ -98,7 +102,7 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
   - Avoid leading questions
 - Output: interview-script.json
 
-#### Step 3: Recommend Interview Subjects
+#### Step 3: Recommend Interview Subjects [Core]
 
 - Based on Persona, recommend interview subject characteristics:
   - Prioritize covering different Persona types
@@ -116,14 +120,14 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 
 ### Phase 3: Post-Interview Analysis (AI-assisted)
 
-#### Step 4: Transcription and Structuring
+#### Step 4: Transcription and Structuring [Conditional]
 
 - If recording available, AI assists with transcription
 - Structure interview content by topic
 - Annotate key quotes (verbatim)
 - Output: Structured interview records
 
-#### Step 5: Key Insight Extraction
+#### Step 5: Key Insight Extraction [Deep]
 
 - Extract key insights from each interview:
   - **Validated hypotheses**: Which hypotheses are supported by interview data
@@ -134,7 +138,7 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 - Distinguish: Direct statements (user explicitly said) vs. inferences (inferred from behavioral descriptions)
 - Output: Insight list
 
-#### Step 6: Cross-Interview Clustering
+#### Step 6: Cross-Interview Clustering [Deep]
 
 - Cluster insights across multiple interviews
 - Identify cross-interview common patterns (independently mentioned by multiple interviewees)
@@ -142,7 +146,7 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 - Assess saturation level of each cluster (whether more interviews needed)
 - Output: Cross-interview insight clusters
 
-#### Step 7: Update Persona
+#### Step 7: Update Persona [Deep]
 
 - Update Persona based on interview findings:
   - Supplement or correct Persona characteristics
@@ -153,6 +157,14 @@ Human->AI **Human-AI collaboration** -- Human leads interview execution; AI hand
 - Output: Updated persona.json
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | interview guide and key questions | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full assist + interview strategy design + follow-up logic tree + data analysis framework | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -379,14 +391,22 @@ Output file: `output/pm-discovery/user-research-interview-assist/interview-insig
 
 ## Quality Checks
 
-| Check Item | Standard | Non-compliance Handling |
-|--------|------|-----------|
-| Script includes follow-up strategies | Each core question >= 2 follow-up directions | Supplement follow-up strategies |
-| Insights cross-validated with existing data | Each insight has cross_validation record | Insights without cross-validation marked "pending validation" |
-| Interview subjects cover main Personas | Each high-priority Persona >= 3 people | Annotate "insufficient coverage"; recommend supplementation |
-| Each insight has quote support | Each insight >= 1 quote | Insights without quotes marked "insufficient support" |
-| All outputs annotated with confidence | 100% | Fields missing confidence filled with default value 0.3 and flagged |
-| Non-leading question check | Core questions have no leading language | Leading questions flagged and recommended for revision |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Script includes follow-up strategies (Each core question >= 2 follow-up directions)
+- [ ] Insights cross-validated with existing data (Each insight has cross_validation record)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Interview subjects cover main Personas (Each high-priority Persona >= 3 people)
+- [ ] Each insight has quote support (Each insight >= 1 quote)
+- [ ] All outputs annotated with confidence (100%)
+- [ ] Non-leading question check (Core questions have no leading language)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -394,21 +414,13 @@ Output file: `output/pm-discovery/user-research-interview-assist/interview-insig
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| persona.json | User provides research objectives and user descriptions -> generate interview script based on descriptions, annotate "lacking Persona data targeting" | target_personas empty, recommended_participants based on inference, interview subject targeting precision reduced |
-| voice-analysis.json / behavior-analysis.json | Generate script directly based on user-provided research objectives, annotate "lacking data-validated hypotheses" | hypothesis_to_validate based on user description rather than data findings, data_cross_validation missing |
-| All upstream files missing | Prompt user to execute prior stages first, or generate lightweight interview script based on user's verbal description of research objectives | Script is purely exploratory design; validation hypotheses missing; overall confidence reduced |
-| If user does not provide research_objectives | Prompt user to provide research objectives; otherwise cannot design targeted interview script | Cannot generate interview-script.json; process interrupted |
-| If user does not provide interview_config | Prompt user to provide interview configuration; otherwise use default configuration (target count: 5, duration: 45 minutes, format: video, recording available) | Default configuration used; interview arrangement may not match actual conditions |
-
-## Data Acquisition Instructions
-
-This Skill requires Persona and user research data. Please provide via one of the following methods:
-  1. Directly describe research objectives, hypotheses, and target user characteristics
-  2. Upload persona.json / voice-analysis.json / behavior-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| persona.json | User provides research objectives and user descriptions -> generate interview script based on descriptions, annotate "lacking Persona data targeting" | target_personas empty, recommended_participants based on inference, interview subject targeting precision reduced | Request user to describe target user characteristics or upload persona.json for persona-guided interview design |
+| voice-analysis.json / behavior-analysis.json | Generate script directly based on user-provided research objectives, annotate "lacking data-validated hypotheses" | hypothesis_to_validate based on user description rather than data findings, data_cross_validation missing | Request user to provide research hypotheses or upload voice-analysis.json / behavior-analysis.json for data-driven hypothesis generation |
+| All upstream files missing | Prompt user to execute prior stages first, or generate lightweight interview script based on user's verbal description of research objectives | Script is purely exploratory design; validation hypotheses missing; overall confidence reduced | Request user to describe research objectives and target users, or execute user-research-voice-analysis and user-research-behavior-analysis first |
+| If user does not provide research_objectives | Prompt user to provide research objectives; otherwise cannot design targeted interview script | Cannot generate interview-script.json; process interrupted | Prompt user to specify research objectives (e.g., "understand onboarding friction", "validate pricing willingness") |
+| If user does not provide interview_config | Prompt user to provide interview configuration; otherwise use default configuration (target count: 5, duration: 45 minutes, format: video, recording available) | Default configuration used; interview arrangement may not match actual conditions | Prompt user to provide interview config (target count, duration, format) or accept defaults |
 
 ---
 

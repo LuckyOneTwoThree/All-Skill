@@ -42,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Business Data Dictionary Extraction
+### Step 1: Business Data Dictionary Extraction [Core]
 
 Extract business data entity definitions from PRD, establishing product data standards:
 
@@ -53,7 +53,7 @@ Extract business data entity definitions from PRD, establishing product data sta
 
 **Stage Gate**: Core business entities 100% have data dictionary definitions
 
-### Step 2: Entity Identification and Relationship Modeling
+### Step 2: Entity Identification and Relationship Modeling [Core]
 
 Extract data entities from PRD, API contract, and data dictionary:
 
@@ -67,19 +67,19 @@ Extract data entities from PRD, API contract, and data dictionary:
 - 1:N -> Add foreign key to child table
 - N:M -> Create association table
 
-### Step 3: Table Structure and Index Design
+### Step 3: Table Structure and Index Design [Core]
 
 Design table structure for each entity (primary key, foreign key, timestamps, soft delete, status fields and other common field conventions), design index strategy and database sharding plan.
 
 **Stage Gate**: ER diagram + DDL + data dictionary complete
 
-### Step 4: Cache Strategy Design
+### Step 4: Cache Strategy Design [Core]
 
 Identify data access patterns requiring caching, design multi-level cache architecture, consistency strategy, and penetration/breakdown/avalanche protection.
 
 **Stage Gate**: Penetration/breakdown/avalanche protection fully covered
 
-### Step 5: Data Migration Plan
+### Step 5: Data Migration Plan [Core]
 
 Compare current Schema with target Schema, generate migration scripts + rollback scripts + verification plan. Skip this step for new projects.
 

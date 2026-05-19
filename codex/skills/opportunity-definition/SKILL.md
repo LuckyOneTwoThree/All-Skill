@@ -12,6 +12,10 @@ metadata:
     - "Define the problem we need to solve"
     - "Generate an opportunity brief"
     - "Is this opportunity worth pursuing"
+execution_depth:
+  default: standard
+  quick_description: "Output opportunity brief and priority ranking only"
+  deep_description: "Full brief + opportunity scoring model + market timing analysis + opportunity portfolio roadmap"
 ---
 
 # Opportunity Definition -- Opportunity Identification and Definition
@@ -41,7 +45,7 @@ AI->Human AI suggests, human approves (Opportunity scoring phase strategic fit d
 
 ## Execution Steps
 
-### Step 1: Opportunity Scoring
+### Step 1: Opportunity Scoring [Core]
 
 Multi-dimensional quantitative scoring of product opportunities to determine priority.
 
@@ -99,7 +103,7 @@ Multi-dimensional quantitative scoring of product opportunities to determine pri
 | 2 | Competitors have good capability but not dominant |
 | 1 | Competitors are already leading |
 
-### Step 2: Problem Statement
+### Step 2: Problem Statement [Core]
 
 Generate structured Problem Statement based on scoring results and user research data.
 
@@ -130,7 +134,7 @@ Generate structured Problem Statement based on scoring results and user research
 | Verifiable | Expected benefit is quantifiable or verifiable through experiment | Replace vague benefits with quantifiable metrics |
 | No solution preset avoided | Problem description does not contain any specific solution | Remove solution descriptions, focus on the problem itself |
 
-### Step 3: HMW Divergence
+### Step 3: HMW Divergence [Core]
 
 Based on Problem Statement and user research data, generate HMW statements from 4 dimensions, 2-3 per dimension:
 
@@ -165,7 +169,7 @@ Based on Problem Statement and user research data, generate HMW statements from 
 - Draw on cross-industry innovation models
 - Encourage breakthrough thinking
 
-### Step 4: Opportunity Brief
+### Step 4: Opportunity Brief [Core]
 
 Assemble all preceding outputs into a complete opportunity brief.
 
@@ -181,6 +185,14 @@ Assemble all preceding outputs into a complete opportunity brief.
 | key_assumptions | Inferred | Key assumption list, including type/testability/risk level |
 | recommended_next_step | Based on scoring and assumption analysis | Recommended next action |
 | human_decisions_needed | Inferred | List of items requiring human decision |
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | opportunity brief and priority ranking only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full brief + opportunity scoring model + market timing analysis + opportunity portfolio roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -462,21 +474,29 @@ Output files: opportunity-definition.json + opportunity-definition.md
 
 ## Quality Checks
 
-| Check Item | Pass Condition |
-|--------|----------|
-| Opportunity scoring complete | All 5 dimensions have score values or marked as needs_human; strategic fit marked as needs_human |
-| Scoring basis complete | Each dimension's evidence field is non-empty |
-| Weight consistency | Sum of 5 dimension weights = 1.00 |
-| Problem Statement 5 quality checks all passed | `quality_check.all_passed === true` |
-| Data support complete | pain_point_frequency, behavioral_evidence, confidence all non-empty |
-| HMW 4 dimensions all covered | All 4 dimensions in `dimension_coverage` >= 1 |
-| Each HMW has data support | Each HMW's `data_source` is non-empty |
-| HMW statements avoid solution presets | Statements do not contain specific product feature or technical solution descriptions |
-| HMW total count within requirement | `total_count` in 8-12 range |
-| All evidence summaries filled | All 3 sub-fields of `evidence_summary` have content |
-| Key assumptions list testability | Each `key_assumptions`'s `testability` is non-empty |
-| Human decision items specified | `human_decisions_needed` is non-empty and each item includes item/context/urgency |
-| High-risk assumptions have corresponding decision items | Assumptions with `risk_if_wrong` as "high" have corresponding items in `human_decisions_needed` |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Opportunity scoring complete (All 5 dimensions have score values or marked as needs_human; strategic fit marked as needs_human)
+- [ ] Scoring basis complete (Each dimension's evidence field is non-empty)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Weight consistency (Sum of 5 dimension weights = 1.00)
+- [ ] Problem Statement 5 quality checks all passed (`quality_check.all_passed === true`)
+- [ ] Data support complete (pain_point_frequency, behavioral_evidence, confidence all non-empty)
+- [ ] HMW 4 dimensions all covered (All 4 dimensions in `dimension_coverage` >= 1)
+- [ ] Each HMW has data support (Each HMW's `data_source` is non-empty)
+- [ ] HMW statements avoid solution presets (Statements do not contain specific product feature or technical solution descriptions)
+- [ ] HMW total count within requirement (`total_count` in 8-12 range)
+- [ ] All evidence summaries filled (All 3 sub-fields of `evidence_summary` have content)
+- [ ] Key assumptions list testability (Each `key_assumptions`'s `testability` is non-empty)
+- [ ] Human decision items specified (`human_decisions_needed` is non-empty and each item includes item/context/urgency)
+- [ ] High-risk assumptions have corresponding decision items (Assumptions with `risk_if_wrong` as "high" have corresponding items in `human_decisions_needed`)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -484,21 +504,13 @@ Output files: opportunity-definition.json + opportunity-definition.md
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| User research data (voice-analysis / behavior-analysis) | User describes opportunity -> score and generate Problem Statement based on description | `problem_validity.score` defaults to 2, `data_support.pain_point_frequency` is user-estimated value, `confidence` < 0.5 |
-| Market analysis data (tam-som) | User describes opportunity -> market size dimension scored based on user estimate | `market_size.score` based on user estimate, `evidence` annotated "lacking market data" |
-| Competitor analysis data (competitor-analysis) | User describes opportunity -> competitive moat dimension scored based on user description | `competitive_moat.score` based on user description, `evidence` annotated "lacking competitor data" |
-| Need insight data (persona / insight-analysis) | Generate directly based on user description | `template_elements.target_user` may use generic terms, `quality_check.specific_user_group` may not pass |
-| All upstream files missing | Prompt user to execute prior stages first, or execute directly based on user's verbal description of opportunity | Multiple dimensions use default values, `weighted_total` credibility extremely low, `quality_check` multiple items may not pass, Brief decision value significantly reduced |
-
-## Data Acquisition Instructions
-
-This Skill requires user research, market analysis, and competitor analysis data. Please provide via one of the following methods:
-  1. Directly describe the opportunity, target users, and core pain points
-  2. Upload voice-analysis.json / tam-som.json / competitor-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| User research data (voice-analysis / behavior-analysis) | User describes opportunity -> score and generate Problem Statement based on description | `problem_validity.score` defaults to 2, `data_support.pain_point_frequency` is user-estimated value, `confidence` < 0.5 | Request user to describe opportunity and pain points, or upload voice-analysis.json / behavior-analysis.json files |
+| Market analysis data (tam-som) | User describes opportunity -> market size dimension scored based on user estimate | `market_size.score` based on user estimate, `evidence` annotated "lacking market data" | Request user to provide market size estimates or upload tam-som.json for market data |
+| Competitor analysis data (competitor-analysis) | User describes opportunity -> competitive moat dimension scored based on user description | `competitive_moat.score` based on user description, `evidence` annotated "lacking competitor data" | Request user to describe competitive landscape or upload competitor-analysis.json for competitor data |
+| Need insight data (persona / insight-analysis) | Generate directly based on user description | `template_elements.target_user` may use generic terms, `quality_check.specific_user_group` may not pass | Request user to describe target users or upload persona.json / insight-analysis.json |
+| All upstream files missing | Prompt user to execute prior stages first, or execute directly based on user's verbal description of opportunity | Multiple dimensions use default values, `weighted_total` credibility extremely low, `quality_check` multiple items may not pass, Brief decision value significantly reduced | Request user to describe opportunity, target users, pain points, and market context, or execute market-pest, user-research-voice-analysis, market-competitor-analysis first |
 
 ## Upstream Change Response
 

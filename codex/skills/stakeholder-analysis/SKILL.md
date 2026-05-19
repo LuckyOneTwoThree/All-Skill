@@ -13,6 +13,10 @@ metadata:
     - "How to communicate with various parties"
     - "Help me write a strategic brief for leadership"
     - "One-page strategy briefing"
+execution_depth:
+  default: standard
+  quick_description: "Output stakeholder map and influence assessment"
+  deep_description: "Full analysis + influence dynamics simulation + communication strategy design + interest balancing plan"
 ---
 
 # Stakeholder Analysis
@@ -51,7 +55,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Stakeholder Map
+### Step 1: Stakeholder Map [Core]
 
 #### Stakeholder Identification
 
@@ -129,7 +133,7 @@ Develop communication strategy for each stakeholder:
 | Suggested topics | What should be discussed during communication |
 | Risk | Consequences of not communicating |
 
-### Step 2: Communication Strategy
+### Step 2: Communication Strategy [Core]
 
 #### Document Structure Planning
 
@@ -240,7 +244,7 @@ Identify risks in stakeholder management:
 - Data sources
 ```
 
-### Step 3: Strategic Brief
+### Step 3: Strategic Brief [Core]
 
 #### Audience Analysis
 
@@ -343,6 +347,14 @@ Desensitize external briefs:
 - Remove competitor comparison details
 - Retain value propositions and collaboration directions
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | stakeholder map and influence assessment | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + influence dynamics simulation + communication strategy design + interest balancing plan | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-strategy/stakeholder-analysis/`
@@ -429,8 +441,13 @@ Desensitize external briefs:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] All 4 stakeholder categories identified
 - [ ] Each stakeholder has dual-dimension scores
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Four-quadrant classification completed
 - [ ] Communication strategies specific and executable
 - [ ] Key decision makers identified
@@ -447,28 +464,25 @@ Desensitize external briefs:
 - [ ] External brief desensitized
 - [ ] Action items have owners and deadlines
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ---
 
 ## Degradation Strategy
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| bmc.json | User provides organizational structure and business info -> Identify stakeholders | Lacks BMC data, key partners and customer relationships may be missed |
-| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Stakeholder identification lacks business context |
-| bmc.json + Product/business info | User provides organizational structure and business info -> Identify stakeholders | Overall confidence reduced, stakeholder list may be incomplete |
-| All upstream files missing | Prompt user to execute prior phases first, or identify stakeholders based on user-provided organizational structure info | Overall confidence significantly reduced, map is generic reference only |
-| business-strategy-report.json | User provides strategic highlights -> Generate strategy document and brief | Lacks structured strategic data, strategy-strategy alignment may be insufficient |
-| stakeholder-analysis.json (brief section) | If strategic brief is missing, does not affect core document generation | Brief content needs to be re-extracted from strategy report |
-
-## Data Acquisition Instructions
-
-This Skill requires business model canvas and product/business info, please provide via one of the following methods:
-  1. Directly provide organizational structure, product name, and business model
-  2. Upload bmc.json file
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| bmc.json | User provides organizational structure and business info -> Identify stakeholders | Lacks BMC data, key partners and customer relationships may be missed | Request user to describe organizational structure and business model, or upload bmc.json |
+| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Stakeholder identification lacks business context | Prompt user to provide product name, business model, and organizational structure |
+| bmc.json + Product/business info | User provides organizational structure and business info -> Identify stakeholders | Overall confidence reduced, stakeholder list may be incomplete | Request user to provide organizational structure and business info, or upload bmc.json |
+| All upstream files missing | Prompt user to execute prior phases first, or identify stakeholders based on user-provided organizational structure info | Overall confidence significantly reduced, map is generic reference only | Request user to describe organizational structure and key roles, or execute business-model-canvas first |
+| business-strategy-report.json | User provides strategic highlights -> Generate strategy document and brief | Lacks structured strategic data, strategy-strategy alignment may be insufficient | Request user to describe strategic priorities, or upload business-strategy-report.json |
+| stakeholder-analysis.json (brief section) | If strategic brief is missing, does not affect core document generation | Brief content needs to be re-extracted from strategy report | Request user to provide strategic brief content or upload stakeholder-analysis.json |
 
 ## Upstream Change Response
 

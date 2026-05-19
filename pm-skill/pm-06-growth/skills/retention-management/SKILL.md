@@ -15,6 +15,10 @@ metadata:
     - "怎么提高用户活跃度"
     - "用户分层怎么做"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "执行流失预警和基础干预策略推荐，输出高风险用户列表与干预建议"
+  deep_description: "完整分层运营策略 + 个性化触达内容 + 干预效果ROI追踪 + 流失模型优化建议 + 用户生命周期价值预测"
 ---
 
 # 留存管理一体化
@@ -77,7 +81,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 流失预警（from retention-churn）
+### Step 1: 流失预警（from retention-churn） [核心]
 
 构建流失预警模型，识别高风险用户，自动化触发干预动作。
 
@@ -158,7 +162,7 @@ metadata:
 - 干预时机对效果的影响
 - 干预内容的优化方向
 
-### Step 2: 分层运营（from retention-engagement）
+### Step 2: 分层运营（from retention-engagement） [条件]
 
 基于Step 1输出的流失预警结果，对用户进行生命周期分层，生成运营策略和个性化触达内容。
 
@@ -397,20 +401,40 @@ trigger_rules:
 |----------|------|------|------|
 | churn_prevention | object | 是 | 流失预警与干预结果，须含risk_model/high_risk_users/interventions |
 | churn_prevention.risk_model | object | 是 | 预警模型，须含model_type/features/accuracy |
+| churn_prevention.risk_model.model_type | string | 是 | 模型类型 |
+| churn_prevention.risk_model.features | array | 是 | 模型特征列表 |
+| churn_prevention.risk_model.features[].feature_name | string | 是 | 特征名称 |
+| churn_prevention.risk_model.features[].importance | number | 否 | 特征重要性 |
 | churn_prevention.risk_model.accuracy | number | 是 | 模型准确率，须>0.75 |
 | churn_prevention.risk_thresholds | object | 是 | 风险阈值，须含high_risk/medium_risk/low_risk |
 | churn_prevention.high_risk_users | array | 是 | 高风险用户列表，每项须含user_id/risk_score/risk_level |
+| churn_prevention.high_risk_users[].user_id | string | 是 | 用户ID |
+| churn_prevention.high_risk_users[].risk_score | number | 是 | 风险评分，范围0-1 |
 | churn_prevention.high_risk_users[].risk_level | string | 是 | 风险等级，仅允许high/medium/low/stable |
+| churn_prevention.high_risk_users[].primary_churn_signals | string[] | 否 | 主要流失信号 |
+| churn_prevention.high_risk_users[].recommended_intervention | string | 否 | 推荐干预措施 |
 | churn_prevention.interventions | array | 是 | 干预策略列表，每项须含trigger_condition/intervention_type/channel |
+| churn_prevention.interventions[].trigger_condition | string | 是 | 触发条件 |
+| churn_prevention.interventions[].intervention_type | string | 是 | 干预类型，枚举：email/in_app/push/call |
+| churn_prevention.interventions[].channel | string | 是 | 触达渠道 |
+| churn_prevention.interventions[].content_theme | string | 否 | 内容主题 |
 | churn_prevention.tracking | object | 否 | 效果追踪，须含response_rate/churn_prevention_rate/roi |
 | segments | array | 是 | 用户分层数据，至少覆盖新/成长/成熟/沉睡/流失5层 |
 | segments[].segment_id | string | 是 | 分层标识，仅允许new_user/growing_user/mature_user/at_risk/churned |
 | segments[].count | number | 是 | 分层用户数，须≥0 |
 | segments[].health_score | number | 是 | 健康度评分，范围0-1 |
+| segments[].characteristics | object | 否 | 分群特征 |
+| segments[].characteristics.avg_tenure | string | 否 | 平均生命周期 |
+| segments[].characteristics.key_behaviors | string[] | 否 | 关键行为 |
 | strategies | array | 是 | 运营策略列表，至少5条（每层1条） |
 | strategies[].segment | string | 是 | 目标分层 |
+| strategies[].key_actions | string[] | 否 | 关键行动列表 |
 | strategies[].success_metrics | array | 是 | 成功指标列表，至少1个 |
 | personalized_content | array | 否 | 个性化内容列表 |
+| personalized_content[].content_type | string | 是 | 内容类型，枚举：email/in_app/push/sms |
+| personalized_content[].theme | string | 是 | 内容主题 |
+| personalized_content[].channels | string[] | 否 | 触达渠道列表 |
+| personalized_content[].frequency | string | 否 | 触达频率 |
 
 ## 决策规则
 
@@ -427,27 +451,27 @@ trigger_rules:
 
 ## 质量检查
 
-- [ ] 流失定义区分免费/付费/企业用户
-- [ ] 预警模型准确率>75%
-- [ ] 干预策略与风险等级匹配
-- [ ] 干预效果追踪包含ROI计算
-- [ ] 用户分层覆盖完整生命周期（新/成长/成熟/沉睡/流失）
-- [ ] 健康度评分包含活跃度、功能深度、付费意愿、社交参与
-- [ ] 运营策略与用户层级匹配
-- [ ] 触达内容经过个性化处理
+- [ ] 流失定义区分免费/付费/企业用户（P0）
+- [ ] 预警模型准确率>75%（P0）
+- [ ] 干预策略与风险等级匹配（P1）
+- [ ] 干预效果追踪包含ROI计算（P2）
+- [ ] 用户分层覆盖完整生命周期（新/成长/成熟/沉睡/流失）（P1）
+- [ ] 健康度评分包含活跃度、功能深度、付费意愿、社交参与（P1）
+- [ ] 运营策略与用户层级匹配（P1）
+- [ ] 触达内容经过个性化处理（P2）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 用户行为数据缺失 | 用户提供用户活跃数据 → 分析流失特征 | 流失归因基于活跃数据推断，行为特征分析受限 |
-| 流失历史缺失 | 跳过流失趋势对比，仅基于当前数据分析 | 无法评估流失趋势变化 |
-| 用户行为数据 + 流失历史均缺失 | 用户提供用户活跃数据 → 分析流失特征 | 输出基础流失分析，干预策略标注"待验证" |
-| 生命周期阶段缺失 | 使用通用生命周期模型（新用户/活跃/沉睡/流失），标注"待确认" | 分层标准基于通用假设 |
-| 用户行为数据 + 生命周期阶段均缺失 | 用户描述用户群体 → 生成分层策略 | 输出基于描述的分层策略，标注"待数据验证" |
-- 若用户未提供用户账户数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 用户行为数据缺失 | 用户提供用户活跃数据 → 分析流失特征 | 流失归因基于活跃数据推断，行为特征分析受限 | 要求用户提供用户活跃数据（各周期活跃用户数、流失用户数） |
+| 流失历史缺失 | 跳过流失趋势对比，仅基于当前数据分析 | 无法评估流失趋势变化 | 要求用户提供历史流失率和流失用户数趋势数据 |
+| 用户行为数据 + 流失历史均缺失 | 用户提供用户活跃数据 → 分析流失特征 | 输出基础流失分析，干预策略标注"待验证" | 要求用户提供用户活跃数据和流失定义标准 |
+| 生命周期阶段缺失 | 使用通用生命周期模型（新用户/活跃/沉睡/流失），标注"待确认" | 分层标准基于通用假设 | 要求用户提供用户生命周期阶段定义和分层标准 |
+| 用户行为数据 + 生命周期阶段均缺失 | 用户描述用户群体 → 生成分层策略 | 输出基于描述的分层策略，标注"待数据验证" | 要求用户提供用户群体描述和核心行为特征 |
+| 用户账户数据缺失 | 跳过账户级流失分析，仅基于汇总数据分析 | 无法识别高流失风险账户 | 要求用户提供用户账户列表、付费状态和活跃度数据 |
 
 ### 数据获取说明
 

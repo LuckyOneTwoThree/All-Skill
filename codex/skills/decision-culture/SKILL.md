@@ -10,6 +10,10 @@ metadata:
     - "Team doesn't habitually look at data, how to drive change"
     - "Help me build a data-driven culture"
     - "Set up regular data report push"
+execution_depth:
+  default: standard
+  quick_description: "Output decision framework and current assessment only"
+  deep_description: "Full framework + decision audit + bias assessment + decision culture evolution roadmap"
 ---
 
 # Data Culture Automation
@@ -57,7 +61,7 @@ AI->Human AI suggests, human approves
 
 ### Daily Rhythm
 
-#### Anomaly Detection (automated)
+#### Anomaly Detection (automated) [Core]
 
 ```
 Execute hourly
@@ -66,7 +70,7 @@ Execute hourly
 └── If anomaly found: trigger alert
 ```
 
-#### Daily Summary (no disturbance without anomaly)
+#### Daily Summary (no disturbance without anomaly) [Core]
 
 ```yaml
 daily_summary:
@@ -130,7 +134,7 @@ daily_summary:
 
 ### Weekly Rhythm
 
-#### Monday: Feature Review
+#### Monday: Feature Review [Conditional]
 
 ```yaml
 weekly_feature_review:
@@ -164,7 +168,7 @@ weekly_feature_review:
       verdict: "Metrics positive, continue monitoring for 2 weeks"
 ```
 
-#### Mid-week: Experiment Summary
+#### Mid-week: Experiment Summary [Conditional]
 
 ```yaml
 weekly_experiment_summary:
@@ -198,7 +202,7 @@ weekly_experiment_summary:
     - "Extend pricing experiments to 3-4 weeks"
 ```
 
-#### Friday: Weekly Report
+#### Friday: Weekly Report [Conditional]
 
 ```yaml
 weekly_report:
@@ -259,7 +263,7 @@ weekly_report:
 
 ### Monthly Rhythm
 
-#### Monthly OKR Tracking
+#### Monthly OKR Tracking [Conditional]
 
 ```yaml
 monthly_okr_review:
@@ -302,7 +306,7 @@ monthly_okr_review:
         - "Improve returning user re-engagement"
 ```
 
-#### Monthly Complete Report
+#### Monthly Complete Report [Conditional]
 
 ```yaml
 monthly_report:
@@ -354,7 +358,7 @@ monthly_report:
 
 ### Quarterly Rhythm
 
-#### Quarterly Metric System Review
+#### Quarterly Metric System Review [Deep]
 
 ```yaml
 quarterly_metrics_review:
@@ -380,7 +384,7 @@ quarterly_metrics_review:
       rationale: "More focus on user stickiness"
 ```
 
-#### Quarterly Strategic Review (human-led)
+#### Quarterly Strategic Review (human-led) [Deep]
 
 ```
 Human-led quarterly review
@@ -492,28 +496,39 @@ When culture report itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Daily summary produces no noisy alerts when no anomalies
 - [ ] Weekly report includes OKR progress and experiment summary
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Monthly report includes complete metric trends and deviation analysis
 - [ ] All data references in reports traceable to data sources
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Analysis module outputs missing | User provides key metrics -> generate summary report | Report content based on user-provided metrics, lacking auto-analysis depth |
-| Anomaly detection output missing | Daily summary uses user-provided metric data | Daily report may miss unmonitored anomalies |
-| Experiment result output missing | Weekly report experiment summary chapter annotated as "to be supplemented" | Experiment progress tracking missing |
-| All analysis module outputs missing | User provides key metrics -> generate summary report | Output basic summary report, each analysis dimension annotated as "to be supplemented" |
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Analysis module outputs missing | User provides key metrics -> generate summary report | Report content based on user-provided metrics, lacking auto-analysis depth | Request user to provide core metric names and current values, or upload analysis module outputs |
+| Anomaly detection output missing | Daily summary uses user-provided metric data | Daily report may miss unmonitored anomalies | Request user to describe observed anomalies, or upload anomaly-analysis.json |
+| Experiment result output missing | Weekly report experiment summary chapter annotated as "to be supplemented" | Experiment progress tracking missing | Request user to provide experiment status and results, or upload experiment-execution.json |
+| All analysis module outputs missing | User provides key metrics -> generate summary report | Output basic summary report, each analysis dimension annotated as "to be supplemented" | Request user to provide key metrics, targets, and team focus areas, or execute analysis-anomaly and experiment-execution first |
 
-### Data Acquisition Instructions
+### Output Depth Grading
 
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Key metrics**: Core metric names and current values to track
-- **Metric targets** (optional): Target values and baseline values for each metric
-- **Team focus areas** (optional): Business issues the team is most concerned about currently
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | decision framework and current assessment only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full framework + decision audit + bias assessment + decision culture evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 

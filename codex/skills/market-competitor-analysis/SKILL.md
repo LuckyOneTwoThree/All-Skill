@@ -12,6 +12,10 @@ metadata:
     - "Map out the competitive landscape"
     - "Generate a competitor analysis report"
     - "What are competitors doing recently"
+execution_depth:
+  default: standard
+  quick_description: "Output competitor landscape and positioning only"
+  deep_description: "Full analysis + competitive strategy simulation + market positioning matrix + competitive response roadmap"
 ---
 
 # Comprehensive Competitor Analysis
@@ -48,7 +52,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Competitor Intelligence Collection
+### Step 1: Competitor Intelligence Collection [Core]
 
 Multi-source information collection covering all aspects of competitor dynamics:
 
@@ -117,7 +121,7 @@ Synthesize hiring, financing, feature updates, pricing changes, and other multi-
 - Target customer migration direction
 - Business model evolution direction
 
-### Step 2: Four-Quadrant Positioning
+### Step 2: Four-Quadrant Positioning [Core]
 
 #### Direct Competitor Identification
 
@@ -227,7 +231,7 @@ Assess inter-quadrant flow possibility for identified competitors:
 - Only annotate flow when clear signals exist; leave blank if no signals
 - Flow signals must include data sources
 
-### Step 3: Competitor Analysis Report
+### Step 3: Competitor Analysis Report [Core]
 
 #### Data Integration and Competitor Profile Construction
 
@@ -428,6 +432,14 @@ Assemble all analysis into a complete Markdown report:
 - Analysis methodology description
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | competitor landscape and positioning only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + competitive strategy simulation + market positioning matrix + competitive response roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage path**: `output/pm-discovery/market-competitor-analysis/`
@@ -606,8 +618,13 @@ Assemble all analysis into a complete Markdown report:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Feature Matrix updated, changes annotated with type and impact level
 - [ ] Competitor reputation comparison completed
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Differentiation opportunities identified
 - [ ] Pricing strategy comparison completed
 - [ ] Strategic direction inference completed, low confidence annotated
@@ -631,29 +648,26 @@ Assemble all analysis into a complete Markdown report:
 - [ ] Data sources listed
 - [ ] Markdown report format complete, directly deliverable
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ---
 
 ## Degradation Strategy
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| Competitor list | User provides category keywords -> AI searches and identifies competitors, annotates "competitor list is AI-inferred" | competitors[].name annotated "AI-inferred", strategic_signals.confidence ceiling lowered to 0.5 |
-| All upstream files missing | User provides category keywords -> AI knowledge base search identifies competitors and executes analysis | All inferences annotated "AI knowledge base inference", needs_human_validation defaults to true, alerts only included in weekly report without triggering immediate notification |
-| monitor_config | Skip input-related steps, use default monitoring configuration (scan frequency: daily, focus dimensions: all, alert threshold: impact level >= 4) | Output does not include monitor_config customization fields, alert threshold fixed at >= 4 |
-| TAM/SOM data missing | Market overview section annotated "lacking market size data" | Market overview section incomplete |
-| PEST data missing | Skip macro environment section | Market overview lacks macro perspective |
-| Own product information missing | Differentiation strategies annotated as "general recommendations" | Strategies need adjustment based on own situation |
-| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot determine competitor analysis scope | Cannot generate output |
-
-## Data Acquisition Instructions
-
-This Skill requires a competitor list or category keywords. Please provide via one of the following methods:
-  1. Directly provide competitor name list and category keywords
-  2. Upload competitor data files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| Competitor list | User provides category keywords -> AI searches and identifies competitors, annotates "competitor list is AI-inferred" | competitors[].name annotated "AI-inferred", strategic_signals.confidence ceiling lowered to 0.5 | Request user to provide competitor name list (e.g., "CompetitorA, CompetitorB") and category keywords, or upload competitor-analysis.json |
+| All upstream files missing | User provides category keywords -> AI knowledge base search identifies competitors and executes analysis | All inferences annotated "AI knowledge base inference", needs_human_validation defaults to true, alerts only included in weekly report without triggering immediate notification | Request user to provide category keywords (e.g., "online education", "SaaS CRM") to define competitor analysis scope |
+| monitor_config | Skip input-related steps, use default monitoring configuration (scan frequency: daily, focus dimensions: all, alert threshold: impact level >= 4) | Output does not include monitor_config customization fields, alert threshold fixed at >= 4 | Prompt user to provide monitoring config (scan frequency, focus dimensions, alert threshold) or accept defaults |
+| TAM/SOM data missing | Market overview section annotated "lacking market size data" | Market overview section incomplete | Request user to provide market size data or upload tam-som.json for market overview |
+| PEST data missing | Skip macro environment section | Market overview lacks macro perspective | Request user to provide PEST analysis data or upload pest-report.json for macro context |
+| Own product information missing | Differentiation strategies annotated as "general recommendations" | Strategies need adjustment based on own situation | Request user to describe own product features, pricing, and positioning for differentiation analysis |
+| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot determine competitor analysis scope | Cannot generate output | Prompt user to input category keywords (e.g., "online education", "SaaS CRM") to define analysis scope |
 
 ## Upstream Change Response
 

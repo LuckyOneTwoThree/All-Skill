@@ -11,6 +11,10 @@ metadata:
     - "Generate user feedback report"
     - "What are users complaining about recently"
     - "Feedback closure rate how"
+execution_depth:
+  default: standard
+  quick_description: "Output closure rate and P0 unresolved list"
+  deep_description: "Full report + feedback trend prediction + root cause deep analysis + improvement roadmap"
 ---
 
 # User Feedback Loop Report Generation AI->Human
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Feedback Collection & Aggregation
+### Step 1: Feedback Collection & Aggregation [Core]
 
 **Goal**: Collect and aggregate multi-channel user feedback
 
@@ -69,7 +73,7 @@ feedback_aggregation:
     negative: {count}
 ```
 
-### Step 2: Feedback Categorization
+### Step 2: Feedback Categorization [Core]
 
 **Goal**: Categorize feedback by type and priority
 
@@ -131,7 +135,7 @@ feedback_categorization:
         source_channels: [customer_service, app_store]
 ```
 
-### Step 3: Closure Rate Tracking
+### Step 3: Closure Rate Tracking [Conditional]
 
 **Goal**: Track feedback closure rate and resolution effectiveness
 
@@ -178,7 +182,7 @@ closure_tracking:
   user_satisfaction_rate: {percentage}
 ```
 
-### Step 4: Improvement Effectiveness Assessment
+### Step 4: Improvement Effectiveness Assessment [Deep]
 
 **Goal**: Assess improvement effectiveness from feedback-driven changes
 
@@ -213,7 +217,7 @@ improvement_effectiveness:
       after: 4.5
 ```
 
-### Step 5: Report Generation
+### Step 5: Report Generation [Core]
 
 **Goal**: Generate complete user feedback loop report
 
@@ -239,6 +243,14 @@ feedback_loop_report:
       owner: {team}
       deadline: {date}
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | closure rate and P0 unresolved list | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + feedback trend prediction + root cause deep analysis + improvement roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -287,13 +299,23 @@ feedback_loop_report:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Feedback aggregation data complete
 - [ ] Categorization coverage >= 95%
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Priority assessment reasonable
 - [ ] Closure rate calculable
 - [ ] P0 unresolved listed
 - [ ] Improvement suggestions actionable
 - [ ] Report structure complete
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

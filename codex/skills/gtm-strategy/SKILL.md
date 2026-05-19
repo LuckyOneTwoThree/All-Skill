@@ -10,6 +10,10 @@ metadata:
     - "New product launching, how to promote it"
     - "Help me create a launch plan"
     - "How to develop a product release strategy"
+execution_depth:
+  default: standard
+  quick_description: "Output target market definition and launch path"
+  deep_description: "Full GTM strategy + channel ROI simulation + launch risk contingency + competitive response strategy"
 ---
 
 # Go-to-Market Strategy Document Generation
@@ -37,7 +41,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Target Market Definition
+### Step 1: Target Market Definition [Core]
 
 Precisely define the target market for launch:
 
@@ -46,7 +50,7 @@ Precisely define the target market for launch:
 3. **TAM/SAM/SOM**: Market size estimation, focus on reachable SOM
 4. **Market timing**: Why now? Market trends, policy windows, competitive gaps
 
-### Step 2: Launch Path Selection
+### Step 2: Launch Path Selection [Core]
 
 Select launch path based on product type and target market:
 
@@ -58,7 +62,7 @@ Select launch path based on product type and target market:
 2. **Path recommendation**: Recommend optimal path based on product characteristics with rationale
 3. **Phase breakdown**: Pre-launch -> Launch -> Growth phase objectives
 
-### Step 3: Pricing and Packaging Strategy
+### Step 3: Pricing and Packaging Strategy [Conditional]
 
 Determine how the product is packaged and priced:
 
@@ -67,7 +71,7 @@ Determine how the product is packaged and priced:
 3. **Launch pricing**: Introductory price, early bird discount, annual payment discount and other promotional strategies
 4. **Value anchoring**: Compare with competitor pricing, highlight cost-effectiveness advantages
 
-### Step 4: Channel and Promotion Plan
+### Step 4: Channel and Promotion Plan [Conditional]
 
 Design a full-funnel channel strategy from reach to conversion:
 
@@ -77,7 +81,7 @@ Design a full-funnel channel strategy from reach to conversion:
 4. **Channel budget allocation**: Budget share and expected ROI for each channel
 5. **Content calendar**: 4-week content publishing plan before and after launch
 
-### Step 5: Launch Milestones and Success Metrics
+### Step 5: Launch Milestones and Success Metrics [Core]
 
 Define criteria for launch success:
 
@@ -89,9 +93,17 @@ Define criteria for launch success:
 3. **Early warning indicators**: Adjustment mechanisms triggered when below expectations
 4. **Go/No-Go checklist**: Final check items before launch
 
-### Step 6: Report Assembly
+### Step 6: Report Assembly [Core]
 
 Assemble the above content into a complete GTM strategy document.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | target market definition and launch path | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full GTM strategy + channel ROI simulation + launch risk contingency + competitive response strategy | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -128,20 +140,64 @@ Assemble the above content into a complete GTM strategy document.
 | product_name | string | Yes | Product name, cannot be empty |
 | target_market | object | Yes | Target market, must contain icp/market_size |
 | target_market.icp | object | Yes | ICP profile, at least industry/size/role 3 dimensions |
+| target_market.icp.industry | string | Yes | Target industry, cannot be empty |
+| target_market.icp.company_size | string | Yes | Company size, cannot be empty |
+| target_market.icp.target_role | string | Yes | Target role, cannot be empty |
+| target_market.icp.pain_points | string[] | No | ICP core pain points |
+| target_market.market_size | object | Yes | Market size |
+| target_market.market_size.tam | string | No | Total addressable market |
+| target_market.market_size.sam | string | No | Serviceable available market |
+| target_market.market_size.som | string | No | Serviceable obtainable market |
 | launch_path | object | Yes | Launch path, must contain mode/rationale/phases |
 | launch_path.mode | string | Yes | Launch mode, only big_bang/invite_only/progressive/soft_launch allowed |
+| launch_path.rationale | string | Yes | Mode selection rationale, cannot be empty |
+| launch_path.phases | array | Yes | Launch phase list, at least 1 phase |
+| launch_path.phases[].phase_name | string | Yes | Phase name, cannot be empty |
+| launch_path.phases[].timeline | string | No | Phase timeline |
+| launch_path.phases[].key_activities | string[] | No | Key activities list |
 | success_metrics | object | Yes | Success metrics, must contain week_1/month_1/quarter_1 |
+| success_metrics.week_1 | object | Yes | Week 1 metrics |
+| success_metrics.week_1.target_users | number | No | Target user count |
+| success_metrics.week_1.activation_rate | number | No | Activation rate |
+| success_metrics.month_1 | object | Yes | Month 1 metrics |
+| success_metrics.month_1.retention_rate | number | No | Retention rate |
+| success_metrics.month_1.revenue | number | No | Revenue target |
+| success_metrics.quarter_1 | object | Yes | Quarter 1 metrics |
+| success_metrics.quarter_1.market_share | string | No | Market share target |
+| success_metrics.quarter_1.nps | number | No | NPS target |
 | channels | object | No | Channel plan, must contain owned/paid/ecosystem |
+| channels.owned | array | No | Owned channel list |
+| channels.owned[].channel_name | string | Yes | Channel name |
+| channels.owned[].budget_ratio | number | No | Budget ratio |
+| channels.paid | array | No | Paid channel list |
+| channels.paid[].channel_name | string | Yes | Channel name |
+| channels.paid[].budget_ratio | number | No | Budget ratio |
+| channels.paid[].expected_roi | number | No | Expected ROI |
+| channels.ecosystem | array | No | Ecosystem channel list |
+| channels.ecosystem[].channel_name | string | Yes | Channel name |
+| channels.ecosystem[].partner_type | string | No | Partner type |
 | risks | array | No | Risk list |
+| risks[].risk | string | Yes | Risk description |
+| risks[].probability | string | No | Probability, enum: high/medium/low |
+| risks[].impact | string | No | Impact level, enum: high/medium/low |
+| risks[].mitigation | string | No | Mitigation measure |
 
 ## Quality Checks
 
-| Check Item | Standard | Failed Action |
-|--------|------|------------|
-| ICP profile specific | At least includes industry, size, role 3 dimensions | Supplement ICP details |
-| Launch path justified | Path selection based on product type and target market characteristics | Supplement selection rationale |
-| Channel budget executable | Each channel has budget share and expected ROI | Supplement budget details |
-| Success metrics quantifiable | Week 1/month 1/quarter 1 metrics all have specific values | Set target values or mark "to be confirmed" |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] ICP profile specific (At least includes industry, size, role 3 dimensions)
+- [ ] Launch path justified (Path selection based on product type and target market characteristics)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Channel budget executable (Each channel has budget share and expected ROI)
+- [ ] Success metrics quantifiable (Week 1/month 1/quarter 1 metrics all have specific values)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Decision Rules
 
@@ -154,13 +210,13 @@ Assemble the above content into a complete GTM strategy document.
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| No product positioning | Infer positioning from user-provided product info, mark "positioning to be confirmed" | Product positioning is inferred conclusion, needs subsequent validation |
-| No business model | Focus on acquisition and channel strategy, business model section marked "to be supplemented" | Pricing and packaging strategy lacks business model support |
-| No pricing plan | Generate pricing strategy framework, specific prices marked "pending pricing analysis" | Pricing recommendations are framework-level, no specific prices |
-| No growth model | Default to PLG model, mark "growth model to be diagnosed" | Launch path and channel strategy based on PLG assumption |
-- If user has not provided product info, prompt user to provide or skip steps related to that input
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| No product positioning | Infer positioning from user-provided product info, mark "positioning to be confirmed" | Product positioning is inferred conclusion, needs subsequent validation | Request user to describe product positioning and target market, or upload positioning-strategy.json |
+| No business model | Focus on acquisition and channel strategy, business model section marked "to be supplemented" | Pricing and packaging strategy lacks business model support | Request user to describe business model and revenue streams, or upload bmc.json |
+| No pricing plan | Generate pricing strategy framework, specific prices marked "pending pricing analysis" | Pricing recommendations are framework-level, no specific prices | Request user to provide pricing tiers or upload business-pricing.json |
+| No growth model | Default to PLG model, mark "growth model to be diagnosed" | Launch path and channel strategy based on PLG assumption | Request user to describe growth model or upload growth-model.json |
+| Product info not provided | Prompt user to provide or skip steps related to that input | Launch timeline and milestones may be unrealistic | Prompt user to provide product name, target market, and launch timeline |
 
 ## Upstream Change Response
 

@@ -10,6 +10,10 @@ metadata:
     - "How big is this market"
     - "Help me calculate market size"
     - "Where is our ceiling"
+execution_depth:
+  default: standard
+  quick_description: "Output market size estimation"
+  deep_description: "Full estimation + market segment breakdown + growth rate prediction + market entry priority"
 ---
 
 # Market Size Auto-Estimation
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: TAM Estimation
+### Step 1: TAM Estimation [Core]
 
 Dual-path cross-validation:
 
@@ -54,7 +58,7 @@ Dual-path cross-validation:
 - Each estimated value annotated with data source
 - When dual-path results differ by > 20%, annotate as needing human judgment
 
-### Step 2: SAM Estimation
+### Step 2: SAM Estimation [Core]
 
 Filter layer by layer on top of TAM:
 
@@ -70,7 +74,7 @@ Filter layer by layer on top of TAM:
 - Each filter coefficient and its basis
 - SAM range estimate (optimistic/neutral/conservative)
 
-### Step 3: SOM Estimation
+### Step 3: SOM Estimation [Core]
 
 Overlay competition and resource constraints on top of SAM:
 
@@ -88,7 +92,7 @@ Overlay competition and resource constraints on top of SAM:
 - SOM range estimate (optimistic/neutral/conservative)
 - Achievable timeline (6-month/12-month/24-month milestones)
 
-### Step 4: Confidence Assessment
+### Step 4: Confidence Assessment [Core]
 
 Assess credibility of overall estimation results:
 
@@ -102,6 +106,14 @@ Assess credibility of overall estimation results:
 - Overall confidence score (0-1)
 - Key assumption list and sensitivity analysis results
 - Low-confidence data points annotated
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | market size estimation | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full estimation + market segment breakdown + growth rate prediction + market entry priority | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -252,13 +264,23 @@ Output file: `output/pm-discovery/market-tam-som/tam-som.json`
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] TAM/SAM/SOM three-layer estimation complete
 - [ ] Each layer includes range estimates (optimistic/neutral/conservative)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Key assumptions annotated
 - [ ] Data sources listed
 - [ ] Confidence scoring completed
 - [ ] Low-reliability data sources annotated as needing human validation
 - [ ] High-sensitivity assumptions annotated
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -266,21 +288,13 @@ Output file: `output/pm-discovery/market-tam-som/tam-som.json`
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| No strong dependencies | This Skill can run independently; user provides category keywords and target market to execute | No impact, output complete |
-| All upstream files missing | User provides category keywords and target market -> estimate TAM/SAM/SOM based on public data in AI knowledge base | Data source reliability score lowered, confidence.overall_score may be < 0.5, annotated "based on AI knowledge base estimation" |
-| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot execute market size estimation | Cannot generate output, process blocked |
-| If user does not provide geographic_scope | Prompt user to provide target market geographic scope; otherwise default to "Global" | sam.geo_coefficient defaults to 1.0 (no geographic filter), SAM = TAM, confidence lowered |
-| If user does not provide time_range | Prompt user to provide measurement time range; otherwise default to 3 years from current year | time_range field is inferred value, annotated "default value", trend prediction accuracy reduced |
-
-## Data Acquisition Instructions
-
-This Skill requires category keywords and target market information. Please provide via one of the following methods:
-  1. Directly input category keywords (e.g., "online education", "SaaS CRM") and target market (e.g., "Mainland China")
-  2. Upload market research data files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| No strong dependencies | This Skill can run independently; user provides category keywords and target market to execute | No impact, output complete | Provide category keywords (e.g., "online education", "SaaS CRM") and target market (e.g., "Mainland China") |
+| All upstream files missing | User provides category keywords and target market -> estimate TAM/SAM/SOM based on public data in AI knowledge base | Data source reliability score lowered, confidence.overall_score may be < 0.5, annotated "based on AI knowledge base estimation" | Request user to provide category keywords and target market, or upload market research data files (e.g., tam-som.json) |
+| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot execute market size estimation | Cannot generate output, process blocked | Prompt user to input category keywords (e.g., "online education", "SaaS CRM") to define estimation scope |
+| If user does not provide geographic_scope | Prompt user to provide target market geographic scope; otherwise default to "Global" | sam.geo_coefficient defaults to 1.0 (no geographic filter), SAM = TAM, confidence lowered | Prompt user to specify geographic scope (e.g., "Mainland China", "North America", "Global") |
+| If user does not provide time_range | Prompt user to provide measurement time range; otherwise default to 3 years from current year | time_range field is inferred value, annotated "default value", trend prediction accuracy reduced | Prompt user to specify time range (e.g., "2024-2026") or accept default 3-year projection |
 
 ## Upstream Change Response
 

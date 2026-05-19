@@ -10,6 +10,10 @@ metadata:
     - "How to write a project charter"
     - "Help me create a project charter"
     - "How to define project objectives and scope"
+execution_depth:
+  default: standard
+  quick_description: "Output project charter and objectives"
+  deep_description: "Full charter + stakeholder alignment + risk contingency + governance mechanism design"
 ---
 
 # Project Charter Auto-generation
@@ -43,7 +47,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Project Background Auto-compilation
+### Step 1: Project Background Auto-compilation [Core]
 
 **Actions**:
 - Extract key product information (product name, positioning, core value)
@@ -65,7 +69,7 @@ metadata:
 }
 ```
 
-### Step 2: Objectives & Scope Auto-definition
+### Step 2: Objectives & Scope Auto-definition [Core]
 
 **Actions**:
 - Decompose strategic objectives into measurable project objectives
@@ -90,7 +94,7 @@ metadata:
 }
 ```
 
-### Step 3: Success Criteria Auto-quantification
+### Step 3: Success Criteria Auto-quantification [Core]
 
 **Actions**:
 - Define quantifiable success criteria for each objective
@@ -112,7 +116,7 @@ metadata:
 }
 ```
 
-### Step 4: Stakeholder Auto-identification
+### Step 4: Stakeholder Auto-identification [Core]
 
 **Actions**:
 - Scan stakeholders involved in the project (individuals, teams, departments)
@@ -135,7 +139,7 @@ metadata:
 }
 ```
 
-### Step 5: Preliminary Risk Assessment
+### Step 5: Preliminary Risk Assessment [Core]
 
 **Actions**:
 - Identify preliminary risks based on project background
@@ -158,7 +162,7 @@ metadata:
 }
 ```
 
-### Step 6: Project Charter Document Generation
+### Step 6: Project Charter Document Generation [Core]
 
 **Actions**:
 - Integrate outputs from the above 5 steps
@@ -204,6 +208,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | project charter and objectives | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full charter + stakeholder alignment + risk contingency + governance mechanism design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -302,10 +314,20 @@ Each Step output must include confidence annotation:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Project objectives follow SMART principles
 - [ ] Stakeholders cover all key roles
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Success criteria are quantifiable and verifiable
 - [ ] Preliminary risk list includes impact and probability assessment
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

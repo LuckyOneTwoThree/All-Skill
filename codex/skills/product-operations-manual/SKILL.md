@@ -10,6 +10,10 @@ metadata:
     - "How to write an operations manual"
     - "How to standardize daily operations processes"
     - "Help me organize operations SOP"
+execution_depth:
+  default: standard
+  quick_description: "Output operations SOP and emergency response procedures"
+  deep_description: "Full manual + operations strategy deep analysis + scenario-based SOP + operations metrics system design"
 ---
 
 # Product Operations Manual Generation
@@ -36,7 +40,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Daily Operations SOP
+### Step 1: Daily Operations SOP [Core]
 
 Define standard operating procedures for daily product operations:
 
@@ -54,7 +58,7 @@ Define standard operating procedures for daily product operations:
    - Operations campaign effectiveness evaluation
    - Next month operations plan development
 
-### Step 2: Content Operations Standards
+### Step 2: Content Operations Standards [Conditional]
 
 Define standards and processes for content operations:
 
@@ -64,7 +68,7 @@ Define standards and processes for content operations:
 4. **Content distribution channels**: Website, official account, community, email, push, social media
 5. **Content calendar template**: Weekly/monthly content scheduling template
 
-### Step 3: User Operations Strategy
+### Step 3: User Operations Strategy [Core]
 
 Define segmented user operations strategies and execution methods:
 
@@ -77,7 +81,7 @@ Define segmented user operations strategies and execution methods:
 3. **Outreach strategy**: Push, email, SMS, in-app message frequency and content standards
 4. **User feedback handling**: Feedback collection -> Classification -> Response -> Closure SLA
 
-### Step 4: Campaign Operations Templates
+### Step 4: Campaign Operations Templates [Core]
 
 Define standard templates and processes for campaign operations:
 
@@ -87,7 +91,7 @@ Define standard templates and processes for campaign operations:
 4. **Campaign retrospective template**: Data review -> Effectiveness evaluation -> Lessons learned -> Improvement recommendations
 5. **Campaign budget template**: Expense details, ROI estimates, approval process
 
-### Step 5: Emergency Response Procedures
+### Step 5: Emergency Response Procedures [Core]
 
 Define emergency response procedures for operations anomalies:
 
@@ -97,9 +101,17 @@ Define emergency response procedures for operations anomalies:
 4. **Emergency communication templates**: User announcement, internal notification, post-incident summary
 5. **Common emergency scenarios**: Server failure, data anomaly, negative PR, security incident
 
-### Step 6: Report Assembly
+### Step 6: Report Assembly [Core]
 
 Assemble the above content into a complete operations manual.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | operations SOP and emergency response procedures | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full manual + operations strategy deep analysis + scenario-based SOP + operations metrics system design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -135,21 +147,45 @@ Assemble the above content into a complete operations manual.
 | product_name | string | Yes | Product name, cannot be empty |
 | daily_sop | object | Yes | Daily operations SOP, must contain daily_checklist/weekly_rhythm/monthly_rhythm |
 | daily_sop.daily_checklist | array | Yes | Daily checklist, at least 3 items |
+| daily_sop.weekly_rhythm | array | No | Weekly rhythm check items |
+| daily_sop.weekly_rhythm[].task | string | Yes | Task description |
+| daily_sop.weekly_rhythm[].day | string | No | Execution day |
+| daily_sop.monthly_rhythm | array | No | Monthly rhythm check items |
+| daily_sop.monthly_rhythm[].task | string | Yes | Task description |
+| daily_sop.monthly_rhythm[].deadline | string | No | Deadline |
 | user_operations | object | Yes | User operations strategy, must contain segmentation_model/segment_strategies |
+| user_operations.segmentation_model | object | Yes | Segmentation model |
+| user_operations.segmentation_model.dimensions | string[] | No | Segmentation dimensions |
+| user_operations.segmentation_model.method | string | No | Segmentation method |
 | user_operations.segment_strategies | array | Yes | Segmented strategies, at least covering new/active/silent/churned 4 types |
+| user_operations.segment_strategies[].segment | string | Yes | Segment name |
+| user_operations.segment_strategies[].strategy | string | Yes | Strategy description |
 | emergency_response | object | Yes | Emergency response, must contain severity_levels/response_sla |
 | emergency_response.severity_levels | array | Yes | Severity levels, at least covering P0-P3 |
+| emergency_response.response_sla | object | Yes | Response SLA |
+| emergency_response.response_sla.P0 | string | No | P0 response time |
+| emergency_response.response_sla.P1 | string | No | P1 response time |
+| emergency_response.response_sla.P2 | string | No | P2 response time |
+| emergency_response.response_sla.P3 | string | No | P3 response time |
 | content_operations | object | No | Content operations standards |
 | activity_operations | object | No | Campaign operations templates |
 
 ## Quality Checks
 
-| Check Item | Standard | Failed Action |
-|--------|------|------------|
-| SOP executable | Each SOP has specific actions and timelines | Supplement execution details |
-| Segmentation strategy complete | At least covering new/active/silent/churned 4 user types | Supplement missing segments |
-| Emergency procedures actionable | P0-P3 all have response SLA and escalation paths | Supplement missing levels |
-| Templates ready to use | Campaign templates have placeholders and fill-in instructions | Supplement template details |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] SOP executable (Each SOP has specific actions and timelines)
+- [ ] Segmentation strategy complete (At least covering new/active/silent/churned 4 user types)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Emergency procedures actionable (P0-P3 all have response SLA and escalation paths)
+- [ ] Templates ready to use (Campaign templates have placeholders and fill-in instructions)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Decision Rules
 
@@ -162,11 +198,11 @@ Assemble the above content into a complete operations manual.
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| No growth model | Manual focuses on general operations SOP, growth strategy section marked "pending growth model diagnosis" | Operations SOP lacks growth model orientation |
-| No stage strategies | Manual provides standard templates and best practices, marked "pending strategy customization" | Operations strategies are generic templates, not customized |
-| No product info | Cannot generate, require user to provide basic information | No output |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| No growth model | Manual focuses on general operations SOP, growth strategy section marked "pending growth model diagnosis" | Operations SOP lacks growth model orientation | Request user to describe growth model and bottlenecks, or upload growth-model.json |
+| No stage strategies | Manual provides standard templates and best practices, marked "pending strategy customization" | Operations strategies are generic templates, not customized | Request user to describe AARRR stage strategies, or upload growth-strategy-report.json |
+| No product info | Cannot generate, require user to provide basic information | No output | Prompt user to provide product name, target users, and business model |
 
 ## Upstream Change Response
 

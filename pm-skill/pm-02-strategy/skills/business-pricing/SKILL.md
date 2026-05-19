@@ -11,6 +11,10 @@ metadata:
     - "产品该怎么定价"
     - "定价方案怎么做"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "生成竞品定价矩阵概览和1个推荐定价方案，含基础单位经济验证"
+  deep_description: "额外包含3个完整定价方案对比、支付意愿多方法交叉推断、敏感性分析、定价调整路线图、竞品定价趋势预测"
 ---
 
 # 定价策略自动分析
@@ -98,7 +102,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：竞品定价矩阵分析
+### Step 1：竞品定价矩阵分析 [核心]
 
 **任务**：整合和系统化分析竞品定价策略。
 
@@ -147,7 +151,7 @@ metadata:
 - 价格区间分类清晰
 - 市场空白识别准确
 
-### Step 2：支付意愿推断
+### Step 2：支付意愿推断 [条件]
 
 **任务**：基于多种数据源推断用户支付意愿。
 
@@ -203,7 +207,7 @@ metadata:
 - 置信度有依据
 - 细分群体差异已分析
 
-### Step 3：定价方案生成
+### Step 3：定价方案生成 [核心]
 
 **任务**：生成3个差异化的定价方案。
 
@@ -379,10 +383,41 @@ metadata:
 | 字段路径 | 类型 | 必填 | 说明 |
 |----------|------|------|------|
 | pricing_analysis.competitor_pricing_matrix | object | 是 | 含premium/mid/budget三段分析 |
+| pricing_analysis.competitor_pricing_matrix.premium_segment | object | 否 | 高端市场段 |
+| pricing_analysis.competitor_pricing_matrix.premium_segment.price_range | string | 条件必填 | 高端价格区间 |
+| pricing_analysis.competitor_pricing_matrix.premium_segment.players | string[] | 条件必填 | 高端市场竞品列表 |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment | object | 否 | 中端市场段 |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment.price_range | string | 条件必填 | 中端价格区间 |
+| pricing_analysis.competitor_pricing_matrix.mid_market_segment.players | string[] | 条件必填 | 中端市场竞品列表 |
+| pricing_analysis.competitor_pricing_matrix.budget_segment | object | 否 | 低端市场段 |
+| pricing_analysis.competitor_pricing_matrix.budget_segment.price_range | string | 条件必填 | 低端价格区间 |
+| pricing_analysis.competitor_pricing_matrix.budget_segment.players | string[] | 条件必填 | 低端市场竞品列表 |
 | pricing_analysis.willingness_to_pay | object | 是 | 含整体区间、置信度、细分分析 |
+| pricing_analysis.willingness_to_pay.overall_range | object | 是 | 整体支付意愿区间 |
+| pricing_analysis.willingness_to_pay.overall_range.floor | string | 是 | 价格下限 |
+| pricing_analysis.willingness_to_pay.overall_range.ceiling | string | 是 | 价格上限 |
+| pricing_analysis.willingness_to_pay.confidence | number | 是 | 推断置信度，0-1 |
+| pricing_analysis.willingness_to_pay.segment_analysis | array | 否 | 按细分群体的支付意愿分析 |
+| pricing_analysis.willingness_to_pay.segment_analysis[].segment_name | string | 是 | 细分群体名称 |
+| pricing_analysis.willingness_to_pay.segment_analysis[].price_sensitivity | string | 是 | 价格敏感度，枚举：high/medium/low |
 | pricing_analysis.pricing_options.option_a | object | 是 | 渗透定价方案，含tiers和unit_economics |
+| pricing_analysis.pricing_options.option_a.tiers | array | 是 | 套餐层级列表，至少1个 |
+| pricing_analysis.pricing_options.option_a.tiers[].tier_name | string | 是 | 套餐名称，不可为空 |
+| pricing_analysis.pricing_options.option_a.tiers[].price | number | 是 | 价格 |
+| pricing_analysis.pricing_options.option_a.tiers[].features | string[] | 是 | 包含功能列表 |
+| pricing_analysis.pricing_options.option_a.unit_economics | object | 是 | 单位经济指标 |
 | pricing_analysis.pricing_options.option_b | object | 是 | 价值定价方案，含tiers和unit_economics |
+| pricing_analysis.pricing_options.option_b.tiers | array | 是 | 套餐层级列表，至少1个 |
+| pricing_analysis.pricing_options.option_b.tiers[].tier_name | string | 是 | 套餐名称，不可为空 |
+| pricing_analysis.pricing_options.option_b.tiers[].price | number | 是 | 价格 |
+| pricing_analysis.pricing_options.option_b.tiers[].features | string[] | 是 | 包含功能列表 |
+| pricing_analysis.pricing_options.option_b.unit_economics | object | 是 | 单位经济指标 |
 | pricing_analysis.pricing_options.option_c | object | 是 | 混合定价方案，含tiers和unit_economics |
+| pricing_analysis.pricing_options.option_c.tiers | array | 是 | 套餐层级列表，至少1个 |
+| pricing_analysis.pricing_options.option_c.tiers[].tier_name | string | 是 | 套餐名称，不可为空 |
+| pricing_analysis.pricing_options.option_c.tiers[].price | number | 是 | 价格 |
+| pricing_analysis.pricing_options.option_c.tiers[].features | string[] | 是 | 包含功能列表 |
+| pricing_analysis.pricing_options.option_c.unit_economics | object | 是 | 单位经济指标 |
 | pricing_options.*.unit_economics.ltv_cac_ratio | number | 是 | LTV/CAC比值，健康标准≥3 |
 | pricing_options.*.unit_economics.payback_period_months | number | 是 | 回本周期（月） |
 | pricing_analysis.recommendation.recommended_option | string | 是 | A/B/C |
@@ -440,25 +475,25 @@ metadata:
 
 ### 自检清单
 
-- [ ] 3个定价方案都已生成
-- [ ] 每个方案包含差异化定位
-- [ ] 单位经济计算正确：
+- [ ] 3个定价方案都已生成（P0）
+- [ ] 每个方案包含差异化定位（P0）
+- [ ] 单位经济计算正确：（P1）
   - ARPU计算逻辑正确
   - CAC分摊合理
   - LTV计算包含留存假设
   - 盈亏平衡分析完整
-- [ ] 风险已完整标注
-- [ ] 竞品矩阵覆盖主要竞品
-- [ ] 支付意愿推断方法透明
+- [ ] 风险已完整标注（P1）
+- [ ] 竞品矩阵覆盖主要竞品（P0）
+- [ ] 支付意愿推断方法透明（P2）
 
 ### 计算验证
 
 **单位经济验证清单**：
-- [ ] ARPU = Σ(套餐价格 × 套餐用户占比)
-- [ ] CAC包括获取成本（广告、BD等）分摊
-- [ ] LTV = ARPU × 平均生命周期（月）
-- [ ] 回收期 = CAC / (ARPU - 边际成本)
-- [ ] LTV/CAC ≥ 3（健康标准）
+- [ ] ARPU = Σ(套餐价格 × 套餐用户占比)（P1）
+- [ ] CAC包括获取成本（广告、BD等）分摊（P1）
+- [ ] LTV = ARPU × 平均生命周期（月）（P1）
+- [ ] 回收期 = CAC / (ARPU - 边际成本)（P2）
+- [ ] LTV/CAC ≥ 3（健康标准）（P2）
 
 ---
 
@@ -466,13 +501,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| bmc.json | 用户提供产品描述 → 基于行业基准推荐定价 | 价值主张和成本结构缺乏BMC数据支撑，定价可能偏离实际 |
-| 竞品定价数据（competitor-analysis.json） | 用户提供产品描述 → 基于行业基准推荐定价 | 竞品矩阵为空，市场空白无法识别，定价缺乏竞品锚定 |
-| bmc.json + 竞品定价数据 | 用户提供产品描述和目标市场 → 基于行业基准推荐定价 | 整体置信度降低，方案缺乏数据锚定 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和行业基准推荐定价 | 整体置信度显著降低，方案仅为行业基准参考 |
-| 支付意愿推断数据（用户提供） | 若用户未提供支付意愿推断数据，提示用户提供或跳过该输入相关步骤 | 支付意愿分析缺失，定价方案缺乏用户端验证 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| bmc.json | 用户提供产品描述 → 基于行业基准推荐定价 | 价值主张和成本结构缺乏BMC数据支撑，定价可能偏离实际 | 要求用户提供产品功能、目标用户和成本结构描述或上传bmc.json文件 |
+| 竞品定价数据（competitor-analysis.json） | 用户提供产品描述 → 基于行业基准推荐定价 | 竞品矩阵为空，市场空白无法识别，定价缺乏竞品锚定 | 要求用户提供竞品名称、定价层级和价格或上传competitor-analysis.json文件 |
+| bmc.json + 竞品定价数据 | 用户提供产品描述和目标市场 → 基于行业基准推荐定价 | 整体置信度降低，方案缺乏数据锚定 | 要求用户提供产品描述、竞品定价和行业基准数据 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和行业基准推荐定价 | 整体置信度显著降低，方案仅为行业基准参考 | 要求用户提供产品功能、目标用户、竞品定价和成本结构信息 |
+| 支付意愿推断数据（用户提供） | 若用户未提供支付意愿推断数据，提示用户提供或跳过该输入相关步骤 | 支付意愿分析缺失，定价方案缺乏用户端验证 | 要求用户提供用户支付意愿调研数据或价格敏感度测试结果 |
 
 ## 数据获取说明
 

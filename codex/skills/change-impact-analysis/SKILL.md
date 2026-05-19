@@ -10,6 +10,10 @@ metadata:
     - "Requirements changed, check the impact scope"
     - "Analyze which modules this change would affect"
     - "Requirements changed, help me assess the impact"
+execution_depth:
+  default: standard
+  quick_description: "Output impact assessment and affected areas only"
+  deep_description: "Full analysis + dependency chain mapping + risk propagation model + change management roadmap"
 ---
 
 # Requirement Change Impact Analysis Automation
@@ -57,7 +61,7 @@ Trigger condition: New change request added to the change management system.
 
 ## Execution Steps
 
-### Step 1: Change Classification (L1-L4)
+### Step 1: Change Classification (L1-L4) [Core]
 
 #### Classification Dimensions
 
@@ -100,7 +104,7 @@ Change Request
 }
 ```
 
-### Step 2: Impact Propagation Analysis
+### Step 2: Impact Propagation Analysis [Core]
 
 #### 2.1 Functional Impact Analysis
 
@@ -220,7 +224,7 @@ Change Request
 }
 ```
 
-### Step 3: Re-Review Necessity Judgment
+### Step 3: Re-Review Necessity Judgment [Core]
 
 #### Review Trigger Rules
 
@@ -268,7 +272,7 @@ Change Request
 }
 ```
 
-### Step 4: Version Linkage Analysis
+### Step 4: Version Linkage Analysis [Core]
 
 #### 4.1 PRD Version Update
 
@@ -346,6 +350,14 @@ Change Request
   }
 }
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | impact assessment and affected areas only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + dependency chain mapping + risk propagation model + change management roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -491,40 +503,32 @@ When change impact analysis results themselves change, downstream notification m
 
 ## Quality Checks
 
-### Quality Check
+### P0 Checks (must pass for quick/standard/deep)
 
-| Check Item | Standard | Non-Compliance Handling |
-|-----------|----------|------------------------|
-| Impact scope exhaustiveness | Functional/technical/testing/operations four dimensions fully covered | Return for supplementation |
-| Re-review judgment basis | Every judgment has corresponding evidence | Return for supplementation |
-| Version linkage completeness | PRD/code/test case versions synchronized | Alert + manual confirmation |
+- [ ] Impact scope exhaustiveness (Functional/technical/testing/operations four dimensions fully covered)
+- [ ] Re-review judgment basis (Every judgment has corresponding evidence)
 
-### Impact Scope Exhaustiveness Checklist
+### P1 Checks (must pass for standard/deep)
 
-- [ ] Functional impact: Direct/indirect/dependent features identified
-- [ ] Technical impact: Code/database/API/dependencies identified
-- [ ] Testing impact: Regression/new test cases identified
-- [ ] Operations impact: Configuration/data/customer service identified
+- [ ] Version linkage completeness (PRD/code/test case versions synchronized)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|--------------|-----------------|---------------|
-| Change request missing | Cannot execute, user must describe change content | - |
-| Current PRD missing | User describes change content -> analyze impact directly, no PRD baseline comparison | Cannot precisely locate affected sections; impact scope based on inference |
-| Technical solution missing | Skip code change scope assessment in technical impact analysis | Technical impact analysis incomplete |
-| Change request + current PRD + technical solution all missing | User describes change content -> analyze impact directly | Output simplified impact analysis, each dimension marked "Pending supplementation" |
-| API contract missing | Only assess impact on frontend and design | Backend impact may be underestimated |
-| Backend review report missing | Only assess based on PRD and design | Backend architecture risk may be missed |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Change content description**: What changed, which feature modules are involved
-- **Change reason** (optional): Why the change is needed
-- **Expected impact scope** (optional): Modules or systems the change may affect
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|--------------|-----------------|---------------|----------|
+| Change request missing | Cannot execute, user must describe change content | - | Prompt user to describe what changed, which feature modules are involved, and why |
+| Current PRD missing | User describes change content -> analyze impact directly, no PRD baseline comparison | Cannot precisely locate affected sections; impact scope based on inference | Request user to provide current PRD or feature description, or upload prd.json |
+| Technical solution missing | Skip code change scope assessment in technical impact analysis | Technical impact analysis incomplete | Request user to describe technical implementation details, or upload tech_stack_decision.json |
+| Change request + current PRD + technical solution all missing | User describes change content -> analyze impact directly | Output simplified impact analysis, each dimension marked "Pending supplementation" | Request user to describe change content, affected modules, and expected impact |
+| API contract missing | Only assess impact on frontend and design | Backend impact may be underestimated | Request user to provide API contract or upload openapi.yaml |
+| Backend review report missing | Only assess based on PRD and design | Backend architecture risk may be missed | Request user to describe backend architecture constraints, or upload review_report.json |
 
 ## Execution Log
 

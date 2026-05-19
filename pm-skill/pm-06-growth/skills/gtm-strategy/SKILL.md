@@ -12,6 +12,10 @@ metadata:
     - "帮我做上市计划"
     - "产品发布策略怎么做"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出目标市场定义和上市路径"
+  deep_description: "完整GTM策略 + 渠道ROI模拟 + 上市风险预案 + 竞品应对策略"
 ---
 
 # Go-to-Market策略文档生成
@@ -39,7 +43,7 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 
 ## 执行步骤
 
-### Step 1：目标市场定义
+### Step 1：目标市场定义 [核心]
 
 精确定义上市目标市场：
 
@@ -48,7 +52,7 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 3. **TAM/SAM/SOM**：市场规模估算，聚焦可触达的SOM
 4. **市场时机**：为什么是现在？市场趋势、政策窗口、竞争空白
 
-### Step 2：上市路径选择
+### Step 2：上市路径选择 [核心]
 
 基于产品类型和目标市场选择上市路径：
 
@@ -60,7 +64,7 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 2. **路径推荐**：基于产品特征推荐最优路径及理由
 3. **阶段划分**：预热期 → 发布期 → 增长期各阶段目标
 
-### Step 3：定价与包装策略
+### Step 3：定价与包装策略 [条件]
 
 确定产品如何被包装和定价：
 
@@ -69,7 +73,7 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 3. **上市定价**：首发价、早鸟价、年付折扣等促销策略
 4. **价值锚定**：与竞品定价对比，突出性价比优势
 
-### Step 4：渠道与推广计划
+### Step 4：渠道与推广计划 [条件]
 
 设计从触达到转化的全链路渠道策略：
 
@@ -79,7 +83,7 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 4. **渠道预算分配**：各渠道预算占比和预期ROI
 5. **内容日历**：上市前后4周的内容发布计划
 
-### Step 5：上市里程碑与成功指标
+### Step 5：上市里程碑与成功指标 [核心]
 
 定义上市成功的衡量标准：
 
@@ -91,9 +95,17 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 3. **预警指标**：低于预期时触发的调整机制
 4. **Go/No-Go检查清单**：上市前的最终检查项
 
-### Step 6：报告组装
+### Step 6：报告组装 [核心]
 
 将以上内容组装为完整GTM策略文档。
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 目标市场定义和上市路径 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整GTM策略 + 渠道ROI模拟 + 上市风险预案 + 竞品应对策略 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -130,20 +142,64 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 | product_name | string | 是 | 产品名称，不可为空 |
 | target_market | object | 是 | 目标市场，须含icp/market_size |
 | target_market.icp | object | 是 | ICP画像，至少含行业/规模/角色3个维度 |
+| target_market.icp.industry | string | 是 | 目标行业，不可为空 |
+| target_market.icp.company_size | string | 是 | 企业规模，不可为空 |
+| target_market.icp.target_role | string | 是 | 目标角色，不可为空 |
+| target_market.icp.pain_points | string[] | 否 | ICP核心痛点 |
+| target_market.market_size | object | 是 | 市场规模 |
+| target_market.market_size.tam | string | 否 | 总可寻址市场 |
+| target_market.market_size.sam | string | 否 | 可服务市场 |
+| target_market.market_size.som | string | 否 | 可获得市场 |
 | launch_path | object | 是 | 上市路径，须含mode/rationale/phases |
 | launch_path.mode | string | 是 | 上市模式，仅允许big_bang/invite_only/progressive/soft_launch |
+| launch_path.rationale | string | 是 | 模式选择理由，不可为空 |
+| launch_path.phases | array | 是 | 上市阶段列表，至少1个阶段 |
+| launch_path.phases[].phase_name | string | 是 | 阶段名称，不可为空 |
+| launch_path.phases[].timeline | string | 否 | 阶段时间线 |
+| launch_path.phases[].key_activities | string[] | 否 | 关键活动列表 |
 | success_metrics | object | 是 | 成功指标，须含week_1/month_1/quarter_1 |
+| success_metrics.week_1 | object | 是 | 首周指标 |
+| success_metrics.week_1.target_users | number | 否 | 目标用户数 |
+| success_metrics.week_1.activation_rate | number | 否 | 激活率 |
+| success_metrics.month_1 | object | 是 | 首月指标 |
+| success_metrics.month_1.retention_rate | number | 否 | 留存率 |
+| success_metrics.month_1.revenue | number | 否 | 收入目标 |
+| success_metrics.quarter_1 | object | 是 | 首季指标 |
+| success_metrics.quarter_1.market_share | string | 否 | 市场份额目标 |
+| success_metrics.quarter_1.nps | number | 否 | NPS目标 |
 | channels | object | 否 | 渠道计划，须含owned/paid/ecosystem |
+| channels.owned | array | 否 | 自有渠道列表 |
+| channels.owned[].channel_name | string | 是 | 渠道名称 |
+| channels.owned[].budget_ratio | number | 否 | 预算占比 |
+| channels.paid | array | 否 | 付费渠道列表 |
+| channels.paid[].channel_name | string | 是 | 渠道名称 |
+| channels.paid[].budget_ratio | number | 否 | 预算占比 |
+| channels.paid[].expected_roi | number | 否 | 预期ROI |
+| channels.ecosystem | array | 否 | 生态渠道列表 |
+| channels.ecosystem[].channel_name | string | 是 | 渠道名称 |
+| channels.ecosystem[].partner_type | string | 否 | 合作类型 |
 | risks | array | 否 | 风险清单 |
+| risks[].risk | string | 是 | 风险描述 |
+| risks[].probability | string | 否 | 概率，枚举：high/medium/low |
+| risks[].impact | string | 否 | 影响程度，枚举：high/medium/low |
+| risks[].mitigation | string | 否 | 缓解措施 |
 
 ## 质量检查
 
-| 检查项 | 标准 | 不通过处理 |
-|--------|------|------------|
-| ICP画像具体 | 至少包含行业、规模、角色3个维度 | 补充ICP细节 |
-| 上市路径有依据 | 路径选择基于产品类型和目标市场特征 | 补充选择理由 |
-| 渠道预算可执行 | 各渠道有预算占比和预期ROI | 补充预算细节 |
-| 成功指标可量化 | 首周/首月/首季指标均有具体数值 | 设定目标值或标注"待确认" |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] ICP画像具体（至少包含行业、规模、角色3个维度）
+- [ ] 上市路径有依据（路径选择基于产品类型和目标市场特征）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] 渠道预算可执行（各渠道有预算占比和预期ROI）
+- [ ] 成功指标可量化（首周/首月/首季指标均有具体数值）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 决策规则
 
@@ -156,13 +212,13 @@ Go-to-Market策略的核心不是"如何把产品推出去"，而是"如何让�
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 无产品定位 | 基于用户提供的产品信息推导定位，标注"定位待确认" | 产品定位为推导结论，需后续验证 |
-| 无商业模式 | 聚焦获客和渠道策略，商业模式部分标注"待补充" | 定价与包装策略缺乏商业模式支撑 |
-| 无定价方案 | 生成定价策略框架，具体价格标注"待定价分析" | 定价建议为框架级，无具体价格 |
-| 无增长模式 | 默认PLG模式，标注"增长模式待诊断" | 上市路径和渠道策略基于PLG假设 |
-- 若用户未提供产品信息，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 无产品定位 | 基于用户提供的产品信息推导定位，标注"定位待确认" | 产品定位为推导结论，需后续验证 | 要求用户提供产品定位描述或上传positioning-strategy输出文件 |
+| 无商业模式 | 聚焦获客和渠道策略，商业模式部分标注"待补充" | 定价与包装策略缺乏商业模式支撑 | 要求用户提供商业模式描述或上传bmc.json文件 |
+| 无定价方案 | 生成定价策略框架，具体价格标注"待定价分析" | 定价建议为框架级，无具体价格 | 要求用户提供定价方案或上传business-pricing输出文件 |
+| 无增长模式 | 默认PLG模式，标注"增长模式待诊断" | 上市路径和渠道策略基于PLG假设 | 要求用户提供增长模式描述或上传growth-model输出文件 |
+| 产品信息缺失 | 提示用户提供产品信息，否则无法确定上市策略 | 上市策略缺乏产品基础 | 要求用户提供产品名称、核心功能和目标用户描述 |
 
 ## 上游变更响应
 

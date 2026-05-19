@@ -161,7 +161,7 @@ UI与前端一体化流程的起点。合并原 project-scaffold 与 design-syst
 
 **新增能力**：
 - 视觉风格定义步骤：从品牌基因推导差异化美学方向
-- `ext-frontend-design` 必调：确保视觉差异化，避免AI同质化
+- `ext-frontend-design` 按 visual_policy 执行：默认既有设计系统优先，在不破坏品牌/组件库约束的前提下提升差异化
 - `PRODUCT.md` 生成：产品定义文档，供下游 Skill 消费
 - `DESIGN.md` 生成：设计决策文档，记录视觉风格和设计令牌依据
 - `anchor_overrides`：页面级视觉锚点覆盖机制，允许特定页面打破全局视觉锚点
@@ -169,7 +169,7 @@ UI与前端一体化流程的起点。合并原 project-scaffold 与 design-syst
 
 **阶段卡口**：
 - visual_direction 10维度均有明确定义
-- ext-frontend-design 已调用且输出不含AI同质化特征
+- ext-frontend-design 已调用且输出符合 visual_policy
 - PRODUCT.md 和 DESIGN.md 已生成且内容非占位符
 - WCAG AA对比度100%达标
 - 令牌文件已写入项目目录
@@ -306,7 +306,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 | 外部 Skill 名称 | 增强能力 | 所属模块 | 调用时机 | 输入 | 输出 |
 |----------------|---------|---------|---------|------|------|
-| `ext-frontend-design` | 视觉差异化（避免AI同质化） | project-init / page-builder | project-init 必调 / page-builder 按需 | 品牌规范+产品定位 | 差异化美学方向建议 |
+| `ext-frontend-design` | 视觉差异化（受 visual_policy 约束） | project-init / page-builder | project-init 必调 / page-builder 按需 | 品牌规范+产品定位 | 差异化美学方向建议 |
 | `ext-impeccable` | 设计质量全生命周期（20+子命令） | project-init / page-builder / production-ready | 各步骤按客观触发条件调用 | 组件/页面代码+设计令牌 | 增强后的代码+审计报告 |
 | `ext-interaction-design` | 交互动效模式库 | page-builder | page-builder 组件生成阶段 | 组件交互需求 | 交互动效代码模式 |
 | `ext-ui-ux-pro-max` | 数据驱动设计决策 | project-init / page-builder | project-init 视觉风格阶段 / page-builder 页面组装阶段 | 设计系统/页面类型 | 数据驱动设计推荐 |

@@ -5,7 +5,7 @@ metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "pipeline"
-  version: "4.0"
+  version: "5.0"
   domain_tags: ["电商", "SaaS", "金融", "通用"]
   trigger_examples:
     - "生成API代码"
@@ -17,6 +17,17 @@ metadata:
 ---
 
 # API代码实现
+
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
 ## 核心原则
 
@@ -140,17 +151,62 @@ metadata:
 **元数据输出文件**：
 - impl-report.json — 代码实现报告（生成文件清单+对齐检查结果+自审结果）
 
+**impl-report.json Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["skill_name", "version", "generated_files", "alignment_check", "self_audit"],
+  "properties": {
+    "skill_name": { "type": "string" },
+    "version": { "type": "string" },
+    "generated_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "description"],
+        "properties": {
+          "path": { "type": "string" },
+          "type": { "type": "string", "enum": ["route", "controller", "service", "validator", "middleware", "type", "mapper", "test"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "alignment_check": {
+      "type": "object",
+      "required": ["prd_alignment", "frontend_alignment", "security_alignment", "repository_call_chain"],
+      "properties": {
+        "prd_alignment": { "type": "object", "properties": { "passed": { "type": "boolean" }, "uncovered_features": { "type": "array", "items": { "type": "string" } } } },
+        "frontend_alignment": { "type": "object", "properties": { "passed": { "type": "boolean" }, "uncovered_pages": { "type": "array", "items": { "type": "string" } } } },
+        "security_alignment": { "type": "object", "properties": { "passed": { "type": "boolean" }, "issues": { "type": "array", "items": { "type": "object", "properties": { "severity": { "type": "string" }, "message": { "type": "string" } } } } } },
+        "repository_call_chain": { "type": "object", "properties": { "passed": { "type": "boolean" }, "missing_repository_methods": { "type": "array", "items": { "type": "object", "properties": { "service": { "type": "string" }, "method": { "type": "string" }, "repository": { "type": "string" } } } } } }
+      }
+    },
+    "self_audit": {
+      "type": "object",
+      "required": ["p0_count", "p1_count", "passed", "items"],
+      "properties": {
+        "p0_count": { "type": "integer" },
+        "p1_count": { "type": "integer" },
+        "passed": { "type": "boolean" },
+        "items": { "type": "array", "items": { "type": "object", "properties": { "severity": { "type": "string" }, "check": { "type": "string" }, "result": { "type": "string" }, "detail": { "type": "string" } } } }
+      }
+    }
+  }
+}
+```
+
 ## 决策规则
 
 | 条件 | 决策 |
 |------|------|
-| OpenAPI规范与PRD不一致 | 以OpenAPI规范为准，标注差异供人类确认 |
+| OpenAPI规范与PRD不一致 | 以PRD为准修正OpenAPI规范，标注差异供人类确认 |
 | 安全策略与代码实现冲突 | 以安全策略为准，调整代码实现 |
 | 前端数据需求缺少API | 自动补充API端点，标注为"前端驱动新增" |
 | 代码自审发现P0问题 | 阻塞输出，自动修复后重新自审 |
 | 数据模型缺失 | 无法生成mappers，报错阻塞 |
 | 数据层实现报告缺失 | 无法调用真实Repository，标注哪些Service方法为骨架，提示待data-architecture-impl完成后可完整实现 |
-| 技术栈决策与用户指定冲突 | 优先使用技术栈决策.json，标注冲突供人类确认 |
+| 技术栈决策与用户指定冲突 | 优先使用tech_stack_decision.json（架构设计产出），其次使用tech_stack参数（用户直接提供），无则默认Express+TypeScript。标注冲突供人类确认 |
 
 ## 质量检查
 
@@ -188,3 +244,9 @@ metadata:
 | 安全策略变更 | 中间件配置 | 更新中间件匹配规则 |
 | 认证鉴权方案变更 | 中间件+Service权限检查 | 更新认证和权限逻辑 |
 | 技术栈决策变更 | 技术栈相关配置 | 更新框架和中间件配置 |
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| 路由变更 | backend-architecture-impl（app.ts路由挂载） | 标注受影响的路由注册，更新impl-report.json |
+| Service接口变更 | backend-architecture-impl（coordinator层） | 标注受影响的跨资源协调逻辑，更新impl-report.json |
+| 中间件配置变更 | backend-architecture-impl（app.ts中间件注册） | 标注受影响的中间件注册，更新impl-report.json |

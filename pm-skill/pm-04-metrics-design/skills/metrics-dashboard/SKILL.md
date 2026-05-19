@@ -12,6 +12,10 @@ metadata:
     - "配置一个监控面板"
     - "做个Dashboard把关键指标都展示出来"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出核心指标看板设计"
+  deep_description: "完整看板 + 下钻分析设计 + 告警规则体系 + 数据治理规范"
 ---
 
 # Dashboard自动配置
@@ -54,7 +58,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: Dashboard结构设计
+### Step 1: Dashboard结构设计 [核心]
 
 **任务**：根据指标层级设计Dashboard结构
 
@@ -70,7 +74,7 @@ metadata:
 
 ---
 
-### Step 2: 指标自动分配
+### Step 2: 指标自动分配 [核心]
 
 **任务**：将指标自动分配到各Dashboard
 
@@ -87,7 +91,7 @@ metadata:
 
 ---
 
-### Step 3: 告警规则配置
+### Step 3: 告警规则配置 [核心]
 
 **任务**：为关键指标配置告警规则
 
@@ -103,7 +107,7 @@ metadata:
 
 ---
 
-### Step 4: Dashboard配置生成
+### Step 4: Dashboard配置生成 [核心]
 
 **任务**：生成各平台的Dashboard配置
 
@@ -118,6 +122,14 @@ metadata:
 3. 配置Dashboard布局和主题
 
 ---
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 核心指标看板设计 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整看板 + 下钻分析设计 + 告警规则体系 + 数据治理规范 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -241,18 +253,25 @@ metadata:
 
 ## 质量检查
 
-### 自动化检查清单
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 所有指标已分配到Dashboard
 - [ ] 每个Dashboard至少有1个Widget
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 北极星指标出现在战略Dashboard
 - [ ] 告警规则配置完整
 - [ ] Dashboard配置可正常解析
-
-### 人工审核清单
 - [ ] Dashboard布局合理性
 - [ ] 告警阈值设置合理性
 - [ ] 访问权限配置
 - [ ] 导航结构清晰性
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 

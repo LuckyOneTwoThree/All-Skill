@@ -5,7 +5,7 @@ metadata:
   module: "后端架构与开发"
   sub-module: "数据架构"
   type: "pipeline"
-  version: "4.0"
+  version: "5.0"
   domain_tags: ["电商", "金融", "SaaS", "通用"]
   trigger_examples:
     - "生成Model代码"
@@ -17,6 +17,17 @@ metadata:
 ---
 
 # 数据层代码实现
+
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
 ## 核心原则
 
@@ -145,6 +156,106 @@ metadata:
 **元数据输出文件**：
 - impl-report.json — 代码实现报告（生成文件清单+对齐检查结果+自审结果）
 
+**impl-report.json Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["skill_name", "version", "generated_files", "repositories", "alignment_check", "self_audit"],
+  "properties": {
+    "skill_name": { "type": "string", "description": "产出本报告的Skill名称" },
+    "version": { "type": "string", "description": "Skill版本号" },
+    "generated_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "description"],
+        "properties": {
+          "path": { "type": "string", "description": "文件相对路径（相对于project_dir）" },
+          "type": { "type": "string", "enum": ["model", "migration", "repository", "cache", "config", "seed", "test"] },
+          "description": { "type": "string", "description": "文件用途说明" }
+        }
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "description": "Repository清单及方法签名，供api-design-impl消费",
+      "items": {
+        "type": "object",
+        "required": ["name", "entity", "methods"],
+        "properties": {
+          "name": { "type": "string", "description": "Repository类名" },
+          "entity": { "type": "string", "description": "对应的Model/Entity类名" },
+          "file_path": { "type": "string", "description": "Repository文件路径" },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "return_type"],
+              "properties": {
+                "name": { "type": "string", "description": "方法名" },
+                "params": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "type": { "type": "string" }
+                    }
+                  }
+                },
+                "return_type": { "type": "string", "description": "返回类型" },
+                "description": { "type": "string", "description": "方法用途" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "alignment_check": {
+      "type": "object",
+      "required": ["passed", "issues"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "severity": { "type": "string", "enum": ["P0", "P1", "P2"] },
+              "category": { "type": "string" },
+              "message": { "type": "string" },
+              "resolution": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "self_audit": {
+      "type": "object",
+      "required": ["p0_count", "p1_count", "passed", "items"],
+      "properties": {
+        "p0_count": { "type": "integer" },
+        "p1_count": { "type": "integer" },
+        "passed": { "type": "boolean" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "severity": { "type": "string", "enum": ["P0", "P1", "P2"] },
+              "check": { "type": "string" },
+              "result": { "type": "string", "enum": ["pass", "fail", "fixed"] },
+              "detail": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 ## 决策规则
 
 | 条件 | 决策 |
@@ -153,7 +264,7 @@ metadata:
 | 缓存策略与代码实现冲突 | 以缓存策略为准，调整代码实现 |
 | 代码自审发现P0问题 | 阻塞输出，自动修复后重新自审 |
 | Repository查询有N+1问题 | 改用JOIN或批量查询 |
-| 技术栈决策与用户指定冲突 | 优先使用技术栈决策.json，标注冲突供人类确认 |
+| 技术栈决策与用户指定冲突 | 优先使用tech_stack_decision.json（架构设计产出），其次使用tech_stack参数（用户直接提供），无则默认Node.js/Prisma。标注冲突供人类确认 |
 
 ## 质量检查
 
@@ -186,3 +297,9 @@ metadata:
 | 缓存策略变更 | 缓存层代码 | 更新CacheRepository和缓存配置 |
 | 技术栈决策变更 | 技术栈相关配置 | 更新ORM配置和数据库连接代码 |
 | API契约变更 | Repository查询方法 | 评估是否需要新增或修改查询方法 |
+
+| 变更类型 | 影响范围 | 通知方式 |
+|----------|----------|----------|
+| Repository方法签名变更 | api-design-impl | 标注受影响的Service调用，更新impl-report.json中的repositories字段 |
+| Model字段变更 | api-design-impl（mappers.ts） | 标注受影响的类型转换，更新impl-report.json |
+| 缓存层接口变更 | api-design-impl, backend-architecture-impl | 标注受影响的缓存调用，更新impl-report.json |

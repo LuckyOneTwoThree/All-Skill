@@ -10,6 +10,10 @@ metadata:
     - "Help me write a PRD document"
     - "Generate a product requirements document"
     - "How to write a requirements document"
+execution_depth:
+  default: standard
+  quick_description: "Generate PRD-L level document with core sections (background, feature specs, acceptance criteria) and basic quality checks"
+  deep_description: "Generate PRD-X level document with upstream conflict decision records, self-correction loop logs, open issue management, version change traceability chain, and degradation impact assessment"
 ---
 
 # PRD Generator
@@ -24,11 +28,11 @@ This Skill is responsible for automatically transforming upstream stage outputs 
 
 ## Execution Steps
 
-1. Determine PRD tier level (L/S/X) -- Auto-classify based on Effort estimation and team count; PM can override
-2. Generate PRD document per corresponding tier structure -- PRD-L uses simplified template, PRD-S uses complete 9-section structure, PRD-X uses enhanced 9-section structure
-3. Execute 4 quality gate checks -- Completeness/Consistency/Ambiguity elimination/Traceability; auto-correct if not passed
-4. Version lifecycle management -- Create->Review->Finalize->Change; each change recorded in changelog
-5. Upstream-downstream alignment -- Ensure PRD is traceable to upstream requirements, downstream design can directly consume PRD output
+1. [Core] Determine PRD tier level (L/S/X) -- Auto-classify based on Effort estimation and team count; PM can override
+2. [Core] Generate PRD document per corresponding tier structure -- PRD-L uses simplified template, PRD-S uses complete 9-section structure, PRD-X uses enhanced 9-section structure
+3. [Core] Execute 4 quality gate checks -- Completeness/Consistency/Ambiguity elimination/Traceability; auto-correct if not passed
+4. [Conditional] Version lifecycle management -- Create->Review->Finalize->Change; each change recorded in changelog
+5. [Conditional] Upstream-downstream alignment -- Ensure PRD is traceable to upstream requirements, downstream design can directly consume PRD output
 
 See detailed descriptions in each section below.
 
@@ -144,7 +148,7 @@ Strategic Goals -> OKR -> Key Results -> Primary Metrics -> Feature Requirements
 - Prompt missing traceability paths
 - Require supplementary upstream evidence
 
-## 4. Version Lifecycle
+## 4. Version Lifecycle [Conditional]
 
 ### 4.1 Version State Machine
 
@@ -183,7 +187,7 @@ Strategic Goals -> OKR -> Key Results -> Primary Metrics -> Feature Requirements
 | Finalized | Change triggered | In-Development Change | Development stage finds adjustments needed |
 | Launched | Publish update | Archived | New version launched |
 
-## 5. Execution Decision Logic
+## 5. Execution Decision Logic [Conditional]
 
 ### 5.1 Generation Order Dependency Graph
 
@@ -281,7 +285,7 @@ Round N Correction:
 5. If passed, end; otherwise enter Round N+1
 ```
 
-## 6. Upstream-Downstream Alignment
+## 6. Upstream-Downstream Alignment [Conditional]
 
 ### 6.1 Upstream Consumption
 
@@ -340,6 +344,14 @@ AI->Human AI suggests, human approves
 | requirement | JSON/object | Yes | User provided | Requirements context and manual override configuration |
 
 **Complete Input Data Structure and Validation Rules**: See [Reference/input-schema.md](Reference/input-schema.md)
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | Generate PRD-L level document with core sections (background, feature specs, acceptance criteria) and basic quality checks | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Generate PRD-X level document with upstream conflict decision records, self-correction loop logs, open issue management, version change traceability chain, and degradation impact assessment | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -616,6 +628,22 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 - Output question closure report upon finalization
 
 ## Quality Checks (Detailed)
+
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Structure completeness: All 9 sections exist
+- [ ] Field completeness: Required fields 100% populated
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Consistency: Goal traceability chain OKR->Metrics->Features->Acceptance end-to-end
+- [ ] Ambiguity elimination: No fuzzy quantifiers, no dangling references, no logical contradictions
+- [ ] Executability: Acceptance format correct (Given-When-Then), judgment clarity, coverage completeness
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ### 10.1 Completeness Standards
 

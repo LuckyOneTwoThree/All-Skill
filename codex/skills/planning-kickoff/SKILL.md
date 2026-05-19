@@ -10,6 +10,10 @@ metadata:
     - "How to run a project kickoff meeting"
     - "How to prepare for a kickoff meeting"
     - "How to conduct a project launch meeting"
+execution_depth:
+  default: standard
+  quick_description: "Output project kickoff plan and objectives"
+  deep_description: "Full kickoff + team alignment plan + risk contingency + communication mechanism design"
 ---
 
 # Kickoff Meeting Automation
@@ -45,7 +49,7 @@ metadata:
 
 ### Pre-meeting AI: Preparation Phase
 
-#### Step 1: Agenda Auto-generation
+#### Step 1: Agenda Auto-generation [Core]
 
 **Actions**:
 - Generate meeting agenda based on project charter and resource plan
@@ -72,7 +76,7 @@ metadata:
 }
 ```
 
-#### Step 2: Background Materials Auto-compilation
+#### Step 2: Background Materials Auto-compilation [Conditional]
 
 **Actions**:
 - Summarize project charter core content into a 1-page summary
@@ -102,7 +106,7 @@ metadata:
 }
 ```
 
-#### Step 3: Question List Pre-preparation
+#### Step 3: Question List Pre-preparation [Conditional]
 
 **Actions**:
 - Identify common questions based on project background
@@ -133,7 +137,7 @@ metadata:
 
 ### Post-meeting AI: Follow-up Phase
 
-#### Step 4: Meeting Minutes Auto-generation
+#### Step 4: Meeting Minutes Auto-generation [Core]
 
 **Actions**:
 - Receive meeting records (or transcription)
@@ -163,7 +167,7 @@ metadata:
 }
 ```
 
-#### Step 5: Action Items Auto-extraction
+#### Step 5: Action Items Auto-extraction [Conditional]
 
 **Actions**:
 - Identify action items from meeting minutes
@@ -186,7 +190,7 @@ metadata:
 }
 ```
 
-#### Step 6: Follow-up Reminder Setup
+#### Step 6: Follow-up Reminder Setup [Deep]
 
 **Actions**:
 - Set reminders based on action item due dates
@@ -215,6 +219,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | project kickoff plan and objectives | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full kickoff + team alignment plan + risk contingency + communication mechanism design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -376,10 +388,20 @@ metadata:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Agenda covers project objectives, scope, roles, timeline
 - [ ] Key stakeholders confirmed attendance
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Action items have clear owners and due dates
 - [ ] Meeting materials sent to participants in advance
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

@@ -13,6 +13,10 @@ metadata:
     - "What does this data mean, help me interpret"
     - "Transform analysis results into a tellable story"
     - "Data is too dry, help me convert to actionable recommendations"
+execution_depth:
+  default: standard
+  quick_description: "Output decision recommendation and key rationale only"
+  deep_description: "Full decision analysis + scenario modeling + stakeholder impact + decision audit trail"
 ---
 
 # DACE Loop Automation (with Insight Transformation)
@@ -75,7 +79,7 @@ AI->Human AI suggests, human approves
 └────────────────────────────────────────────────────────┘
 ```
 
-### Step 1: Define AI
+### Step 1: Define AI [Core]
 
 Auto-establish OKR tracking system:
 
@@ -129,7 +133,7 @@ define:
       guardrail: ["user_satisfaction", "app_crash_rate"]
 ```
 
-### Step 2: Analyze (Insight Generation) AI
+### Step 2: Analyze (Insight Generation) AI [Core]
 
 Narrative insight transformation, decision recommendations, decision boundaries, confidence assessment
 
@@ -327,7 +331,7 @@ insights_gathered:
     source: "retention_analysis"
 ```
 
-### Step 3: Conclude (Decision Options) AI->Human
+### Step 3: Conclude (Decision Options) AI->Human [Core]
 
 AI-assisted human decision-making
 
@@ -372,7 +376,7 @@ conclude:
       - "Timeline planning"
 ```
 
-### Step 4: Execute (Execution Tracking) AI
+### Step 4: Execute (Execution Tracking) AI [Conditional]
 
 Track execution effectiveness:
 
@@ -557,6 +561,14 @@ funnel_insight:
     - "Enhance add-to-cart guidance (overlay, prompts)"
     - "Conduct research on dropped-off users"
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | decision recommendation and key rationale only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full decision analysis + scenario modeling + stakeholder impact + decision audit trail | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -796,8 +808,13 @@ When DACE status/insights themselves change, notification mechanism to downstrea
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Define phase goals quantifiable, with baselines
 - [ ] Analyze phase covers all data sources
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Conclude phase provides at least 2 decision options
 - [ ] Execute phase sets monitoring and rollback mechanisms
 - [ ] Insight narrative uses business language not data jargon
@@ -805,27 +822,23 @@ When DACE status/insights themselves change, notification mechanism to downstrea
 - [ ] Decision boundary annotation correct (auto/reference/human)
 - [ ] Recommended action has clear next steps and responsible person
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| OKR tracking missing | User provides current metric data -> execute DACE analysis | Define phase goal definition based on user description |
-| Anomaly detection missing | Skip Analyze phase anomaly trigger, execute based on user-provided metric data | Analysis dimensions limited, may miss unmonitored anomalies |
-| OKR tracking + Anomaly detection both missing | User provides current metric data -> execute DACE analysis | Output DACE analysis based on user data, Define and Analyze annotated as "to be supplemented" |
-| Analysis results missing | User provides data findings -> transform into insights | Insights based on user description, may lack deep attribution |
-| Experiment results missing | Skip experiment-related insight transformation | Experiment insight dimension missing |
-| Analysis results + Experiment results both missing | User provides data findings -> transform into insights | Output insights based on user description, attribution and decision boundaries annotated as "to be supplemented" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Current metric data**: Current values, baseline values, and target values for key metrics
-- **Business goals** (optional): Current business priorities and decision needs
-- **Known issues** (optional): Already discovered anomalies or pending decision issues
-- **Data findings** (optional): Observed data changes, trends, or anomalies
-- **Desired decision direction** (optional): Type of decisions the insights should support
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| OKR tracking missing | User provides current metric data -> execute DACE analysis | Define phase goal definition based on user description | Request user to provide current metric values and targets, or upload okr.json |
+| Anomaly detection missing | Skip Analyze phase anomaly trigger, execute based on user-provided metric data | Analysis dimensions limited, may miss unmonitored anomalies | Request user to describe observed anomalies and metric changes, or upload anomaly-analysis.json |
+| OKR tracking + Anomaly detection both missing | User provides current metric data -> execute DACE analysis | Output DACE analysis based on user data, Define and Analyze annotated as "to be supplemented" | Request user to provide current metric data and business goals, or execute metrics-system and analysis-anomaly first |
+| Analysis results missing | User provides data findings -> transform into insights | Insights based on user description, may lack deep attribution | Request user to describe data findings and observed trends, or upload analysis reports |
+| Experiment results missing | Skip experiment-related insight transformation | Experiment insight dimension missing | Request user to provide experiment results, or upload experiment-execution.json |
+| Analysis results + Experiment results both missing | User provides data findings -> transform into insights | Output insights based on user description, attribution and decision boundaries annotated as "to be supplemented" | Request user to provide data findings and desired decision direction, or execute analysis-anomaly and experiment-execution first |
 
 ## Execution Frequency
 

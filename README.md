@@ -4,9 +4,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-122-orange.svg)](#四大领域总览)
+[![Skill Count](https://img.shields.io/badge/Skills-123-orange.svg)](#四大领域总览)
 
-> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现122个Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
+> 🌟 **推荐**：访问 [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) 体验交互式可视化 —— 力导向图谱呈现123个源Skill编排关系，12条跨域数据契约流一目了然，四大领域模块全景浏览！
 
 > ## ⚠ 声明：AI 是杠杆，不是替代
 >
@@ -22,7 +22,7 @@
 
 ## 这是什么
 
-将软件产品从0到1的全生命周期方法论，提取为 **122 个 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。
+将软件产品从0到1的全生命周期方法论，提取为 **123 个源 AI Agent Skill**，覆盖**产品方法论、UI设计与前端开发、后端架构与开发、跨领域协调**四大领域，兼容 Trae / Claude Code 的 Agent Skills 开放标准。源目录统计以 `skills-manifest.json` 为准，`codex/skills` 作为后续同步目标。
 
 每个 Skill 是一个可独立执行的方法论 Pipeline，编排器（Orchestrator）负责调度子 Skill 的执行顺序和阶段卡口。四大领域通过**数据契约**紧密衔接，形成从产品探索到上线运营的完整闭环。
 
@@ -41,7 +41,7 @@
 ├── insight-analysis/SKILL.md
 ├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
-├── ...（122个Skill扁平平铺）
+├── ...（123个源Skill扁平平铺）
 └── production-ready/SKILL.md
 ```
 
@@ -366,7 +366,7 @@ All-Skill/
 
 ---
 
-### 后端架构与开发（9个Skill）
+### 后端架构与开发（10个Skill）
 
 > **设计先行，审查后实现**：Backend 模块每个子域拆分为"设计Skill + 实现Skill"两个阶段，设计产出经人类审查确认后才生成代码。编排器在设计和实现之间加入人类审查卡口，确保设计缺陷在代码生成前被发现和修复。
 
@@ -399,7 +399,7 @@ All-Skill/
 
 ## 核心产出文档
 
-PM 领域的 74 个 Pipeline Skill 中，18 个产出包含 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 122 个 Skill（含 33 个编排器 + 74 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
+PM 领域的 74 个 Pipeline Skill 中，18 个产出包含 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 123 个源 Skill（含 34 个编排器 + 74 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
 
 ### PM 核心产出文档一览
 

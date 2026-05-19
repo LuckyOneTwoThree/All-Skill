@@ -12,6 +12,10 @@ metadata:
     - "站会怎么高效开"
     - "帮我准备今天的站会内容"
   interaction_mode: "ai_auto"
+execution_depth:
+  default: standard
+  quick_description: "直接输出障碍清单和当日重点"
+  deep_description: "完整同步 + 障碍根因分析 + 风险趋势追踪 + 团队协作优化建议"
 ---
 
 # Daily Sync自动化
@@ -227,6 +231,14 @@ metadata:
 
 ---
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 障碍清单和当日重点 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整同步 + 障碍根因分析 + 风险趋势追踪 + 团队协作优化建议 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-project/agile-daily-sync/`
@@ -289,10 +301,20 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 进展汇总覆盖所有进行中Story
 - [ ] 障碍项有明确状态和跟进人
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 风险标记及时且准确
 - [ ] Sync材料在会前生成
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 

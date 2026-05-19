@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Help me write a business strategy plan"
     - "Produce a strategy report"
+execution_depth:
+  default: standard
+  quick_description: "Output strategic recommendations and priorities"
+  deep_description: "Full report + strategic simulation + competitive landscape analysis + execution roadmap"
 ---
 
 # Business Strategy Report Auto-Generation
@@ -42,7 +46,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Strategic Posture Assessment
+### Step 1: Strategic Posture Assessment [Core]
 
 Integrate SWOT + Porter's Five Forces + Value Curve to assess current strategic posture:
 
@@ -65,7 +69,7 @@ Integrate SWOT + Porter's Five Forces + Value Curve to assess current strategic 
 | **Strong Strengths** | Offensive Strategy | Defensive Strategy |
 | **Obvious Weaknesses** | Turnaround Strategy | Survival Strategy |
 
-### Step 2: Strategic Direction Reasoning
+### Step 2: Strategic Direction Reasoning [Core]
 
 Based on posture assessment, reason through 2-3 strategic directions:
 
@@ -97,7 +101,7 @@ Posture judgment -> Ansoff Matrix positioning -> Strategic direction selection -
 | Expected return | | | |
 | Recommendation level | | | |
 
-### Step 3: Execution Path Planning
+### Step 3: Execution Path Planning [Core]
 
 Develop execution paths for recommended strategic directions:
 
@@ -117,7 +121,7 @@ Develop execution paths for recommended strategic directions:
 - Current pricing fit with strategic direction
 - Pricing adjustment recommendations (if any)
 
-### Step 4: Stakeholder Management
+### Step 4: Stakeholder Management [Core]
 
 Integrate stakeholder data and develop communication strategy:
 
@@ -127,7 +131,7 @@ Integrate stakeholder data and develop communication strategy:
 | Execution team | | High | Goal alignment + resource assurance | Weekly |
 | External partners | | Medium | Value sharing + risk sharing | As needed |
 
-### Step 5: Risks and Contingencies
+### Step 5: Risks and Contingencies [Core]
 
 Identify key risks in strategy execution:
 
@@ -138,7 +142,7 @@ Identify key risks in strategy execution:
 | Execution risk | Team capability/collaboration issues | | | |
 | Technology risk | Technical feasibility/data security | | | |
 
-### Step 6: Report Assembly
+### Step 6: Report Assembly [Core]
 
 **Report Structure**:
 
@@ -178,6 +182,14 @@ Identify key risks in strategy execution:
 - Methodology notes
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | strategic recommendations and priorities | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + strategic simulation + competitive landscape analysis + execution roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-strategy/business-strategy-report/`
@@ -202,12 +214,35 @@ Identify key risks in strategy execution:
 | executive_summary.core_okr | object | Yes | Core OKR |
 | executive_summary.key_risks | array | Yes | Key risks list |
 | strategic_assessment.external | object | Yes | External environment assessment |
+| strategic_assessment.external.industry_attractiveness | string | Yes | Industry attractiveness assessment, must not be empty |
+| strategic_assessment.external.opportunities | array | Yes | External opportunities list, must not be empty |
+| strategic_assessment.external.threats | array | Yes | External threats list, must not be empty |
+| strategic_assessment.external.competitive_position | string | Yes | Competitive position description |
 | strategic_assessment.internal | object | Yes | Internal capability assessment |
+| strategic_assessment.internal.strengths | array | Yes | Core strengths list, must not be empty |
+| strategic_assessment.internal.weaknesses | array | Yes | Key weaknesses list, must not be empty |
+| strategic_assessment.internal.key_resources | array | No | Key resources list |
+| strategic_assessment.internal.capability_gaps | array | No | Capability gaps list |
 | strategic_assessment.posture_matrix.quadrant | string | Yes | Posture quadrant |
 | strategic_directions | array | Yes | At least 2 strategic directions |
+| strategic_directions[].name | string | Yes | Direction name, must not be empty |
+| strategic_directions[].rationale | string | Yes | Direction rationale, must not be empty |
+| strategic_directions[].target_market | string | No | Target market |
+| strategic_directions[].differentiation | string | No | Differentiation strategy |
+| strategic_directions[].key_assumptions | array | No | Key assumptions list |
+| strategic_directions[].risk_factors | array | No | Risk factors list |
 | execution_path.okr | object | Yes | OKR system |
 | execution_path.roadmap | object | Yes | Roadmap |
+| stakeholder_management | array | No | Stakeholder management strategies |
+| stakeholder_management[].stakeholder | string | Yes | Stakeholder name |
+| stakeholder_management[].attitude | string | No | Attitude |
+| stakeholder_management[].influence | string | No | Influence level |
+| stakeholder_management[].communication_strategy | string | No | Communication strategy |
 | risks_and_contingencies | array | Yes | Risks and contingencies |
+| risks_and_contingencies[].risk_category | string | Yes | Risk category |
+| risks_and_contingencies[].probability | string | No | Probability assessment |
+| risks_and_contingencies[].impact | string | No | Impact assessment |
+| risks_and_contingencies[].contingency | string | No | Contingency plan |
 
 **business-strategy-report.json Structure**:
 
@@ -277,24 +312,34 @@ Identify key risks in strategy execution:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Executive summary includes posture judgment + recommended direction + core OKR
 - [ ] Strategic posture matrix generated
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] At least 2 strategic directions compared
 - [ ] OKRs quantifiable and trackable
 - [ ] Roadmap includes Q1-Q4 milestones
 - [ ] Key risks have contingencies
 - [ ] All inferences labeled with confidence
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| bmc missing | Derive business model from product information | Business model analysis may be incomplete, lacking 9-block canvas structured support |
-| swot missing | Derive posture from product information and AI knowledge | Posture assessment lacks structured basis, strategic directions may be subjective |
-| okr missing | Derive OKRs from strategic directions | OKRs need manual calibration, quantifiability may be insufficient |
-| roadmap missing | Derive milestones from OKRs | Timeline needs manual adjustment, milestone dependencies may be inaccurate |
-| positioning missing | Strategic direction lacks positioning validation | Differentiation strategy needs supplementary validation, competitive positioning may be vague |
-| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Report cannot generate core content |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| bmc missing | Derive business model from product information | Business model analysis may be incomplete, lacking 9-block canvas structured support | Request user to provide product description and business model info, or upload bmc.json |
+| swot missing | Derive posture from product information and AI knowledge | Posture assessment lacks structured basis, strategic directions may be subjective | Request user to describe strengths, weaknesses, opportunities, and threats, or upload strategic-analysis.json |
+| okr missing | Derive OKRs from strategic directions | OKRs need manual calibration, quantifiability may be insufficient | Request user to provide business objectives and key results, or upload okr.json |
+| roadmap missing | Derive milestones from OKRs | Timeline needs manual adjustment, milestone dependencies may be inaccurate | Request user to provide timeline expectations and milestones, or upload roadmap.json |
+| positioning missing | Strategic direction lacks positioning validation | Differentiation strategy needs supplementary validation, competitive positioning may be vague | Request user to describe product positioning and differentiation, or upload positioning-strategy.json |
+| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Report cannot generate core content | Prompt user to provide product name, business model, and current business status |
 
 ---
 

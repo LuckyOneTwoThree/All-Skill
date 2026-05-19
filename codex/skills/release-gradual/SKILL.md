@@ -10,6 +10,10 @@ metadata:
     - "Do a gradual rollout, start with 1% traffic"
     - "Help me do small traffic verification"
     - "Incrementally roll out to full traffic"
+execution_depth:
+  default: standard
+  quick_description: "Output rollout plan and go/no-go criteria only"
+  deep_description: "Full rollout + rollback simulation + feature flag strategy + progressive delivery roadmap"
 ---
 
 # Gradual Rollout Auto-Execution
@@ -106,7 +110,7 @@ Trigger Conditions:
 
 ## Execution Steps
 
-### Step 1: Gradual Plan Generation
+### Step 1: Gradual Plan Generation [Core]
 
 #### 1.1 Pre-Release Verification
 
@@ -124,11 +128,11 @@ Trigger Conditions:
 
 Generate canary plan with phases, traffic percentages, durations, and success criteria.
 
-### Step 2: Feature Flag Auto-Configuration
+### Step 2: Feature Flag Auto-Configuration [Core]
 
 Generate Feature Flag serving configurations for each phase with appropriate traffic percentage rules.
 
-### Step 3: Phase-by-Phase Auto-Monitoring
+### Step 3: Phase-by-Phase Auto-Monitoring [Core]
 
 #### 3.1 Metric Collection
 
@@ -149,7 +153,7 @@ Collect metrics at configured intervals from monitoring sources.
 
 Evaluate whether to proceed to next phase based on duration completion and metric health.
 
-### Step 4: Auto-Rollback Trigger
+### Step 4: Auto-Rollback Trigger [Core]
 
 #### 4.1 Rollback Trigger Conditions
 
@@ -167,6 +171,14 @@ Execute rollback by disabling Feature Flag, switching traffic, and verifying rol
 #### 4.3 Post-Rollback Handling
 
 Notify release team, document rollback event, create incident follow-up ticket, and analyze root cause within 24 hours.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | rollout plan and go/no-go criteria only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full rollout + rollback simulation + feature flag strategy + progressive delivery roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -244,23 +256,20 @@ Notify release team, document rollback event, create incident follow-up ticket, 
 
 ## Quality Checks
 
-### Quality Gates
+### P0 Checks (must pass for quick/standard/deep)
 
-| Check Item | Standard | Failed Action |
-|------------|----------|---------------|
-| Pre-release verification | All verification items passed | Block release |
-| P0 metrics stable | No metric degradation trend | Stop gradual rollout |
-| Rollback mechanism ready | Feature Flag available | Block release |
-| Alert configuration correct | All metrics have alerts configured | Block release |
+- [ ] Pre-release verification (All verification items passed)
+- [ ] P0 metrics stable (No metric degradation trend)
 
-### Quality Check List
+### P1 Checks (must pass for standard/deep)
 
-- [ ] Pre-release verification all passed
-- [ ] Feature Flag configuration correct
-- [ ] Monitoring alerts configured
-- [ ] Rollback mechanism ready
-- [ ] On-call personnel confirmed
-- [ ] Phase transition records complete
+- [ ] Rollback mechanism ready (Feature Flag available)
+- [ ] Alert configuration correct (All metrics have alerts configured)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

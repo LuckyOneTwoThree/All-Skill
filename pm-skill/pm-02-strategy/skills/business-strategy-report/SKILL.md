@@ -11,6 +11,10 @@ metadata:
     - "帮我写一份商业战略规划"
     - "出一份战略报告"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出战略建议和优先级"
+  deep_description: "完整报告 + 战略推演 + 竞争格局分析 + 执行路线图"
 ---
 
 # 商业战略规划报告自动生成
@@ -44,7 +48,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 战略态势评估
+### Step 1: 战略态势评估 [核心]
 
 整合 SWOT + 五力模型 + 价值曲线，评估当前战略态势：
 
@@ -67,7 +71,7 @@ metadata:
 | **优势强** | 进攻型战略 | 防御型战略 |
 | **劣势明显** | 扭转型战略 | 生存型战略 |
 
-### Step 2: 战略方向推演
+### Step 2: 战略方向推演 [核心]
 
 基于态势评估，推演2-3个战略方向：
 
@@ -99,7 +103,7 @@ metadata:
 | 预期回报 | | | |
 | 推荐度 | | | |
 
-### Step 3: 执行路径规划
+### Step 3: 执行路径规划 [核心]
 
 为推荐的战略方向制定执行路径：
 
@@ -119,7 +123,7 @@ metadata:
 - 当前定价与战略方向的匹配度
 - 定价调整建议（如有）
 
-### Step 4: 利益相关者管理
+### Step 4: 利益相关者管理 [核心]
 
 整合利益相关者数据，制定沟通策略：
 
@@ -129,7 +133,7 @@ metadata:
 | 执行团队 | | 高 | 目标对齐+资源保障 | 周度 |
 | 外部合作方 | | 中 | 价值共享+风险共担 | 按需 |
 
-### Step 5: 风险与预案
+### Step 5: 风险与预案 [核心]
 
 识别战略执行的关键风险：
 
@@ -140,7 +144,7 @@ metadata:
 | 执行风险 | 团队能力/协作问题 | | | |
 | 技术风险 | 技术可行性/数据安全 | | | |
 
-### Step 6: 报告组装
+### Step 6: 报告组装 [核心]
 
 **报告结构**：
 
@@ -180,6 +184,14 @@ metadata:
 - 方法论说明
 ```
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 战略建议和优先级 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整报告 + 战略推演 + 竞争格局分析 + 执行路线图 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-strategy/business-strategy-report/`
@@ -204,12 +216,35 @@ metadata:
 | executive_summary.core_okr | object | 是 | 核心OKR |
 | executive_summary.key_risks | array | 是 | 关键风险列表 |
 | strategic_assessment.external | object | 是 | 外部环境评估 |
+| strategic_assessment.external.industry_attractiveness | string | 是 | 行业吸引力评估，不可为空 |
+| strategic_assessment.external.opportunities | array | 是 | 外部机会列表，不可为空 |
+| strategic_assessment.external.threats | array | 是 | 外部威胁列表，不可为空 |
+| strategic_assessment.external.competitive_position | string | 是 | 竞争定位描述 |
 | strategic_assessment.internal | object | 是 | 内部能力评估 |
+| strategic_assessment.internal.strengths | array | 是 | 核心优势列表，不可为空 |
+| strategic_assessment.internal.weaknesses | array | 是 | 关键劣势列表，不可为空 |
+| strategic_assessment.internal.key_resources | array | 否 | 关键资源列表 |
+| strategic_assessment.internal.capability_gaps | array | 否 | 能力缺口列表 |
 | strategic_assessment.posture_matrix.quadrant | string | 是 | 态势象限 |
 | strategic_directions | array | 是 | 至少2个战略方向 |
+| strategic_directions[].name | string | 是 | 方向名称，不可为空 |
+| strategic_directions[].rationale | string | 是 | 方向逻辑，不可为空 |
+| strategic_directions[].target_market | string | 否 | 目标市场 |
+| strategic_directions[].differentiation | string | 否 | 差异化策略 |
+| strategic_directions[].key_assumptions | array | 否 | 关键假设列表 |
+| strategic_directions[].risk_factors | array | 否 | 风险因素列表 |
 | execution_path.okr | object | 是 | OKR体系 |
 | execution_path.roadmap | object | 是 | 路线图 |
+| stakeholder_management | array | 否 | 利益相关者管理策略 |
+| stakeholder_management[].stakeholder | string | 是 | 利益相关者名称 |
+| stakeholder_management[].attitude | string | 否 | 态度 |
+| stakeholder_management[].influence | string | 否 | 影响力等级 |
+| stakeholder_management[].communication_strategy | string | 否 | 沟通策略 |
 | risks_and_contingencies | array | 是 | 风险与预案 |
+| risks_and_contingencies[].risk_category | string | 是 | 风险类别 |
+| risks_and_contingencies[].probability | string | 否 | 概率评估 |
+| risks_and_contingencies[].impact | string | 否 | 影响评估 |
+| risks_and_contingencies[].contingency | string | 否 | 预案 |
 
 **business-strategy-report.json 结构**：
 
@@ -279,24 +314,34 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 执行摘要包含态势判断+推荐方向+核心OKR
 - [ ] 战略态势矩阵已生成
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 至少2个战略方向对比
 - [ ] OKR可量化、可追踪
 - [ ] 路线图包含Q1-Q4里程碑
 - [ ] 关键风险有预案
 - [ ] 所有推断标注置信度
 
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
+
 ## 降级策略
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| bmc缺失 | 基于产品信息推导商业模式 | 商业模式分析可能不够完整，缺乏9格画布结构化支撑 |
-| swot缺失 | 基于产品信息和AI知识推导态势 | 态势评估缺乏结构化依据，战略方向可能偏主观 |
-| okr缺失 | 基于战略方向推导OKR | OKR需人工校准，可量化性可能不足 |
-| roadmap缺失 | 基于OKR推导里程碑 | 时间线需人工调整，里程碑依赖关系可能不准确 |
-| positioning缺失 | 战略方向缺少定位验证 | 差异化策略需补充验证，竞争定位可能模糊 |
-| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | 报告无法生成核心内容 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| bmc缺失 | 基于产品信息推导商业模式 | 商业模式分析可能不够完整，缺乏9格画布结构化支撑 | 要求用户提供产品功能、收入模式和成本结构描述或上传bmc.json文件 |
+| swot缺失 | 基于产品信息和AI知识推导态势 | 态势评估缺乏结构化依据，战略方向可能偏主观 | 要求用户提供产品优势、劣势、机会和威胁描述或上传strategic-analysis.json文件 |
+| okr缺失 | 基于战略方向推导OKR | OKR需人工校准，可量化性可能不足 | 要求用户提供业务目标和关键结果预期或上传okr.json文件 |
+| roadmap缺失 | 基于OKR推导里程碑 | 时间线需人工调整，里程碑依赖关系可能不准确 | 要求用户提供功能优先级和时间约束或上传roadmap.json文件 |
+| positioning缺失 | 战略方向缺少定位验证 | 差异化策略需补充验证，竞争定位可能模糊 | 要求用户提供产品差异化描述或上传positioning-strategy输出文件 |
+| 产品/业务信息（用户提供） | 若用户未提供产品/业务信息，提示用户提供或跳过该输入相关步骤 | 报告无法生成核心内容 | 要求用户提供产品名称、核心功能、目标用户和业务目标 |
 
 ---
 

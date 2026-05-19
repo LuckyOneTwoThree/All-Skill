@@ -12,6 +12,10 @@ metadata:
     - "对手加了新功能怎么应对"
     - "竞品动态怎么追踪"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出竞品诊断和功能对比"
+  deep_description: "完整诊断 + 竞品战略推演 + 差异化机会识别 + 竞争应对路线图"
 ---
 
 # 竞品动态追踪与应对 🤖
@@ -37,7 +41,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 功能变更监控
+### Step 1: 功能变更监控 [条件]
 
 **目标**：识别竞品近期功能变更
 
@@ -75,7 +79,7 @@ feature_changes:
     priority: P0 | P1 | P2
 ```
 
-### Step 2: 优势动态评估
+### Step 2: 优势动态评估 [核心]
 
 **目标**：评估自身相对竞品的优劣势变化
 
@@ -118,7 +122,7 @@ advantage_changes:
       impact_level: high | medium | low
 ```
 
-### Step 3: 应对策略生成
+### Step 3: 应对策略生成 [核心]
 
 **目标**：基于竞品动态生成应对策略
 
@@ -163,7 +167,7 @@ response_strategy:
       milestones: [...]
 ```
 
-### Step 4: 效果追踪
+### Step 4: 效果追踪 [条件]
 
 **目标**：追踪应对策略的执行效果
 
@@ -192,6 +196,14 @@ effect_tracking:
     competitive_position:
       status_change: improved | unchanged | declined
 ```
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 竞品诊断和功能对比 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整诊断 + 竞品战略推演 + 差异化机会识别 + 竞争应对路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -263,12 +275,22 @@ competition_response:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 竞品覆盖完整性 ≥ 90%
 - [ ] 功能变更识别及时性 ≤ 7 天
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 优势评估与实际市场反馈一致
 - [ ] 策略可执行性 ≥ 80%
 - [ ] 效果追踪覆盖率 100%
 - [ ] 报告完整性（所有维度）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 

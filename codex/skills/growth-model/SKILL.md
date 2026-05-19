@@ -11,6 +11,10 @@ metadata:
     - "What growth model fits our product"
     - "Is our product PLG or SLG"
     - "Analyze our growth flywheel"
+execution_depth:
+  default: standard
+  quick_description: "Output growth model diagnosis and bottleneck identification"
+  deep_description: "Full diagnosis + flywheel modeling simulation + cold start simulation + growth stage evolution roadmap"
 ---
 
 # Growth Model Auto-Diagnosis
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Growth Model Matching Decision Tree
+### Step 1: Growth Model Matching Decision Tree [Core]
 
 Analyze the following dimensions to determine the optimal growth model:
 
@@ -62,7 +66,7 @@ Analyze the following dimensions to determine the optimal growth model:
 - Different product lines adopt different growth models
 - Different market stages adopt different growth models
 
-### Step 2: Flywheel Auto-Modeling
+### Step 2: Flywheel Auto-Modeling [Core]
 
 Based on the identified growth model, build the growth flywheel model:
 
@@ -71,7 +75,7 @@ Based on the identified growth model, build the growth flywheel model:
 3. **Identify reinforcing loops**: Which nodes positively reinforce other nodes
 4. **Identify friction points**: Sources of friction when the flywheel turns
 
-### Step 3: Cold Start Threshold Identification
+### Step 3: Cold Start Threshold Identification [Core]
 
 Analyze the cold start conditions of the growth flywheel:
 
@@ -79,13 +83,21 @@ Analyze the cold start conditions of the growth flywheel:
 - What external resources are needed during the cold start phase?
 - How to validate the flywheel hypothesis?
 
-### Step 4: Key Leverage Identification
+### Step 4: Key Leverage Identification [Core]
 
 Based on the flywheel model, identify the highest-leverage growth actions for the current stage:
 
 - Which node should be strengthened first to maximize flywheel acceleration?
 - Which bottleneck should be eliminated to unlock the greatest growth potential?
 - Where should resources be prioritized?
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | growth model diagnosis and bottleneck identification | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full diagnosis + flywheel modeling simulation + cold start simulation + growth stage evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -151,8 +163,15 @@ Recommended Priority Actions:
 | model | string | Yes | Growth model, only PLG/SLG/MLG/Hybrid allowed |
 | flywheel | object | Yes | Flywheel model, must contain nodes and edges |
 | flywheel.nodes | array | Yes | Flywheel node list, at least 4 nodes |
+| flywheel.nodes[].node_name | string | Yes | Node name, cannot be empty |
 | flywheel.edges | array | Yes | Flywheel edge list, at least 2 edges, must contain from/to/description |
+| flywheel.edges[].from | string | Yes | Source node, cannot be empty |
+| flywheel.edges[].to | string | Yes | Target node, cannot be empty |
+| flywheel.edges[].description | string | Yes | Causal relationship description, cannot be empty |
 | key_constraints | array | Yes | Key constraints list, max 5 items |
+| key_constraints[].constraint | string | Yes | Constraint description, cannot be empty |
+| key_constraints[].impact | string | No | Impact assessment |
+| key_constraints[].suggested_action | string | No | Suggested action |
 | bottleneck | string | Yes | Bottleneck description, cannot be empty |
 | confidence | number | Yes | Diagnosis confidence, range 0-1 |
 
@@ -171,30 +190,33 @@ Recommended Priority Actions:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] North Star metric directly linked to >=1 OKR Objective
 - [ ] Growth model contains >=3 quantifiable variables with clear causal relationships
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Input variables 100% trackable (have data source or collection plan)
 - [ ] Each diagnosis recommendation cites at least 1 data point
 - [ ] Growth flywheel contains >=4 nodes and forms a closed loop
 - [ ] Bottleneck constraints identified <=5, each with quantified impact assessment
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| Product features missing | User describes product -> diagnose growth model based on description | Product features based on user description, diagnosis precision limited |
-| User data missing | Skip data-driven growth stage assessment, infer based on user description | Growth stage assessment based on qualitative description |
-| Business model missing | Use generic business model template, mark as "to be confirmed" | Business model fit may be low |
-| Product features + user data + business model all missing | User describes product -> diagnose growth model based on description | Output based on description growth diagnosis, key parameters marked "to be confirmed" |
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Product description**: What the product is, what problem it solves, core value proposition
-- **Current growth stage** (optional): Product is in exploration/growth/maturity/decline phase
-- **Core growth metrics** (optional): Current most important growth metrics (e.g., DAU, GMV, MRR, etc.)
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| Product features missing | User describes product -> diagnose growth model based on description | Product features based on user description, diagnosis precision limited | Request user to describe product features and core value proposition, or upload prd.json |
+| User data missing | Skip data-driven growth stage assessment, infer based on user description | Growth stage assessment based on qualitative description | Request user to provide user metrics (DAU, MAU, growth rate), or upload user_data.json |
+| Business model missing | Use generic business model template, mark as "to be confirmed" | Business model fit may be low | Request user to describe business model and revenue streams, or upload bmc.json |
+| Product features + user data + business model all missing | User describes product -> diagnose growth model based on description | Output based on description growth diagnosis, key parameters marked "to be confirmed" | Request user to describe product, current growth stage, and core growth metrics, or execute business-model-canvas first |
 
 ## Upstream Change Response
 

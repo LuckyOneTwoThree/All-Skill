@@ -12,6 +12,10 @@ metadata:
     - "Analyze requirements using the KANO model"
     - "Uncover deep user needs"
     - "What tasks do users really want to accomplish"
+execution_depth:
+  default: standard
+  quick_description: "Output key insights and evidence only"
+  deep_description: "Full analysis + cross-source validation + insight priority matrix + insight application roadmap"
 ---
 
 # Insight Analysis -- Need Insight Analysis
@@ -40,7 +44,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Parallel Insight (JTBD + Requirement Layering)
+### Step 1: Parallel Insight (JTBD + Requirement Layering) [Core]
 
 Execute JTBD analysis and requirement three-layer model decomposition in parallel.
 
@@ -128,7 +132,7 @@ Decompose original requirements into surface requirements, behavioral requiremen
 - Confidence range: 0.4-0.7
 - Validation flag: Essential requirement confidence < 0.5 -> `validation_needed: true`, Behavioral requirement confidence < 0.7 -> `validation_needed: true`
 
-### Step 2: Root Cause Deep Dive (5Whys)
+### Step 2: Root Cause Deep Dive (5Whys) [Core]
 
 Conduct root cause deep dive on key pain points or problem phenomena.
 
@@ -147,7 +151,7 @@ Conduct root cause deep dive on key pain points or problem phenomena.
 | Consecutive 2 layers with confidence < 0.3 | Inference chain lacks credibility; human intervention needed |
 | Actionable improvement point found | Root cause is clear and can be converted to specific action |
 
-### Step 3: Requirement Classification (KANO)
+### Step 3: Requirement Classification (KANO) [Core]
 
 Classify functional requirements using the KANO model.
 
@@ -181,7 +185,7 @@ Classify functional requirements using the KANO model.
 - Reverse type: Positive mention rate < 10% AND negative mention rate > 70%, mark as "Reverse"
 - No feedback data: Mark as "insufficient data"
 
-### Step 4: Priority Scoring
+### Step 4: Priority Scoring [Core]
 
 Perform weighted priority scoring and sorting on the requirement list.
 
@@ -234,6 +238,14 @@ Solvability (1-5 points):
 | 1 | Technical solution uncertain or depends on external conditions |
 
 > **Note**: Solvability requires technical team input; default value is 3 (medium), marked as "pending technical confirmation"; overall score confidence for this requirement is downgraded to low
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | key insights and evidence only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + cross-source validation + insight priority matrix + insight application roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -518,24 +530,32 @@ Output files: insight-analysis.json + insight-analysis.md
 
 ## Quality Checks
 
-| Check Item | Pass Condition |
-|--------|----------|
-| JTBD three-layer Jobs all extracted | functional/emotional/social Jobs all present |
-| Each Job has data support | evidence field is non-empty |
-| Low-confidence Jobs marked for validation | Jobs with confidence < 0.5 are in needs_human_validation |
-| Requirement three layers all decomposed | surface/behavioral/essential all have content |
-| Inference basis is non-empty | inference_basis field is non-empty |
-| Essential requirements marked with validation status | validation_needed field is complete |
-| Causal chain is complete | Logically coherent from phenomenon to root cause |
-| Root cause has data support | At least 1 evidence |
-| Actionable suggestions provided | actionable_fix is non-empty, containing effort/impact/suggested_metrics |
-| All functional requirements classified | kano_classification is complete |
-| Boundary cases marked | Those with confidence < 0.7 are in boundary_cases |
-| Classification statistics summary complete | Sum of each type in summary equals kano_classification array length |
-| All requirements scored | priority_list is complete |
-| Scoring results sorted by priority descending | rank field is correct |
-| Score confidence level annotated | score_confidence field is complete |
-| base_score and kano_bonus calculated separately | Auditable |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] JTBD three-layer Jobs all extracted (functional/emotional/social Jobs all present)
+- [ ] Each Job has data support (evidence field is non-empty)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Low-confidence Jobs marked for validation (Jobs with confidence < 0.5 are in needs_human_validation)
+- [ ] Requirement three layers all decomposed (surface/behavioral/essential all have content)
+- [ ] Inference basis is non-empty (inference_basis field is non-empty)
+- [ ] Essential requirements marked with validation status (validation_needed field is complete)
+- [ ] Causal chain is complete (Logically coherent from phenomenon to root cause)
+- [ ] Root cause has data support (At least 1 evidence)
+- [ ] Actionable suggestions provided (actionable_fix is non-empty, containing effort/impact/suggested_metrics)
+- [ ] All functional requirements classified (kano_classification is complete)
+- [ ] Boundary cases marked (Those with confidence < 0.7 are in boundary_cases)
+- [ ] Classification statistics summary complete (Sum of each type in summary equals kano_classification array length)
+- [ ] All requirements scored (priority_list is complete)
+- [ ] Scoring results sorted by priority descending (rank field is correct)
+- [ ] Score confidence level annotated (score_confidence field is complete)
+- [ ] base_score and kano_bonus calculated separately (Auditable)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -543,21 +563,13 @@ Output files: insight-analysis.json + insight-analysis.md
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| voice-analysis.json | Extract JTBD and KANO classification based on user-pasted feedback text | Reduced basis for Emotional/Social Job inference, lower KANO classification confidence |
-| behavior-analysis.json | Infer behavioral intent from user feedback text | Functional Jobs lack behavioral data corroboration, imprecise frequency statistics |
-| voice-analysis.json + behavior-analysis.json | User provides feedback text -> directly extract JTBD | Overall confidence reduced, frequency is estimated |
-| Original requirement list | User verbally describes requirements -> directly decompose three layers | inference_basis lacks data corroboration, behavioral requirement confidence ceiling lowered to 0.7 |
-| All upstream files missing | Prompt user to execute prior stages first, or execute lightweight analysis based on user's verbal description | Output is lightweight version; JTBD only contains Functional Jobs; all KANO classifications are inferred; priority_scoring uses default values for multiple dimensions |
-
-## Data Acquisition Instructions
-
-This Skill requires user feedback and behavior analysis data. Please provide via one of the following methods:
-  1. Directly paste user feedback text and requirement list
-  2. Upload voice-analysis.json / behavior-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| voice-analysis.json | Extract JTBD and KANO classification based on user-pasted feedback text | Reduced basis for Emotional/Social Job inference, lower KANO classification confidence | Request user to paste user feedback text or upload voice-analysis.json file |
+| behavior-analysis.json | Infer behavioral intent from user feedback text | Functional Jobs lack behavioral data corroboration, imprecise frequency statistics | Request user to provide event/funnel data or upload behavior-analysis.json file |
+| voice-analysis.json + behavior-analysis.json | User provides feedback text -> directly extract JTBD | Overall confidence reduced, frequency is estimated | Request user to provide feedback text and requirement list, or upload voice-analysis.json / behavior-analysis.json files |
+| Original requirement list | User verbally describes requirements -> directly decompose three layers | inference_basis lacks data corroboration, behavioral requirement confidence ceiling lowered to 0.7 | Request user to provide requirement list (e.g., feature requests, user stories) or upload requirements.json |
+| All upstream files missing | Prompt user to execute prior stages first, or execute lightweight analysis based on user's verbal description | Output is lightweight version; JTBD only contains Functional Jobs; all KANO classifications are inferred; priority_scoring uses default values for multiple dimensions | Request user to describe product features and user needs, or execute user-research-voice-analysis and user-research-behavior-analysis first |
 
 ## Upstream Change Response
 

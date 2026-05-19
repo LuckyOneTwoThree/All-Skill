@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Help me clarify our business model"
     - "How does our business model make money"
+execution_depth:
+  default: standard
+  quick_description: "Output BMC and key assumptions only"
+  deep_description: "Full BMC + revenue model simulation + unit economics deep dive + business model evolution roadmap"
 ---
 
 # Business Model Canvas Auto-Generation
@@ -75,7 +79,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Customer Segments Population
+### Step 1: Customer Segments Population [Core]
 
 **Task**: Define target customer segment groups based on user personas and pain point analysis.
 
@@ -104,7 +108,7 @@ AI->Human AI suggests, human approves
 - Each group has clear characteristic descriptions
 - Priority ranking is data-supported
 
-### Step 2: Value Propositions Population
+### Step 2: Value Propositions Population [Core]
 
 **Task**: Design differentiated value propositions based on user pain points and competitor analysis.
 
@@ -208,7 +212,7 @@ Start
 - Each model includes a clear pricing structure
 - Pros/cons analysis and risk level labeled
 
-### Step 4: Cost Structure Population
+### Step 4: Cost Structure Population [Core]
 
 **Task**: Analyze and estimate the cost structure based on business model requirements.
 
@@ -250,7 +254,7 @@ Start
 - Fixed costs and variable costs classified
 - Unit economics metrics set
 
-### Step 5: Channels Population
+### Step 5: Channels Population [Conditional]
 
 **Task**: Define channels for reaching customers and delivering value.
 
@@ -281,7 +285,7 @@ Start
 - Mix of direct and indirect channels
 - Reasonable priority ranking
 
-### Step 6: Key Activities/Resources/Partners Population
+### Step 6: Key Activities/Resources/Partners Population [Core]
 
 **Task**: Define the key activities, resources, and partnerships needed to realize the business model.
 
@@ -336,7 +340,7 @@ Start
 - Resource requirements match capabilities
 - Partnership design is reasonable
 
-### Step 7: Customer Relationships Population
+### Step 7: Customer Relationships Population [Core]
 
 **Task**: Define relationship types with different customer segment groups.
 
@@ -364,6 +368,14 @@ Start
 - Relationship type matches product characteristics
 - Touchpoints are clear
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | BMC and key assumptions only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full BMC + revenue model simulation + unit economics deep dive + business model evolution roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-strategy/business-model-canvas/`
@@ -375,18 +387,45 @@ Start
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
 | bmc.customer_segments | array | Yes | Customer segments list, at least 2 |
+| bmc.customer_segments[].segment_name | string | Yes | Customer group name, must not be empty |
+| bmc.customer_segments[].characteristics | string[] | Yes | Group characteristics list, must not be empty |
 | bmc.value_propositions | array | Yes | Value propositions list, at least 1 |
+| bmc.value_propositions[].proposition | string | Yes | Value proposition description, must not be empty |
+| bmc.value_propositions[].pain_addressed | string | Yes | Pain point addressed, must not be empty |
+| bmc.value_propositions[].gain_created | string | No | Gain created |
 | bmc.channels | array | Yes | Covers all customer journey stages |
+| bmc.channels[].channel_name | string | Yes | Channel name, must not be empty |
+| bmc.channels[].type | string | Yes | Channel type, enum: direct/indirect/partner |
+| bmc.channels[].phase | string | Yes | Channel phase, enum: awareness/evaluation/purchase/delivery/after_sales |
 | bmc.customer_relationships | array | Yes | Each segment has a corresponding relationship type |
+| bmc.customer_relationships[].type | string | Yes | Relationship type, enum: personal/automated/community/self_service |
+| bmc.customer_relationships[].segment | string | Yes | Corresponding customer group, must not be empty |
 | bmc.revenue_streams | array | Yes | Revenue streams list, at least 1 |
+| bmc.revenue_streams[].stream_name | string | Yes | Revenue stream name, must not be empty |
+| bmc.revenue_streams[].pricing_model | string | Yes | Pricing model, enum: subscription/transaction/freemium/advertising/licensing |
+| bmc.revenue_streams[].estimated_amount | string | No | Estimated amount range |
+| bmc.revenue_streams[].target_segment | string | No | Corresponding customer group |
 | bmc.key_resources | array | Yes | Covers physical/intellectual/human/financial |
+| bmc.key_resources[].resource | string | Yes | Key resource description, must not be empty |
+| bmc.key_resources[].type | string | Yes | Resource type, enum: physical/intellectual/human/financial |
 | bmc.key_activities | array | Yes | Covers full value creation process |
+| bmc.key_activities[].activity | string | Yes | Key activity description, must not be empty |
+| bmc.key_activities[].type | string | Yes | Activity type, enum: production/problem_solving/platform/network |
 | bmc.key_partnerships | array | Yes | Includes suppliers/strategic alliances/joint ventures |
+| bmc.key_partnerships[].partner | string | Yes | Partner name, must not be empty |
+| bmc.key_partnerships[].type | string | Yes | Partnership type, enum: strategic_alliance/joint_venture/buyer_supplier |
+| bmc.key_partnerships[].purpose | string | Yes | Partnership purpose, must not be empty |
 | bmc.cost_structure | array | Yes | Cost structure list, at least 1 |
+| bmc.cost_structure[].cost_item | string | Yes | Cost item name, must not be empty |
+| bmc.cost_structure[].type | string | Yes | Cost type, enum: fixed/variable |
+| bmc.cost_structure[].estimated_range | string | No | Estimated cost range |
+| bmc.cost_structure[].category | string | No | Cost category, enum: infrastructure/marketing/operations/personnel |
 | metadata.confidence | number | Yes | Between 0-1, overall confidence |
 | metadata.requires_human_review | boolean | Yes | Whether human review is needed |
 | assumptions[].assumption_id | string | Yes | Unique assumption identifier |
+| assumptions[].description | string | Yes | Assumption description, must not be empty |
 | assumptions[].related_bmc_element | string | Yes | Related canvas element path |
+| assumptions[].validation_method | string | No | Validation method |
 | assumptions[].priority | string | Yes | critical/high/medium/low |
 | assumptions[].confidence | number | Yes | Between 0-1, assumption confidence |
 
@@ -510,25 +549,22 @@ Start
 
 ## Quality Checks
 
-### Self-Check List
+### P0 Checks (must pass for quick/standard/deep)
 
 - [ ] All 9 elements of the Business Model Canvas are populated
 - [ ] Each element's content has data support or assumption labels
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] At least 2 revenue model options generated
 - [ ] Assumptions list is complete, each assumption includes:
-  - Clear description
-  - Risk level labeled
-  - Validation status labeled
-  - Impact assessment provided
 - [ ] Validation methods recommended for core assumptions
 - [ ] Unit economics metrics set
 
-### Output Quality Standards
+### P2 Checks (must pass for deep only)
 
-1. **Completeness**: Each of the 9 canvas blocks has at least 1 entry, and value_propositions correspond to customer_segments
-2. **Traceability**: Each block's content is labeled with data_source (upstream skill/user description/AI inference)
-3. **Assumption Completeness**: assumptions list >=3 items, each including assumption+validation_method+priority
-4. **Revenue Verifiability**: revenue_streams include >=1 specific revenue source and pricing strategy has numeric ranges
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -536,19 +572,11 @@ Start
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| persona.json / opportunity-definition.json | User provides product description and target users -> Generate BMC based on description | Customer segments and value propositions lack exploration phase data support, overall confidence drops from 0.8 to 0.5, related canvas blocks confidence <=0.4, labeled needs_human_validation: true |
-| exploration_outputs (multiple exploration phase files) | User provides product description and target users -> Generate BMC based on description | Overall confidence drops from 0.8 to 0.5 for each module, assumption entries increase, related canvas blocks confidence <=0.3, labeled auto_filled: true |
-| All upstream files missing | Prompt user to execute prior phases first, or generate BMC based on user-provided product description and target users | Overall confidence drops from 0.8 to 0.3, most content is assumption-based inference, related canvas blocks confidence <=0.3, labeled auto_filled: true |
-
-## Data Acquisition Instructions
-
-This Skill requires exploration phase output data (Persona, Opportunity Brief, etc.), please provide via one of the following methods:
-  1. Directly describe the product concept, target users, and value proposition
-  2. Upload persona.json / opportunity-definition.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| persona.json / opportunity-definition.json | User provides product description and target users -> Generate BMC based on description | Customer segments and value propositions lack exploration phase data support, overall confidence drops from 0.8 to 0.5, related canvas blocks confidence <=0.4, labeled needs_human_validation: true | Request user to provide product description and target users, or upload persona.json / opportunity-definition.json files |
+| exploration_outputs (multiple exploration phase files) | User provides product description and target users -> Generate BMC based on description | Overall confidence drops from 0.8 to 0.5 for each module, assumption entries increase, related canvas blocks confidence <=0.3, labeled auto_filled: true | Request user to describe product concept, target users, and value proposition, or upload exploration phase output files |
+| All upstream files missing | Prompt user to execute prior phases first, or generate BMC based on user-provided product description and target users | Overall confidence drops from 0.8 to 0.3, most content is assumption-based inference, related canvas blocks confidence <=0.3, labeled auto_filled: true | Request user to provide product concept, target users, and value proposition, or execute pm-01-discovery skills first |
 
 ---
 

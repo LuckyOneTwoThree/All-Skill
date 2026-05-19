@@ -10,6 +10,10 @@ metadata:
     - "This feature needs tracking"
     - "Help me create a tracking plan"
     - "Organize what data needs to be collected"
+execution_depth:
+  default: standard
+  quick_description: "Output core event list and tracking checklist only"
+  deep_description: "Full plan + data governance specs + privacy compliance audit + long-term evolution roadmap"
 ---
 
 # Tracking Plan Auto-Generation
@@ -92,7 +96,7 @@ This Pipeline automatically generates tracking plans, but key decision points re
 
 ## Execution Steps
 
-### Step 1: Reverse-Engineer Tracking Needs from Metric System
+### Step 1: Reverse-Engineer Tracking Needs from Metric System [Conditional]
 
 **AI AI Processing**
 
@@ -136,7 +140,7 @@ FOR each metric in metric_system:
 
 ---
 
-### Step 2: Extract Feature Tracking Needs from PRD
+### Step 2: Extract Feature Tracking Needs from PRD [Conditional]
 
 **AI AI Processing**
 
@@ -221,7 +225,7 @@ Identify interaction details in PRD -> Define interaction tracking
 
 ---
 
-### Step 3: Deduplicate with Existing Tracking
+### Step 3: Deduplicate with Existing Tracking [Conditional]
 
 **AI AI Processing**
 
@@ -267,7 +271,7 @@ Weight recommendations:
 
 ---
 
-### Step 4: Tracking Quality Check
+### Step 4: Tracking Quality Check [Conditional]
 
 **AI AI Processing**
 
@@ -481,7 +485,7 @@ IF any of the following conditions exist THEN flag as redundant tracking:
 
 ---
 
-### Step 5: Generate Tracking Document
+### Step 5: Generate Tracking Document [Core]
 
 **AI AI Processing**
 
@@ -529,7 +533,7 @@ IF any of the following conditions exist THEN flag as redundant tracking:
 
 ---
 
-### Step 6: PRD Tracking Plan Consistency Validation
+### Step 6: PRD Tracking Plan Consistency Validation [Conditional]
 
 **AI AI Processing**
 
@@ -629,6 +633,14 @@ def calculate_prd_consistency_score():
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | core event list and tracking checklist only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full plan + data governance specs + privacy compliance audit + long-term evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -792,24 +804,21 @@ When the tracking plan itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
-### Quality Check List
+### P0 Checks (must pass for quick/standard/deep)
 
-#### [OK] Naming Convention Passed
-
-**Check Standards**:
 - [ ] All event names use lowercase + underscore
 - [ ] All property names use lowercase + underscore
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] No camelCase naming
 - [ ] No special characters
 - [ ] Semantic units complete
 
-**Failure Handling**:
-```
-IF naming convention not passed:
-  1. Auto-fix naming issues
-  2. Generate naming fix report
-  3. Flag for human confirmation
-```
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -852,19 +861,12 @@ IF PRD consistency insufficient:
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| PRD missing | Prompt user to provide feature list, generate basic tracking plan based on feature list | Cannot extract user flows and interaction details, tracking coverage may be incomplete |
-| Metric system missing | Skip metric reverse-engineering step, only extract tracking needs based on PRD features | Tracking-metric association missing, analysis purpose annotated as "to be supplemented" |
-| Existing tracking list missing | Skip deduplication step, all tracking marked as new | May produce redundant tracking, requires subsequent manual deduplication |
-| PRD + Metric system + Existing tracking list all missing | User provides feature list -> generate basic tracking plan based on features | Output basic tracking plan, annotated as "to be supplemented" and "to be confirmed" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Feature list**: Core feature modules and feature points included in the product
-- **Core user paths** (optional): Main process steps for users using the product
-- **Key interaction nodes** (optional): User interaction behaviors that need to be tracked
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| PRD missing | Prompt user to provide feature list, generate basic tracking plan based on feature list | Cannot extract user flows and interaction details, tracking coverage may be incomplete | Request user to provide feature list and core user paths, or upload prd.json |
+| Metric system missing | Skip metric reverse-engineering step, only extract tracking needs based on PRD features | Tracking-metric association missing, analysis purpose annotated as "to be supplemented" | Request user to provide core metric list, or upload metrics-system.json |
+| Existing tracking list missing | Skip deduplication step, all tracking marked as new | May produce redundant tracking, requires subsequent manual deduplication | Request user to provide existing tracking event list, or upload tracking-plan.json |
+| PRD + Metric system + Existing tracking list all missing | User provides feature list -> generate basic tracking plan based on features | Output basic tracking plan, annotated as "to be supplemented" and "to be confirmed" | Request user to provide feature list, core user paths, and key interaction nodes, or execute design-prd and metrics-system first |
 
 ---
 

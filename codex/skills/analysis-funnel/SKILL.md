@@ -10,6 +10,10 @@ metadata:
     - "Registration flow conversion rate is too low, help me analyze"
     - "At which step do users drop off the most"
     - "Help me look at the payment conversion funnel"
+execution_depth:
+  default: standard
+  quick_description: "Output funnel analysis and conversion bottlenecks"
+  deep_description: "Full analysis + funnel segment breakdown + conversion optimization simulation + multi-dimensional attribution analysis"
 ---
 
 # Funnel Auto-Analysis
@@ -44,7 +48,7 @@ AI AI auto-execution (data analysis type)
 
 ## Execution Steps
 
-### Step 1: Full Funnel Calculation
+### Step 1: Full Funnel Calculation [Core]
 
 ```
 Get funnel definition
@@ -54,7 +58,7 @@ Get funnel definition
 └── Calculate overall conversion rate
 ```
 
-### Step 2: Multi-Dimensional Drilldown
+### Step 2: Multi-Dimensional Drilldown [Core]
 
 Perform multi-dimensional breakdown analysis on the funnel:
 
@@ -67,7 +71,7 @@ Perform multi-dimensional breakdown analysis on the funnel:
 | Region | By country/province |
 | Time | By hour/day/week |
 
-### Step 3: Largest Drop-off Node Identification
+### Step 3: Largest Drop-off Node Identification [Core]
 
 ```
 Analyze drop-off rate at each step
@@ -77,11 +81,19 @@ Analyze drop-off rate at each step
 └── Identify drop-off cause hypotheses
 ```
 
-### Step 4: Trend Analysis
+### Step 4: Trend Analysis [Core]
 
 - **Time trend**: Daily/weekly/monthly changes in conversion rate at each step
 - **Comparison analysis**: Compare with previous period
 - **Prediction**: Predict future performance based on trends
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | funnel analysis and conversion bottlenecks | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + funnel segment breakdown + conversion optimization simulation + multi-dimensional attribution analysis | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -309,30 +321,30 @@ When funnel analysis itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Funnel step definition complete, no omissions
 - [ ] Conversion rate calculation based on full data
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Drop-off node identification includes cause hypotheses
 - [ ] Multi-dimensional drilldown covers at least 3 dimensions
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Funnel definition missing | Prompt user to provide funnel steps and data for each step, calculate conversion rate directly | Funnel steps based on user description, may be incomplete |
-| Event data missing | User provides funnel steps and data for each step -> calculate conversion rate directly | Cannot auto-acquire data, relies on user input |
-| Funnel definition + Event data both missing | User provides funnel steps and data for each step -> calculate conversion rate directly | Output basic conversion rate calculation results, multi-dimensional drilldown annotated as "to be supplemented" |
-
-- If user does not provide segment configuration, prompt user to provide or skip related steps
-- If user does not provide comparison period, prompt user to provide or skip related steps
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Funnel steps**: Names and order of each step in the conversion funnel
-- **Data per step**: User count or event count at each step
-- **Comparison period** (optional): Time period to compare against
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Funnel definition missing | Prompt user to provide funnel steps and data for each step, calculate conversion rate directly | Funnel steps based on user description, may be incomplete | Request user to provide funnel step names and order, or upload funnel_definition.json |
+| Event data missing | User provides funnel steps and data for each step -> calculate conversion rate directly | Cannot auto-acquire data, relies on user input | Request user to provide user count or event count at each funnel step |
+| Funnel definition + Event data both missing | User provides funnel steps and data for each step -> calculate conversion rate directly | Output basic conversion rate calculation results, multi-dimensional drilldown annotated as "to be supplemented" | Request user to provide funnel step names, order, and data per step |
 
 ## Key Metrics
 

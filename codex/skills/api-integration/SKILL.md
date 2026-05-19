@@ -41,7 +41,7 @@ AI AI suggests, human confirms
 
 ## Execution Steps
 
-### Step 1: API Contract Parsing and Endpoint Planning
+### Step 1: API Contract Parsing and Endpoint Planning [Core]
 
 **1a. Contract Parsing**
 
@@ -79,7 +79,7 @@ Token refresh strategy:
 - Refresh failure -> redirect to login page
 - Concurrent requests queue while refresh is in progress
 
-### Step 2: API Client Code Generation
+### Step 2: API Client Code Generation [Core]
 
 **2a. Type Definition Generation**
 
@@ -135,7 +135,7 @@ Generation rules:
 | 429 Rate Limited | Wait then retry | "Too many requests, please try again later" |
 | 5xx Server Error | Retry 2 times -> prompt server exception | "Server error, please try again later" |
 
-### Step 3: Mock Data and Parallel Development
+### Step 3: Mock Data and Parallel Development [Core]
 
 **3a. Mock Data Generation**
 
@@ -166,7 +166,7 @@ Generate MSW (Mock Service Worker) handlers:
 - Support delay simulation (200-500ms random delay)
 - Support error scenario simulation (5% probability of returning 500 error)
 
-### Step 4: Data Layer Integration and Cache Strategy
+### Step 4: Data Layer Integration and Cache Strategy [Core]
 
 **4a. Data Preloading Configuration**
 

@@ -12,6 +12,10 @@ metadata:
     - "Are there any new risks emerging"
     - "What to do when risk needs escalation"
     - "The problem is too big, need to escalate"
+execution_depth:
+  default: standard
+  quick_description: "Output risk register and mitigation priorities only"
+  deep_description: "Full management + risk simulation + mitigation effectiveness tracking + risk evolution roadmap"
 ---
 
 # Risk Monitoring & Escalation Handling Automation
@@ -54,7 +58,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Risk Monitoring (Continuously monitor risk status, detect risk indicator changes and trigger conditions)
+### Step 1: Risk Monitoring (Continuously monitor risk status, detect risk indicator changes and trigger conditions) [Core]
 
 #### Step 1.1: Risk Indicator Auto-tracking
 
@@ -210,7 +214,7 @@ metadata:
 
 ---
 
-### Step 2: Escalation Handling (High-priority risk escalation handling, initiate response process and resource allocation)
+### Step 2: Escalation Handling (High-priority risk escalation handling, initiate response process and resource allocation) [Core]
 
 Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results), combined with issue data, escalation rules, and organizational structure, to execute escalation handling.
 
@@ -351,6 +355,14 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | risk register and mitigation priorities only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full management + risk simulation + mitigation effectiveness tracking + risk evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -546,8 +558,13 @@ escalation_rules:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Risk status updates timely
 - [ ] Alert trigger conditions clear
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Risk trend analysis covers at least 3 cycles
 - [ ] High-risk items have follow-up records
 - [ ] Escalation paths match risk levels (P0->Director level/P1->Manager level/P2->Lead level)
@@ -555,6 +572,11 @@ escalation_rules:
 - [ ] Escalation reason includes >= 3 elements (risk description + impact scope + urgency level)
 - [ ] Escalation timeout has automatic follow-up mechanism (P0 every 15 min/P1 every 2 hours/P2 every 24 hours)
 - [ ] 100% of escalation operations recorded and traceable
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

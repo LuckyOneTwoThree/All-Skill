@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Is our value proposition right"
     - "Do users really need this feature"
+execution_depth:
+  default: standard
+  quick_description: "Output value-market fit assessment"
+  deep_description: "Full assessment + value-market fit matrix + gap analysis + optimization roadmap"
 ---
 
 # Value Proposition Fit Auto-Evaluation
@@ -89,7 +93,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Pain Point Alignment Assessment
+### Step 1: Pain Point Alignment Assessment [Core]
 
 **Task**: Systematically evaluate the coverage of each Pain Reliever against user pain points.
 
@@ -149,7 +153,7 @@ AI->Human AI suggests, human approves
 - Each pain point has clear coverage status
 - Omitted pain points include improvement recommendations
 
-### Step 2: Gain Creation Validation
+### Step 2: Gain Creation Validation [Conditional]
 
 **Task**: Evaluate the match between Gain Creators and users' expected gains.
 
@@ -198,7 +202,7 @@ AI->Human AI suggests, human approves
 - Uncovered gains identified and importance assessed
 - Achievability assessment reasonable
 
-### Step 3: Overall Fit Score
+### Step 3: Overall Fit Score [Core]
 
 **Task**: Synthesize pain point coverage and gain creation to calculate overall fit score.
 
@@ -237,6 +241,14 @@ Overall Fit Score = (Pain Alignment Score x 0.6) + (Gain Validation Score x 0.4)
 }
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | value-market fit assessment | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full assessment + value-market fit matrix + gap analysis + optimization roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-strategy/business-value-fit/`
@@ -253,14 +265,36 @@ Overall Fit Score = (Pain Alignment Score x 0.6) + (Gain Validation Score x 0.4)
 | evaluation_report.evaluation_metadata.gains_analyzed | number | Yes | Number of gains analyzed |
 | evaluation_report.evaluation_metadata.confidence | string | Yes | high/medium/low |
 | evaluation_report.pain_alignment.covered_pains | array | Yes | Covered pain points list |
+| evaluation_report.pain_alignment.covered_pains[].pain_id | string | Yes | Pain point ID, must not be empty |
+| evaluation_report.pain_alignment.covered_pains[].coverage_score | number | Yes | Coverage score, 0-5 |
+| evaluation_report.pain_alignment.covered_pains[].coverage_quality | string | Yes | Coverage quality, enum: full/partial/edge/none |
 | evaluation_report.pain_alignment.uncovered_pains | array | Yes | Uncovered pain points list, each with recommendation |
+| evaluation_report.pain_alignment.uncovered_pains[].pain_id | string | Yes | Pain point ID, must not be empty |
+| evaluation_report.pain_alignment.uncovered_pains[].frequency | string | Yes | Frequency, enum: high/medium/low |
+| evaluation_report.pain_alignment.uncovered_pains[].severity | string | Yes | Severity, enum: high/medium/low |
+| evaluation_report.pain_alignment.uncovered_pains[].recommendation | string | Yes | Improvement suggestion, must not be empty |
 | evaluation_report.pain_alignment.pain_coverage_summary | object | Yes | Coverage statistics |
+| evaluation_report.pain_alignment.pain_coverage_summary.total_pains | number | Yes | Total pain points count |
+| evaluation_report.pain_alignment.pain_coverage_summary.fully_covered | number | Yes | Fully covered count |
+| evaluation_report.pain_alignment.pain_coverage_summary.uncovered | number | Yes | Uncovered count |
 | evaluation_report.gain_validation.covered_gains | array | Yes | Covered gains list |
+| evaluation_report.gain_validation.covered_gains[].gain_id | string | Yes | Gain ID, must not be empty |
+| evaluation_report.gain_validation.covered_gains[].coverage_status | string | Yes | Coverage status, enum: covered/partial/not_covered |
+| evaluation_report.gain_validation.covered_gains[].realizability | string | Yes | Realizability, enum: high/medium/low |
 | evaluation_report.gain_validation.uncovered_gains | array | Yes | Uncovered gains list, each with recommendation |
+| evaluation_report.gain_validation.uncovered_gains[].gain_id | string | Yes | Gain ID, must not be empty |
+| evaluation_report.gain_validation.uncovered_gains[].importance | string | Yes | Importance, enum: high/medium/low |
+| evaluation_report.gain_validation.uncovered_gains[].recommendation | string | Yes | Improvement suggestion, must not be empty |
 | evaluation_report.overall_fit_score | number | Yes | Overall fit score 0-5 |
 | evaluation_report.coverage_rate | object | Yes | Coverage metrics |
 | evaluation_report.improvement_suggestions | array | Yes | Improvement suggestions list |
+| evaluation_report.improvement_suggestions[].priority | string | Yes | Priority, enum: high/medium/low |
+| evaluation_report.improvement_suggestions[].category | string | Yes | Suggestion category, enum: add_pain_coverage/enhance_gain/clarify_message/reposition |
+| evaluation_report.improvement_suggestions[].description | string | Yes | Suggestion description, must not be empty |
 | evaluation_report.warnings | array | Yes | Warnings list |
+| evaluation_report.warnings[].warning_type | string | Yes | Warning type, e.g. high_frequency_uncovered |
+| evaluation_report.warnings[].description | string | Yes | Warning description, must not be empty |
+| evaluation_report.warnings[].severity | string | Yes | Severity, enum: high/medium/low |
 
 ### Complete Evaluation Report
 
@@ -334,28 +368,22 @@ Overall Fit Score = (Pain Alignment Score x 0.6) + (Gain Validation Score x 0.4)
 
 ## Quality Checks
 
-### Self-Check List
+### P0 Checks (must pass for quick/standard/deep)
 
 - [ ] All Pain Relievers evaluated
 - [ ] All Gain Creators validated
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Omission list complete with no gaps
 - [ ] Scoring logic consistent
 - [ ] Weight settings reasonable
 - [ ] Warning rules correctly triggered
 
-### Quality Standards
+### P2 Checks (must pass for deep only)
 
-1. **Scoring Consistency**:
-   - Same pain point-value proposition combinations should have consistent scores
-   - Scoring rationale sufficient and explainable
-
-2. **Coverage Completeness**:
-   - Pain point coverage cannot be 0 (unless explicitly choosing not to cover certain pain points)
-   - High-frequency, high-severity pain points must have coverage
-
-3. **Actionability of Recommendations**:
-   - Improvement suggestions are specific and executable
-   - Priority ranking reasonable
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -363,20 +391,12 @@ Overall Fit Score = (Pain Alignment Score x 0.6) + (Gain Validation Score x 0.4)
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| bmc.json | User provides value propositions and user pain points -> Directly evaluate fit | Lacks BMC structured data, value propositions may be incomplete |
-| User research data (voice-analysis / persona) | User provides value propositions and user pain points -> Directly evaluate fit | Lacks user research data, pain point frequency and severity lack empirical evidence |
-| bmc.json + User research data | User provides value proposition and user pain point descriptions -> Directly evaluate fit | Overall confidence reduced, scoring lacks data anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or evaluate fit based on user-provided value propositions and pain points | Overall confidence significantly reduced, evaluation is assumption-based only |
-
-## Data Acquisition Instructions
-
-This Skill requires BMC and user research data, please provide via one of the following methods:
-  1. Directly describe value propositions and user pain points
-  2. Upload bmc.json / persona.json / voice-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| bmc.json | User provides value propositions and user pain points -> Directly evaluate fit | Lacks BMC structured data, value propositions may be incomplete | Request user to describe value propositions and pain points, or upload bmc.json |
+| User research data (voice-analysis / persona) | User provides value propositions and user pain points -> Directly evaluate fit | Lacks user research data, pain point frequency and severity lack empirical evidence | Request user to describe user pain points and frequency, or upload persona.json / voice-analysis.json |
+| bmc.json + User research data | User provides value proposition and user pain point descriptions -> Directly evaluate fit | Overall confidence reduced, scoring lacks data anchoring | Request user to describe value propositions and pain points, or upload bmc.json / persona.json / voice-analysis.json |
+| All upstream files missing | Prompt user to execute prior phases first, or evaluate fit based on user-provided value propositions and pain points | Overall confidence significantly reduced, evaluation is assumption-based only | Request user to describe value propositions and pain points, or execute business-model-canvas and user-research skills first |
 
 ---
 

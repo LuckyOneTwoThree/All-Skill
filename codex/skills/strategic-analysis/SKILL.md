@@ -12,6 +12,10 @@ metadata:
     - "How should we expand the market"
     - "Where is the next growth direction"
     - "Is this industry worth entering"
+execution_depth:
+  default: standard
+  quick_description: "Output strategic analysis conclusions and recommendations"
+  deep_description: "Full analysis + strategic simulation + competitive landscape modeling + strategic roadmap"
 ---
 
 # Strategic Analysis
@@ -45,7 +49,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Framework Selection
+### Step 1: Framework Selection [Core]
 
 Automatically select 1-2 most applicable strategic frameworks based on product stage and industry characteristics.
 
@@ -68,7 +72,7 @@ Automatically select 1-2 most applicable strategic frameworks based on product s
 4. Default recommendation: SWOT (most universally applicable)
 5. Select at most 2 frameworks (avoid over-analysis); if all 3 are applicable, prioritize SWOT + Ansoff
 
-### Step 2: Execute Analysis
+### Step 2: Execute Analysis [Core]
 
 Execute strategic analysis per selected frameworks.
 
@@ -191,7 +195,7 @@ Assessment factors: Number and concentration of buyers, switching costs, price s
 
 Assessment factors: Number and scale of competitors, industry growth rate, product differentiation degree, exit barriers, competitive strategy diversity
 
-### Step 3: Strategic Conclusion Integration
+### Step 3: Strategic Conclusion Integration [Core]
 
 Integrate analysis conclusions from each framework to generate unified strategic recommendations.
 
@@ -201,6 +205,14 @@ Integrate analysis conclusions from each framework to generate unified strategic
 2. Porter's Five Forces industry attractiveness + Ansoff path feasibility: When industry attractiveness is low, growth path risk needs to be upgraded
 3. SWOT strengths + Porter's Five Forces competitive barriers: Do strengths constitute competitive barriers, are barriers sustainable
 4. Generate integrated strategic recommendation list, sorted by priority
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | strategic analysis conclusions and recommendations | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + strategic simulation + competitive landscape modeling + strategic roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -378,22 +390,30 @@ Output files: strategic-analysis.json + strategic-analysis.md
 
 ## Quality Checks
 
-| Check Item | Pass Condition |
-|--------|----------|
-| Framework selection reasonable | selected_frameworks not empty and selection rationale sufficient |
-| SWOT each item has data support | evidence field not empty |
-| SWOT 4 strategic directions generated | strategies include SO/ST/WO/WT |
-| SWOT confidence assessment completed | Each item has confidence value |
-| Ansoff 4 quadrants analyzed | Current positioning determined |
-| Ansoff 1-2 growth paths recommended | growth_paths not empty |
-| Ansoff each path has risk level labeled | risk_level not empty |
-| Ansoff feasibility assessment completed | feasibility not empty |
-| Porter's Five Forces 5 forces assessed | 5 forces each have score |
-| Porter's Five Forces scores have data basis | key_factors not empty |
-| Porter's Five Forces industry attractiveness overall assessment completed | industry_attractiveness not empty |
-| Strategic conclusions integrated | integrated_recommendations not empty |
-| Cross-framework validation completed | cross_validation_notes not empty |
-| Human decision items listed | human_decisions_needed not empty |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Framework selection reasonable (selected_frameworks not empty and selection rationale sufficient)
+- [ ] SWOT each item has data support (evidence field not empty)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] SWOT 4 strategic directions generated (strategies include SO/ST/WO/WT)
+- [ ] SWOT confidence assessment completed (Each item has confidence value)
+- [ ] Ansoff 4 quadrants analyzed (Current positioning determined)
+- [ ] Ansoff 1-2 growth paths recommended (growth_paths not empty)
+- [ ] Ansoff each path has risk level labeled (risk_level not empty)
+- [ ] Ansoff feasibility assessment completed (feasibility not empty)
+- [ ] Porter's Five Forces 5 forces assessed (5 forces each have score)
+- [ ] Porter's Five Forces scores have data basis (key_factors not empty)
+- [ ] Porter's Five Forces industry attractiveness overall assessment completed (industry_attractiveness not empty)
+- [ ] Strategic conclusions integrated (integrated_recommendations not empty)
+- [ ] Cross-framework validation completed (cross_validation_notes not empty)
+- [ ] Human decision items listed (human_decisions_needed not empty)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -401,23 +421,15 @@ Output files: strategic-analysis.json + strategic-analysis.md
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| exploration_outputs (persona / opportunity-definition etc.) | User provides product status description -> Generate analysis based on description | Lacks exploration phase data, O/T may lack user-side empirical evidence |
-| competitor-analysis.json | User provides product/industry status description -> Generate analysis based on description | Lacks competitor analysis data, T and some O lack competitor reference, Porter's Five Forces competitive rivalry score may be imprecise |
-| bmc.json | User provides product status description -> Generate analysis based on description | Lacks BMC data, S/W correlation with business model may be weak |
-| Market data (tam-som / pest) | User provides industry information -> Assess based on AI knowledge | Lacks market data, industry attractiveness assessment lacks quantitative basis |
-| Internal capability assessment (user provided) | Prompt user to provide or skip related steps | S/W lacks internal data support, may be subjective |
-| Current product/market definition | User provides product status -> Position Ansoff quadrant | Lacks structured product-market definition, quadrant positioning may be imprecise |
-| All upstream files missing | Prompt user to execute prior phases first, or directly generate analysis based on user-provided product status description | Overall confidence significantly reduced, analysis primarily AI inference |
-
-## Data Acquisition Instructions
-
-This Skill requires exploration outputs, competitor analysis, and BMC data, please provide via one of the following methods:
-  1. Directly describe product status, strengths, and challenges
-  2. Upload competitor-analysis.json / bmc.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| exploration_outputs (persona / opportunity-definition etc.) | User provides product status description -> Generate analysis based on description | Lacks exploration phase data, O/T may lack user-side empirical evidence | Request user to describe product status and target users, or upload persona.json / opportunity-definition.json |
+| competitor-analysis.json | User provides product/industry status description -> Generate analysis based on description | Lacks competitor analysis data, T and some O lack competitor reference, Porter's Five Forces competitive rivalry score may be imprecise | Request user to describe competitive landscape, or upload competitor-analysis.json |
+| bmc.json | User provides product status description -> Generate analysis based on description | Lacks BMC data, S/W correlation with business model may be weak | Request user to describe business model and cost structure, or upload bmc.json |
+| Market data (tam-som / pest) | User provides industry information -> Assess based on AI knowledge | Lacks market data, industry attractiveness assessment lacks quantitative basis | Request user to provide industry size and growth data, or upload tam-som.json / pest-report.json |
+| Internal capability assessment (user provided) | Prompt user to provide or skip related steps | S/W lacks internal data support, may be subjective | Prompt user to describe team capabilities, technical assets, and competitive advantages |
+| Current product/market definition | User provides product status -> Position Ansoff quadrant | Lacks structured product-market definition, quadrant positioning may be imprecise | Request user to describe current product-market fit and growth strategy |
+| All upstream files missing | Prompt user to execute prior phases first, or directly generate analysis based on user-provided product status description | Overall confidence significantly reduced, analysis primarily AI inference | Request user to describe product status, strengths, and challenges, or execute pm-01-discovery and business-model-canvas first |
 
 ## Upstream Change Response
 

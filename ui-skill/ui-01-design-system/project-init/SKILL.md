@@ -17,6 +17,16 @@ metadata:
 
 # 项目初始化与视觉定义
 
+## Engineering Delivery Boundary
+
+Follow [Engineering Boundary Protocol](../../../templates/engineering-boundary-protocol.md).
+
+1. Project first: inspect existing framework, router, state management, component library, styling, API client, and test stack before writing code; inherit by default.
+2. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
+3. Write scope: declare target directories and files before implementation; do not overwrite unrelated user code.
+4. Responsive acceptance: check desktop/mobile layout, text overflow, cramped controls, nested cards, accessibility basics, and design-token consistency.
+5. Verification record: report created/modified files, checks run, checks that could not run, and residual risks.
+
 ## 核心原则
 
 1. **视觉方向优先**——先定义"长什么样"，再生成令牌和代码
@@ -70,6 +80,7 @@ metadata:
 | 组件库偏好 | string | ○ | 用户提供 | shadcn/Ant Design/MUI/Element Plus/自定义（默认根据framework推荐） |
 | PRD | markdown | ○ | output/pm-design/design-prd/prd.md | 产品需求文档（含功能区域和组件需求） |
 | PRD结构化数据 | JSON | ○ | output/pm-design/design-prd/prd.json | PRD机器可消费版本，包含pages[]/user_flows[]，供项目初始化编程式消费 |
+| visual_policy | string | ○ | 用户提供 / 编排器默认 | 视觉策略：existing-design-system-first / balanced / differentiation-strict，默认 existing-design-system-first |
 
 ## 执行步骤
 
@@ -104,6 +115,7 @@ metadata:
 
 | 维度 | 定义内容 | 输出字段 |
 |------|---------|---------|
+| 视觉策略 | 既有设计系统优先/平衡/严格差异化 | visual_policy |
 | 美学方向 | 具体风格描述（如"温暖有机+大留白+柔和圆角"） | aesthetic_direction |
 | 色彩策略 | Restrained/Committed/Full palette/Drenched | color_strategy |
 | 主题决策 | 亮色/暗色 + 物理场景句（如"SRE在凌晨2点昏暗房间看监控"） | theme_decision |
@@ -114,6 +126,14 @@ metadata:
 | 参考风格 | 1-2个可参考的产品/设计风格 | reference_style |
 | 设计张力 | 大胆vs克制的程度（conservative/balanced/bold/extreme），决定设计是"安全但无聊"还是"有记忆点" | tension_level |
 | 视觉叙事 | 页面如何引导用户视线流动（如"Z型阅读→聚焦CTA→渐进展示细节"），定义信息呈现的叙事节奏 | visual_narrative |
+
+**visual_policy 执行规则**：
+
+| 策略 | 规则 |
+|------|------|
+| existing-design-system-first | 默认策略。已有项目优先继承现有设计系统，差异化规则不得覆盖品牌规范和组件库约束 |
+| balanced | 在遵守品牌和组件库的前提下引入适度差异化，适合多数新项目 |
+| differentiation-strict | 全新项目或品牌升级时使用，强制避开同质化模式，允许更大胆的视觉锚点 |
 
 **视觉锚点定义**（防止文字描述导致AI理解模糊）：
 
@@ -308,6 +328,7 @@ else:
       "type": "object",
       "description": "视觉风格方向定义（10个维度均有定义 = 每个字段非空且非占位符，见下方验证标准）",
       "properties": {
+        "visual_policy": {"type": "string", "enum": ["existing-design-system-first", "balanced", "differentiation-strict"], "description": "视觉策略，默认existing-design-system-first"},
         "aesthetic_direction": {"type": "string", "minLength": 10, "description": "具体风格描述，如'温暖有机+大留白+柔和圆角'，不允许'TBD'/'待定'等占位符"},
         "color_strategy": {"type": "string", "enum": ["restrained", "committed", "full_palette", "drenched"]},
         "theme_decision": {"type": "string", "minLength": 15, "description": "必须包含亮/暗决策+物理场景句，如'亮色+办公室日间自然光下使用'"},
@@ -412,7 +433,7 @@ else:
 
 P0（必须通过，不通过则阻断输出）：
 - [ ] WCAG AA对比度100%达标（正文≥4.5:1，大文本≥3:1）
-- [ ] 视觉方向不含AI同质化特征（由编排器调用ext-frontend-design审视）
+- [ ] 视觉方向符合visual_policy；existing-design-system-first模式下不得为避开同质化而破坏既有设计系统
 - [ ] 设计系统推荐已被数据驱动审视（由编排器调用ext-ui-ux-pro-max）
 - [ ] npm run dev启动成功
 

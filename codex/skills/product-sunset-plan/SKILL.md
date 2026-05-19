@@ -11,6 +11,10 @@ metadata:
     - "Product needs to go offline"
     - "How to migrate users to new product"
     - "Product end-of-life plan"
+execution_depth:
+  default: standard
+  quick_description: "Output sunset plan and risk checklist"
+  deep_description: "Full sunset plan + user migration plan + data archival strategy + impact assessment report"
 ---
 
 # Product Sunset Plan Generation AI->Human
@@ -36,7 +40,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Sunset Impact Assessment
+### Step 1: Sunset Impact Assessment [Core]
 
 **Goal**: Comprehensively assess the impact of product sunset
 
@@ -101,7 +105,7 @@ sunset_impact:
       skill_transfer_needed: [{skill}]
 ```
 
-### Step 2: User Migration Plan
+### Step 2: User Migration Plan [Core]
 
 **Goal**: Formulate detailed user migration plan
 
@@ -161,7 +165,7 @@ migration_plan:
     migration_guide: {url}
 ```
 
-### Step 3: Data Disposal Strategy
+### Step 3: Data Disposal Strategy [Core]
 
 **Goal**: Formulate compliant data disposal plan
 
@@ -199,7 +203,7 @@ data_disposal:
     verification: "User confirmation + system log"
 ```
 
-### Step 4: Timeline Formulation
+### Step 4: Timeline Formulation [Core]
 
 **Goal**: Formulate executable sunset timeline
 
@@ -252,7 +256,7 @@ sunset_timeline:
     data_disposal_complete: {date}
 ```
 
-### Step 5: Communication Plan
+### Step 5: Communication Plan [Core]
 
 **Goal**: Formulate comprehensive communication plan
 
@@ -286,6 +290,14 @@ communication_templates:
       - "Contract handling plan"
     tone: "Professional, proactive, solution-oriented"
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | sunset plan and risk checklist | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full sunset plan + user migration plan + data archival strategy + impact assessment report | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -335,12 +347,22 @@ communication_templates:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Impact assessment complete (users/revenue/brand/data/technical/team 6 dimensions)
 - [ ] Migration plan feasible (has tools, support, timeline)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Data disposal compliant (complies with privacy regulations)
 - [ ] Timeline executable (has buffer, milestones clear)
 - [ ] Communication plan complete (covers all stakeholders)
 - [ ] P0 unresolved issues listed
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

@@ -15,6 +15,10 @@ metadata:
     - "Summarize this iteration"
     - "Two weeks post-launch, do a retrospective"
     - "Help me summarize this release's results"
+execution_depth:
+  default: standard
+  quick_description: "Output iteration score and TOP3 improvement items only"
+  deep_description: "Full retrospective + team dynamics analysis + trend comparison + improvement roadmap"
 ---
 
 # Sprint Review & Retrospective Report Automation
@@ -56,7 +60,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Sprint Review (Assess goal achievement and consolidate improvements)
+### Step 1: Sprint Review (Assess goal achievement and consolidate improvements) [Core]
 
 #### Step 1.1: Deliverable Auto-compilation
 
@@ -253,7 +257,7 @@ metadata:
 
 ---
 
-### Step 2: Retrospective Report Generation (Sprint goal achievement analysis, delivery quality assessment, team velocity trends, improvement action items)
+### Step 2: Retrospective Report Generation (Sprint goal achievement analysis, delivery quality assessment, team velocity trends, improvement action items) [Core]
 
 Step 2 receives Step 1 output as input, combined with Sprint plan and historical data, to generate a complete retrospective report.
 
@@ -391,7 +395,7 @@ Assemble the above content into a complete report.
 
 ---
 
-### Step 3: Release Retrospective
+### Step 3: Release Retrospective [Core]
 
 Step 3 is executed after release completion (recommended T+2 weeks), automatically collecting multi-source data to retrospect on release effectiveness, engineering quality, and release process, and generate improvement action items.
 
@@ -656,6 +660,14 @@ Assemble effectiveness retrospective, engineering quality retrospective, process
 
 ---
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | iteration score and TOP3 improvement items only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full retrospective + team dynamics analysis + trend comparison + improvement roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-project/agile-review/`
@@ -832,8 +844,13 @@ Assemble effectiveness retrospective, engineering quality retrospective, process
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Review covers all completed Stories
 - [ ] Demo content corresponds to acceptance criteria
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Feedback classified (accepted/rejected/improved)
 - [ ] Improvement suggestions have clear owners and follow-up plans
 - [ ] Goal achievement consistent with data (achievement assessment matches Story completion rate)
@@ -847,6 +864,11 @@ Assemble effectiveness retrospective, engineering quality retrospective, process
 - [ ] Release retrospective process issues identified
 - [ ] Release retrospective action items have owners and due dates
 - [ ] Release retrospective action items have verification methods
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

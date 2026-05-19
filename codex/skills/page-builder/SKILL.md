@@ -99,12 +99,13 @@ AI->Human AI suggests, human approves
 | Route Structure | JSON | Conditionally required | output/pm-design/design-ia/ia_proposals.json | Must consume when file exists, routes[] is authoritative source for route manifest |
 | Interaction Spec | markdown | O | output/pm-design/interaction-spec/interaction-spec.md | Interaction state machines/interaction intent/exception paths/accessibility interactions |
 | Interaction Spec (Structured) | JSON | O | output/pm-design/interaction-spec/interaction-spec.json | Structured data of interaction state machines/animation intent/gesture intent for programmatic consumption |
+| User Flow | JSON | O | output/pm-design/design-userflow/userflow.json | User flow data containing step sequences and data_operations[], for page data binding and interaction logic mapping |
 | Exploration Phase Design Decisions | JSON | O | output/ui-frontend/design-exploration/design_decisions.json | Design decisions from progressive mode Stage 1 conditional branch (constraint alignment), as design_decisions initial values |
 | Design Brief | JSON | O | output/ui-frontend/design-brief/design_brief.json | Executable design specifications produced by ext Skills, containing specific CSS values/component structures/layout instructions |
 
 ## Execution Steps
 
-### Step 1: Page Structure Planning and Visual Rhythm Design
+### Step 1: Page Structure Planning and Visual Rhythm Design [Core]
 
 Decompose page requirements into layout blocks, while designing visual rhythm (not just functional layout):
 
@@ -120,6 +121,24 @@ Decompose page requirements into layout blocks, while designing visual rhythm (n
 - If component_catalog input exists: Its `type` is the recommended component type, `alternatives` are alternatives, `selection_criteria` is the selection basis
 - page-builder selects recommended or alternative type based on visual_direction and page context; selecting alternative type must be recorded in design_decisions
 - When alternative type better matches visual direction, prefer alternative type
+
+**User Flow Consumption Rules** (data operation mapping):
+
+- If userflow.json input exists: Its `steps[]` are associated with pages via `page_id`, `data_operations[]` provides cross-domain data perspective for page component data binding
+- **Step-Page Mapping**: Group userflow.steps[] by page_id, the step set corresponding to each page defines the user operation sequence that the page needs to support
+- **Data Operation-Component Mapping**: data_operations[].operation_type determines the component data interaction pattern:
+
+| operation_type | Component Pattern | Required Interactions |
+|---------------|-------------------|-----------------------|
+| read | Display component (DataGrid/Card/List) | Data fetch logic + empty/loading/error three states |
+| create | Form component (Form/Dialog) | Submit logic + validation feedback + success notification |
+| update | Edit component (InlineEdit/Form) | Optimistic update + conflict handling + change confirmation |
+| delete | Action component (ActionButton/ConfirmDialog) | Confirmation mechanism + undo capability + cascade impact prompt |
+
+- **Entity-Type Mapping**: data_operations[].related_entity corresponds to data layer type definitions, for generating TypeScript interfaces and Mock data structures
+- **Operation Sequence-Interaction Flow Mapping**: The operation sequence of multiple steps within the same page determines data dependencies and interaction order between components (e.g., step 2 depends on step 1's creation result)
+- **Branch Path-Conditional Rendering Mapping**: Branch conditions in userflow map to component conditional rendering logic (v-if/conditional rendering)
+- **Coordination with Interaction Spec**: userflow's data_operations focuses on "data perspective" (what entity to operate on), interaction-spec focuses on "interaction perspective" (how to operate), they complement rather than replace each other
 
 **Functional Layout**:
 
@@ -233,7 +252,7 @@ When design_brief.json exists, page-builder must consume it as a **strong constr
 - When design_brief conflicts with PM input: design_brief takes precedence, conflicts recorded in design_decisions
 - When guiding dimensions in design_brief conflict with page-builder's design judgment: Design judgment takes precedence, deviations recorded in design_decisions
 
-### Step 2: Component Generation (in Page Context)
+### Step 2: Component Generation (in Page Context) [Core]
 
 Generate components within page scenarios based on page structure and visual direction:
 
@@ -272,9 +291,24 @@ Animation intent consumption: interaction-spec defines intent, page-builder + ex
 
 If interaction-spec doesn't define animation intent, use page-builder built-in default animation specification table.
 
+**Data Operation Consumption** (consuming userflow.json data_operations):
+
+When userflow.json exists, component generation must consume the corresponding page's data_operations, translating data operation intent into component interfaces:
+
+| data_operations Dimension | Component Interface Impact | Example |
+|--------------------------|---------------------------|---------|
+| operation_type=read | Component must declare data fetch Props (dataSource/fetchParams), built-in loading/error/empty states | CourseList component accepts fetchCourses parameter, built-in skeleton and empty state |
+| operation_type=create | Component must declare submit Props (onSubmit/onValidate), built-in form validation and submit feedback | CourseForm component accepts onSubmit callback, built-in field validation |
+| operation_type=update | Component must declare edit Props (onUpdate/initialValues), built-in change detection and conflict handling | ProfileEdit component accepts onUpdate and initial values, built-in dirty check |
+| operation_type=delete | Component must declare delete Props (onDelete/confirmMessage), built-in confirmation and undo | DeleteButton component accepts onDelete callback, built-in secondary confirmation dialog |
+| related_entity | Corresponds to TypeScript type definition, as data object type in Props | related_entity="course" -> Course type interface |
+
+- When multiple data_operations exist on the same page, components pass operation results via Props (e.g., after create, pass new data to read component for list refresh)
+- Data requirements not covered by data_operations are supplemented by page-builder based on PRD and page requirements
+
 > ext enhancement results consumed through design_brief.json in Step 1, this step focuses on core logic
 
-### Step 3: Page Assembly and State Management
+### Step 3: Page Assembly and State Management [Core]
 
 Assemble components into complete pages:
 
@@ -304,6 +338,7 @@ When orchestrator decides to skip api-integration (no backend API or using stati
 
 Generation rules:
 - Mock data must cover all data requirements defined in page data flows
+- When userflow.json exists: Mock data must cover data structures for all related_entity in data_operations, data operation types determine Mock data CRUD methods (read->query function, create->create function, update->update function, delete->delete function)
 - Data fetch function signatures consistent with api-integration generated signatures (for subsequent replacement)
 - Mark `api_integration_skipped: true` in pages.json, for production-ready reference
 - Mark `// @api-integration: pending api-integration replacement` comments in code, for subsequent locating and replacement
@@ -312,7 +347,7 @@ Generation rules:
 
 > ext enhancement results consumed through design_brief.json in Step 1, this step focuses on core logic
 
-### Step 4: Built-in Quality Gates
+### Step 4: Built-in Quality Gates [Core]
 
 Execute quality checks immediately after code generation (no independent review step needed):
 
@@ -374,12 +409,13 @@ Execute quality checks immediately after code generation (no independent review 
 | Route coverage | All pages have routes | P1 |
 | Page manifest coverage | All page_ids in page_manifest.json.pages[] have corresponding pages generated | P0 |
 | Route manifest coverage | All routes in ia_proposals.routes[] are configured | P0 |
+| Data operation coverage | When userflow exists, each page's data_operations[] has corresponding component support | P1 |
 
 **Issue Handling Rules**: P0 issues must be fixed before output, P1 issues marked as "pending fix".
 
 > ext enhancement results consumed through design_brief.json in Step 1, this step focuses on core logic
 
-### Step 5: Code Output and Final Polish
+### Step 5: Code Output and Final Polish [Core]
 
 **Code Writing Rules**:
 - Component files -> {project_dir}/src/components/{ComponentName}/
@@ -575,6 +611,7 @@ P1 (Recommended, mark as "pending fix" if not):
 - [ ] Differentiation suggestions applied
 - [ ] Interaction design applied (when not purely static components)
 - [ ] design_decisions moderate level deviations annotated with recommendation for human confirmation
+- [ ] When userflow exists, all data_operations have corresponding component implementations
 
 ## Degradation Strategy
 
@@ -588,6 +625,7 @@ P1 (Recommended, mark as "pending fix" if not):
 | PRD missing | Generate based on page requirement descriptions only, no product requirements context | Component functionality may deviate from product intent, missing business logic constraints, incomplete functional area coverage |
 | Route structure missing | Plan route hierarchy and nesting based on page requirements independently | Routes may be inconsistent with IA definition, navigation structure needs subsequent alignment |
 | Interaction spec missing | Use default animation specification table and generic feedback mechanisms, exception paths inferred from PRD | Interaction state machines may be incomplete, exception paths may be missing, animations and feedback may be inconsistent with product-level definitions |
+| User flow missing | Infer data operation requirements from PRD and interaction spec, component data binding relies on page requirement description derivation | Data operations may be incomplete, component data interfaces lack cross-domain data perspective, page and user flow data operations may be inconsistent |
 | project_dir missing | Output to output/ directory only | Code needs manual copying |
 
 ## Upstream Change Response
@@ -604,6 +642,7 @@ P1 (Recommended, mark as "pending fix" if not):
 | PRD change | Page functional requirements, component boundaries, functional area coverage | Mark affected pages and components, assess whether re-planning needed |
 | Route structure change | Route configuration and navigation components | Mark affected route paths, recommend updating route configuration |
 | Interaction spec change | Interaction state machines, exception paths, accessibility interactions | Mark affected state transitions and exception paths, recommend updating state machines |
+| User flow change | Page data binding, component data interfaces, data layer type definitions | Mark affected pages and data_operations, recommend updating component Props and data layer |
 
 ### Downstream Notification Mechanism Table
 

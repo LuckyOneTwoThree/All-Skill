@@ -12,6 +12,10 @@ metadata:
     - "用户调研结果怎么整理"
     - "出个用户分析报告"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出研究结论和建议"
+  deep_description: "完整报告 + 研究方法论反思 + 洞察深度分析 + 行动建议路线图"
 ---
 
 # 用户研究报告自动生成
@@ -40,7 +44,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 研究背景与目标梳理
+### Step 1: 研究背景与目标梳理 [核心]
 
 基于用户提供的研究目标和产品信息，明确：
 
@@ -49,7 +53,7 @@ metadata:
 - 研究范围：目标用户群、产品范围、时间范围
 - 研究方法概述：使用了哪些方法（VOC分析/行为分析/访谈/问卷）
 
-### Step 2: 用户画像整合
+### Step 2: 用户画像整合 [核心]
 
 整合 persona.json 数据，生成可读的用户画像章节：
 
@@ -65,7 +69,7 @@ metadata:
 - 2-4个核心Persona
 - 每个Persona标注代表性用户原话（至少2条）
 
-### Step 3: 用户旅程整合
+### Step 3: 用户旅程整合 [核心]
 
 整合 Journey Map 和行为数据：
 
@@ -89,7 +93,7 @@ metadata:
 - Aha Moment 触发条件
 - 流失预警信号
 
-### Step 4: 洞察提炼
+### Step 4: 洞察提炼 [核心]
 
 从所有上游数据中提炼核心洞察：
 
@@ -107,7 +111,7 @@ metadata:
 | 行为洞察 | 用户实际行为 vs 预期 | "注册后3天内未完成首次操作的用户流失率87%" |
 | 机会洞察 | 未被满足的需求空间 | "40%用户在搜索后放弃，存在意图理解的机会" |
 
-### Step 5: 行动建议
+### Step 5: 行动建议 [核心]
 
 基于洞察生成可执行的产品改进建议：
 
@@ -124,7 +128,7 @@ metadata:
 - 影响留存/活跃的障碍 → P1
 - 体验优化类建议 → P2
 
-### Step 6: 报告组装
+### Step 6: 报告组装 [核心]
 
 将所有章节整合为完整的 Markdown 报告：
 
@@ -175,6 +179,14 @@ metadata:
 - 样本描述与局限性
 ```
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 研究结论和建议 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整报告 + 研究方法论反思 + 洞察深度分析 + 行动建议路线图 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-discovery/user-research-report/`
@@ -221,13 +233,20 @@ metadata:
 | executive_summary.top_recommendation | string | 是 | Top1行动建议 |
 | personas | array | 是 | 用户画像列表，2-4个 |
 | personas[].name | string | 是 | 用户群名称 |
+| personas[].demographics | object | 否 | 人口统计学信息 |
+| personas[].goals | string[] | 否 | 目标与动机列表 |
+| personas[].pain_points | string[] | 否 | 核心痛点列表 |
 | personas[].quotes | string[] | 是 | 代表性原话，每个Persona≥2条 |
 | journey | object | 否 | 用户旅程 |
 | journey.stages | array | 否 | 旅程阶段列表 |
 | journey.stages[].name | string | 是 | 阶段名称 |
 | journey.stages[].behaviors | string[] | 是 | 用户行为 |
+| journey.stages[].touchpoints | string[] | 否 | 触点列表 |
+| journey.stages[].emotion_peak | string | 否 | 情绪高峰描述 |
+| journey.stages[].emotion_valley | string | 否 | 情绪低谷描述 |
 | journey.stages[].pain_points | string[] | 是 | 痛点 |
 | journey.stages[].opportunities | string[] | 是 | 机会点 |
+| journey.stages[].metrics | object | 否 | 关键指标（转化率、留存率等） |
 | journey.aha_moment | string | 否 | Aha Moment描述 |
 | journey.churn_signals | string[] | 否 | 流失信号列表 |
 | insights | array | 是 | 核心洞察列表，≤15条 |
@@ -319,24 +338,34 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 执行摘要包含3条核心发现+Top1建议
 - [ ] 每个Persona有代表性用户原话
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 用户旅程包含情绪曲线和关键时刻
 - [ ] 每条洞察有观察+证据+含义三要素
 - [ ] 行动建议至少3条，每条有优先级和验证方式
 - [ ] 数据来源和局限性已说明
 
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
+
 ## 降级策略
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| voice-analysis缺失 | 用户画像和痛点基于行为数据和AI推断 | 痛点洞察缺乏用户原话支撑 |
-| behavior-analysis缺失 | 旅程和行为洞察基于VOC和访谈数据 | 行为洞察缺乏量化数据 |
-| persona缺失 | 基于VOC和行为数据推导用户画像 | 画像可能不够精细 |
-| interview数据缺失 | 洞察基于VOC和行为数据 | 缺乏深度定性洞察 |
-| 所有上游数据均缺失 | 基于研究目标和AI知识库生成，整体置信度降低 | 报告需人类大量补充验证 |
-| 若用户未提供研究目标 | 提示用户提供研究目标，否则无法确定报告聚焦方向 | 无法生成定向报告 |
-| 若用户未提供产品/品类信息 | 跳过该输入相关步骤，报告中产品相关描述基于推断 | 产品背景描述可能不够准确 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| voice-analysis缺失 | 用户画像和痛点基于行为数据和AI推断 | 痛点洞察缺乏用户原话支撑 | 要求用户提供用户反馈文本或上传voice-analysis.json文件 |
+| behavior-analysis缺失 | 旅程和行为洞察基于VOC和访谈数据 | 行为洞察缺乏量化数据 | 要求用户提供行为事件日志或上传behavior-analysis.json文件 |
+| persona缺失 | 基于VOC和行为数据推导用户画像 | 画像可能不够精细 | 要求用户提供目标用户画像描述或上传persona.json文件 |
+| interview数据缺失 | 洞察基于VOC和行为数据 | 缺乏深度定性洞察 | 要求用户提供访谈记录文本或上传interview数据文件 |
+| 所有上游数据均缺失 | 基于研究目标和AI知识库生成，整体置信度降低 | 报告需人类大量补充验证 | 要求用户提供研究目标、目标用户描述和产品信息 |
+| 若用户未提供研究目标 | 提示用户提供研究目标，否则无法确定报告聚焦方向 | 无法生成定向报告 | 要求用户提供研究目标（如"了解用户付费决策因素"） |
+| 若用户未提供产品/品类信息 | 跳过该输入相关步骤，报告中产品相关描述基于推断 | 产品背景描述可能不够准确 | 要求用户提供产品名称、品类和核心功能描述 |
 
 ---
 

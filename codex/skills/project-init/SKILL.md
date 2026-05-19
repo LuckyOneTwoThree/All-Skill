@@ -71,7 +71,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Brand DNA Extraction and Color System Generation
+### Step 1: Brand DNA Extraction and Color System Generation [Core]
 
 Extract core design DNA from brand specifications:
 - Primary color: Brand primary color (1) + secondary colors (2-3)
@@ -94,7 +94,7 @@ Dark mode derivation (built-in capability): Primary hue unchanged with reduced l
 
 > ext enhancement results are output through visual_direction/tokens for downstream consumption, this step focuses on core logic
 
-### Step 2: Visual Style Definition
+### Step 2: Visual Style Definition [Core]
 
 **This is the most critical step** -- defining "what this product should look like", not just outputting token values.
 
@@ -190,7 +190,7 @@ Prompt construction rules:
 
 > ext enhancement results are output through visual_direction/tokens for downstream consumption, this step focuses on core logic
 
-### Step 3: Component Library Selection and Theme Customization
+### Step 3: Component Library Selection and Theme Customization [Core]
 
 **PRD Consumption Rules** (intent constraints):
 - PRD defines "what functionality the product needs" (functional requirements), project-init defines "what the technical implementation is" (code implementation)
@@ -225,7 +225,7 @@ Component reuse decision: Reuse >=3 pages -> high priority, 1-2 pages -> medium 
 
 > ext-impeccable extract enhancement is called by orchestrator in subsequent stages, this step focuses on core logic. Only when project contains existing code will orchestrator call extract (brand new projects have no content to extract, skip)
 
-### Step 4: Project Scaffold Initialization
+### Step 4: Project Scaffold Initialization [Core]
 
 Create project skeleton based on framework:
 
@@ -250,7 +250,7 @@ Install core dependencies:
 
 Verify project runs: `npm run dev` starts successfully.
 
-### Step 5: Context File Output
+### Step 5: Context File Output [Core]
 
 **Generate Context Files** (for ext-impeccable consumption):
 

@@ -44,7 +44,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Code Skeleton Generation
+### Step 1: Code Skeleton Generation [Core]
 
 Generate project API layer code skeleton based on OpenAPI specification:
 
@@ -59,7 +59,7 @@ Generate project API layer code skeleton based on OpenAPI specification:
 
 **Stage Gate**: Code compiles (npm run build or tsc --noEmit passes), routes correspond one-to-one with OpenAPI specification
 
-### Step 2: Service Business Logic Implementation
+### Step 2: Service Business Logic Implementation [Core]
 
 Generate a Service for each resource, including complete business logic:
 
@@ -76,7 +76,7 @@ Generate a Service for each resource, including complete business logic:
 
 **Stage Gate**: Every API endpoint has a corresponding Service method, Controller->Service call chain is complete
 
-### Step 3: Middleware and Security Implementation
+### Step 3: Middleware and Security Implementation [Core]
 
 Generate middleware based on security policy and authentication scheme:
 
@@ -91,7 +91,7 @@ Generate middleware based on security policy and authentication scheme:
 
 **Stage Gate**: L1-L4 middleware matching is correct, rate limiting rules are consistent with security policy
 
-### Step 4: Alignment Check and Code Self-Review
+### Step 4: Alignment Check and Code Self-Review [Core]
 
 **PRD Alignment Check**:
 - Check each PRD feature point one by one, ensuring every feature point has a corresponding API endpoint
@@ -112,7 +112,7 @@ Generate middleware based on security policy and authentication scheme:
 
 **Stage Gate**: PRD feature points 100% have API coverage, frontend data requirements 100% have API correspondence, code self-review P0 issues=0
 
-### Step 5: API Test Code Generation
+### Step 5: API Test Code Generation [Core]
 
 Generate integration test skeletons for each API endpoint:
 

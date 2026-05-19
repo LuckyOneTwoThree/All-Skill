@@ -10,6 +10,10 @@ metadata:
     - "Help me generate a prototype"
     - "Quickly create a design mockup"
     - "How to make a low-fidelity prototype"
+execution_depth:
+  default: standard
+  quick_description: "Output prototype proposal and interaction notes"
+  deep_description: "Full prototype + interaction state full coverage + multi-device adaptation plan + usability assessment"
 ---
 
 # Prototype Auto-Generation
@@ -38,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Low-Fidelity Prototype Generation
+### Step 1: Low-Fidelity Prototype Generation [Core]
 
 Generate wireframe-level prototype descriptions:
 
@@ -47,7 +51,7 @@ Generate wireframe-level prototype descriptions:
 - **Copy**: Key text content
 - **Functional Areas**: Functional area mapping based on PRD
 
-### Step 2: Medium-Fidelity Prototype Generation
+### Step 2: Medium-Fidelity Prototype Generation [Core]
 
 Add on top of low-fidelity:
 
@@ -56,7 +60,7 @@ Add on top of low-fidelity:
 - **Data Display Needs**: List data, empty states, loading state requirement descriptions (does not define specific UI implementation)
 - **Interaction Intents**: Basic interaction behavior intents (does not define specific animation parameters; interaction-spec and UI Skill decide implementation)
 
-### Step 3: Usability Heuristic Evaluation
+### Step 3: Usability Heuristic Evaluation [Core]
 
 Evaluate based on Nielsen's 10 Usability Heuristics:
 
@@ -72,6 +76,14 @@ Evaluate based on Nielsen's 10 Usability Heuristics:
 10. Help and documentation
 
 Scoring range 0-10, **weak areas with score <3 require improvement suggestions**.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | prototype proposal and interaction notes | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full prototype + interaction state full coverage + multi-device adaptation plan + usability assessment | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -230,27 +242,35 @@ component_catalog.json is the machine-consumable component catalog from prototyp
 
 ## Quality Checks
 
-| Check Item | Standard | Non-Compliance Handling |
-|-----------|----------|------------------------|
-| Heuristic evaluation | All 10 principles evaluated | Mark "Evaluation incomplete", supplement missing evaluations |
-| Weak area improvement suggestions | All weak areas with score <3 have specific improvement suggestions | Mark "Suggestions missing", supplement improvement plans and re-evaluate |
-| Core page coverage | All core pages covered | Mark "Incomplete coverage", list uncovered pages and supplement |
-| Functional area coverage | Each page's functional areas align with PRD | Mark "Functional areas incomplete", supplement missing functional areas |
-| Component catalog coverage | component_catalog covers all pages' functional_areas and data_display_needs | Mark "Component catalog incomplete", supplement missing components |
-| Component alternatives | Key components (cross-page shared + data display components) have alternatives | Mark "Alternatives missing", supplement alternatives (does not affect output) |
-| Component page reference consistency | component_catalog.components[].pages_used_in page names exist in prototype.pages[] | Mark "Reference inconsistent", fix page references |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Heuristic evaluation (All 10 principles evaluated)
+- [ ] Weak area improvement suggestions (All weak areas with score <3 have specific improvement suggestions)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Core page coverage (All core pages covered)
+- [ ] Functional area coverage (Each page's functional areas align with PRD)
+- [ ] Component catalog coverage (component_catalog covers all pages' functional_areas and data_display_needs)
+- [ ] Component alternatives (Key components (cross-page shared + data display components) have alternatives)
+- [ ] Component page reference consistency (component_catalog.components[].pages_used_in page names exist in prototype.pages[])
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| IA proposal missing | User provides feature description, generate low-fidelity prototype | Lacks IA data, page structure may be less reasonable |
-| UserFlow missing | User provides feature description, generate low-fidelity prototype | Lacks UserFlow data, interaction flow may be less complete |
-| PRD missing | Derive functional areas based on IA and UserFlow | Functional areas may be less complete |
-| Both IA and UserFlow missing | Generate low-fidelity prototype based on user feature description | Overall confidence reduced, only low-fidelity output |
-| All upstream files missing | Prompt user to execute prior stages first, or generate low-fidelity prototype based on user feature description | Output is only low-fidelity prototype description |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| IA proposal missing | User provides feature description, generate low-fidelity prototype | Lacks IA data, page structure may be less reasonable | Request user to describe page structure and navigation, or upload ia.json |
+| UserFlow missing | User provides feature description, generate low-fidelity prototype | Lacks UserFlow data, interaction flow may be less complete | Request user to describe user tasks and flow, or upload userflow.json |
+| PRD missing | Derive functional areas based on IA and UserFlow | Functional areas may be less complete | Request user to provide feature list and requirements, or upload prd.json |
+| Both IA and UserFlow missing | Generate low-fidelity prototype based on user feature description | Overall confidence reduced, only low-fidelity output | Request user to describe features and page layout, or execute design-ia and design-userflow first |
+| All upstream files missing | Prompt user to execute prior stages first, or generate low-fidelity prototype based on user feature description | Output is only low-fidelity prototype description | Request user to describe features and expected pages, or execute design-prd, design-ia, and design-userflow first |
 
 ## Output Validation Rules
 

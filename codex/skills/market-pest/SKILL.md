@@ -10,6 +10,10 @@ metadata:
     - "What changes in the market environment"
     - "How do policies affect us"
     - "Scan the external environment for me"
+execution_depth:
+  default: standard
+  quick_description: "Output PEST analysis conclusions"
+  deep_description: "Full analysis + policy impact simulation + trend prediction + strategic response recommendations"
 ---
 
 # PEST Auto-Scan
@@ -34,7 +38,7 @@ AI AI auto-executes
 
 ## Execution Steps
 
-### Step 1: Scheduled Scanning
+### Step 1: Scheduled Scanning [Core]
 
 Collect and monitor information across four dimensions:
 
@@ -45,7 +49,7 @@ Collect and monitor information across four dimensions:
 | Social | Demographic structure changes, consumption habit migration, cultural trends, user preference evolution, lifestyle changes | Social media trends, user research reports, census data, lifestyle studies |
 | Technological | New technology maturity, technology adoption curves, infrastructure evolution, technology standard changes, patent trends | Technology media, patent databases, Gartner/IDC technology reports, open-source community dynamics |
 
-### Step 2: Trend Summary
+### Step 2: Trend Summary [Core]
 
 Structure summaries of information collected for each dimension:
 
@@ -54,7 +58,7 @@ Structure summaries of information collected for each dimension:
 - Annotate trend strength (strong/medium/weak)
 - Link category impact path
 
-### Step 3: Key Change Signals
+### Step 3: Key Change Signals [Core]
 
 Identify key change signals from trend summaries:
 
@@ -62,7 +66,7 @@ Identify key change signals from trend summaries:
 - Signal timing: Has occurred / Is occurring / Expected to occur
 - Signal source and verifiability
 
-### Step 4: Impact Assessment
+### Step 4: Impact Assessment [Core]
 
 Assess impact for each key change signal:
 
@@ -74,13 +78,21 @@ Assess impact for each key change signal:
 | Impact scope | Category only / Entire industry / Cross-industry |
 | Response recommendation | Leverage strategy / Avoidance strategy / Monitoring strategy |
 
-### Step 5: Major Change Alerts
+### Step 5: Major Change Alerts [Core]
 
 Trigger alerts for high-impact signals:
 
 - Filter signals with impact level >= 4
 - Generate alert summary: Signal description + Impact assessment + Response recommendation
 - Push to human PM in real-time
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | PEST analysis conclusions | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + policy impact simulation + trend prediction + strategic response recommendations | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -114,16 +126,72 @@ Output file: `output/pm-discovery/market-pest/pest.json`
 | scan_timestamp | string | Yes | ISO 8601 format scan timestamp |
 | political | object | Yes | Political dimension, must not be missing |
 | political.trends | array | Yes | Must contain at least 1 trend; each must include trend, direction, strength, impact_path |
+| political.trends[].trend | string | Yes | Trend description, must not be empty |
+| political.trends[].direction | string | Yes | Trend direction, enum: Rising/Declining/Stable/Emerging |
+| political.trends[].strength | string | Yes | Trend strength, enum: Strong/Medium/Weak |
+| political.trends[].impact_path | string | Yes | Category impact path, must not be empty |
 | political.key_signals | array | Yes | Signal list; each must include signal, type, timing, source, impact |
+| political.key_signals[].signal | string | Yes | Signal description, must not be empty |
+| political.key_signals[].type | string | Yes | Signal type, enum: New policy/Indicator shift/Trend turning point/Technology breakthrough |
+| political.key_signals[].timing | string | Yes | Signal timing, enum: Occurred/Occurring/Expected |
+| political.key_signals[].source | string | Yes | Signal source, must not be empty |
+| political.key_signals[].impact | object | Yes | Impact assessment, must include direction, degree, time_window, scope, recommendation |
+| political.key_signals[].impact.direction | string | Yes | Impact direction, enum: Positive/Negative/Neutral |
+| political.key_signals[].impact.degree | integer | Yes | Impact degree, 1-5 |
+| political.key_signals[].impact.time_window | string | Yes | Impact time window, enum: Short-term/Medium-term/Long-term |
+| political.key_signals[].impact.scope | string | Yes | Impact scope |
+| political.key_signals[].impact.recommendation | string | Yes | Response recommendation |
 | economic | object | Yes | Economic dimension, must not be missing; when data insufficient, fill with industry baseline values and annotate "inferred value" |
 | economic.trends | array | Yes | Must contain at least 1 trend; each must include trend, direction, strength, impact_path |
+| economic.trends[].trend | string | Yes | Trend description, must not be empty |
+| economic.trends[].direction | string | Yes | Trend direction, enum: Rising/Declining/Stable/Emerging |
+| economic.trends[].strength | string | Yes | Trend strength, enum: Strong/Medium/Weak |
+| economic.trends[].impact_path | string | Yes | Category impact path, must not be empty |
 | economic.key_signals | array | Yes | Signal list; each must include signal, type, timing, source, impact |
+| economic.key_signals[].signal | string | Yes | Signal description, must not be empty |
+| economic.key_signals[].type | string | Yes | Signal type, enum: New policy/Indicator shift/Trend turning point/Technology breakthrough |
+| economic.key_signals[].timing | string | Yes | Signal timing, enum: Occurred/Occurring/Expected |
+| economic.key_signals[].source | string | Yes | Signal source, must not be empty |
+| economic.key_signals[].impact | object | Yes | Impact assessment, must include direction, degree, time_window, scope, recommendation |
+| economic.key_signals[].impact.direction | string | Yes | Impact direction, enum: Positive/Negative/Neutral |
+| economic.key_signals[].impact.degree | integer | Yes | Impact degree, 1-5 |
+| economic.key_signals[].impact.time_window | string | Yes | Impact time window, enum: Short-term/Medium-term/Long-term |
+| economic.key_signals[].impact.scope | string | Yes | Impact scope |
+| economic.key_signals[].impact.recommendation | string | Yes | Response recommendation |
 | social | object | Yes | Social dimension, must not be missing; when data insufficient, fill with industry baseline values and annotate "inferred value" |
 | social.trends | array | Yes | Must contain at least 1 trend; each must include trend, direction, strength, impact_path |
+| social.trends[].trend | string | Yes | Trend description, must not be empty |
+| social.trends[].direction | string | Yes | Trend direction, enum: Rising/Declining/Stable/Emerging |
+| social.trends[].strength | string | Yes | Trend strength, enum: Strong/Medium/Weak |
+| social.trends[].impact_path | string | Yes | Category impact path, must not be empty |
 | social.key_signals | array | Yes | Signal list; each must include signal, type, timing, source, impact |
+| social.key_signals[].signal | string | Yes | Signal description, must not be empty |
+| social.key_signals[].type | string | Yes | Signal type, enum: New policy/Indicator shift/Trend turning point/Technology breakthrough |
+| social.key_signals[].timing | string | Yes | Signal timing, enum: Occurred/Occurring/Expected |
+| social.key_signals[].source | string | Yes | Signal source, must not be empty |
+| social.key_signals[].impact | object | Yes | Impact assessment, must include direction, degree, time_window, scope, recommendation |
+| social.key_signals[].impact.direction | string | Yes | Impact direction, enum: Positive/Negative/Neutral |
+| social.key_signals[].impact.degree | integer | Yes | Impact degree, 1-5 |
+| social.key_signals[].impact.time_window | string | Yes | Impact time window, enum: Short-term/Medium-term/Long-term |
+| social.key_signals[].impact.scope | string | Yes | Impact scope |
+| social.key_signals[].impact.recommendation | string | Yes | Response recommendation |
 | technological | object | Yes | Technological dimension, must not be missing; when data insufficient, fill with industry baseline values and annotate "inferred value" |
 | technological.trends | array | Yes | Must contain at least 1 trend; each must include trend, direction, strength, impact_path |
+| technological.trends[].trend | string | Yes | Trend description, must not be empty |
+| technological.trends[].direction | string | Yes | Trend direction, enum: Rising/Declining/Stable/Emerging |
+| technological.trends[].strength | string | Yes | Trend strength, enum: Strong/Medium/Weak |
+| technological.trends[].impact_path | string | Yes | Category impact path, must not be empty |
 | technological.key_signals | array | Yes | Signal list; each must include signal, type, timing, source, impact |
+| technological.key_signals[].signal | string | Yes | Signal description, must not be empty |
+| technological.key_signals[].type | string | Yes | Signal type, enum: New policy/Indicator shift/Trend turning point/Technology breakthrough |
+| technological.key_signals[].timing | string | Yes | Signal timing, enum: Occurred/Occurring/Expected |
+| technological.key_signals[].source | string | Yes | Signal source, must not be empty |
+| technological.key_signals[].impact | object | Yes | Impact assessment, must include direction, degree, time_window, scope, recommendation |
+| technological.key_signals[].impact.direction | string | Yes | Impact direction, enum: Positive/Negative/Neutral |
+| technological.key_signals[].impact.degree | integer | Yes | Impact degree, 1-5 |
+| technological.key_signals[].impact.time_window | string | Yes | Impact time window, enum: Short-term/Medium-term/Long-term |
+| technological.key_signals[].impact.scope | string | Yes | Impact scope |
+| technological.key_signals[].impact.recommendation | string | Yes | Response recommendation |
 | alerts | array | Yes | Alert list for impact level >= 4; empty array when no high-impact signals |
 | alerts[].signal | string | Yes (when alerts non-empty) | Alert signal description |
 | alerts[].dimension | string | Yes (when alerts non-empty) | PEST dimension |
@@ -200,15 +268,22 @@ Output file: `output/pm-discovery/market-pest/pest.json`
 
 ## Quality Checks
 
-- [ ] Political dimension scanned
-- [ ] Economic dimension scanned
-- [ ] Social dimension scanned
-- [ ] Technological dimension scanned
-- [ ] At least 3 trend summaries per dimension
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] All 4 PEST dimensions scanned
 - [ ] Key change signals identified
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] At least 3 trend summaries per dimension
 - [ ] Impact assessment completed (direction + level + time window)
 - [ ] Major changes (impact level >= 4) alerted
-- [ ] Data sources annotated | Each PEST dimension annotated with data source and reliability | Dimensions without source annotation marked "source unknown"
+- [ ] Data sources annotated (each PEST dimension annotated with data source and reliability)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -216,20 +291,12 @@ Output file: `output/pm-discovery/market-pest/pest.json`
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|----------|
-| No strong dependencies | This Skill can run independently; user provides category and target market to execute | Output complete, no impact |
-| All upstream files missing | User provides category keywords and target market -> scan PEST four-dimension trends based on AI knowledge base | Trend data based on AI knowledge base inference, confidence annotated as "inferred value", timeliness may lag |
-| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot determine scan scope | Cannot generate output, process interrupted |
-| If user does not provide target_market | Prompt user to provide target market; otherwise default to "Mainland China" | Target market defaults to "Mainland China", trends for other markets may be missed |
-
-## Data Acquisition Instructions
-
-This Skill requires category keywords and target market information. Please provide via one of the following methods:
-  1. Directly input category keywords (e.g., "online education", "SaaS CRM") and target market (e.g., "Mainland China")
-  2. Upload industry analysis data files
-  3. Provide data file paths
-- AI is not responsible for external data collection; only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|----------|----------|
+| No strong dependencies | This Skill can run independently; user provides category and target market to execute | Output complete, no impact | Provide category keywords (e.g., "online education", "SaaS CRM") and target market (e.g., "Mainland China") |
+| All upstream files missing | User provides category keywords and target market -> scan PEST four-dimension trends based on AI knowledge base | Trend data based on AI knowledge base inference, confidence annotated as "inferred value", timeliness may lag | Request user to provide category keywords and target market, or upload industry analysis data files (e.g., pest-report.json) |
+| If user does not provide category_keywords | Prompt user to provide category keywords; otherwise cannot determine scan scope | Cannot generate output, process interrupted | Prompt user to input category keywords (e.g., "online education", "SaaS CRM") to define scan scope |
+| If user does not provide target_market | Prompt user to provide target market; otherwise default to "Mainland China" | Target market defaults to "Mainland China", trends for other markets may be missed | Prompt user to specify target market region (e.g., "Mainland China", "North America", "Europe") |
 
 ## Upstream Change Response
 

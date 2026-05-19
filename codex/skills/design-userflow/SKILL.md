@@ -10,6 +10,10 @@ metadata:
     - "How to map user operation flows"
     - "Help me structure user paths"
     - "How to design task flows"
+execution_depth:
+  default: standard
+  quick_description: "Output Task Flow and exception paths"
+  deep_description: "Full flow + exception path full coverage + flow performance optimization + multi-role flow matrix"
 ---
 
 # User Flow Auto-Design
@@ -38,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Task Flow Generation
+### Step 1: Task Flow Generation [Core]
 
 Define task-level flows:
 
@@ -47,7 +51,7 @@ Define task-level flows:
 - **System Response**: System feedback at each step
 - **End Point**: Task completion state
 
-### Step 2: User Flow Generation
+### Step 2: User Flow Generation [Core]
 
 Expand into complete user flows:
 
@@ -56,7 +60,7 @@ Expand into complete user flows:
 - **Return Paths**: Operations to go back to previous step
 - **Alternative Paths**: Different ways to accomplish the same goal
 
-### Step 3: Flow Quality Auto-Check
+### Step 3: Flow Quality Auto-Check [Core]
 
 Validate generated flows for quality:
 
@@ -68,7 +72,7 @@ Validate generated flows for quality:
 | Decision point information | Whether information at decision points is sufficient |
 | Dead ends | Situations where task cannot be completed |
 
-### Step 4: Flow Optimization Suggestions
+### Step 4: Flow Optimization Suggestions [Deep]
 
 Propose improvements based on quality check results:
 
@@ -76,6 +80,14 @@ Propose improvements based on quality check results:
 - **Exception handling supplementation**: Suggestions for uncovered exception scenarios
 - **Guidance suggestions**: Guidance optimization for complex nodes
 - **Dead end handling**: Eliminate or optimize dead ends
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | Task Flow and exception paths | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full flow + exception path full coverage + flow performance optimization + multi-role flow matrix | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -149,26 +161,34 @@ Propose improvements based on quality check results:
 
 ## Quality Checks
 
-| Check Item | Standard | Non-Compliance Handling |
-|-----------|----------|------------------------|
-| Core task step count | < 5 steps optimal, <= 7 steps acceptable | Mark "Path too long", suggest splitting into sub-flows |
-| Exception path coverage | >= 80% | List uncovered exceptions, mark "Insufficient exception coverage" |
-| Dead end count | = 0 | Provide fix suggestion for each dead end, must fix |
-| Decision point information sufficiency | All decision points have sufficient judgment information | Mark missing information items, suggest supplementation |
-| Return path completeness | All branches have return to main path | Supplement missing return paths |
-| PRD feature coverage | Key feature points 100% covered | List uncovered features, mark "Feature coverage gap" |
-| All outputs have confidence scores | 100% | Fields missing confidence scores filled with default 0.3 and flagged |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Core task step count (< 5 steps optimal, <= 7 steps acceptable)
+- [ ] Exception path coverage (>= 80%)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Dead end count (= 0)
+- [ ] Decision point information sufficiency (All decision points have sufficient judgment information)
+- [ ] Return path completeness (All branches have return to main path)
+- [ ] PRD feature coverage (Key feature points 100% covered)
+- [ ] All outputs have confidence scores (100%)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| PRD document missing | User provides feature description, design flow directly | Lacks PRD structured data, flow may miss feature points |
-| IA proposal missing | User provides feature description, design flow directly | Lacks IA data, flow may not match page structure |
-| Both PRD and IA missing | User provides feature description, design flow directly | Overall confidence reduced, flow may be less complete |
-| All upstream files missing | Prompt user to execute prior stages first, or design flow based on user feature description | Output is only basic flow framework |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| PRD document missing | User provides feature description, design flow directly | Lacks PRD structured data, flow may miss feature points | Request user to provide feature list and task descriptions, or upload prd.json |
+| IA proposal missing | User provides feature description, design flow directly | Lacks IA data, flow may not match page structure | Request user to describe page structure or upload ia.json |
+| Both PRD and IA missing | User provides feature description, design flow directly | Overall confidence reduced, flow may be less complete | Request user to describe features and page structure, or execute design-prd and design-ia first |
+| All upstream files missing | Prompt user to execute prior stages first, or design flow based on user feature description | Output is only basic flow framework | Request user to describe core user tasks and features, or execute design-prd and design-ia first |
 
 ## Output Validation Rules
 

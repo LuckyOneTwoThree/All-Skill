@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "Help me plan the product roadmap"
     - "What should the next version include"
+execution_depth:
+  default: standard
+  quick_description: "Output roadmap and milestones"
+  deep_description: "Full roadmap + dependency analysis + risk buffer design + multi-scenario roadmap"
 ---
 
 # Roadmap Auto-Planning
@@ -34,7 +38,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Strategic Theme Extraction
+### Step 1: Strategic Theme Extraction [Core]
 
 Extract 3-5 strategic themes from OKRs and SWOT:
 
@@ -47,7 +51,7 @@ Each strategic theme includes:
 - Supporting OKRs
 - Strategic significance
 
-### Step 2: Epic-Level Planning
+### Step 2: Epic-Level Planning [Core]
 
 Decompose strategic themes into quarterly Epics:
 
@@ -71,7 +75,7 @@ epic:
     - "Key assumption 2"
 ```
 
-### Step 3: Now/Next/Later Layering
+### Step 3: Now/Next/Later Layering [Core]
 
 Layer based on RICE scores and time dimensions:
 
@@ -90,7 +94,7 @@ Layer based on RICE scores and time dimensions:
 - Assumptions requiring further validation
 - Low-priority or exploratory items
 
-### Step 4: RICE Score Calculation
+### Step 4: RICE Score Calculation [Core]
 
 RICE formula:
 ```
@@ -103,13 +107,21 @@ Scoring criteria:
 - **Confidence**: Confidence in data and assumptions (0.5-1)
 - **Effort**: Person-months required to complete
 
-### Step 5: Risk Labeling
+### Step 5: Risk Labeling [Core]
 
 Identify and label risks:
 - Technical risks
 - Resource risks
 - Dependency risks
 - Market risks
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | roadmap and milestones | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full roadmap + dependency analysis + risk buffer design + multi-scenario roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -124,15 +136,32 @@ Identify and label risks:
 | roadmap.strategic_themes | array | Yes | 3-5 strategic themes |
 | roadmap.strategic_themes[].theme | string | Yes | Theme name |
 | roadmap.strategic_themes[].okr_reference | string | Yes | Linked OKR |
+| roadmap.strategic_themes[].priority | number | No | Theme priority ranking |
 | roadmap.quarterly_epics | array | Yes | Quarterly Epic list |
 | roadmap.quarterly_epics[].quarter | string | Yes | Quarter identifier |
+| roadmap.quarterly_epics[].epics | array | Yes | Epic list |
+| roadmap.quarterly_epics[].epics[].name | string | Yes | Epic name, must not be empty |
+| roadmap.quarterly_epics[].epics[].success_metric | string | No | Success metric |
 | roadmap.quarterly_epics[].epics[].rice_score | number | Yes | RICE score |
 | roadmap.quarterly_epics[].epics[].effort | number | Yes | Effort (person-months) |
+| roadmap.quarterly_epics[].epics[].dependencies | array | No | Dependencies list |
 | roadmap.quarterly_epics[].epics[].risks | array | Yes | Risk list |
+| roadmap.quarterly_epics[].epics[].risks[].risk | string | Yes | Risk description |
+| roadmap.quarterly_epics[].epics[].risks[].likelihood | string | Yes | Likelihood, enum: high/medium/low |
+| roadmap.quarterly_epics[].epics[].risks[].mitigation | string | No | Mitigation measure |
 | roadmap.now_next_later | object | Yes | Three-layer classification |
 | roadmap.now_next_later.now | array | Yes | Current quarter Epics |
+| roadmap.now_next_later.now[].epic | string | Yes | Epic name |
+| roadmap.now_next_later.now[].quarter | string | No | Quarter identifier |
+| roadmap.now_next_later.now[].rationale | string | No | Classification rationale |
 | roadmap.now_next_later.next | array | Yes | Next quarter Epics |
+| roadmap.now_next_later.next[].epic | string | Yes | Epic name |
+| roadmap.now_next_later.next[].quarter | string | No | Quarter identifier |
+| roadmap.now_next_later.next[].rationale | string | No | Classification rationale |
 | roadmap.now_next_later.later | array | Yes | Future Epics |
+| roadmap.now_next_later.later[].epic | string | Yes | Epic name |
+| roadmap.now_next_later.later[].quarter | string | No | Quarter identifier |
+| roadmap.now_next_later.later[].rationale | string | No | Classification rationale |
 
 ```yaml
 roadmap:
@@ -194,12 +223,22 @@ roadmap:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Epics have clear success metrics
 - [ ] All Epics have dependency labels
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Now/Next/Later layering completed
 - [ ] RICE scores calculated
 - [ ] Risks identified with mitigation measures
 - [ ] Resource estimates reasonable
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -207,22 +246,14 @@ roadmap:
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| okr.json | User provides objective list -> Directly plan roadmap | Lacks OKR structured data, strategic theme-OKR alignment insufficient |
-| strategic-analysis.json | User provides objective list -> Directly plan roadmap | Lacks strategic analysis data, strategic themes may deviate from strategic direction |
-| Requirement priority data (insight-analysis / design-prd) | User provides objective list -> Directly plan roadmap | Lacks requirement priority data, RICE scores lack input basis |
-| okr.json + strategic-analysis.json + requirement priority | User provides objective list -> Directly plan roadmap | Overall confidence reduced, Epic ranking lacks data anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or directly plan roadmap based on user-provided objective list | Overall confidence significantly reduced, roadmap is generic planning reference only |
-| Resource constraints (user provided) | If user has not provided resource constraints, prompt user to provide or skip related steps | Lacks resource constraints, Epic effort estimates may be unrealistic |
-
-## Data Acquisition Instructions
-
-This Skill requires OKR, strategic analysis, and requirement priority data, please provide via one of the following methods:
-  1. Directly describe business objectives and feature priorities
-  2. Upload okr.json / strategic-analysis.json / insight-analysis.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| okr.json | User provides objective list -> Directly plan roadmap | Lacks OKR structured data, strategic theme-OKR alignment insufficient | Request user to provide business objectives and key results, or upload okr.json |
+| strategic-analysis.json | User provides objective list -> Directly plan roadmap | Lacks strategic analysis data, strategic themes may deviate from strategic direction | Request user to describe strategic direction and priorities, or upload strategic-analysis.json |
+| Requirement priority data (insight-analysis / design-prd) | User provides objective list -> Directly plan roadmap | Lacks requirement priority data, RICE scores lack input basis | Request user to provide feature priorities and effort estimates, or upload insight-analysis.json / prd.json |
+| okr.json + strategic-analysis.json + requirement priority | User provides objective list -> Directly plan roadmap | Overall confidence reduced, Epic ranking lacks data anchoring | Request user to provide objectives, priorities, and effort estimates, or upload okr.json / strategic-analysis.json |
+| All upstream files missing | Prompt user to execute prior phases first, or directly plan roadmap based on user-provided objective list | Overall confidence significantly reduced, roadmap is generic planning reference only | Request user to describe business objectives and feature priorities, or execute planning-okr and strategic-analysis first |
+| Resource constraints (user provided) | If user has not provided resource constraints, prompt user to provide or skip related steps | Lacks resource constraints, Epic effort estimates may be unrealistic | Prompt user to provide team size, budget, and timeline constraints |
 
 ---
 

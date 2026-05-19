@@ -10,6 +10,10 @@ metadata:
     - "How to organize website navigation"
     - "Help me structure the information architecture"
     - "How to design content classification and navigation"
+execution_depth:
+  default: standard
+  quick_description: "Output IA proposals and navigation requirements"
+  deep_description: "Full IA proposal + card sorting validation + user mental model alignment + navigation usability assessment"
 ---
 
 # Information Architecture Auto-Design
@@ -38,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Content Inventory Generation
+### Step 1: Content Inventory Generation [Core]
 
 Extract all feature points and content items from PRD:
 
@@ -47,7 +51,7 @@ Extract all feature points and content items from PRD:
 - Core business entities
 - User-reachable information nodes
 
-### Step 2: Auto-Classification
+### Step 2: Auto-Classification [Core]
 
 Generate classification suggestions based on semantic similarity:
 
@@ -63,7 +67,7 @@ AI generates classification suggestions based on semantic similarity of feature 
   - Each category contains 3-7 items
   - Hierarchy does not exceed 3 levels
 
-### Step 3: Navigation Needs Definition
+### Step 3: Navigation Needs Definition [Core]
 
 Based on content characteristics and user scenarios, define navigation needs (do not define specific navigation patterns, UI Skill decides implementation):
 
@@ -74,7 +78,7 @@ Based on content characteristics and user scenarios, define navigation needs (do
 | Feature-oriented | Core feature entries need persistent visibility |
 | Content-rich | Needs browsing + search combination |
 
-### Step 4: Card Sorting Suggestions
+### Step 4: Card Sorting Suggestions [Deep]
 
 AI generates card sorting suggestions based on classification results:
 
@@ -84,7 +88,7 @@ AI generates card sorting suggestions based on classification results:
 4. Mark key classification decision points requiring user validation
 5. Output classification suggestions rather than test conclusions
 
-### Step 5: IA Proposal Generation
+### Step 5: IA Proposal Generation [Core]
 
 Generate 2-3 candidate IA proposals, each containing:
 
@@ -94,6 +98,14 @@ Generate 2-3 candidate IA proposals, each containing:
 - **avg_clicks_to_core**: Average clicks to core features
 - **alignment_with_user_model**: Alignment with user mental model
 - **needs_user_validation**: Nodes requiring user validation
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | IA proposals and navigation requirements | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full IA proposal + card sorting validation + user mental model alignment + navigation usability assessment | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -149,23 +161,31 @@ Generate 2-3 candidate IA proposals, each containing:
 
 ## Quality Checks
 
-| Check Item | Standard | Non-Compliance Handling |
-|-----------|----------|------------------------|
-| Content inventory completeness | Covers all PRD feature points | Add missing feature points, mark "Feature coverage gap" |
-| Classification reasonableness | Follows Miller's Law (3-7 items per category) | Re-cluster, split oversized categories or merge undersized ones |
-| Navigation needs definition | Has clear navigation needs matching content characteristics | Add navigation need descriptions, re-evaluate |
-| Validation node marking | All key classification nodes marked for user validation | Add missing validation marks, escalate to manual review |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Content inventory completeness (Covers all PRD feature points)
+- [ ] Classification reasonableness (Follows Miller's Law (3-7 items per category))
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Navigation needs definition (Has clear navigation needs matching content characteristics)
+- [ ] Validation node marking (All key classification nodes marked for user validation)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| PRD document missing | User provides feature list, design IA directly | Lacks PRD structured data, classification may be less complete |
-| Existing IA data missing | Design IA from scratch, no reference baseline | Lacks existing IA reference, may miss established structures |
-| User research data missing | Derive classification based on PRD features | Lacks user research data, classification may deviate from user mental model |
-| All upstream files missing | Prompt user to execute prior stages first, or design IA based on user-provided feature list | Overall confidence reduced |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| PRD document missing | User provides feature list, design IA directly | Lacks PRD structured data, classification may be less complete | Request user to provide feature list and product description, or upload prd.json |
+| Existing IA data missing | Design IA from scratch, no reference baseline | Lacks existing IA reference, may miss established structures | Request user to describe current IA structure or upload existing ia.json |
+| User research data missing | Derive classification based on PRD features | Lacks user research data, classification may deviate from user mental model | Request user to describe user expectations and mental models, or upload persona.json / voice-analysis.json |
+| All upstream files missing | Prompt user to execute prior stages first, or design IA based on user-provided feature list | Overall confidence reduced | Request user to provide feature list and user characteristics, or execute design-prd and user-research skills first |
 
 ## Output Validation Rules
 

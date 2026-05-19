@@ -10,6 +10,10 @@ metadata:
     - "I want to verify if the new homepage improves conversion, help me design an A/B test"
     - "How many samples does this feature change need"
     - "Help me design a traffic split experiment plan"
+execution_depth:
+  default: standard
+  quick_description: "Output experiment design and hypotheses"
+  deep_description: "Full design + statistical power calculation + multivariate experiment plan + result interpretation framework"
 ---
 
 # A/B Test Auto-Design
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Hypothesis Structuring
+### Step 1: Hypothesis Structuring [Core]
 
 Transform raw hypothesis into structured Hypothesis:
 
@@ -64,7 +68,7 @@ Because users face less friction
 For all new users on iOS and Android
 ```
 
-### Step 2: Metric Auto-Selection
+### Step 2: Metric Auto-Selection [Core]
 
 #### Primary Metric
 
@@ -93,7 +97,7 @@ Provide additional insights:
 - Correlated metrics (for attribution)
 - Exploratory metrics (for discovery)
 
-### Step 3: Sample Size Auto-Calculation
+### Step 3: Sample Size Auto-Calculation [Core]
 
 ```
 Sample size calculation formula:
@@ -124,7 +128,7 @@ sample_size_calculation:
     expected_duration_days: 7
 ```
 
-### Step 4: Traffic Split Design
+### Step 4: Traffic Split Design [Core]
 
 #### Traffic Split Principles
 
@@ -154,7 +158,7 @@ Traffic
 | High uncertainty | 50/25/25 | Multi-variant comparison |
 | Gradual rollout | 95/5 | Minimum traffic verification |
 
-### Step 5: Experiment Configuration Generation
+### Step 5: Experiment Configuration Generation [Core]
 
 Generate complete experiment configuration:
 
@@ -267,6 +271,14 @@ ab_test_design:
       - "Configure real-time monitoring"
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | experiment design and hypotheses | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full design + statistical power calculation + multivariate experiment plan + result interpretation framework | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage Path**: `output/pm-metrics-ops/experiment-design/`
@@ -372,28 +384,31 @@ When experiment design itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Hypothesis structured (If-Then-Because-For)
 - [ ] Primary metric directly corresponds to hypothesis
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Guardrail metrics cover retention, revenue, technical dimensions
 - [ ] Sample size calculation parameters are evidence-based
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Hypothesis statement missing | Cannot execute, user must describe hypothesis | - |
-| Available traffic missing | Use conservative default (5% of total traffic), annotate as "to be confirmed" | Sample size calculation based on conservative assumption, experiment period may be longer |
-| Metric system missing | Infer primary and guardrail metrics from hypothesis description, annotate as "to be confirmed" | Metric selection based on inference, may be incomplete |
-| Hypothesis statement + Available traffic + Metric system all missing | User describes hypothesis -> design experiment based on description | Output experiment design plan, key parameters annotated as "to be confirmed" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Hypothesis description**: Improvement idea to verify and expected effect
-- **Available traffic** (optional): User volume or traffic percentage available for experiment
-- **Key metrics** (optional): Primary metrics and guardrail metrics for the experiment
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Hypothesis statement missing | Cannot execute, user must describe hypothesis | - | Prompt user to describe improvement idea and expected effect to verify |
+| Available traffic missing | Use conservative default (5% of total traffic), annotate as "to be confirmed" | Sample size calculation based on conservative assumption, experiment period may be longer | Prompt user to provide available user volume or traffic percentage for experiment |
+| Metric system missing | Infer primary and guardrail metrics from hypothesis description, annotate as "to be confirmed" | Metric selection based on inference, may be incomplete | Request user to specify primary metrics and guardrail metrics, or upload metrics-system.json |
+| Hypothesis statement + Available traffic + Metric system all missing | User describes hypothesis -> design experiment based on description | Output experiment design plan, key parameters annotated as "to be confirmed" | Request user to describe hypothesis, available traffic, and key metrics, or execute validation-experiment and metrics-system first |
 
 ## Design Principles
 

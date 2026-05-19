@@ -1,6 +1,6 @@
 ---
 name: insight-analysis
-description: 需求洞察分析，整合JTBD、需求分层、5Whys根因、KANO分类和优先级评分。关键词：需求洞察、JTBD、5Whys、KANO、优先级评分、需求分析。
+description: 当需要进行需求洞察分析、需求分层、根因分析或需求优先级评估时使用。整合JTBD、需求分层、5Whys根因、KANO分类和优先级评分。关键词：需求洞察、JTBD、5Whys、KANO、优先级评分、需求分析。
 metadata:
   module: "产品探索与发现"
   sub-module: "需求洞察"
@@ -17,6 +17,10 @@ metadata:
     - "哪些功能是必须有的"
     - "需求太多先做哪个"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "执行JTBD功能性任务提取和需求三层拆解，输出需求列表与基础优先级排序"
+  deep_description: "额外包含情感性/社会性Job推断、5Whys根因深挖、KANO分类、完整优先级评分（含KANO加成）"
 ---
 
 # Insight Analysis — 需求洞察分析
@@ -45,7 +49,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 并行洞察（JTBD + 需求分层）
+### Step 1: 并行洞察（JTBD + 需求分层） [核心]
 
 并行执行 JTBD 分析和需求三层模型拆解。
 
@@ -133,7 +137,7 @@ metadata:
 - 置信度范围：0.4-0.7
 - 验证标记：本质需求置信度<0.5 → `validation_needed: true`，行为需求置信度<0.7 → `validation_needed: true`
 
-### Step 2: 根因深挖（5Whys）
+### Step 2: 根因深挖（5Whys） [条件]
 
 对关键痛点或问题现象进行根因深挖。
 
@@ -152,7 +156,7 @@ metadata:
 | 连续2层置信度 < 0.3 | 推断链可信度不足，需人类介入 |
 | 已找到可行动改进点 | 根因已明确且可转化为具体行动 |
 
-### Step 3: 需求分类（KANO）
+### Step 3: 需求分类（KANO） [条件]
 
 对功能需求进行KANO模型分类。
 
@@ -186,7 +190,7 @@ metadata:
 - 反向型：正向提及率 < 10% 且负向提及率 > 70%，标记为"反向型"
 - 无反馈数据：标记为"数据不足"
 
-### Step 4: 优先级评分
+### Step 4: 优先级评分 [条件]
 
 对需求列表进行加权优先级评分排序。
 
@@ -529,22 +533,22 @@ metadata:
 
 | 检查项 | 通过条件 |
 |--------|----------|
-| JTBD三层Job均已提取 | functional/emotional/social Job均存在 |
-| 每个Job有数据支撑 | evidence字段非空 |
-| 低置信度Job已标记验证 | confidence<0.5的Job在needs_human_validation中 |
-| 需求三层均已拆解 | surface/behavioral/essential均有内容 |
-| 推断依据非空 | inference_basis字段非空 |
-| 本质需求已标记验证状态 | validation_needed字段完整 |
-| 因果链完整 | 从现象到根因逻辑连贯 |
-| 根因有数据支撑 | 至少1条evidence |
-| 可行动建议已给出 | actionable_fix非空，含effort/impact/suggested_metrics |
-| 所有功能需求已分类 | kano_classification完整 |
-| 边界情况已标记 | confidence<0.7的在boundary_cases中 |
-| 分类统计summary完整 | summary中各类型数量之和等于kano_classification数组长度 |
-| 所有需求已评分 | priority_list完整 |
-| 评分结果按优先级降序排列 | rank字段正确 |
-| 评分可信度等级已标注 | score_confidence字段完整 |
-| base_score和kano_bonus分别计算 | 可审计 |
+| JTBD三层Job均已提取（P0） | functional/emotional/social Job均存在 |
+| 每个Job有数据支撑（P0） | evidence字段非空 |
+| 低置信度Job已标记验证（P1） | confidence<0.5的Job在needs_human_validation中 |
+| 需求三层均已拆解（P0） | surface/behavioral/essential均有内容 |
+| 推断依据非空（P0） | inference_basis字段非空 |
+| 本质需求已标记验证状态（P1） | validation_needed字段完整 |
+| 因果链完整（P1） | 从现象到根因逻辑连贯 |
+| 根因有数据支撑（P1） | 至少1条evidence |
+| 可行动建议已给出（P1） | actionable_fix非空，含effort/impact/suggested_metrics |
+| 所有功能需求已分类（P1） | kano_classification完整 |
+| 边界情况已标记（P2） | confidence<0.7的在boundary_cases中 |
+| 分类统计summary完整（P2） | summary中各类型数量之和等于kano_classification数组长度 |
+| 所有需求已评分（P1） | priority_list完整 |
+| 评分结果按优先级降序排列（P1） | rank字段正确 |
+| 评分可信度等级已标注（P2） | score_confidence字段完整 |
+| base_score和kano_bonus分别计算（P2） | 可审计 |
 
 ---
 
@@ -552,13 +556,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|----------|
-| voice-analysis.json | 基于用户直接粘贴的反馈文本提取JTBD和KANO分类 | Emotional/Social Job推断依据减少，KANO分类置信度降低 |
-| behavior-analysis.json | 基于用户反馈文本推断行为意图 | Functional Job缺乏行为数据佐证，频率统计不精确 |
-| voice-analysis.json + behavior-analysis.json | 用户提供反馈文本 → 直接提取JTBD | 整体置信度降低，frequency为估算值 |
-| 原始需求列表 | 用户口述需求 → 直接拆解三层 | inference_basis缺失数据佐证，行为需求置信度上限降至0.7 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版分析 | 输出为轻量版，JTBD仅含Functional Job，KANO全部分类为推断结果，priority_scoring多个维度使用默认值 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|----------|------------|
+| voice-analysis.json | 基于用户直接粘贴的反馈文本提取JTBD和KANO分类 | Emotional/Social Job推断依据减少，KANO分类置信度降低 | 要求用户提供用户反馈文本或上传voice-analysis.json文件 |
+| behavior-analysis.json | 基于用户反馈文本推断行为意图 | Functional Job缺乏行为数据佐证，频率统计不精确 | 要求用户提供行为事件日志或上传behavior-analysis.json文件 |
+| voice-analysis.json + behavior-analysis.json | 用户提供反馈文本 → 直接提取JTBD | 整体置信度降低，frequency为估算值 | 要求用户提供用户反馈文本和行为事件日志 |
+| 原始需求列表 | 用户口述需求 → 直接拆解三层 | inference_basis缺失数据佐证，行为需求置信度上限降至0.7 | 要求用户提供需求列表文本或产品需求文档 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版分析 | 输出为轻量版，JTBD仅含Functional Job，KANO全部分类为推断结果，priority_scoring多个维度使用默认值 | 要求用户提供用户反馈文本、行为数据和需求列表 |
 
 ## 数据获取说明
 

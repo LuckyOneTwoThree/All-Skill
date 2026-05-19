@@ -10,6 +10,10 @@ metadata:
     - "Help me produce this month's data analysis report"
     - "Summarize the recent data situation"
     - "Generate an operations weekly report"
+execution_depth:
+  default: standard
+  quick_description: "Output data insights and key findings"
+  deep_description: "Full report + multi-dimensional cross analysis + prediction model + decision recommendation roadmap"
 ---
 
 # Data Insight Report Auto-Generation
@@ -39,7 +43,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Data Overview and Core Metrics
+### Step 1: Data Overview and Core Metrics [Core]
 
 Integrate metrics system and analysis data to generate data overview:
 
@@ -58,7 +62,7 @@ Integrate metrics system and analysis data to generate data overview:
 - Data completeness assessment
 - Known data biases
 
-### Step 2: Funnel Health Analysis
+### Step 2: Funnel Health Analysis [Core]
 
 Integrate funnel data to generate funnel analysis chapter:
 
@@ -81,7 +85,7 @@ Impression -> Click -> Register -> Activate -> First Payment -> Repurchase
 - Possible causes (at least 2 hypotheses)
 - Verification recommendations
 
-### Step 3: Retention and Lifecycle Analysis
+### Step 3: Retention and Lifecycle Analysis [Core]
 
 Integrate retention data to generate retention analysis chapter:
 
@@ -105,7 +109,7 @@ Integrate retention data to generate retention analysis chapter:
 - Pre-churn behavior signals
 - Re-engagement window
 
-### Step 4: Anomaly Attribution Analysis
+### Step 4: Anomaly Attribution Analysis [Core]
 
 Integrate anomaly detection data to generate anomaly analysis chapter:
 
@@ -120,7 +124,7 @@ Integrate anomaly detection data to generate anomaly analysis chapter:
 - External: Market changes, competitor actions, seasonal factors
 - Data: Statistical bias, missing data, metric definition changes
 
-### Step 5: Insights and Action Recommendations
+### Step 5: Insights and Action Recommendations [Deep]
 
 Integrate all analysis data to extract insights and action recommendations:
 
@@ -142,7 +146,7 @@ Integrate all analysis data to extract insights and action recommendations:
 - Long-term Investment: High difficulty, high impact
 - Watch Items: Need more data verification
 
-### Step 6: Report Assembly
+### Step 6: Report Assembly [Core]
 
 **Report Structure**:
 
@@ -181,6 +185,14 @@ Integrate all analysis data to extract insights and action recommendations:
 - Metric definitions
 - Statistical method descriptions
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | data insights and key findings | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + multi-dimensional cross analysis + prediction model + decision recommendation roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -302,22 +314,32 @@ When analysis report itself changes, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Executive summary contains 3 key findings + Top 1 recommendation
 - [ ] Core metrics dashboard complete
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Funnel analysis includes largest drop-off point and improvement opportunity
 - [ ] Retention analysis includes lifecycle stages
 - [ ] Each insight has data fact + business implication
 - [ ] At least 3 action recommendations, each with priority and validation method
 - [ ] Data scope and limitations documented
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------------------|-----------------|---------------|
-| funnel-analysis missing | Funnel chapter annotated as "lacking funnel data" | Missing conversion analysis |
-| retention-analysis missing | Retention chapter annotated as "lacking retention data" | Missing lifecycle analysis |
-| anomaly-analysis missing | Skip anomaly analysis chapter | Missing anomaly attribution |
-| decision-dace missing | Action recommendations derived from data analysis | Recommendations may lack depth |
-| metrics-system missing | Core metrics based on user-provided info | Metric definitions may be incomplete |
-- If user does not provide analysis time range, prompt user to provide or skip related steps
-- If user does not provide product/business info, prompt user to provide or skip related steps
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------------------|-----------------|---------------|----------|
+| funnel-analysis missing | Funnel chapter annotated as "lacking funnel data" | Missing conversion analysis | Request user to provide funnel conversion data, or upload funnel-analysis.json |
+| retention-analysis missing | Retention chapter annotated as "lacking retention data" | Missing lifecycle analysis | Request user to provide retention rate data, or upload retention-analysis.json |
+| anomaly-analysis missing | Skip anomaly analysis chapter | Missing anomaly attribution | Request user to describe observed anomalies, or upload anomaly-analysis.json |
+| decision-dace missing | Action recommendations derived from data analysis | Recommendations may lack depth | Request user to describe desired decision direction, or upload decision-dace.json |
+| metrics-system missing | Core metrics based on user-provided info | Metric definitions may be incomplete | Request user to provide core metric names and definitions, or upload metrics-system.json |
+| Analysis time range not provided | Prompt user to provide or skip related steps | Report time range defaults to last 30 days | Prompt user to specify analysis time range |
+| Product/business info not provided | Prompt user to provide or skip related steps | Report lacks business context | Prompt user to provide product name and business stage |

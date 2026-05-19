@@ -10,6 +10,10 @@ metadata:
     - "Help me write version update notes"
     - "Generate release notes"
     - "What was updated in this version, organize it"
+execution_depth:
+  default: standard
+  quick_description: "Output release notes and change list"
+  deep_description: "Full notes + change impact analysis + upgrade guide + rollback contingency"
 ---
 
 # Version Release Notes Auto-Generation
@@ -39,7 +43,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Change Collection & Classification
+### Step 1: Change Collection & Classification [Core]
 
 Collect all changes for this version and classify by type:
 
@@ -62,7 +66,7 @@ Collect all changes for this version and classify by type:
 | PRD diff | Compare new and old PRD to extract feature changes |
 | User provided | User directly describes change content |
 
-### Step 2: User Impact Assessment
+### Step 2: User Impact Assessment [Core]
 
 Assess the impact of each change on users:
 
@@ -82,7 +86,7 @@ Assess the impact of each change on users:
 | Recommended Action | Doing so improves experience | Recommend updating mobile app to latest version |
 | No Action Needed | Takes effect automatically | Performance optimization auto-applied |
 
-### Step 3: Multi-Format Generation
+### Step 3: Multi-Format Generation [Core]
 
 Generate release notes in different styles based on target audience:
 
@@ -146,7 +150,7 @@ Generate release notes in different styles based on target audience:
 - security: Fixed XSS vulnerability CVE-2025-XXXX
 ```
 
-### Step 4: Version Information Assembly
+### Step 4: Version Information Assembly [Core]
 
 **Version Information Header**:
 
@@ -168,7 +172,7 @@ Generate release notes in different styles based on target audience:
 | patch | Bug fixes, backward compatible | Expect stability improvement |
 | hotfix | Emergency fix | Expect issue resolution |
 
-### Step 5: Document Assembly
+### Step 5: Document Assembly [Core]
 
 **Complete Release Notes Structure**:
 
@@ -206,6 +210,14 @@ Generate release notes in different styles based on target audience:
 
 ## Acknowledgments (optional)
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | release notes and change list | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full notes + change impact analysis + upgrade guide + rollback contingency | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -282,13 +294,23 @@ Generate release notes in different styles based on target audience:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Version number and date correct
 - [ ] Changes classified by category
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Breaking changes highlighted
 - [ ] User action items clear
 - [ ] Known issues listed
 - [ ] Multi-format generated (user/enterprise/developer editions)
 - [ ] No technical jargon leaked into end user edition
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

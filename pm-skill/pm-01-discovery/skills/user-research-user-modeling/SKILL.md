@@ -12,6 +12,10 @@ metadata:
     - "用户旅程怎么梳理"
     - "用户是什么样的人"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出用户模型和行为特征"
+  deep_description: "完整建模 + 行为序列分析 + 模型验证方案 + 用户演进追踪"
 ---
 
 # 用户建模自动生成
@@ -67,7 +71,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：用户聚类
+### Step 1：用户聚类 [核心]
 
 - 整合voice-analysis的用户分群与behavior-analysis的行为分群
 - 使用交叉验证确定最优聚类数（2-6个Persona）
@@ -75,7 +79,7 @@ metadata:
 - 评估每个聚类的内聚度和区分度
 - 输出：聚类结果，每个聚类的核心特征描述
 
-### Step 2：特征画像提取
+### Step 2：特征画像提取 [核心]
 
 - 对每个聚类提取关键特征：
   - **行为特征**：核心使用场景、使用频率、功能偏好、Aha Moment
@@ -86,7 +90,7 @@ metadata:
 - 标注数据来源（voice / behavior / survey / 推断）
 - 输出：每个聚类的特征画像
 
-### Step 3：Persona文档生成
+### Step 3：Persona文档生成 [核心]
 
 - 为每个聚类生成Persona文档，包含：
   - **名称**：易记的代称（如"效率先锋""体验探索者"）
@@ -99,7 +103,7 @@ metadata:
 - 标注推断性内容（无直接数据支撑的特征）
 - 输出：persona.json
 
-### Step 4：Empathy Map生成
+### Step 4：Empathy Map生成 [核心]
 
 - 为每个Persona生成Empathy Map，包含四个象限：
   - **Says**：用户说了什么（来自voice-analysis的原声）
@@ -109,7 +113,7 @@ metadata:
 - 标注每个象限条目的数据来源和置信度
 - 输出：empathy-map.json
 
-### Step 5：Journey Map生成
+### Step 5：Journey Map生成 [核心]
 
 - 为每个Persona生成Journey Map，包含：
   - **阶段**：认知 → 考虑 → 使用 → 深度使用 → 流失/留存
@@ -122,7 +126,7 @@ metadata:
 - 标注情绪曲线的置信度（行为数据支撑 vs 推断）
 - 输出：journey-map.json
 
-### Step 6：置信度评估
+### Step 6：置信度评估 [核心]
 
 - 评估每个Persona的整体置信度
 - 评估每个输出字段的置信度
@@ -131,6 +135,14 @@ metadata:
 - 输出：置信度评估报告
 
 ---
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 用户模型和行为特征 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整建模 + 行为序列分析 + 模型验证方案 + 用户演进追踪 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -386,15 +398,23 @@ metadata:
 
 ## 质量检查
 
-| 检查项 | 标准 | 不达标处理 |
-|--------|------|-----------|
-| 至少1个Persona置信度 ≥ 0.7 | 满足 | 无高置信度Persona时标记"建模不充分"，建议补充数据或访谈 |
-| 每个Persona有数据支撑 | 每个字段标注数据来源 | 推断性字段占比 > 50%时标记"数据支撑不足" |
-| Persona间区分度 | 特征重叠 < 70% | 重叠过高时建议合并或重新聚类 |
-| 代表性原声 | 每个Persona ≥ 3条原声 | 不足时标记"原声支撑不足" |
-| Empathy Map四象限完整 | 每个象限 ≥ 2条内容 | 缺失象限标记"数据不足" |
-| Journey Map阶段完整 | 覆盖核心阶段 | 缺失阶段标记"数据缺失" |
-| 所有输出标注置信度 | 100% | 缺失置信度的字段补填默认值0.3并标记 |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] 至少1个Persona置信度 ≥ 0.7（满足）
+- [ ] 每个Persona有数据支撑（每个字段标注数据来源）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] Persona间区分度（特征重叠 < 70%）
+- [ ] 代表性原声（每个Persona ≥ 3条原声）
+- [ ] Empathy Map四象限完整（每个象限 ≥ 2条内容）
+- [ ] Journey Map阶段完整（覆盖核心阶段）
+- [ ] 所有输出标注置信度（100%）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -402,14 +422,14 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| voice-analysis.json | 基于用户口头描述的目标用户特征推断Persona，标注"缺乏声音数据支撑" | Persona声音特征和痛点基于推断，representative_quotes缺失，core_pain_points置信度降低 |
-| behavior-analysis.json | 基于用户口头描述的用户行为推断Persona，标注"缺乏行为数据支撑" | Persona行为特征和Aha Moment基于推断，key_behaviors置信度降低，Journey Map行为数据缺失 |
-| voice-analysis.json + behavior-analysis.json | 用户提供目标用户描述 → 基于描述推断Persona，整体置信度降低 | personas整体confidence降低，data_source多为inferred，low_confidence_fields增多 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版Persona推断 | 输出为纯推断Persona，confidence_overall上限0.3，所有字段标注inferred |
-| 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" | 人口统计字段data_source为inferred，置信度降低 |
-| 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） | 使用默认配置，Persona数量和阈值可能非最优 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| voice-analysis.json | 基于用户口头描述的目标用户特征推断Persona，标注"缺乏声音数据支撑" | Persona声音特征和痛点基于推断，representative_quotes缺失，core_pain_points置信度降低 | 要求用户提供用户反馈文本或上传voice-analysis.json文件 |
+| behavior-analysis.json | 基于用户口头描述的用户行为推断Persona，标注"缺乏行为数据支撑" | Persona行为特征和Aha Moment基于推断，key_behaviors置信度降低，Journey Map行为数据缺失 | 要求用户提供行为事件日志或上传behavior-analysis.json文件 |
+| voice-analysis.json + behavior-analysis.json | 用户提供目标用户描述 → 基于描述推断Persona，整体置信度降低 | personas整体confidence降低，data_source多为inferred，low_confidence_fields增多 | 要求用户提供用户反馈文本和行为事件日志 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户口头描述执行轻量版Persona推断 | 输出为纯推断Persona，confidence_overall上限0.3，所有字段标注inferred | 要求用户提供目标用户特征描述、行为模式和核心痛点 |
+| 若用户未提供survey_data | 跳过该输入相关步骤，Persona中人口统计学信息基于推断，标注"缺乏问卷数据" | 人口统计字段data_source为inferred，置信度降低 | 要求用户提供用户问卷数据（含人口统计、使用习惯等） |
+| 若用户未提供modeling_config | 跳过该输入相关步骤，使用默认建模配置（最大Persona数：4，置信度阈值：0.5） | 使用默认配置，Persona数量和阈值可能非最优 | 要求用户提供最大Persona数量、置信度阈值等建模参数 |
 
 ## 数据获取说明
 

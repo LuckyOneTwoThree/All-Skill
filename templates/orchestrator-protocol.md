@@ -8,18 +8,44 @@
 
 ### 调用规则
 
-1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
-2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
+1. **双模式调用**：平台支持 Skill 工具时，显式调用子Skill；平台不支持时，按子Skill的 `name`、输入契约、输出契约和阶段卡口执行兼容调度。
+2. **不代理扩写**：兼容调度时不得把子Skill内部方法论复制进编排器上下文，也不得改写子Skill逻辑；只传递必要输入、输出路径和验证条件。
+3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现细节。
+4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径和 artifact index 传递数据。
+5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段。
 6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
+7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
 
 ### 上下文管理
 
 - 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
 - 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
 - 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+- 跨领域编排器不搬运子Skill全文；只维护 `artifact-index.json` 中的产物引用，按需读取直接下游需要的文件。
+
+### 产物路径与索引
+
+- 子Skill始终写入自己的领域原生输出路径，例如 `output/pm-design/`、`output/ui-frontend/`、`output/backend-api-design/`。
+- 跨领域编排器只生成汇总产物：`output/cross-domain/artifact-index.json` 与 `output/phase-reports/cross-domain/{orchestrator-name}.md`。
+- `artifact-index.json` 记录阶段、skill、真实输出路径、摘要和验证状态，作为跨领域传递的唯一索引；不得要求子Skill改写到 `output/cross-domain/{skill-name}/`。
+
+### 人类审批记录
+
+关键人类决策点应输出轻量审批记录，路径为 `output/approvals/{orchestrator-name}/{stage-id}.approval.json`：
+
+```json
+{
+  "approval_id": "string",
+  "stage": "string",
+  "decision_required": "string",
+  "recommended_option": "approve",
+  "options": ["approve", "revise", "reject"],
+  "risks": [],
+  "status": "pending | approved | rejected",
+  "decided_by": "human",
+  "decided_at": "ISO8601"
+}
+```
 
 ### 阶段总结
 

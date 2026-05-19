@@ -12,6 +12,10 @@ metadata:
     - "Registration to activation conversion rate is too low"
     - "Where is the biggest funnel drop-off"
     - "How to improve acquisition conversion rate"
+execution_depth:
+  default: standard
+  quick_description: "Output acquisition channels and CAC analysis"
+  deep_description: "Full analysis + channel attribution model + CAC optimization simulation + acquisition experiment roadmap"
 ---
 
 # Integrated Acquisition Analysis
@@ -71,7 +75,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Channel Assessment (from acquisition-channel)
+### Step 1: Channel Assessment (from acquisition-channel) [Core]
 
 Analyze 19 acquisition channel types data, calculate channel scale, conversion rate, ROI, and output channel grading report.
 
@@ -143,7 +147,7 @@ Composite Score = 0.3 x ROI Score + 0.25 x Scale Score + 0.25 x Quality Score + 
 | Channel ROI < target and no strategic significance | Grade as observation channel, reduce investment |
 | New channel with no historical data | Small traffic test, evaluate after 2 weeks |
 
-### Step 2: Funnel Optimization (from acquisition-optimize)
+### Step 2: Funnel Optimization (from acquisition-optimize) [Deep]
 
 Based on Step 1 channel assessment output, analyze acquisition funnel data, identify biggest drop-off points, and auto-generate optimization plans and A/B test designs.
 
@@ -223,6 +227,14 @@ Design A/B tests for optimization plans:
 3. **Test groups**: Design control and treatment groups
 4. **Monitoring metrics**: Define primary and secondary monitoring metrics
 5. **Decision rules**: Define when to stop the test and determine winner
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | acquisition channels and CAC analysis | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + channel attribution model + CAC optimization simulation + acquisition experiment roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -338,20 +350,41 @@ success_criteria:
 |----------|------|------|------|
 | channel_assessment | object | Yes | Channel assessment results, must contain channels/primary_channels/test_channels/observation_channels |
 | channel_assessment.channels | array | Yes | Channel assessment details list, each item must contain name/scale/conversion_rate/roi/classification |
+| channel_assessment.channels[].name | string | Yes | Channel name, cannot be empty |
+| channel_assessment.channels[].scale | string | Yes | Channel scale description |
+| channel_assessment.channels[].volume | number | No | Channel user volume |
+| channel_assessment.channels[].conversion_rate | number | Yes | Conversion rate, range 0-1 |
+| channel_assessment.channels[].cost_per_acquisition | number | No | Cost per acquisition |
+| channel_assessment.channels[].quality_score | number | No | Quality score, range 0-1 |
+| channel_assessment.channels[].classification | string | Yes | Channel grading, only primary/test/observation allowed |
+| channel_assessment.channels[].roi | number | Yes | Channel ROI, must be calculated based on LTV |
 | channel_assessment.primary_channels | array | Yes | Primary channel names list, at least 1 channel |
 | channel_assessment.test_channels | array | Yes | Test channel names list |
 | channel_assessment.observation_channels | array | Yes | Observation channel names list |
 | channel_assessment.total_new_users | number | Yes | Total new users, must be >0 |
 | channel_assessment.blended_cac | number | Yes | Blended acquisition cost, must be >0 |
 | channel_assessment.blended_roi | number | Yes | Blended ROI |
-| channel_assessment.channels[].classification | string | Yes | Channel grading, only primary/test/observation allowed |
-| channel_assessment.channels[].roi | number | Yes | Channel ROI, must be calculated based on LTV |
 | funnel_analysis | object | Yes | Funnel analysis, must contain stages and critical_drop_off |
 | funnel_analysis.stages | array | Yes | Stage data, each item must contain name/volume/conversion_rate/drop_off_rate |
+| funnel_analysis.stages[].name | string | Yes | Stage name, cannot be empty |
+| funnel_analysis.stages[].volume | number | Yes | Stage user volume, must be >=0 |
+| funnel_analysis.stages[].conversion_rate | number | Yes | Conversion rate, range 0-1 |
+| funnel_analysis.stages[].drop_off_rate | number | Yes | Drop-off rate, range 0-1 |
 | funnel_analysis.critical_drop_off | object | Yes | Critical drop-off point, must contain from_stage/to_stage/drop_off_rate/impact_score |
+| funnel_analysis.critical_drop_off.from_stage | string | Yes | Drop-off source stage |
+| funnel_analysis.critical_drop_off.to_stage | string | Yes | Drop-off target stage |
+| funnel_analysis.critical_drop_off.drop_off_rate | number | Yes | Drop-off rate, range 0-1 |
+| funnel_analysis.critical_drop_off.impact_score | number | Yes | Impact score, range 0-1 |
 | optimization_suggestions | array | Yes | Optimization suggestions list, each item must contain priority/stage/issue/solution/expected_improvement |
 | optimization_suggestions[].priority | number | Yes | Priority, starting from 1 |
+| optimization_suggestions[].stage | string | Yes | Target stage, cannot be empty |
+| optimization_suggestions[].issue | string | Yes | Issue description, cannot be empty |
+| optimization_suggestions[].solution | string | Yes | Solution, cannot be empty |
+| optimization_suggestions[].expected_improvement | string | Yes | Expected improvement |
 | ab_test_designs | array | No | A/B test design plans list, each item must contain test_id/hypothesis/primary_metric |
+| ab_test_designs[].test_id | string | Yes | Test ID, cannot be empty |
+| ab_test_designs[].hypothesis | string | Yes | Test hypothesis, cannot be empty |
+| ab_test_designs[].primary_metric | string | Yes | Primary metric, cannot be empty |
 
 ## Decision Rules
 
@@ -368,8 +401,13 @@ success_criteria:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Channel assessment covers scale, conversion rate, ROI, quality 4 dimensions
 - [ ] Channel grading criteria clear (Primary/Test/Observation)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] ROI calculation considers user LTV rather than single revenue
 - [ ] Assessment covers 19 acquisition channel types
 - [ ] Funnel stage definition complete (Impression -> Activation/Payment)
@@ -377,25 +415,21 @@ success_criteria:
 - [ ] Optimization plans include expected improvement and implementation difficulty assessment
 - [ ] A/B test design includes decision rules and stopping conditions
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| Channel data missing | User describes product type and target users -> recommend channel mix | Channel scoring based on industry experience rather than actual data |
-| Historical performance missing | Skip channel historical performance assessment, use industry benchmarks | Cannot identify proven high-efficiency channels |
-| Channel data + historical performance both missing | User describes product type and target users -> recommend channel mix | Output based on industry experience channel recommendations, marked "to be validated" |
-| Historical optimization data missing | Skip historical comparison, analyze based on current data only | Cannot evaluate optimization trends |
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Product type**: Product type and core features
-- **Target users**: Target user group characteristics and scale
-- **Budget range** (optional): Budget available for acquisition
-- **Funnel data** (optional): User count and conversion rate at each acquisition funnel step
-- **Optimization target** (optional): Key conversion rate to improve
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| Channel data missing | User describes product type and target users -> recommend channel mix | Channel scoring based on industry experience rather than actual data | Request user to describe product type and target users, or upload channel_data.json |
+| Historical performance missing | Skip channel historical performance assessment, use industry benchmarks | Cannot identify proven high-efficiency channels | Request user to provide historical channel performance data, or upload historical_performance.json |
+| Channel data + historical performance both missing | User describes product type and target users -> recommend channel mix | Output based on industry experience channel recommendations, marked "to be validated" | Request user to provide product type, target users, and budget range, or execute growth-model first |
+| Historical optimization data missing | Skip historical comparison, analyze based on current data only | Cannot evaluate optimization trends | Request user to provide previous optimization results, or upload optimization_history.json |
 
 ## Upstream Change Response
 

@@ -9,6 +9,10 @@ metadata:
   trigger_examples:
     - "What should our core metric be"
     - "How to measure product success"
+execution_depth:
+  default: standard
+  quick_description: "Output recommended North Star metric and input variables"
+  deep_description: "Full analysis + metric correlation matrix + manipulation risk assessment + metric evolution roadmap"
 ---
 
 # North Star Metric Selection
@@ -34,7 +38,7 @@ Human->AI Human executes, AI assists
 
 ## Execution Steps
 
-### Step 1: Candidate Metric Generation
+### Step 1: Candidate Metric Generation [Core]
 
 Generate 3-5 North Star metric candidates based on input data:
 
@@ -43,7 +47,7 @@ Generate 3-5 North Star metric candidates based on input data:
 - Extract existing metrics from business status data, assess suitability as North Star
 - Each candidate metric must include: metric name, calculation formula, data source, update frequency
 
-### Step 2: Four-Dimension Scoring
+### Step 2: Four-Dimension Scoring [Core]
 
 Score each candidate metric on 4 dimensions (1-5 scale):
 
@@ -56,20 +60,28 @@ Score each candidate metric on 4 dimensions (1-5 scale):
 
 **Composite Score = 0.3xValue Relationship + 0.3xBusiness Correlation + 0.2xActionability + 0.2xMeasurability**
 
-### Step 3: Recommendation and Alternatives
+### Step 3: Recommendation and Alternatives [Core]
 
 - Metrics with composite score >=4.0 recommended as North Star metric
 - Metrics with composite score 3.0-4.0 as alternative metrics
 - Metrics with composite score <3.0 labeled with elimination reason
 - Recommended metrics need alignment validation with BMC value propositions and OKRs
 
-### Step 4: Input Variable Definition
+### Step 4: Input Variable Definition [Core]
 
 Define 3 key input variables (driving factors) for the recommended metric:
 
 - Each input variable must be quantifiable, trackable, and influenceable
 - Causal relationship between input variables and North Star metric must be clear
 - Label data source and collection method for each input variable
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | recommended North Star metric and input variables | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + metric correlation matrix + manipulation risk assessment + metric evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -168,12 +180,22 @@ AI should provide the following analytical support:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] At least 3 metric candidates analyzed
 - [ ] Each candidate has 5-dimension evaluation
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Correlation analysis completed
 - [ ] Risk assessment provided
 - [ ] Final selection has human confirmation record
 - [ ] Selection rationale recorded
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -181,21 +203,13 @@ AI should provide the following analytical support:
 
 When upstream files do not exist, this Skill can still execute independently:
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|---------------|---------|---------|
-| User value data (voice-analysis / persona) | User provides product description -> Recommend North Star candidates | Lacks user value data, metric-user value correlation may be weak |
-| bmc.json | User provides product description -> Recommend North Star candidates | Lacks BMC data, metric-business model correlation may be weak |
-| User value data + bmc.json | User provides product description -> Recommend North Star candidates | Overall confidence reduced, metrics lack value-business dual anchoring |
-| All upstream files missing | Prompt user to execute prior phases first, or recommend North Star candidates based on user-provided product description | Overall confidence significantly reduced, recommendations are industry-generic references only |
-| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip related steps | Lacks baseline data, cannot assess metric current status |
-
-## Data Acquisition Instructions
-
-This Skill requires user value data and BMC data, please provide via one of the following methods:
-  1. Directly describe product core value and business model
-  2. Upload persona.json / voice-analysis.json / bmc.json files
-  3. Provide data file paths
-- AI is not responsible for external data collection, only for analysis
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|---------|---------|----------|
+| User value data (voice-analysis / persona) | User provides product description -> Recommend North Star candidates | Lacks user value data, metric-user value correlation may be weak | Request user to describe core user value and pain points, or upload persona.json / voice-analysis.json |
+| bmc.json | User provides product description -> Recommend North Star candidates | Lacks BMC data, metric-business model correlation may be weak | Request user to describe business model and revenue streams, or upload bmc.json |
+| User value data + bmc.json | User provides product description -> Recommend North Star candidates | Overall confidence reduced, metrics lack value-business dual anchoring | Request user to describe product core value and business model, or upload persona.json / voice-analysis.json / bmc.json |
+| All upstream files missing | Prompt user to execute prior phases first, or recommend North Star candidates based on user-provided product description | Overall confidence significantly reduced, recommendations are industry-generic references only | Request user to describe product core value and business model, or execute user-research and business-model-canvas first |
+| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip related steps | Lacks baseline data, cannot assess metric current status | Prompt user to provide current metric values and business stage |
 
 ---
 

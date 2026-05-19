@@ -39,7 +39,7 @@ metadata:
 | `index/execution-templates.csv` | Common scenario execution sequences | ~0.3k tk |
 | `index/skill-relationships.csv` | Inter-Skill orchestration/data contract relationships | ~2.6k tk |
 
-#### Step 1: Synonym Expansion
+#### Step 1: Synonym Expansion [Core]
 
 Read `index/synonym-map.csv`, mapping non-standard expressions in user input to standard trigger words and domains:
 
@@ -54,7 +54,7 @@ User input -> Scan synonym-map.csv user_expression column
 - Colloquial mapping: "do competitor analysis" -> "competitor research/competitive analysis" + domain=strategy
 - Industry jargon mapping: "DAU dropped" -> "DAU decline/user churn" + domain=growth
 
-#### Step 2: Five-dimensional Scoring
+#### Step 2: Five-dimensional Scoring [Core]
 
 Calculate match score for each Skill in `index/skill-index.csv`:
 
@@ -81,7 +81,7 @@ score = trigger_match * trigger_w
 
 Where match=1 (hit) or 0 (miss), type_score=3-type_order.
 
-#### Step 3: Context Enhancement (Optional)
+#### Step 3: Context Enhancement (Optional) [Core]
 
 Detect `output/` directory under user's project directory:
 
@@ -93,14 +93,14 @@ Detection Rules:
   No output/ directory -> Skip context enhancement
 ```
 
-#### Step 4: Ambiguity Disambiguation
+#### Step 4: Ambiguity Disambiguation [Core]
 
 When Top-3 candidate scores differ by <= 1:
 1. Read `index/skill-relationships.csv`, check upstream/downstream relationships between candidate Skills
 2. Prioritize recommending upstream Skills (do prerequisite steps first)
 3. If currently in the middle stage of an orchestrator, prioritize recommending pipeline skills from the same stage
 
-#### Step 5: Scenario Template Matching
+#### Step 5: Scenario Template Matching [Core]
 
 If user intent matches a scenario in `index/execution-templates.csv`:
 - Directly recommend the complete orchestrator execution sequence

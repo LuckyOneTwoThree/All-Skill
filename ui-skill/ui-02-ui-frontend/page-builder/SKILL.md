@@ -17,6 +17,16 @@ metadata:
 
 # 页面与组件一体化构建
 
+## Engineering Delivery Boundary
+
+Follow [Engineering Boundary Protocol](../../../templates/engineering-boundary-protocol.md).
+
+1. Project first: inspect existing framework, router, state management, component library, styling, API client, and test stack before writing code; inherit by default.
+2. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
+3. Write scope: declare target directories and files before implementation; do not overwrite unrelated user code.
+4. Responsive acceptance: check desktop/mobile layout, text overflow, cramped controls, nested cards, accessibility basics, and design-token consistency.
+5. Verification record: report created/modified files, checks run, checks that could not run, and residual risks.
+
 ## 核心原则
 
 1. **设计简报驱动**——当 design_brief.json 存在时，以其可执行设计规范为强约束生成代码；不存在时退回视觉方向驱动模式
@@ -84,6 +94,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 - PRD 的 functional_areas 定义必须覆盖的功能清单，但区域布局方式、视觉层次、组件选型由本 Skill 决定
 - IA 的路由结构定义页面间导航关系，但页面内部布局和导航模式由本 Skill 决定
 - Interaction-Spec 的状态机和动画意图定义必须覆盖的交互完整性，但视觉表现、过渡效果、反馈组件由本 Skill + ext-interaction-design 决定
+- Userflow 的 data_operations 定义页面必须支持的数据操作类型和关联实体，但组件选型、数据获取方式、状态管理方案由本 Skill 决定
 - 当 PM 输入与本 Skill 的设计判断冲突时，以设计判断为准，但需在输出中标注偏离原因
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
@@ -91,6 +102,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 页面需求 | string/markdown | 是 | 用户提供 / output/pm-design/design-prd/prd.md | 页面功能描述和布局需求 |
 | 页面清单 | JSON | 条件必填 | output/ui-frontend/page-manifest/page_manifest.json | 编排器生成的统一页面清单，存在时必须消费，pages[]为页面生成权威来源 |
 | 视觉方向 | JSON | 是 | output/ui-project-init/project-init.json → visual_direction | 美学方向/色彩策略/视觉禁忌等 |
+| visual_policy | string | ○ | output/ui-project-init/project-init.json → visual_direction.visual_policy | 视觉策略；默认 existing-design-system-first |
 | 设计令牌 | JSON | 是 | output/ui-project-init/project-init.json → tokens | 设计变量定义 |
 | 组件库 | JSON | 是 | output/ui-project-init/project-init.json → component_library | 可用组件清单和主题定制 |
 | 目标框架 | string | 是 | 用户提供 | React/Vue/Svelte |
@@ -101,6 +113,7 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 | 路由结构 | JSON | 条件必填 | output/pm-design/design-ia/ia_proposals.json | 当文件存在时必填消费，routes[]为路由清单权威来源 |
 | 交互规范 | markdown | ○ | output/pm-design/interaction-spec/interaction-spec.md | 交互状态机/交互意图/异常路径/无障碍交互 |
 | 交互规范(结构化) | JSON | ○ | output/pm-design/interaction-spec/interaction-spec.json | 交互状态机/动画意图/手势意图的结构化数据，供编程式消费 |
+| 用户流程 | JSON | ○ | output/pm-design/design-userflow/userflow.json | 用户流程数据，包含步骤序列和data_operations[]，用于页面数据绑定和交互逻辑映射 |
 | 探索阶段设计决策 | JSON | ○ | output/ui-frontend/design-exploration/design_decisions.json | progressive模式下Stage 1条件分支（约束对齐）产出的设计决策，作为design_decisions初始值 |
 | 设计简报 | JSON | ○ | output/ui-frontend/design-brief/design_brief.json | ext Skill产出的可执行设计规范，包含具体的CSS值/组件结构/布局指令 |
 
@@ -123,6 +136,24 @@ page-builder 单次执行可能生成大量组件代码，必须主动管理上�
 - 若有 component_catalog 输入：其 `type` 为推荐组件类型，`alternatives` 为备选方案，`selection_criteria` 为选型依据
 - page-builder 根据 visual_direction 和页面上下文选择推荐类型或备选类型，选择备选类型时需记录到 design_decisions
 - 当备选类型更符合视觉方向（如 visual_direction.tension_level=bold 时 Card Grid 比 Table 更合适）时，优先选择备选类型
+
+**用户流程消费规则**（数据操作映射）：
+
+- 若有 userflow.json 输入：其 `steps[]` 通过 `page_id` 与页面关联，`data_operations[]` 为页面组件的数据绑定提供跨域数据视角
+- **步骤-页面映射**：将 userflow.steps[] 按 page_id 分组，每个页面对应的步骤集合定义了该页面需要支持的用户操作序列
+- **数据操作-组件映射**：data_operations[].operation_type 决定组件的数据交互模式：
+
+| operation_type | 组件模式 | 必须包含的交互 |
+|---------------|---------|--------------|
+| read | 展示型组件（DataGrid/Card/List） | 数据获取逻辑 + 空/加载/错误三态 |
+| create | 表单型组件（Form/Dialog） | 提交逻辑 + 校验反馈 + 成功提示 |
+| update | 编辑型组件（InlineEdit/Form） | 乐观更新 + 冲突处理 + 变更确认 |
+| delete | 操作型组件（ActionButton/ConfirmDialog） | 确认机制 + 撤销能力 + 级联影响提示 |
+
+- **实体-类型映射**：data_operations[].related_entity 对应数据层类型定义，用于生成 TypeScript 接口和 Mock 数据结构
+- **操作序列-交互流程映射**：同一页面内多个步骤的操作序列决定组件间的数据依赖和交互顺序（如步骤2依赖步骤1的创建结果）
+- **分支路径-条件渲染映射**：userflow 中的 branch 条件映射为组件的条件渲染逻辑（v-if/conditional rendering）
+- **与交互规范协同**：userflow 的 data_operations 侧重"数据视角"（操作什么实体），interaction-spec 侧重"交互视角"（如何操作），两者互补而非替代
 
 **功能布局**：
 
@@ -300,6 +331,21 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 
 若 interaction-spec 未定义动画意图，使用 page-builder 内建默认动画规范表。interaction-spec 中的具体动画数值（缓动函数/时长/阈值）仅供参考，page-builder 有权基于 visual_direction 调整。
 
+**数据操作消费**（消费 userflow.json 的 data_operations）：
+
+当 userflow.json 存在时，组件生成必须消费对应页面的 data_operations，将数据操作意图转化为组件接口：
+
+| data_operations 维度 | 组件接口影响 | 示例 |
+|---------------------|------------|------|
+| operation_type=read | 组件需声明数据获取 Props（dataSource/fetchParams），内建 loading/error/empty 状态 | CourseList 组件接收 fetchCourses 参数，内建骨架屏和空状态 |
+| operation_type=create | 组件需声明提交 Props（onSubmit/onValidate），内建表单校验和提交反馈 | CourseForm 组件接收 onSubmit 回调，内建字段校验 |
+| operation_type=update | 组件需声明编辑 Props（onUpdate/initialValues），内建变更检测和冲突处理 | ProfileEdit 组件接收 onUpdate 和初始值，内建脏检查 |
+| operation_type=delete | 组件需声明删除 Props（onDelete/confirmMessage），内建确认和撤销 | DeleteButton 组件接收 onDelete 回调，内建二次确认弹窗 |
+| related_entity | 对应 TypeScript 类型定义，作为 Props 中数据对象的类型 | related_entity="course" → Course 类型接口 |
+
+- 同一页面多个 data_operations 时，组件间通过 Props 传递操作结果（如 create 后将新数据传递给 read 组件刷新列表）
+- data_operations 未覆盖的组件数据需求，由 page-builder 基于 PRD 和页面需求补充
+
 > ext 增强结果已通过 design_brief.json 在 Step 1 中消费，本步骤专注核心逻辑
 
 ### Step 3: 页面组装与状态管理
@@ -332,6 +378,7 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 
 生成规则：
 - Mock 数据必须覆盖页面数据流中定义的所有数据需求
+- 当 userflow.json 存在时：Mock 数据必须覆盖 data_operations 中所有 related_entity 的数据结构，数据操作类型决定 Mock 数据的 CRUD 方法（read→查询函数、create→创建函数、update→更新函数、delete→删除函数）
 - 数据获取函数签名与 api-integration 生成的签名一致（便于后续替换）
 - 在 pages.json 中标注 `api_integration_skipped: true`，供 production-ready 参考
 - 代码中标注 `// @api-integration: 待 api-integration 替换` 注释，便于后续定位和替换
@@ -364,7 +411,7 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 | visual_direction一致性 | 组件视觉风格与aesthetic_direction描述一致，不出现aesthetic_direction中未提及的风格特征 | P0 |
 | 留白节奏 | 页面间距非均匀分布，至少3种不同间距值形成节奏感 | P1 |
 | 视觉锚点遵循 | 8个锚点维度(border_radius_level/shadow_style/spacing_rhythm/type_scale/brand_color_usage/image_treatment/motion_style/grid_density)的实现与visual_direction定义一致 | P0 |
-| AI同质化特征检测 | 不包含以下AI同质化特征：Inter/Roboto/Arial作为主字体、蓝紫渐变+白底配色、均匀卡片网格布局、所有间距相同、无视觉焦点 | P0 |
+| AI同质化特征检测 | 按 visual_policy 执行：existing-design-system-first 下同质化特征仅作为提示，不得覆盖既有设计系统；balanced 下作为P1；differentiation-strict 下作为P0 | P0/P1 |
 | 视觉无聊度检测 | 不满足以下任一条件即为"视觉无聊"：①品牌色占比<5% ②所有字号跳跃<1.25x ③所有间距值相同 ④无视觉焦点区域 ⑤无任何阴影或深度层次 | P1 |
 
 **无障碍检查**：
@@ -402,6 +449,7 @@ tension_level 决定整体视觉大胆程度，不同级别对应不同的视觉
 | 路由覆盖 | 全部页面有路由 | P1 |
 | 页面清单覆盖 | page_manifest.json.pages[] 中的所有 page_id 均有对应页面生成（无 page_manifest 时检查 prd.json.pages[]） | P0 |
 | 路由清单覆盖 | ia_proposals.routes[] 中的所有路由均已配置 | P0 |
+| 数据操作覆盖 | userflow存在时，每个页面的data_operations[]均有对应组件承载 | P1 |
 
 **问题处理规则**：P0问题必须修复后才能输出，P1问题标注"待修复"。
 
@@ -609,7 +657,7 @@ P0（必须通过，不通过则阻断输出）：
 - [ ] 视觉节奏6维度已在页面中体现
 - [ ] 视觉锚点8维度实现与visual_direction定义一致（含页面级覆盖后的最终值）
 - [ ] 排版层级跳跃≥type_scale对应倍率
-- [ ] 不包含AI同质化特征（Inter/Roboto主字体、蓝紫渐变+白底、均匀卡片网格、相同间距、无视觉焦点）
+- [ ] AI同质化检查符合 visual_policy；默认不因字体或卡片网格单项特征破坏既有设计系统
 - [ ] design_decisions中无critical/major级别偏离未经人类确认
 
 P1（建议通过，不通过则标注"待修复"）：
@@ -630,6 +678,7 @@ P1（建议通过，不通过则标注"待修复"）：
 - [ ] 交互设计已应用（由编排器调用ext-interaction-design，非纯静态组件时）
 - [ ] ext-impeccable 各子命令增强已应用（由编排器调用）
 - [ ] design_decisions中moderate级别偏离已标注建议人类确认
+- [ ] userflow存在时，所有data_operations均有对应组件实现
 
 ## 降级策略
 
@@ -643,6 +692,7 @@ P1（建议通过，不通过则标注"待修复"）：
 | PRD缺失 | 仅基于页面需求描述生成，无产品需求上下文 | 组件功能可能偏离产品意图，缺少业务逻辑约束，功能区域覆盖不完整 |
 | 路由结构缺失 | 基于页面需求自行规划路由层级和嵌套关系 | 路由可能与IA定义不一致，导航结构需后续对齐 |
 | 交互规范缺失 | 使用默认动画规范表和通用反馈机制，异常路径基于PRD推断 | 交互状态机可能不完整，异常路径可能遗漏，动画和反馈可能与产品层面定义不一致 |
+| 用户流程缺失 | 基于PRD和交互规范推断数据操作需求，组件数据绑定依赖页面需求描述推导 | 数据操作可能不完整，组件数据接口缺少跨域数据视角，页面与用户流程的数据操作可能不一致 |
 | project_dir 缺失 | 仅输出到 output/ 目录 | 代码需手动复制 |
 
 ## 上游变更响应
@@ -659,6 +709,7 @@ P1（建议通过，不通过则标注"待修复"）：
 | PRD变更 | 页面功能需求、组件边界、功能区域覆盖 | 标注受影响的页面和组件，评估是否需重新规划 |
 | 路由结构变更 | 路由配置和导航组件 | 标注受影响的路由路径，建议更新路由配置 |
 | 交互规范变更 | 交互状态机、异常路径、无障碍交互 | 标注受影响的状态转换和异常路径，建议更新状态机 |
+| 用户流程变更 | 页面数据绑定、组件数据接口、数据层类型定义 | 标注受影响的页面和data_operations，建议更新组件Props和数据层 |
 
 ### 下游通知机制表
 

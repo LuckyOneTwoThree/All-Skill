@@ -12,6 +12,10 @@ metadata:
     - "生成产品需求文档"
     - "需求文档怎么写"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "生成PRD-L级别文档，包含核心章节（背景目标、功能规格、验收标准）和基础质量检查"
+  deep_description: "生成PRD-X级别文档，额外包含上游冲突决策记录、自校正循环日志、开放问题管理、版本变更追溯链、降级方案影响评估"
 ---
 
 # PRD生成器
@@ -26,11 +30,16 @@ metadata:
 
 ## 执行步骤
 
-1. 确定PRD分层级别（L/S/X）——基于Effort估算和团队数量自动分级，PM可覆盖
-2. 按对应层级结构生成PRD文档——PRD-L使用简化模板，PRD-S使用完整9节结构，PRD-X使用增强版9节结构
-3. 执行4道质量门禁检查——完整性/一致性/歧义消除/可追溯性，不通过则自动修正
-4. 版本生命周期管理——创建→评审→定稿→变更，每次变更记录变更日志
-5. 上下游衔接——确保PRD可追溯到上游需求，下游设计可直接消费PRD输出
+1. [核心] 确定PRD分层级别（L/S/X）——基于Effort估算和团队数量自动分级，PM可覆盖
+2. [核心] 按对应层级结构生成PRD文档——PRD-L使用简化模板，PRD-S使用完整9节结构，PRD-X使用增强版9节结构
+3. [核心] 执行4道质量门禁检查——完整性/一致性/歧义消除/可追溯性，不通过则自动修正
+4. [条件] 版本生命周期管理——创建→评审→定稿→变更，每次变更记录变更日志
+5. [条件] 上下游衔接——确保PRD可追溯到上游需求，下游设计可直接消费PRD输出
+
+**关键产出要求**：
+- **entities[].fields 必须完整**：每个实体至少包含标识字段（id）、名称字段、状态字段和业务核心字段。字段粒度以"backend可直接用于ER模型设计"为准，不能只给实体名不给字段
+- **pages[].data_requirements 必须完整**：每个页面必须明确需要什么数据、数据操作类型（读/增/改/删）、关联哪个实体、需要哪些字段。这是UI页面生成和API设计的直接输入
+- **entities[].api_endpoints 为建议性**：PRD阶段定义的是业务操作需求（如"用户需要查看课程列表"），具体API路径由api-design-spec设计
 
 详见下方各章节详细说明。
 
@@ -146,7 +155,7 @@ metadata:
 - 提示缺失的追溯路径
 - 要求补充上游证据
 
-## 4. 版本生命周期
+## 4. 版本生命周期 [条件]
 
 ### 4.1 版本状态机
 
@@ -185,7 +194,7 @@ metadata:
 | 已定稿 | 触发变更 | 开发中变更 | 开发阶段发现需调整 |
 | 已上线 | 发布更新 | 已归档 | 新版本上线 |
 
-## 5. 执行决策逻辑
+## 5. 执行决策逻辑 [条件]
 
 ### 5.1 生成顺序依赖图
 
@@ -283,7 +292,7 @@ L2处理：
 5. 若通过则结束，否则进入第N+1轮
 ```
 
-## 6. 上下游衔接
+## 6. 上下游衔接 [条件]
 
 ### 6.1 上游消费
 
@@ -336,6 +345,8 @@ L2处理：
 | opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition / 上游探索阶段 | 机会定义产出，替代原 requirements-understanding/prioritization 输入，提供需求理解和优先级排序 |
 | exploration_outputs | JSON/object | ○ | 上游探索阶段 | 用户洞察、问题陈述 |
 | strategy_outputs | JSON/object | ○ | 上游战略阶段 | OKR、路线图 |
+| north_star_metric | JSON/object | ○ | output/pm-strategy/planning-north-star/north_star.json | 北极星指标及驱动功能 |
+| okr_candidates | JSON/object | ○ | output/pm-strategy/planning-okr/okr.json | OKR候选及驱动功能 |
 | ideation_outputs | JSON/object | ○ | 上游构思阶段 | 解决方案、功能列表 |
 | design_outputs | JSON/object | ○ | 上游设计阶段 | 原型、用户流程 |
 | metrics_outputs | JSON/object | ○ | 上游度量阶段 | 指标体系、埋点方案 |
@@ -393,6 +404,12 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
       "priority": "must | should | could | wont",
       "status": "planned | in_progress | completed | cancelled",
       "goal_id": "string",
+      "driven_by": {
+        "north_star_metric": "string | null",
+        "okr_objective": "string | null",
+        "kr_id": "string | null",
+        "expected_lift": "string"
+      },
       "acceptance_criteria": [
         {
           "criterion_id": "string",
@@ -416,8 +433,10 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
         {
           "data_name": "string",
           "source": "api | local | cache",
-          "api_endpoint": "string | null",
-          "fields": ["string"]
+          "data_operations": ["read | create | update | delete"],
+          "related_entity": "entity_id | null",
+          "fields": ["string"],
+          "description": "string"
         }
       ],
       "functional_areas": ["string"],
@@ -563,11 +582,15 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 - [ ] 门禁通过：4道质量门禁全部通过
 - [ ] 无歧义残留：无模糊量词和悬空引用
 - [ ] prd.json 完整性：features/pages/entities/user_flows 四个数组均非空
+- [ ] prd.json entities字段完整性：每个entity的fields数组非空且至少包含核心字段（id/名称/状态等），relationships数组非空
+- [ ] prd.json pages数据需求完整性：每个page的data_requirements数组非空，明确标注数据来源（api/local/cache）和所需字段
 - [ ] prd.json 引用一致性：feature.related_pages 中的 page_id 在 pages[] 中存在，feature.related_entities 中的 entity_id 在 entities[] 中存在
 - [ ] prd.json 追溯链完整：每个 feature 都有对应的 traceability 条目
 - [ ] prd.json 与 prd.md 一致：prd.json 中的功能点名称、优先级、验收标准与 prd.md 一致
 - [ ] prd.json tracking_plan 完整性：tracking_plan.events 非空，每个 event 的 properties 非空
 - [ ] prd.json NFR完整性：non_functional_requirements 的4个维度数组均非空
+- [ ] prd.json 功能驱动信息完整性：每个 P0/P1 功能的 driven_by 字段非空，明确关联到北极星指标或 OKR
+- [ ] prd.json 功能优先级与指标关联一致性：feature.priority 与 driven_by.expected_lift 正相关
 
 ## 决策规则（详细）
 
@@ -605,7 +628,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 6. 更新PRD
 ```
 
-### 9.3 开放问题管理
+### 9.3 开放问题管理 [深度]
 
 **开放问题状态**：
 - **Open**：未解决
@@ -619,7 +642,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 
 ## 质量检查（详细）
 
-### 10.1 完整性标准
+### 10.1 完整性标准（P0）
 
 | 检查项 | 标准 | 检查方法 |
 |--------|------|----------|
@@ -628,7 +651,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 | 验收覆盖 | 主流程+边界+异常全覆盖 | Given-When-Then覆盖率 |
 | 状态覆盖 | 5种状态全部定义 | 状态类型枚举匹配 |
 
-### 10.2 一致性标准
+### 10.2 一致性标准（P1）
 
 | 检查项 | 标准 | 检查方法 |
 |--------|------|----------|
@@ -636,7 +659,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 | 优先级一致性 | MoSCoW在所有引用中一致 | 优先级交叉验证 |
 | 版本一致性 | 版本号与变更记录匹配 | 版本号一致性检查 |
 
-### 10.3 歧义消除标准
+### 10.3 歧义消除标准（P1）
 
 | 检查项 | 标准 | 检查方法 |
 |--------|------|----------|
@@ -644,7 +667,7 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 | 悬空引用 | 所有引用指向存在目标 | 引用解析+存在性验证 |
 | 逻辑矛盾 | 无前置与结果矛盾 | 逻辑规则引擎检查 |
 
-### 10.4 可执行性标准
+### 10.4 可执行性标准（P2）
 
 | 检查项 | 标准 | 检查方法 |
 |--------|------|----------|
@@ -656,18 +679,17 @@ prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程�
 
 ### 上游文件缺失降级方案
 
-| 缺失范围 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| insight_analysis缺失 | 基于用户描述和opportunity_definition补充用户洞察，标注"洞察数据待补充" | Section 2用户需求部分简化，需求收集可能不够完整 |
-| opportunity_definition缺失 | 基于用户描述和insight_analysis推断机会和优先级，标注"优先级待确认" | 需求理解和优先级排序可能不够精准 |
-| insight_analysis + opportunity_definition均缺失 | 基于用户口头描述执行内建的需求收集、理解和优先级排序（Step 1-3），标注"需求管理数据为AI推断" | 需求管理全流程依赖AI推断，置信度降低 |
-| 部分上游缺失（如仅缺exploration_outputs） | 生成对应章节时标注"待补充"，其他章节正常生成 | 部分章节内容不完整，标注待补充 |
-| exploration_outputs缺失 | 背景与目标章节标注"待补充"，基于用户描述生成简化版 | Section 2内容简化 |
-| strategy_outputs缺失 | OKR对齐和优先级判断章节标注"待补充" | Section 2.2目标定义简化 |
-| ideation_outputs缺失 | 方案设计章节标注"待补充"，基于用户描述生成功能列表 | Section 3功能规格简化 |
-| design_outputs缺失 | 交互逻辑和状态设计标注"待补充" | Section 3.2交互逻辑简化 |
-| metrics_outputs缺失 | 数据埋点方案标注"待补充" | Section 6内容简化 |
-| 所有上游缺失 | 基于用户口头描述生成简化版PRD-L（200-500字），内建执行需求收集、理解和优先级排序 | 输出PRD-L级别文档 |
+| 缺失范围 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| insight_analysis缺失 | 基于用户描述和opportunity_definition补充用户洞察，标注"洞察数据待补充" | Section 2用户需求部分简化，需求收集可能不够完整 | 要求用户提供用户洞察描述或上传insight-analysis.json文件 |
+| opportunity_definition缺失 | 基于用户描述和insight_analysis推断机会和优先级，标注"优先级待确认" | 需求理解和优先级排序可能不够精准 | 要求用户提供机会定义和优先级描述或上传opportunity-definition.json文件 |
+| insight_analysis + opportunity_definition均缺失 | 基于用户口头描述执行内建的需求收集、理解和优先级排序（Step 1-3），标注"需求管理数据为AI推断" | 需求管理全流程依赖AI推断，置信度降低 | 要求用户提供核心需求、目标用户和优先级排序 |
+| exploration_outputs缺失 | 背景与目标章节标注"待补充"，基于用户描述生成简化版 | Section 2内容简化 | 要求用户提供产品背景和目标描述或上传探索阶段输出文件 |
+| strategy_outputs缺失 | OKR对齐和优先级判断章节标注"待补充" | Section 2.2目标定义简化 | 要求用户提供战略目标和OKR或上传strategy阶段输出文件 |
+| ideation_outputs缺失 | 方案设计章节标注"待补充"，基于用户描述生成功能列表 | Section 3功能规格简化 | 要求用户提供功能方案描述或上传ideation阶段输出文件 |
+| design_outputs缺失 | 交互逻辑和状态设计标注"待补充" | Section 3.2交互逻辑简化 | 要求用户提供交互设计描述或上传design阶段输出文件 |
+| metrics_outputs缺失 | 数据埋点方案标注"待补充" | Section 6内容简化 | 要求用户提供核心指标和埋点需求或上传metrics阶段输出文件 |
+| 所有上游缺失 | 基于用户口头描述生成简化版PRD-L（200-500字），内建执行需求收集、理解和优先级排序 | 输出PRD-L级别文档 | 要求用户提供产品需求描述、核心功能和目标用户 |
 
 ### 数据获取说明
 

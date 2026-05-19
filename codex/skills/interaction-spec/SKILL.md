@@ -10,6 +10,10 @@ metadata:
     - "How to write interaction specifications"
     - "Help me write an interaction design document"
     - "How to define animations and gestures"
+execution_depth:
+  default: standard
+  quick_description: "Output interaction specifications and state design"
+  deep_description: "Full spec + state machine full coverage + motion design specs + accessibility interaction design"
 ---
 
 # Interaction Design Specification Document Generation
@@ -35,16 +39,16 @@ AI->Human AI suggests, human approves
 
 ### Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| User flow missing | Derive interaction flow from prototype | Flow pending confirmation, interaction state machine may be less complete |
-| Prototype specification missing | Generate interaction spec framework based on user flow | Pending prototype validation, component interaction specs may be less precise |
-| Design handoff document missing | Interaction spec uses independent numbering | Subsequent alignment with handoff document needed, token references may be inconsistent |
-| Brand guidelines missing | Adopt neutral interaction style | Pending brand confirmation, animation style may need adjustment |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| User flow missing | Derive interaction flow from prototype | Flow pending confirmation, interaction state machine may be less complete | Request user to describe user tasks and flow, or upload userflow.json |
+| Prototype specification missing | Generate interaction spec framework based on user flow | Pending prototype validation, component interaction specs may be less precise | Request user to describe page layouts and components, or upload prototype.json |
+| Design handoff document missing | Interaction spec uses independent numbering | Subsequent alignment with handoff document needed, token references may be inconsistent | Request user to provide design tokens or upload handoff-spec.json |
+| Brand guidelines missing | Adopt neutral interaction style | Pending brand confirmation, animation style may need adjustment | Request user to provide brand guidelines (animation style, easing functions) or upload brand-guidelines.json |
 
 ## Execution Steps
 
-### Step 1: Interaction State Machine Definition
+### Step 1: Interaction State Machine Definition [Core]
 
 Define interaction state machines for each core component and page:
 
@@ -53,7 +57,7 @@ Define interaction state machines for each core component and page:
 3. **State Priority**: Priority rules when multiple states overlap (e.g., Disabled + Error)
 4. **State Persistence**: Rules for transient vs. persistent state retention
 
-### Step 2: Animation and Transition Intents
+### Step 2: Animation and Transition Intents [Core]
 
 Define the **intents** of animations and transitions in the product; specific implementation parameters are determined by UI Skill (ext-interaction-design + page-builder) based on visual_direction:
 
@@ -70,7 +74,7 @@ Define the **intents** of animations and transitions in the product; specific im
 3. **Animation Performance**: Only use transform and opacity; avoid triggering layout and paint
 4. **Reduced Motion**: `prefers-reduced-motion` adaptation rules
 
-### Step 3: Gesture and Operation Intents
+### Step 3: Gesture and Operation Intents [Core]
 
 Define **intents and constraints** for gesture operations across platforms; specific thresholds are determined by UI Skill based on platform specifications and visual_direction:
 
@@ -90,7 +94,7 @@ Define **intents and constraints** for gesture operations across platforms; spec
    - Keyboard shortcut mapping table
    - Enter/Space activation rules
 
-### Step 4: Feedback Mechanism Specification
+### Step 4: Feedback Mechanism Specification [Core]
 
 Define feedback standards for user operations:
 
@@ -109,7 +113,7 @@ Define feedback standards for user operations:
    - Information: Must provide supplementary explanation without interfering with the main flow
 4. **No Feedback Scenarios**: Explicitly list operations that don't need feedback and the reasons
 
-### Step 5: Exception State Interactions
+### Step 5: Exception State Interactions [Core]
 
 Define interaction handling for exception scenarios:
 
@@ -119,7 +123,7 @@ Define interaction handling for exception scenarios:
 4. **Data Overflow**: Must reasonably display truncated content, provide ways to view complete content
 5. **Concurrent Conflicts**: Must detect and inform of conflicts, provide user decision paths
 
-### Step 6: Accessibility Interaction Specification
+### Step 6: Accessibility Interaction Specification [Core]
 
 Ensure interactions meet accessibility standards:
 
@@ -132,9 +136,17 @@ Ensure interactions meet accessibility standards:
 3. **ARIA Labels**: Role (role), state (aria-state), property (aria-property) usage specifications
 4. **Screen Readers**: Read-aloud text and read-aloud order for key interactions
 
-### Step 7: Report Assembly
+### Step 7: Report Assembly [Core]
 
 Assemble the above content into a complete interaction design specification document.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | interaction specifications and state design | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full spec + state machine full coverage + motion design specs + accessibility interaction design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -283,12 +295,20 @@ Assemble the above content into a complete interaction design specification docu
 
 ## Quality Checks
 
-| Check Item | Standard | Non-Pass Handling |
-|-----------|----------|-------------------|
-| State machine complete | All 8 basic states covered | Supplement missing state definitions |
-| Animation performance compliant | Only uses transform/opacity | Replace non-compliant animation properties |
-| Accessibility compliant | WCAG 2.1 AA fully covered | Supplement missing accessibility specifications |
-| Feedback fully covered | Every user operation has corresponding feedback | Supplement missing feedback or mark "No feedback" with reason |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] State machine complete (All 8 basic states covered)
+- [ ] Animation performance compliant (Only uses transform/opacity)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Accessibility compliant (WCAG 2.1 AA fully covered)
+- [ ] Feedback fully covered (Every user operation has corresponding feedback)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Output Validation Rules
 

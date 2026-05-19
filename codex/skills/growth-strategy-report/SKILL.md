@@ -10,6 +10,10 @@ metadata:
     - "Generate a growth strategy report"
     - "Growth has hit a bottleneck, what should I do"
     - "How to develop a growth plan"
+execution_depth:
+  default: standard
+  quick_description: "Output growth strategy and priority actions"
+  deep_description: "Full report + growth model simulation + channel mix optimization + growth experiment roadmap"
 ---
 
 # Growth Strategy Report Generation
@@ -37,7 +41,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Growth Model Assessment
+### Step 1: Growth Model Assessment [Core]
 
 Extract core judgments from the growth model diagnosis results:
 
@@ -46,7 +50,7 @@ Extract core judgments from the growth model diagnosis results:
 3. **Bottleneck positioning**: Current biggest bottleneck stage and quantified basis
 4. **Growth stage assessment**: Cold start / Takeoff / Scale / Maturity
 
-### Step 2: AARRR Funnel Diagnosis
+### Step 2: AARRR Funnel Diagnosis [Core]
 
 Integrate analysis results from each stage to build a full-funnel view:
 
@@ -55,7 +59,7 @@ Integrate analysis results from each stage to build a full-funnel view:
 3. **Retention curve**: D1/D7/D30 retention rates, retention curve shape (power law/exponential/logarithmic)
 4. **Revenue funnel**: Free -> Trial -> Paid -> Renewal -> Upsell, ARPU contribution at each stage
 
-### Step 3: Leverage Strategy Integration
+### Step 3: Leverage Strategy Integration [Core]
 
 Based on bottleneck positioning and stage plans, integrate leverage strategies:
 
@@ -64,7 +68,7 @@ Based on bottleneck positioning and stage plans, integrate leverage strategies:
 3. **Defensive strategies** (prevent decline): Risk mitigation + early warning indicators
 4. **Strategy priority matrix**: Sorted by impact x feasibility
 
-### Step 4: Execution Roadmap
+### Step 4: Execution Roadmap [Core]
 
 Transform strategies into an executable roadmap:
 
@@ -73,9 +77,17 @@ Transform strategies into an executable roadmap:
 3. **Long-term Investment** (8+ weeks): Infrastructure building for flywheel acceleration
 4. **Milestones and Metrics**: Key milestones and acceptance criteria for each phase
 
-### Step 5: Report Assembly
+### Step 5: Report Assembly [Core]
 
 Assemble the above content into a complete report.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | growth strategy and priority actions | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + growth model simulation + channel mix optimization + growth experiment roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -185,21 +197,64 @@ Assemble the above content into a complete report.
 | product_name | string | Yes | Product name, cannot be empty |
 | growth_model | object | Yes | Growth model assessment, must contain type/flywheel/bottleneck |
 | growth_model.type | string | Yes | Growth model type, only PLG/SLG/MLG/hybrid allowed |
+| growth_model.evidence | string | No | Model determination basis |
 | growth_model.flywheel.nodes | array | Yes | Flywheel nodes, at least 3 |
+| growth_model.flywheel.nodes[].node_name | string | Yes | Node name, cannot be empty |
+| growth_model.flywheel.edges | array | No | Flywheel causal relationships, at least 2 |
+| growth_model.flywheel.edges[].from | string | Yes | Source node |
+| growth_model.flywheel.edges[].to | string | Yes | Target node |
+| growth_model.flywheel.edges[].description | string | No | Causal relationship description |
 | growth_model.bottleneck | string | Yes | Bottleneck description, cannot be empty |
+| aarrr_funnel | object | No | AARRR funnel data |
+| aarrr_funnel.acquisition | object | No | Acquisition stage |
+| aarrr_funnel.acquisition.current_rate | number | No | Current acquisition rate |
+| aarrr_funnel.activation | object | No | Activation stage |
+| aarrr_funnel.activation.current_rate | number | No | Current activation rate |
+| aarrr_funnel.retention | object | No | Retention stage |
+| aarrr_funnel.retention.current_rate | number | No | Current retention rate |
+| aarrr_funnel.referral | object | No | Referral stage |
+| aarrr_funnel.referral.current_rate | number | No | Current referral rate |
+| aarrr_funnel.revenue | object | No | Revenue stage |
+| aarrr_funnel.revenue.current_rate | number | No | Current payment rate |
 | leverage_strategies | object | Yes | Leverage strategies, must contain high/medium/defensive |
 | leverage_strategies.high | array | Yes | High-leverage strategies, at least 1 |
+| leverage_strategies.high[].strategy | string | Yes | Strategy description, cannot be empty |
+| leverage_strategies.high[].expected_impact | string | No | Expected impact |
+| leverage_strategies.medium | array | Yes | Medium-leverage strategies, at least 1 |
+| leverage_strategies.medium[].strategy | string | Yes | Strategy description, cannot be empty |
+| leverage_strategies.defensive | array | No | Defensive strategies |
+| leverage_strategies.defensive[].strategy | string | Yes | Strategy description, cannot be empty |
 | roadmap | object | Yes | Execution roadmap, must contain quick_wins/core_optimization/long_term |
+| roadmap.quick_wins | array | Yes | Quick win items, at least 1 |
+| roadmap.quick_wins[].action | string | Yes | Action description |
+| roadmap.quick_wins[].timeline | string | No | Timeline |
+| roadmap.core_optimization | array | Yes | Core optimization items, at least 1 |
+| roadmap.core_optimization[].action | string | Yes | Action description |
+| roadmap.core_optimization[].timeline | string | No | Timeline |
+| roadmap.long_term | array | No | Long-term investment items |
+| roadmap.long_term[].action | string | Yes | Action description |
+| roadmap.long_term[].timeline | string | No | Timeline |
 | risks_and_assumptions | array | No | Risks and assumptions list |
+| risks_and_assumptions[].type | string | Yes | Type, enum: risk/assumption |
+| risks_and_assumptions[].description | string | Yes | Description, cannot be empty |
+| risks_and_assumptions[].impact | string | No | Impact assessment |
 
 ## Quality Checks
 
-| Check Item | Standard | Failed Action |
-|--------|------|------------|
-| Flywheel model completeness | At least 3 nodes + 2 causal relationships | Supplement flywheel nodes or mark "to be validated" |
-| Strategy aligned with bottleneck | High-leverage strategies directly target core bottleneck | Adjust strategies or supplement bottleneck analysis |
-| Roadmap executable | Each action has owner, timeline, acceptance criteria | Supplement execution details |
-| Funnel data complete | AARRR at least 3 stages with data | Mark missing stages as "to be supplemented" |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Flywheel model completeness (At least 3 nodes + 2 causal relationships)
+- [ ] Strategy aligned with bottleneck (High-leverage strategies directly target core bottleneck)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Roadmap executable (Each action has owner, timeline, acceptance criteria)
+- [ ] Funnel data complete (AARRR at least 3 stages with data)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Decision Rules
 
@@ -212,12 +267,12 @@ Assemble the above content into a complete report.
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| No growth model diagnosis | Infer growth model from stage plans, mark "model to be confirmed" | Growth model is inferred conclusion, needs subsequent validation |
-| Only partial stage plans available | Cover only stages with available data, mark missing stages as "to be supplemented" | Report coverage incomplete, no strategy recommendations for missing stages |
-| No upstream input at all | Generate growth strategy framework based on user-provided product info, mark "needs data validation" | Report is framework-level, all conclusions need data validation |
-- If user has not provided business goals, prompt user to provide or skip steps related to that input
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| No growth model diagnosis | Infer growth model from stage plans, mark "model to be confirmed" | Growth model is inferred conclusion, needs subsequent validation | Request user to describe growth model or upload growth-model.json |
+| Only partial stage plans available | Cover only stages with available data, mark missing stages as "to be supplemented" | Report coverage incomplete, no strategy recommendations for missing stages | Request user to provide data for missing AARRR stages, or upload available stage plan files |
+| No upstream input at all | Generate growth strategy framework based on user-provided product info, mark "needs data validation" | Report is framework-level, all conclusions need data validation | Request user to provide product info and business goals, or execute growth-model and AARRR stage skills first |
+| Business goals not provided | Prompt user to provide or skip steps related to that input | Strategy prioritization lacks goal alignment | Prompt user to specify business goals and target metrics |
 
 ## Upstream Change Response
 

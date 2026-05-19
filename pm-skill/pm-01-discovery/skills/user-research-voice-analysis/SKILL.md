@@ -12,6 +12,10 @@ metadata:
     - "帮我分析用户反馈"
     - "用户评价怎么样"
   interaction_mode: "ai_auto"
+execution_depth:
+  default: standard
+  quick_description: "直接输出用户声音主题和情感分布"
+  deep_description: "完整分析 + 情感趋势追踪 + 主题聚类深度分析 + 行动建议路线图"
 ---
 
 # 大规模用户声音分析
@@ -88,7 +92,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：数据采集与清洗
+### Step 1：数据采集与清洗 [核心]
 
 - 从各数据源拉取原始数据
 - 去重（同一用户同一内容跨平台去重）
@@ -97,14 +101,14 @@ metadata:
 - 时间范围校验
 - 输出：清洗后的反馈数据集，记录原始条数与清洗后条数
 
-### Step 2：情感分类
+### Step 2：情感分类 [核心]
 
 - 对每条反馈进行情感分类：正面 / 负面 / 中性 / 混合
 - 提取情感强度（0-1）
 - 对负面反馈提取情感维度：愤怒/失望/困惑/焦虑/其他
 - 输出：每条反馈附带情感标签和强度
 
-### Step 3：主题聚类
+### Step 3：主题聚类 [核心]
 
 - 对所有反馈进行语义聚类
 - 生成主题标签（自动生成 + 人工可调整）
@@ -112,7 +116,7 @@ metadata:
 - 识别跨主题的关联关系
 - 输出：主题列表，每个主题包含反馈量、情感分布、代表原声
 
-### Step 4：痛点提取与分级
+### Step 4：痛点提取与分级 [核心]
 
 - 从负面反馈和混合反馈中提取痛点
 - 痛点分级标准：
@@ -123,7 +127,7 @@ metadata:
 - 痛点评分 = 影响面（受影响用户占比） × 痛苦度（情感强度均值） × 频率（提及次数/总反馈数）
 - 输出：痛点列表，按评分降序排列
 
-### Step 5：用户分群洞察
+### Step 5：用户分群洞察 [核心]
 
 - 基于反馈内容和情感模式进行用户分群
 - 每个分群描述：核心特征、主要诉求、情感倾向、规模占比
@@ -131,6 +135,14 @@ metadata:
 - 输出：用户分群列表
 
 ---
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 用户声音主题和情感分布 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 情感趋势追踪 + 主题聚类深度分析 + 行动建议路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -161,15 +173,21 @@ metadata:
 | summary.sentiment_distribution.neutral | number | 是 | 中性情感占比，0-1 |
 | summary.sentiment_distribution.mixed | number | 是 | 混合情感占比，0-1 |
 | summary.top_themes | array | 是 | 主题列表，每项须含theme、feedback_count、representative_quotes、confidence |
+| summary.top_themes[].theme | string | 是 | 主题名称，不可为空 |
+| summary.top_themes[].feedback_count | number | 是 | 该主题反馈数量 |
 | summary.top_themes[].representative_quotes | string[] | 是 | 每个主题≥2条代表原声 |
 | summary.top_themes[].confidence | number | 是 | 主题置信度，0-1 |
 | summary.top_pain_points | array | 是 | 痛点列表，每项须含pain_point、severity、impact_score、representative_quotes、confidence |
+| summary.top_pain_points[].pain_point | string | 是 | 痛点描述，不可为空 |
 | summary.top_pain_points[].severity | string | 是 | 痛点等级，枚举：P0/P1/P2/P3 |
+| summary.top_pain_points[].impact_score | number | 是 | 痛点影响评分 |
 | summary.top_pain_points[].representative_quotes | string[] | 是 | 每个痛点≥2条代表原声 |
 | summary.top_pain_points[].confidence | number | 是 | 痛点置信度，0-1 |
 | summary.emerging_themes | array | 否 | 新兴主题列表 |
 | summary.emerging_themes[].confidence | number | 是 | 新兴主题置信度，0-1 |
 | summary.user_segments | array | 是 | 用户分群列表，每项须含segment_name、size_ratio、confidence |
+| summary.user_segments[].segment_name | string | 是 | 分群名称，不可为空 |
+| summary.user_segments[].size_ratio | number | 是 | 规模占比，0-1 |
 | summary.user_segments[].confidence | number | 是 | 分群置信度，0-1 |
 | metadata.analysis_timestamp | string | 是 | 分析时间戳 |
 | metadata.data_quality_flags | string[] | 是 | 数据质量标记 |
@@ -253,14 +271,22 @@ metadata:
 
 ## 质量检查
 
-| 检查项 | 标准 | 不达标处理 |
-|--------|------|-----------|
-| 反馈覆盖量 | ≥ 500条 | 标记数据不足，输出降级 |
-| 情感分类覆盖率 | ≥ 95% | 未分类条目标记"未覆盖"，说明原因 |
-| 主题聚类一致性 | Silhouette Score ≥ 0.5 | 调整聚类参数或标记"聚类质量待优化" |
-| 所有输出标注置信度 | 100% | 缺失置信度的字段补填默认值0.3并标记 |
-| 痛点有代表原声 | 每个痛点≥2条原声 | 标记"原声支撑不足" |
-| 数据去重率 | 记录去重比例 | 去重率>50%时标记"数据源可能重复" |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] 反馈覆盖量（≥ 500条）
+- [ ] 情感分类覆盖率（≥ 95%）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] 主题聚类一致性（Silhouette Score ≥ 0.5）
+- [ ] 所有输出标注置信度（100%）
+- [ ] 痛点有代表原声（每个痛点≥2条原声）
+- [ ] 数据去重率（记录去重比例）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -268,14 +294,14 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| 所有数据源均缺失 | 提示用户先提供反馈数据，或基于用户直接粘贴的反馈文本执行轻量版分析 | summary字段为空，置信度降为0 |
-| 若用户未提供app_reviews | 提示用户提供应用商店评论数据，否则缺乏核心反馈来源 | data_sources_used缺少app_reviews，情感分布和主题可能偏斜 |
-| 若用户未提供support_tickets | 提示用户提供客服工单数据，否则缺乏核心反馈来源 | data_sources_used缺少support_tickets，痛点可能遗漏工单类问题 |
-| 若用户未提供social_mentions | 跳过该输入相关步骤，社交媒体数据不参与分析 | data_sources_used缺少social_mentions，新兴主题检测能力降低 |
-| 若用户未提供community_posts | 跳过该输入相关步骤，社区帖子数据不参与分析 | data_sources_used缺少community_posts，深度用户洞察可能缺失 |
-| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 | 使用默认配置，分析参数可能非最优 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| 所有数据源均缺失 | 提示用户先提供反馈数据，或基于用户直接粘贴的反馈文本执行轻量版分析 | summary字段为空，置信度降为0 | 要求用户提供用户反馈文本（评论、工单、社媒提及等） |
+| 若用户未提供app_reviews | 提示用户提供应用商店评论数据，否则缺乏核心反馈来源 | data_sources_used缺少app_reviews，情感分布和主题可能偏斜 | 要求用户提供应用商店评论数据或导出评论CSV文件 |
+| 若用户未提供support_tickets | 提示用户提供客服工单数据，否则缺乏核心反馈来源 | data_sources_used缺少support_tickets，痛点可能遗漏工单类问题 | 要求用户提供客服工单数据或导出工单列表 |
+| 若用户未提供social_mentions | 跳过该输入相关步骤，社交媒体数据不参与分析 | data_sources_used缺少social_mentions，新兴主题检测能力降低 | 要求用户提供社交媒体提及数据（如微博、Twitter提及） |
+| 若用户未提供community_posts | 跳过该输入相关步骤，社区帖子数据不参与分析 | data_sources_used缺少community_posts，深度用户洞察可能缺失 | 要求用户提供社区/论坛帖子数据 |
+| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 | 使用默认配置，分析参数可能非最优 | 要求用户提供情感分析粒度、主题数量等分析参数配置 |
 
 ## 数据获取说明
 

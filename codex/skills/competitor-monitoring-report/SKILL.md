@@ -11,6 +11,10 @@ metadata:
     - "What are competitors doing recently"
     - "Competitor threat assessment"
     - "How to respond to competitor changes"
+execution_depth:
+  default: standard
+  quick_description: "Output competitor dynamics summary and threat level"
+  deep_description: "Full report + competitor trend prediction + strategic impact simulation + response strategy roadmap"
 ---
 
 # Competitor Monitoring Report Generation AI->Human
@@ -35,7 +39,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Dynamic Data Aggregation
+### Step 1: Dynamic Data Aggregation [Core]
 
 **Goal**: Aggregate multi-dimensional competitor dynamic data
 
@@ -64,7 +68,7 @@ dynamics_summary:
     negative_trends: [{competitor}]
 ```
 
-### Step 2: Threat Level Assessment
+### Step 2: Threat Level Assessment [Core]
 
 **Goal**: Assess threat level of each competitor to self
 
@@ -111,7 +115,7 @@ threat_assessment:
       - "Rapidly gaining users in tier-2 cities"
 ```
 
-### Step 3: Response Strategy Suggestions
+### Step 3: Response Strategy Suggestions [Deep]
 
 **Goal**: Generate targeted response strategy suggestions
 
@@ -147,7 +151,7 @@ response_suggestions:
       - "Enterprise customer service experience"
 ```
 
-### Step 4: Report Generation
+### Step 4: Report Generation [Core]
 
 **Goal**: Generate complete competitor monitoring report
 
@@ -178,6 +182,14 @@ competitor_monitoring_report:
     focus_areas: [{area}]
     alert_triggers: [{trigger}]
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | competitor dynamics summary and threat level | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full report + competitor trend prediction + strategic impact simulation + response strategy roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -223,11 +235,21 @@ competitor_monitoring_report:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Dynamic coverage complete (product/market/sentiment 3 dimensions all analyzed)
 - [ ] Threat assessment evidence-based (each assessment has data support)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Response suggestions actionable (each suggestion has clear execution steps)
 - [ ] Report structure complete (executive summary + detailed analysis + suggestions)
 - [ ] Monitoring recommendations reasonable (focus areas and alert triggers clear)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

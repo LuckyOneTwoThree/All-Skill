@@ -13,6 +13,10 @@ metadata:
     - "How to differentiate operations for different users"
     - "How to improve user engagement"
     - "How to implement user segmentation"
+execution_depth:
+  default: standard
+  quick_description: "Output retention analysis and key strategies only"
+  deep_description: "Full strategy + churn prediction model + lifecycle optimization + retention evolution roadmap"
 ---
 
 # Integrated Retention Management
@@ -75,7 +79,7 @@ Health Score = 0.3 x Activity + 0.25 x Feature Depth + 0.25 x Payment Willingnes
 
 ## Execution Steps
 
-### Step 1: Churn Prediction (from retention-churn)
+### Step 1: Churn Prediction (from retention-churn) [Core]
 
 Build churn prediction model, identify high-risk users, and auto-trigger intervention actions.
 
@@ -156,7 +160,7 @@ Identify key factors leading to high risk:
 - Impact of intervention timing on effectiveness
 - Optimization directions for intervention content
 
-### Step 2: Segmented Operations (from retention-engagement)
+### Step 2: Segmented Operations (from retention-engagement) [Core]
 
 Based on Step 1 churn prediction output, segment users by lifecycle stage and generate operations strategies and personalized outreach content.
 
@@ -268,6 +272,14 @@ trigger_rules:
 - Recommend relevant content based on user usage history
 - Adjust content format based on user preference settings
 - Adjust content theme based on user lifecycle stage
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | retention analysis and key strategies only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full strategy + churn prediction model + lifecycle optimization + retention evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -395,20 +407,40 @@ Event-triggered outreach:
 |----------|------|------|------|
 | churn_prevention | object | Yes | Churn prediction and intervention results, must contain risk_model/high_risk_users/interventions |
 | churn_prevention.risk_model | object | Yes | Prediction model, must contain model_type/features/accuracy |
+| churn_prevention.risk_model.model_type | string | Yes | Model type |
+| churn_prevention.risk_model.features | array | Yes | Model feature list |
+| churn_prevention.risk_model.features[].feature_name | string | Yes | Feature name |
+| churn_prevention.risk_model.features[].importance | number | No | Feature importance |
 | churn_prevention.risk_model.accuracy | number | Yes | Model accuracy, must be >0.75 |
 | churn_prevention.risk_thresholds | object | Yes | Risk thresholds, must contain high_risk/medium_risk/low_risk |
 | churn_prevention.high_risk_users | array | Yes | High-risk user list, each item must contain user_id/risk_score/risk_level |
+| churn_prevention.high_risk_users[].user_id | string | Yes | User ID |
+| churn_prevention.high_risk_users[].risk_score | number | Yes | Risk score, range 0-1 |
 | churn_prevention.high_risk_users[].risk_level | string | Yes | Risk level, only high/medium/low/stable allowed |
+| churn_prevention.high_risk_users[].primary_churn_signals | string[] | No | Primary churn signals |
+| churn_prevention.high_risk_users[].recommended_intervention | string | No | Recommended intervention |
 | churn_prevention.interventions | array | Yes | Intervention strategy list, each item must contain trigger_condition/intervention_type/channel |
+| churn_prevention.interventions[].trigger_condition | string | Yes | Trigger condition |
+| churn_prevention.interventions[].intervention_type | string | Yes | Intervention type, enum: email/in_app/push/call |
+| churn_prevention.interventions[].channel | string | Yes | Outreach channel |
+| churn_prevention.interventions[].content_theme | string | No | Content theme |
 | churn_prevention.tracking | object | No | Effect tracking, must contain response_rate/churn_prevention_rate/roi |
 | segments | array | Yes | User segmentation data, at least covering new/growing/mature/dormant/churned 5 segments |
 | segments[].segment_id | string | Yes | Segment identifier, only new_user/growing_user/mature_user/at_risk/churned allowed |
 | segments[].count | number | Yes | Segment user count, must be >=0 |
 | segments[].health_score | number | Yes | Health score, range 0-1 |
+| segments[].characteristics | object | No | Segment characteristics |
+| segments[].characteristics.avg_tenure | string | No | Average tenure |
+| segments[].characteristics.key_behaviors | string[] | No | Key behaviors |
 | strategies | array | Yes | Operations strategy list, at least 5 items (1 per segment) |
 | strategies[].segment | string | Yes | Target segment |
+| strategies[].key_actions | string[] | No | Key actions list |
 | strategies[].success_metrics | array | Yes | Success metrics list, at least 1 |
 | personalized_content | array | No | Personalized content list |
+| personalized_content[].content_type | string | Yes | Content type, enum: email/in_app/push/sms |
+| personalized_content[].theme | string | Yes | Content theme |
+| personalized_content[].channels | string[] | No | Outreach channel list |
+| personalized_content[].frequency | string | No | Outreach frequency |
 
 ## Decision Rules
 
@@ -425,8 +457,13 @@ Event-triggered outreach:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Churn definition distinguishes free/paid/enterprise users
 - [ ] Prediction model accuracy >75%
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Intervention strategies match risk levels
 - [ ] Intervention effect tracking includes ROI calculation
 - [ ] User segmentation covers complete lifecycle (new/growing/mature/dormant/churned)
@@ -434,28 +471,23 @@ Event-triggered outreach:
 - [ ] Operations strategies match user segments
 - [ ] Outreach content is personalized
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| User behavior data missing | User provides user activity data -> analyze churn characteristics | Churn attribution based on activity data inference, behavioral feature analysis limited |
-| Churn history missing | Skip churn trend comparison, analyze based on current data only | Cannot evaluate churn trend changes |
-| User behavior data + churn history both missing | User provides user activity data -> analyze churn characteristics | Output basic churn analysis, intervention strategies marked "pending validation" |
-| Lifecycle stage missing | Use generic lifecycle model (new/active/dormant/churned), mark "to be confirmed" | Segmentation criteria based on generic assumptions |
-| User behavior data + lifecycle stage both missing | User describes user groups -> generate segmentation strategy | Output based on description segmentation strategy, marked "pending data validation" |
-- If user has not provided user account data, prompt user to provide or skip steps related to that input
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **User activity data**: Active user count and churned user count per period
-- **Churn definition** (optional): Product's criteria for defining churned users
-- **High-value user proportion** (optional): Proportion of high-value users among active users
-- **User group description**: Main types and characteristics of product users
-- **Activity distribution** (optional): High/medium/low active user proportions
-- **Operations resources** (optional): Resources and channels available for user operations
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| User behavior data missing | User provides user activity data -> analyze churn characteristics | Churn attribution based on activity data inference, behavioral feature analysis limited | Request user to provide active user count and churned user count per period, or upload behavior_data.json |
+| Churn history missing | Skip churn trend comparison, analyze based on current data only | Cannot evaluate churn trend changes | Request user to provide historical churn rate data, or upload churn_history.json |
+| User behavior data + churn history both missing | User provides user activity data -> analyze churn characteristics | Output basic churn analysis, intervention strategies marked "pending validation" | Request user to provide user activity data and churn definition, or execute analysis-retention first |
+| Lifecycle stage missing | Use generic lifecycle model (new/active/dormant/churned), mark "to be confirmed" | Segmentation criteria based on generic assumptions | Request user to define lifecycle stages and criteria, or upload lifecycle_definition.json |
+| User behavior data + lifecycle stage both missing | User describes user groups -> generate segmentation strategy | Output based on description segmentation strategy, marked "pending data validation" | Request user to describe user groups and activity distribution, or execute analysis-retention first |
+| User account data not provided | Prompt user to provide or skip steps related to that input | Cannot perform account-level churn risk analysis | Prompt user to provide user account data for churn risk scoring |
 
 ## Upstream Change Response
 

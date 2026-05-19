@@ -10,6 +10,10 @@ metadata:
     - "Help me organize the product's core metrics"
     - "We need to define a North Star metric"
     - "Build a metric system"
+execution_depth:
+  default: standard
+  quick_description: "Output metric hierarchy and key definitions only"
+  deep_description: "Full system + metric correlation analysis + data quality framework + metric evolution roadmap"
 ---
 
 # Metric System Auto-Construction
@@ -81,7 +85,7 @@ This Pipeline is automatically executed by AI for metric system construction, bu
 
 ## Execution Steps
 
-### Step 1: North Star Metric Validation
+### Step 1: North Star Metric Validation [Conditional]
 
 **AI AI Processing**
 
@@ -174,7 +178,7 @@ Generate 3 North Star metric candidates
 
 ---
 
-### Step 2: L1 Metric Auto-Decomposition
+### Step 2: L1 Metric Auto-Decomposition [Core]
 
 **AI AI Processing**
 
@@ -232,7 +236,7 @@ FOR each L1 dimension:
 
 ---
 
-### Step 3: L2 Metric Auto-Decomposition
+### Step 3: L2 Metric Auto-Decomposition [Core]
 
 **AI AI Processing**
 
@@ -301,7 +305,7 @@ FOR each L1 metric:
 
 ---
 
-### Step 4: Actionable Metric Auto-Identification
+### Step 4: Actionable Metric Auto-Identification [Core]
 
 **AI AI Processing**
 
@@ -349,7 +353,7 @@ FOR each L2 metric:
 
 ---
 
-### Step 5: Vanity Metric Auto-Detection
+### Step 5: Vanity Metric Auto-Detection [Core]
 
 **AI AI Processing**
 
@@ -445,6 +449,14 @@ THEN flag as "not actionable" vanity metric
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | metric hierarchy and key definitions only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full system + metric correlation analysis + data quality framework + metric evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -573,11 +585,19 @@ THEN flag as "not actionable" vanity metric
 
 ## Quality Checks
 
-| Check Item | Standard | Non-compliance Handling |
-|------------|----------|------------------------|
-| North Star vanity metric detection | No "only-increases" characteristics, has time dimension, can be linked to business goals, can be influenced by team | Flag specific issues, re-recommend North Star metric, trigger human decision flow |
-| L1-L2 decomposition completeness | Each L1 layer (Acquisition/Activation/Retention/Revenue/Referral) has 3-5 L2 metrics | Auto-supplement missing L2 metrics based on AARRR model, flag supplemented items for human confirmation |
-| Actionable metric trackability | Has clear data source, has executable optimization plan, can be verified through A/B testing | Flag non-trackable metrics, suggest adding data tracking, lower metric priority |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] North Star vanity metric detection (No "only-increases" characteristics, has time dimension, can be linked to business goals, can be influenced by team)
+- [ ] L1-L2 decomposition completeness (Each L1 layer (Acquisition/Activation/Retention/Revenue/Referral) has 3-5 L2 metrics)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Actionable metric trackability (Has clear data source, has executable optimization plan, can be verified through A/B testing)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -585,18 +605,11 @@ THEN flag as "not actionable" vanity metric
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| product_context missing | Prompt user to provide product type and business goals, execute based on user input | North Star recommendation based on user description rather than structured input |
-| existing_metrics missing | Skip existing metric validation, build metric system from scratch | No existing metric comparison, cannot detect redundancy |
-| product_context + existing_metrics both missing | User provides product type and business goals -> recommend metric system based on industry templates | Output metric system based on industry templates, annotated as "to be confirmed" |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Product type**: Social/E-commerce/SaaS/Content/Gaming/Fintech/Online Education/Healthcare/Other
-- **Business goals**: Core business goals for the current stage (e.g., increase GMV, improve retention rate, etc.)
-- **Business model** (optional): Product business model description (helps with more precise recommendations)
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| product_context missing | Prompt user to provide product type and business goals, execute based on user input | North Star recommendation based on user description rather than structured input | Prompt user to provide product type (Social/E-commerce/SaaS/etc.) and business goals |
+| existing_metrics missing | Skip existing metric validation, build metric system from scratch | No existing metric comparison, cannot detect redundancy | Request user to list current metrics being tracked, or upload existing_metrics.json |
+| product_context + existing_metrics both missing | User provides product type and business goals -> recommend metric system based on industry templates | Output metric system based on industry templates, annotated as "to be confirmed" | Prompt user to provide product type, business goals, and business model, or execute planning-north-star first |
 
 ## Upstream Change Response
 

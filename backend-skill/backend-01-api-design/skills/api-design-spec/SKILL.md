@@ -5,7 +5,7 @@ metadata:
   module: "后端架构与开发"
   sub-module: "API设计"
   type: "pipeline"
-  version: "4.0"
+  version: "5.0"
   domain_tags: ["电商", "SaaS", "金融", "通用"]
   trigger_examples:
     - "设计API接口"
@@ -46,7 +46,8 @@ metadata:
 | 安全等级 | string | 是 | 用户提供 | 标准 / 高安全（金融/医疗） |
 | 合规要求 | string | ○ | 用户提供 | GDPR / 等保 / PCI-DSS |
 | 多租户需求 | string | ○ | 用户提供 | 是否需要多租户隔离 |
-| 前端页面数据需求 | JSON | ○ | output/ui-frontend/page-builder/pages.json | 前端页面数据获取需求，确保API与前端对齐 |
+| 前端页面数据需求 | JSON | ○ | output/ui-frontend/page-builder/pages.json | 前端页面数据获取需求，确保API与前端对齐（UI先行时可用） |
+| PRD页面数据需求 | JSON | ○ | output/pm-design/design-prd/prd.json -> pages[].data_requirements | PRD中每个页面的数据操作需求（读/增/改/删、关联实体、所需字段），后端先行时优先消费此字段替代pages.json |
 
 ## 执行步骤
 
@@ -60,6 +61,22 @@ metadata:
 - 确定资源的CRUD操作需求
 - 标注哪些资源需要嵌套资源（子资源）
 - 根据服务设计（service_design.json）按限界上下文分组API资源
+
+**页面数据需求消费优先级**（解决后端先行时序矛盾）：
+
+| 优先级 | 数据源 | 可用时机 | 消费方式 |
+|--------|--------|---------|---------|
+| 1 | pages.json（UI产出） | UI先行流程 | 直接消费pages.json的data_flow字段 |
+| 2 | prd.json → pages[].data_requirements | 后端先行流程 | 消费PRD中每个页面的data_operations/related_entity/fields，推导API端点 |
+| 3 | 两者均不可用 | 仅基于PRD和ER模型 | 仅设计CRUD接口，标注"待前端数据需求补充" |
+
+当 prd.json 的 pages[].data_requirements 可用时，按以下规则推导API端点：
+- data_operations 包含 "read" → 对应 GET 端点
+- data_operations 包含 "create" → 对应 POST 端点
+- data_operations 包含 "update" → 对应 PUT/PATCH 端点
+- data_operations 包含 "delete" → 对应 DELETE 端点
+- related_entity → 映射到对应资源路径
+- fields → 作为响应字段或请求字段的子集
 
 **资源命名规范**：
 - 使用复数名词：`/courses` 而非 `/course`
@@ -80,6 +97,27 @@ metadata:
 | 删除 | DELETE | /resources/{id} | 删除资源 |
 
 定义统一的请求响应格式、错误码体系和版本策略。
+
+**错误码体系规范**：
+
+| 错误码范围 | 类别 | 示例 |
+|-----------|------|------|
+| 10000-19999 | 通用错误（参数校验/认证/限流） | 10001 参数校验失败, 10002 未认证, 10003 权限不足, 10004 请求限流 |
+| 20000-29999 | 业务逻辑错误 | 20001 资源不存在, 20002 状态冲突, 20003 业务规则违反 |
+| 30000-39999 | 数据层错误 | 30001 唯一约束冲突, 30002 数据过期, 30003 外键约束违反 |
+| 40000-49999 | 外部服务错误 | 40001 下游服务超时, 40002 第三方服务异常 |
+
+**统一错误响应格式**：
+```json
+{
+  "error": {
+    "code": 20001,
+    "message": "资源不存在",
+    "detail": "Course with id 'abc' not found",
+    "trace_id": "req-xxx"
+  }
+}
+```
 
 **服务边界适配**：
 - 微服务架构：API按服务拆分，每个服务生成独立的 OpenAPI tags 或独立文件
@@ -105,7 +143,37 @@ metadata:
 
 ### Step 4: 认证鉴权设计
 
-根据业务场景选择认证方案（JWT/OAuth2/SSO），设计权限模型（RBAC/ABAC），多租户隔离和会话管理。
+根据业务场景选择认证方案、设计权限模型、多租户隔离和会话管理：
+
+**认证方案选择**：
+
+| 场景 | 推荐方案 | 说明 |
+|------|---------|------|
+| 单体应用+自建用户体系 | JWT + Refresh Token | 无状态，易扩展 |
+| 需要第三方登录 | OAuth2 + JWT | 支持社交账号登录 |
+| 企业内部系统 | SSO (SAML/OIDC) | 对接企业身份提供商 |
+| 微服务+服务间调用 | JWT + Service Account | 服务间mTLS或API Key |
+
+**权限模型设计**：
+
+| 模型 | 适用场景 | 复杂度 |
+|------|---------|--------|
+| RBAC | 角色固定（≤10个），权限变化少 | 低 |
+| RBAC+权限组 | 角色较多（10-50个），需要灵活组合 | 中 |
+| ABAC | 权限依赖上下文（时间/地点/数据属性） | 高 |
+
+**多租户隔离策略**：
+
+| 策略 | 适用场景 | 隔离级别 |
+|------|---------|---------|
+| 共享数据库+tenant_id | 租户数>100，成本敏感 | 逻辑隔离 |
+| Schema隔离 | 租户数10-100，中等隔离要求 | Schema级隔离 |
+| 独立数据库 | 租户数<10，高安全要求 | 物理隔离 |
+
+**会话管理**：
+- Token过期策略（Access Token短期 + Refresh Token长期）
+- 并发登录控制（单设备/多设备）
+- Token撤销机制（黑名单/版本号）
 
 **阶段卡口**：认证方案+权限模型+会话管理完整
 
@@ -130,6 +198,35 @@ metadata:
 - auth-scheme.json — 认证鉴权方案
 - compliance-checklist.json — 合规检查清单
 - api-coverage.json — PRD/前端对齐覆盖报告
+
+**api-coverage.json Schema**：
+
+```json
+{
+  "type": "object",
+  "required": ["prd_coverage", "frontend_coverage"],
+  "properties": {
+    "prd_coverage": {
+      "type": "object",
+      "required": ["total_features", "covered_features", "coverage_rate", "uncovered"],
+      "properties": {
+        "total_features": { "type": "integer" },
+        "covered_features": { "type": "integer" },
+        "coverage_rate": { "type": "string" },
+        "uncovered": { "type": "array", "items": { "type": "object", "properties": { "feature": { "type": "string" }, "reason": { "type": "string" } } } }
+      }
+    },
+    "frontend_coverage": {
+      "type": "object",
+      "properties": {
+        "total_pages": { "type": "integer" },
+        "covered_pages": { "type": "integer" },
+        "uncovered": { "type": "array", "items": { "type": "object", "properties": { "page": { "type": "string" }, "missing_apis": { "type": "array", "items": { "type": "string" } } } } }
+      }
+    }
+  }
+}
+```
 
 ## 决策规则
 
@@ -157,7 +254,7 @@ metadata:
 - [ ] 合规检查无P0问题
 - [ ] 敏感字段100%有脱敏或加密策略
 - [ ] PRD功能点100%有API端点覆盖
-- [ ] 前端页面数据需求100%有API对应（有前端输入时）
+- [ ] 前端页面数据需求100%有API对应（有前端输入或PRD页面数据需求时）
 
 ## 降级策略
 
@@ -170,7 +267,7 @@ metadata:
 | 业务流程缺失 | 仅设计CRUD接口 | 缺少跨资源的业务接口 |
 | PRD缺失 | 无法设计API | 输出为空 |
 | 安全等级未指定 | 默认标准等级 | 可能不满足高安全要求 |
-| 前端页面数据需求缺失 | 仅基于PRD设计API | 可能与前端实际需求不完全匹配 |
+| 前端页面数据需求缺失 | 优先消费prd.json的pages[].data_requirements推导API端点；若PRD也无页面数据，仅基于PRD和ER模型设计CRUD接口 | 可能缺少前端特定的数据聚合接口和分页/筛选需求 |
 
 ## 上游变更响应
 

@@ -42,7 +42,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Model Code Generation
+### Step 1: Model Code Generation [Core]
 
 Generate data layer entity code based on ER model:
 
@@ -57,7 +57,7 @@ Generate data layer entity code based on ER model:
 
 **Stage Gate**: Code compiles (npm run build or tsc --noEmit passes), Model fields consistent with DDL
 
-### Step 2: Migration and Seed Data Generation
+### Step 2: Migration and Seed Data Generation [Core]
 
 Generate migration scripts and seed data based on DDL:
 
@@ -72,7 +72,7 @@ Generate migration scripts and seed data based on DDL:
 
 **Stage Gate**: Migrations are executable (verified via npx prisma migrate status or equivalent), 100% have rollback scripts
 
-### Step 3: Repository Code Generation
+### Step 3: Repository Code Generation [Core]
 
 Generate a Repository for each entity:
 
@@ -87,7 +87,7 @@ Generate a Repository for each entity:
 
 **Stage Gate**: Every API data access need has a corresponding Repository method
 
-### Step 4: Cache Layer Code Generation
+### Step 4: Cache Layer Code Generation [Core]
 
 Generate cache layer code based on cache strategy:
 
@@ -101,7 +101,7 @@ Generate cache layer code based on cache strategy:
 
 **Stage Gate**: Cache layer aligned with cache strategy design
 
-### Step 5: Alignment Check and Code Self-Review
+### Step 5: Alignment Check and Code Self-Review [Core]
 
 **API Alignment Check**:
 - Check each API contract request/response structure one by one, ensuring Model fields cover all API requirements
@@ -117,7 +117,7 @@ Generate cache layer code based on cache strategy:
 
 **Stage Gate**: API data requirements 100% have Model field coverage, code self-review P0 issues=0
 
-### Step 6: Data Layer Test Code Generation
+### Step 6: Data Layer Test Code Generation [Core]
 
 Generate test code for the data layer:
 

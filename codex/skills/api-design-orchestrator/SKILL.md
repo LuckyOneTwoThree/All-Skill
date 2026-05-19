@@ -77,6 +77,7 @@ Input:
   Compliance requirements: User provided (optional)
   Multi-tenant requirements: User provided (optional)
   Frontend page data requirements: output/ui-frontend/page-builder/pages.json (optional)
+  PRD page data requirements: output/pm-design/design-prd/prd.json -> pages[].data_requirements (optional)
 Output: output/backend-api-design/api-design-spec/
 Validation: API contract + security policy + authentication/authorization scheme complete, compliance check no P0 issues
 Mode: AI->Human
@@ -127,11 +128,14 @@ Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-temp
 | Summary output path | output/phase-reports/backend/api-design-orchestrator.md |
 
 Downstream connections:
-  primary: data-architecture-orchestrator (after API contract completed, enter data architecture design, design ER model and table structure based on API data requirements)
+  primary: backend-architecture-orchestrator (after API code implementation completed, enter architecture-level code integration and project assembly)
   alternatives:
     - target: ui-orchestrator
       reason: API contract can be consumed by UI frontend for parallel development
-      condition: Under frontend-backend parallel development mode
+      condition: Under frontend-backend parallel development mode, when API contract needed to support frontend
+    - target: data-architecture-orchestrator
+      reason: When API design discovers data model does not meet requirements, trace back to adjust data architecture
+      condition: When API design phase discovers ER model missing or incomplete, need to supplement data architecture
 
 ## Stage Gates
 
@@ -165,3 +169,58 @@ Downstream connections:
 | Design review not passed | Adjust design per human feedback, re-review |
 | Code self-review P0 issues | Auto-fix and re-review, if unfixable then block output |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through backend-orchestrator orchestration), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests "Design API interfaces" or "Establish API specifications"
+- Triggered as a standalone skill by an external system
+- Upstream orchestrators have not been executed, but the user only needs API design capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Acquire from user dialog | Last Resort: AI inference |
+|----------|------------------------|------------------------|----------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user to provide PRD document or describe requirements verbally | Infer requirements document from user description (⚠️ Low confidence, mark "PRD is AI-inferred") |
+| PRD structured data (prd.json) | Read output/pm-design/design-prd/prd.json | Ask user to provide structured requirements | Extract structured data from PRD document (⚠️ Low confidence) |
+| Data model (er_model.json) | Read output/backend-data-architecture/data-architecture-spec/er_model.json | Ask user to provide data model | Infer data entities and relationships from PRD (⚠️ Low confidence, mark "Data model pending confirmation") |
+| Architecture plan (architecture_decision.json) | Read output/backend-architecture/backend-architecture-spec/architecture_decision.json | Ask user to provide architecture plan | Default to monolithic architecture (⚠️ Low confidence, mark "Architecture plan pending confirmation") |
+| Service design (service_design.json) | Read output/backend-architecture/backend-architecture-spec/service_design.json | Ask user to provide service decomposition | Default to single service (⚠️ Low confidence, mark "Service design pending confirmation") |
+| Security level | — | Ask user to specify security level requirements | Default to standard security level (⚠️ Low confidence, mark "Security level pending confirmation") |
+| project_dir | — | Ask user to provide project directory path | Cannot infer, must be provided by user |
+| tech_stack | — | Ask user to provide tech stack | Read tech_stack_decision.json or default to common tech stack (⚠️ Low confidence) |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest the user execute upstream orchestrators in the following priority order:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|----------|---------------------|------|
+| PRD + PRD structured data | pm-design related orchestrators | PRD is the business source for API design; missing it will result in interface design without basis |
+| Architecture plan + Service design | backend-architecture-orchestrator | Architecture plan determines API service boundaries and communication patterns; missing it will result in API design lacking architectural constraints |
+| Data model | data-architecture-orchestrator | ER model is the foundation for API resource mapping; missing it will result in API resources not aligned with data entities |
+
+Backtracking suggestion output format:
+```
+⚠️ Critical input missing detected. It is recommended to execute upstream orchestrators first:
+1. [Priority] backend-architecture-orchestrator → Produces architecture plan and service design
+2. [Priority] data-architecture-orchestrator → Produces data model
+3. [Recommended] pm-design related orchestrators → Produces PRD
+Continue with AI-inferred values? (Inferred values have confidence ≤ 0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, the following additional checks must pass before executing the Pipeline:
+
+| Gate Item | Check Content | Action if Not Passed |
+|--------|----------|------------|
+| PRD existence | prd.md or equivalent requirements document is accessible | Block execution, suggest user execute pm-design orchestrator or provide PRD |
+| Data model existence | er_model.json is accessible or inferable | Degrade execution, mark "Data model missing, API resource mapping based on PRD inference" |
+| Architecture plan existence | architecture_decision.json is accessible or inferable | Degrade execution, default to monolithic architecture, mark "Architecture plan missing, using default monolithic architecture" |
+| project_dir validity | User provides a valid project directory path | Block execution, user must provide a valid project_dir |
+| Input confidence assessment | All required input acquisition methods are determined, overall confidence ≥ 0.5 | If confidence < 0.5, force human confirmation on whether to continue execution |
+
+Gate execution order: PRD existence → project_dir validity → Data model existence → Architecture plan existence → Input confidence assessment

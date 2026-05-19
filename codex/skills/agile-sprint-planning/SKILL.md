@@ -10,6 +10,10 @@ metadata:
     - "How to plan the next Sprint"
     - "Which requirements for this iteration"
     - "How to schedule the Sprint plan"
+execution_depth:
+  default: standard
+  quick_description: "Output Sprint plan and story allocation"
+  deep_description: "Full plan + risk buffer design + dependency analysis + capacity optimization suggestions"
 ---
 
 # Sprint Planning Automation
@@ -44,7 +48,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Sprint Goal Auto-suggestion
+### Step 1: Sprint Goal Auto-suggestion [Core]
 
 **Actions**:
 - Analyze high-priority Stories in Product Backlog
@@ -64,7 +68,7 @@ metadata:
 }
 ```
 
-### Step 2: Story Auto-selection
+### Step 2: Story Auto-selection [Core]
 
 **Actions**:
 - Sort Backlog Stories by priority
@@ -92,7 +96,7 @@ metadata:
 }
 ```
 
-### Step 3: Workload Auto-estimation
+### Step 3: Workload Auto-estimation [Core]
 
 **Actions**:
 - Estimate Story Points for each selected Story
@@ -117,7 +121,7 @@ metadata:
 }
 ```
 
-### Step 4: Capacity Matching Validation
+### Step 4: Capacity Matching Validation [Conditional]
 
 **Actions**:
 - Calculate team available capacity (person-days x team size)
@@ -146,7 +150,7 @@ metadata:
 }
 ```
 
-### Step 5: Sprint Plan Document Generation
+### Step 5: Sprint Plan Document Generation [Core]
 
 **Actions**:
 - Integrate outputs from the above steps
@@ -183,6 +187,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | Sprint plan and story allocation | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full plan + risk buffer design + dependency analysis + capacity optimization suggestions | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -276,12 +288,22 @@ Recommended Configuration:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Sprint Goal is clear and contains >=1 quantifiable acceptance criteria
 - [ ] Selected Stories total points <= team available capacity x 1.1 (10% buffer)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] 100% of cross-team dependencies identified with resolution plan or timeline
 - [ ] Each Story estimate confirmed by >=2 team members
 - [ ] Sprint includes >=1 tech debt or improvement item (if backlog exists)
 - [ ] No P0 risks excluded from Sprint consideration
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

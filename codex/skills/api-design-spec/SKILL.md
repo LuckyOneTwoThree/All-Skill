@@ -40,11 +40,12 @@ AI->Human AI suggests, human approves
 | Security Level | string | Yes | User provided | Standard / High Security (Finance/Healthcare) |
 | Compliance Requirements | string | O | User provided | GDPR / MLPS / PCI-DSS |
 | Multi-tenant Requirements | string | O | User provided | Whether multi-tenant isolation is needed |
-| Frontend Page Data Requirements | JSON | O | output/ui-frontend/page-builder/pages.json | Frontend page data fetching requirements, ensuring API and frontend alignment |
+| Frontend Page Data Requirements | JSON | O | output/ui-frontend/page-builder/pages.json | Frontend page data fetching requirements, ensuring API and frontend alignment (available in UI-first flow) |
+| PRD Page Data Requirements | JSON | O | output/pm-design/design-prd/prd.json -> pages[].data_requirements | Page data operation requirements from PRD (read/create/update/delete, related entity, required fields), consumed when pages.json is unavailable in backend-first flow |
 
 ## Execution Steps
 
-### Step 1: Resource Identification and Modeling
+### Step 1: Resource Identification and Modeling [Core]
 
 Identify API resources from PRD and data model:
 
@@ -53,12 +54,28 @@ Identify API resources from PRD and data model:
 - Determine CRUD operation requirements for resources
 - Mark which resources need nested resources (sub-resources)
 
+**Page Data Requirements Consumption Priority** (resolving backend-first timing conflict):
+
+| Priority | Data Source | Availability Timing | Consumption Method |
+|----------|-------------|---------------------|-------------------|
+| 1 | pages.json (UI output) | UI-first flow | Directly consume pages.json data_flow fields |
+| 2 | prd.json -> pages[].data_requirements | Backend-first flow | Consume PRD page data_operations/related_entity/fields, derive API endpoints |
+| 3 | Neither available | PRD and ER model only | Design CRUD interfaces only, mark "pending frontend data requirements supplement" |
+
+When prd.json pages[].data_requirements is available, derive API endpoints following these rules:
+- data_operations contains "read" -> corresponding GET endpoint
+- data_operations contains "create" -> corresponding POST endpoint
+- data_operations contains "update" -> corresponding PUT/PATCH endpoint
+- data_operations contains "delete" -> corresponding DELETE endpoint
+- related_entity -> maps to corresponding resource path
+- fields -> serves as subset of response fields or request fields
+
 **Resource Naming Conventions**:
 - Use plural nouns: `/courses` not `/course`
 - Nested resources max 2 levels: `/courses/{id}/lessons`
 - Use kebab-case: `/user-groups` not `/userGroups`
 
-### Step 2: Interface and Specification Design
+### Step 2: Interface and Specification Design [Core]
 
 Design standard interfaces for each resource:
 
@@ -75,7 +92,7 @@ Define unified request/response formats, error code system, and versioning strat
 
 **Stage Gate**: Each resource has CRUD definition + error code system
 
-### Step 3: Interface Security Design
+### Step 3: Interface Security Design [Core]
 
 Classify interfaces by sensitivity level:
 
@@ -90,13 +107,13 @@ Design rate limiting strategy, data security (encryption/masking/input validatio
 
 **Stage Gate**: 100% of interfaces have security level + rate limiting rules, L4 interface security policies are complete
 
-### Step 4: Authentication and Authorization Design
+### Step 4: Authentication and Authorization Design [Core]
 
 Select authentication scheme based on business scenario (JWT/OAuth2/SSO), design permission model (RBAC/ABAC), multi-tenant isolation and session management.
 
 **Stage Gate**: Authentication scheme + permission model + session management complete
 
-### Step 5: Compliance Check
+### Step 5: Compliance Check [Core]
 
 Built-in privacy compliance assessment:
 - Personal information collection minimum necessity principle check
@@ -141,7 +158,7 @@ Built-in privacy compliance assessment:
 - [ ] Compliance check has no P0 issues
 - [ ] Sensitive fields 100% have masking or encryption strategy
 - [ ] PRD feature points 100% have API endpoint coverage
-- [ ] Frontend page data requirements 100% have API correspondence (when frontend input exists)
+- [ ] Frontend page data requirements 100% have API correspondence (when frontend input or PRD page data requirements exist)
 
 ## Degradation Strategy
 
@@ -151,7 +168,7 @@ Built-in privacy compliance assessment:
 | Business process missing | Design CRUD interfaces only | Missing cross-resource business interfaces |
 | PRD missing | Cannot design API | Output is empty |
 | Security level not specified | Default standard level | May not meet high security requirements |
-| Frontend page data requirements missing | Design API based on PRD only | May not fully match frontend actual requirements |
+| Frontend page data requirements missing | Prefer consuming prd.json pages[].data_requirements to derive API endpoints; if PRD also lacks page data, design CRUD interfaces based on PRD and ER model only | May lack frontend-specific data aggregation interfaces and pagination/filtering requirements |
 
 ## Upstream Change Response
 

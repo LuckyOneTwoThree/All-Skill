@@ -14,6 +14,10 @@ metadata:
     - "漏斗哪里流失最多"
     - "怎么提高获客转化率"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出获客渠道和CAC分析"
+  deep_description: "完整分析 + 渠道归因模型 + CAC优化模拟 + 获客实验路线图"
 ---
 
 # 获客分析一体化
@@ -73,7 +77,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 渠道评估（from acquisition-channel）
+### Step 1: 渠道评估（from acquisition-channel） [条件]
 
 分析19种获客渠道数据，计算渠道规模、转化率、ROI，输出渠道分级报告。
 
@@ -145,7 +149,7 @@ metadata:
 | 渠道ROI<目标值且无战略意义 | 评级为观察渠道，减少投入 |
 | 新渠道无历史数据 | 小流量测试，2周后评估 |
 
-### Step 2: 漏斗优化（from acquisition-optimize）
+### Step 2: 漏斗优化（from acquisition-optimize） [核心]
 
 基于Step 1输出的渠道评估数据，分析获客漏斗数据，识别最大流失节点，自动生成优化方案和A/B测试设计。
 
@@ -225,6 +229,14 @@ metadata:
 3. **测试分组**: 设计对照组和实验组
 4. **监控指标**: 确定主要和次要监控指标
 5. **决策规则**: 定义何时停止测试和判定胜负
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 获客渠道和CAC分析 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 渠道归因模型 + CAC优化模拟 + 获客实验路线图 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -340,20 +352,41 @@ success_criteria:
 |----------|------|------|------|
 | channel_assessment | object | 是 | 渠道评估结果，须含channels/primary_channels/test_channels/observation_channels |
 | channel_assessment.channels | array | 是 | 渠道评估详情列表，每项须含name/scale/conversion_rate/roi/classification |
+| channel_assessment.channels[].name | string | 是 | 渠道名称，不可为空 |
+| channel_assessment.channels[].scale | string | 是 | 渠道规模描述 |
+| channel_assessment.channels[].volume | number | 否 | 渠道用户量 |
+| channel_assessment.channels[].conversion_rate | number | 是 | 转化率，范围0-1 |
+| channel_assessment.channels[].cost_per_acquisition | number | 否 | 单用户获客成本 |
+| channel_assessment.channels[].quality_score | number | 否 | 质量评分，范围0-1 |
+| channel_assessment.channels[].classification | string | 是 | 渠道分级，仅允许primary/test/observation三值 |
+| channel_assessment.channels[].roi | number | 是 | 渠道ROI，须基于LTV计算 |
 | channel_assessment.primary_channels | array | 是 | 主力渠道名称列表，至少1个渠道 |
 | channel_assessment.test_channels | array | 是 | 测试渠道名称列表 |
 | channel_assessment.observation_channels | array | 是 | 观察渠道名称列表 |
 | channel_assessment.total_new_users | number | 是 | 总新增用户数，须>0 |
 | channel_assessment.blended_cac | number | 是 | 混合获客成本，须>0 |
 | channel_assessment.blended_roi | number | 是 | 混合ROI |
-| channel_assessment.channels[].classification | string | 是 | 渠道分级，仅允许primary/test/observation三值 |
-| channel_assessment.channels[].roi | number | 是 | 渠道ROI，须基于LTV计算 |
 | funnel_analysis | object | 是 | 漏斗分析，须含stages和critical_drop_off |
 | funnel_analysis.stages | array | 是 | 各阶段数据，每项须含name/volume/conversion_rate/drop_off_rate |
+| funnel_analysis.stages[].name | string | 是 | 阶段名称，不可为空 |
+| funnel_analysis.stages[].volume | number | 是 | 阶段用户量，须≥0 |
+| funnel_analysis.stages[].conversion_rate | number | 是 | 转化率，范围0-1 |
+| funnel_analysis.stages[].drop_off_rate | number | 是 | 流失率，范围0-1 |
 | funnel_analysis.critical_drop_off | object | 是 | 关键流失节点，须含from_stage/to_stage/drop_off_rate/impact_score |
+| funnel_analysis.critical_drop_off.from_stage | string | 是 | 流失起始阶段 |
+| funnel_analysis.critical_drop_off.to_stage | string | 是 | 流失目标阶段 |
+| funnel_analysis.critical_drop_off.drop_off_rate | number | 是 | 流失率，范围0-1 |
+| funnel_analysis.critical_drop_off.impact_score | number | 是 | 影响评分，范围0-1 |
 | optimization_suggestions | array | 是 | 优化建议列表，每项须含priority/stage/issue/solution/expected_improvement |
 | optimization_suggestions[].priority | number | 是 | 优先级，从1开始递增 |
+| optimization_suggestions[].stage | string | 是 | 目标阶段，不可为空 |
+| optimization_suggestions[].issue | string | 是 | 问题描述，不可为空 |
+| optimization_suggestions[].solution | string | 是 | 解决方案，不可为空 |
+| optimization_suggestions[].expected_improvement | string | 是 | 预期提升效果 |
 | ab_test_designs | array | 否 | A/B测试设计方案列表，每项须含test_id/hypothesis/primary_metric |
+| ab_test_designs[].test_id | string | 是 | 测试ID，不可为空 |
+| ab_test_designs[].hypothesis | string | 是 | 测试假设，不可为空 |
+| ab_test_designs[].primary_metric | string | 是 | 主要指标，不可为空 |
 
 ## 决策规则
 
@@ -370,8 +403,13 @@ success_criteria:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 渠道评估覆盖规模、转化率、ROI、质量4个维度
 - [ ] 渠道分级标准明确（主力/测试/观察）
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] ROI计算考虑用户LTV而非单次收入
 - [ ] 评估覆盖19种获客渠道类型
 - [ ] 漏斗阶段定义完整（曝光→激活/付费）
@@ -379,16 +417,21 @@ success_criteria:
 - [ ] 优化方案附带预期提升和实施难度评估
 - [ ] A/B测试设计包含决策规则和终止条件
 
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
+
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 渠道数据缺失 | 用户描述产品类型和目标用户 → 推荐渠道组合 | 渠道评分基于行业经验而非实际数据 |
-| 历史表现缺失 | 跳过渠道历史表现评估，使用行业基准 | 无法识别已验证的高效渠道 |
-| 渠道数据 + 历史表现均缺失 | 用户描述产品类型和目标用户 → 推荐渠道组合 | 输出基于行业经验的渠道推荐，标注"待验证" |
-| 历史优化数据缺失 | 跳过历史对比，仅基于当前数据分析 | 无法评估优化趋势 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 渠道数据缺失 | 用户描述产品类型和目标用户 → 推荐渠道组合 | 渠道评分基于行业经验而非实际数据 | 要求用户提供各获客渠道的流量、转化率和成本数据 |
+| 历史表现缺失 | 跳过渠道历史表现评估，使用行业基准 | 无法识别已验证的高效渠道 | 要求用户提供历史渠道表现数据（各渠道CAC、LTV、转化率） |
+| 渠道数据 + 历史表现均缺失 | 用户描述产品类型和目标用户 → 推荐渠道组合 | 输出基于行业经验的渠道推荐，标注"待验证" | 要求用户提供产品类型、目标用户和获客预算 |
+| 历史优化数据缺失 | 跳过历史对比，仅基于当前数据分析 | 无法评估优化趋势 | 要求用户提供历史获客漏斗数据和优化实验结果 |
 
 ### 数据获取说明
 

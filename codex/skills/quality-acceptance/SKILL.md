@@ -13,6 +13,10 @@ metadata:
     - "Generate acceptance report"
     - "Version needs acceptance, help me produce the report"
     - "Organize acceptance results"
+execution_depth:
+  default: standard
+  quick_description: "Output acceptance verdict and critical issues only"
+  deep_description: "Full acceptance + regression analysis + quality trend + quality improvement roadmap"
 ---
 
 # Acceptance Execution Plan Generation & Sign-off Report Generation
@@ -76,7 +80,7 @@ Trigger Conditions:
 
 ## Execution Steps
 
-### Step 1: Acceptance Execution Plan Generation
+### Step 1: Acceptance Execution Plan Generation [Core]
 
 #### 1.1 Acceptance Criteria Parsing
 
@@ -387,7 +391,7 @@ Trigger Conditions:
 }
 ```
 
-### Step 2: Sign-off Report Generation
+### Step 2: Sign-off Report Generation [Core]
 
 #### 2.1 Acceptance Criteria Extraction
 
@@ -546,6 +550,14 @@ Acceptance Recommendation:
 - Failed case analysis details
 ```
 
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | acceptance verdict and critical issues only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full acceptance + regression analysis + quality trend + quality improvement roadmap | Full deliverables + extended analysis + deep simulation |
+
 ## Output
 
 **Storage path**: `output/pm-monitoring/quality-acceptance/`
@@ -687,28 +699,20 @@ When acceptance results themselves change, downstream notification mechanism:
 
 ## Quality Checks
 
-### Quality Gates
+### P0 Checks (must pass for quick/standard/deep)
 
-| Check Item | Standard | Failed Action |
-|------------|----------|---------------|
-| P0 case pass rate | 100% | Block |
-| Automated execution rate | >= 90% | Block |
-| Test environment configuration | All configuration suggestion items output | Block |
-| Failure analysis completeness | Includes root cause and suggestions | Alert |
+- [ ] P0 case pass rate (100%)
+- [ ] Automated execution rate (>= 90%)
 
-### Quality Check List
+### P1 Checks (must pass for standard/deep)
 
-- [ ] All P0 case execution instructions generated
-- [ ] Automated execution rate meets target
-- [ ] Failed case analysis rules generated
-- [ ] Failed cases have fix suggestions
-- [ ] Environment configuration suggestions output
-- [ ] Acceptance criteria item-by-item results available
-- [ ] Must requirement pass rate calculated
-- [ ] Defects classified by severity
-- [ ] Open issues have resolution plans
-- [ ] Acceptance conclusion clear (pass/conditional pass/fail)
-- [ ] Sign-off confirmation table included
+- [ ] Test environment configuration (All configuration suggestion items output)
+- [ ] Failure analysis completeness (Includes root cause and suggestions)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

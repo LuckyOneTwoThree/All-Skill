@@ -11,6 +11,10 @@ metadata:
     - "帮我把商业模式理清楚"
     - "我们的商业模式怎么赚钱"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "生成9格画布核心要素（客户细分、价值主张、收入来源、成本结构）及基础假设清单"
+  deep_description: "额外包含单位经济敏感性分析、假设验证路线图、象限间联动一致性校验、长期商业模式演进推演"
 ---
 
 # 商业模式画布自动生成
@@ -77,7 +81,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：客户细分填充
+### Step 1：客户细分填充 [核心]
 
 **任务**：基于用户画像和痛点分析，定义目标客户细分群体。
 
@@ -106,7 +110,7 @@ metadata:
 - 每个群体有明确的特征描述
 - 优先级排序有数据支撑
 
-### Step 2：价值主张填充
+### Step 2：价值主张填充 [核心]
 
 **任务**：基于用户痛点和竞品分析，设计差异化价值主张。
 
@@ -138,7 +142,7 @@ metadata:
 - 价值主张直接对应高优先级痛点
 - 包含Pain Relievers和Gain Creators的具体描述
 
-### Step 3a：收入来源填充（决策树匹配）
+### Step 3a：收入来源填充（决策树匹配） [核心]
 
 **任务**：基于产品特性和市场基准，自动匹配潜在收入模式类型。
 
@@ -166,7 +170,7 @@ metadata:
         └─ 否 → 基于产品形态选择
 ```
 
-**Step 3b：多选项收入模式生成**
+**Step 3b：多选项收入模式生成** [条件]
 
 **任务**：基于Step 3a的决策树结果，生成至少2个可比较的收入模式选项。
 
@@ -210,7 +214,7 @@ metadata:
 - 每个模式包含清晰的定价结构
 - 优劣分析和风险等级已标注
 
-### Step 4：成本结构填充
+### Step 4：成本结构填充 [条件]
 
 **任务**：基于商业模式需求，分析和估算成本结构。
 
@@ -252,7 +256,7 @@ metadata:
 - 固定成本和可变成本已分类
 - 单位经济指标已设定
 
-### Step 5：渠道通路填充
+### Step 5：渠道通路填充 [条件]
 
 **任务**：定义触达客户和交付价值的渠道。
 
@@ -283,7 +287,7 @@ metadata:
 - 直接和间接渠道组合
 - 优先级排序合理
 
-### Step 6：关键活动/资源/伙伴填充
+### Step 6：关键活动/资源/伙伴填充 [条件]
 
 **任务**：定义实现商业模式所需的关键活动、资源和合作伙伴。
 
@@ -338,7 +342,7 @@ metadata:
 - 资源需求与能力匹配
 - 伙伴关系设计合理
 
-### Step 7：客户关系填充
+### Step 7：客户关系填充 [条件]
 
 **任务**：定义与不同客户细分群体的关系类型。
 
@@ -377,18 +381,45 @@ metadata:
 | 字段路径 | 类型 | 必填 | 说明 |
 |----------|------|------|------|
 | bmc.customer_segments | array | 是 | 客户细分列表，至少2个 |
+| bmc.customer_segments[].segment_name | string | 是 | 客户群体名称，不可为空 |
+| bmc.customer_segments[].characteristics | string[] | 是 | 群体特征列表，不可为空 |
 | bmc.value_propositions | array | 是 | 价值主张列表，至少1个 |
+| bmc.value_propositions[].proposition | string | 是 | 价值主张描述，不可为空 |
+| bmc.value_propositions[].pain_addressed | string | 是 | 解决的痛点，不可为空 |
+| bmc.value_propositions[].gain_created | string | 否 | 创造的收益 |
 | bmc.channels | array | 是 | 覆盖客户旅程全阶段 |
+| bmc.channels[].channel_name | string | 是 | 渠道名称，不可为空 |
+| bmc.channels[].type | string | 是 | 渠道类型，枚举：direct/indirect/partner |
+| bmc.channels[].phase | string | 是 | 渠道阶段，枚举：awareness/evaluation/purchase/delivery/after_sales |
 | bmc.customer_relationships | array | 是 | 每个细分群体有对应关系类型 |
+| bmc.customer_relationships[].type | string | 是 | 关系类型，枚举：personal/automated/community/self_service |
+| bmc.customer_relationships[].segment | string | 是 | 对应客户群体，不可为空 |
 | bmc.revenue_streams | array | 是 | 收入来源列表，至少1个 |
+| bmc.revenue_streams[].stream_name | string | 是 | 收入来源名称，不可为空 |
+| bmc.revenue_streams[].pricing_model | string | 是 | 定价模式，枚举：subscription/transaction/freemium/advertising/licensing |
+| bmc.revenue_streams[].estimated_amount | string | 否 | 预估金额区间 |
+| bmc.revenue_streams[].target_segment | string | 否 | 对应客户群体 |
 | bmc.key_resources | array | 是 | 覆盖实体/知识产权/人力/财务 |
+| bmc.key_resources[].resource | string | 是 | 核心资源描述，不可为空 |
+| bmc.key_resources[].type | string | 是 | 资源类型，枚举：physical/intellectual/human/financial |
 | bmc.key_activities | array | 是 | 覆盖价值创造全流程 |
+| bmc.key_activities[].activity | string | 是 | 核心活动描述，不可为空 |
+| bmc.key_activities[].type | string | 是 | 活动类型，枚举：production/problem_solving/platform/network |
 | bmc.key_partnerships | array | 是 | 含供应商/战略联盟/合资伙伴 |
+| bmc.key_partnerships[].partner | string | 是 | 合作伙伴名称，不可为空 |
+| bmc.key_partnerships[].type | string | 是 | 合作类型，枚举：strategic_alliance/joint_venture/buyer_supplier |
+| bmc.key_partnerships[].purpose | string | 是 | 合作目的，不可为空 |
 | bmc.cost_structure | array | 是 | 成本结构列表，至少1个 |
+| bmc.cost_structure[].cost_item | string | 是 | 成本项名称，不可为空 |
+| bmc.cost_structure[].type | string | 是 | 成本类型，枚举：fixed/variable |
+| bmc.cost_structure[].estimated_range | string | 否 | 预估成本区间 |
+| bmc.cost_structure[].category | string | 否 | 成本分类，枚举：infrastructure/marketing/operations/personnel |
 | metadata.confidence | number | 是 | 0-1之间，整体置信度 |
 | metadata.requires_human_review | boolean | 是 | 是否需要人类审核 |
 | assumptions[].assumption_id | string | 是 | 假设唯一标识 |
+| assumptions[].description | string | 是 | 假设描述，不可为空 |
 | assumptions[].related_bmc_element | string | 是 | 关联画布要素路径 |
+| assumptions[].validation_method | string | 否 | 验证方法 |
 | assumptions[].priority | string | 是 | critical/high/medium/low |
 | assumptions[].confidence | number | 是 | 0-1之间，假设置信度 |
 
@@ -514,23 +545,23 @@ metadata:
 
 ### 自检清单
 
-- [ ] 商业模式画布9个要素全部填充
-- [ ] 每个要素包含内容有数据支撑或假设标注
-- [ ] 至少生成2个收入模式选项
-- [ ] 假设清单完整，每个假设包含：
+- [ ] 商业模式画布9个要素全部填充（P0）
+- [ ] 每个要素包含内容有数据支撑或假设标注（P0）
+- [ ] 至少生成2个收入模式选项（P1）
+- [ ] 假设清单完整，每个假设包含：（P1）
   - 描述清晰
   - 风险等级已标注
   - 验证状态已标注
   - 影响评估已提供
-- [ ] 核心假设的验证方法已建议
-- [ ] 单位经济指标已设定
+- [ ] 核心假设的验证方法已建议（P1）
+- [ ] 单位经济指标已设定（P2）
 
 ### 输出质量标准
 
-1. **完整性**：9格画布每格至少1条内容，且value_propositions与customer_segments有对应关系
-2. **可追溯性**：每格内容标注data_source(上游skill/用户描述/AI推断)
-3. **假设完整性**：assumptions列表≥3条，每条包含assumption+validation_method+priority
-4. **收入可验证性**：revenue_streams包含≥1个具体收入来源且定价策略有数字区间
+1. **完整性（P0）**：9格画布每格至少1条内容，且value_propositions与customer_segments有对应关系
+2. **可追溯性（P0）**：每格内容标注data_source(上游skill/用户描述/AI推断)
+3. **假设完整性（P1）**：assumptions列表≥3条，每条包含assumption+validation_method+priority
+4. **收入可验证性（P2）**：revenue_streams包含≥1个具体收入来源且定价策略有数字区间
 
 ---
 
@@ -538,11 +569,12 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| persona.json / opportunity-definition.json | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，整体置信度从0.8降至0.5，相关画布格置信度≤0.4，标注needs_human_validation: true |
-| exploration_outputs（多个探索阶段文件） | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块整体置信度从0.8降至0.5，假设条目增多，相关画布格置信度≤0.3，标注auto_filled: true |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度从0.8降至0.3，大部分内容为假设推断，相关画布格置信度≤0.3，标注auto_filled: true |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| product_context缺失 | 用户提供产品描述和目标用户 → 基于描述生成BMC | 客户细分和价值主张缺乏探索阶段数据支撑，整体置信度从0.8降至0.5，相关画布格置信度≤0.4，标注needs_human_validation: true | 要求用户提供产品概念、目标用户画像和核心痛点描述 |
+| market_data缺失 | 用户提供竞品和行业信息 → 基于描述推断市场规模和竞品模式 | 收入模式和成本结构缺乏市场基准数据，定价参考缺失，相关画布格置信度≤0.4 | 要求用户提供竞品商业模式、行业典型定价和市场规模数据 |
+| product_context + market_data均缺失 | 用户提供产品描述和目标用户 → 基于描述生成BMC | 各模块整体置信度从0.8降至0.5，假设条目增多，相关画布格置信度≤0.3，标注auto_filled: true | 要求用户提供产品描述、目标用户画像、竞品信息和行业定价参考 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供的产品描述和目标用户直接生成BMC | 整体置信度从0.8降至0.3，大部分内容为假设推断，相关画布格置信度≤0.3，标注auto_filled: true | 要求用户提供产品概念、目标用户、价值主张，或上传persona.json/opportunity-definition.json文件 |
 
 ## 数据获取说明
 

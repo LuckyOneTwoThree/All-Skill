@@ -10,6 +10,10 @@ metadata:
     - "DAU suddenly dropped 30% today, help me find the cause"
     - "Metric anomaly alert, help me with attribution analysis"
     - "Data fluctuation is too large, see what went wrong"
+execution_depth:
+  default: standard
+  quick_description: "Output anomaly diagnosis and root cause"
+  deep_description: "Full analysis + root cause inference chain + impact scope assessment + prevention mechanism design"
 ---
 
 # Automated Data Analysis Engine
@@ -35,7 +39,7 @@ AI AI auto-execution (data analysis type)
 
 ## Execution Steps
 
-### Step 1: Hourly Core Metric Health Check
+### Step 1: Hourly Core Metric Health Check [Core]
 
 ```
 Execute hourly
@@ -45,7 +49,7 @@ Execute hourly
 └── Flag metrics requiring attention
 ```
 
-### Step 2: Anomaly Detection
+### Step 2: Anomaly Detection [Core]
 
 | Detection Method | Description |
 |-----------------|-------------|
@@ -54,7 +58,7 @@ Execute hourly
 | MoM anomaly | Large fluctuation compared to recent data |
 | YoY anomaly | Significant change compared to same period last year |
 
-### Step 3: Auto-Attribution
+### Step 3: Auto-Attribution [Core]
 
 Anomaly auto-attribution four-step method:
 
@@ -84,7 +88,7 @@ Anomaly auto-attribution four-step method:
    └── Recommended action (recommended_action)
 ```
 
-### Step 4: Insight Push
+### Step 4: Insight Push [Core]
 
 Push based on anomaly severity:
 
@@ -92,6 +96,14 @@ Push based on anomaly severity:
 - **P1 (Important)**: Notification within 2 hours
 - **P2 (General)**: Daily summary
 - **P3 (Info)**: Log only
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | anomaly diagnosis and root cause | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full analysis + root cause inference chain + impact scope assessment + prevention mechanism design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -263,30 +275,30 @@ When anomaly reports themselves change, notification mechanism to downstream:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Anomaly detection covers all key metrics
 - [ ] Anomaly severity classification correct (P0/P1/P2)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Root cause analysis has data support
 - [ ] Recommended actions are actionable
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Metric system missing | Prompt user to provide metric data and anomaly description, perform attribution analysis based on description | Anomaly detection scope based on user description, may miss unmonitored metrics |
-| Real-time data stream missing | User provides metric data and anomaly description -> attribution analysis based on description | Cannot auto-detect anomalies, relies on user to discover proactively |
-| Metric system + Real-time data stream both missing | User provides metric data and anomaly description -> attribution analysis based on description | Output attribution analysis report based on description, annotated as "to be verified" |
-
-- If user does not provide alert rules, prompt user to provide or skip related steps
-- If user does not provide event calendar, prompt user to provide or skip related steps
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Metric data**: Anomalous metric name, current value, baseline value, change magnitude
-- **Anomaly description**: Observed anomaly phenomena and occurrence time
-- **Recent changes** (optional): Possibly related product changes or marketing campaigns
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Metric system missing | Prompt user to provide metric data and anomaly description, perform attribution analysis based on description | Anomaly detection scope based on user description, may miss unmonitored metrics | Request user to provide metric names, current values, and baseline values, or upload metrics-system.json |
+| Real-time data stream missing | User provides metric data and anomaly description -> attribution analysis based on description | Cannot auto-detect anomalies, relies on user to discover proactively | Request user to provide anomalous metric data and occurrence time, or upload real-time data |
+| Metric system + Real-time data stream both missing | User provides metric data and anomaly description -> attribution analysis based on description | Output attribution analysis report based on description, annotated as "to be verified" | Request user to provide anomalous metric name, current value, baseline value, and change magnitude |
 
 ### Execution Frequency
 

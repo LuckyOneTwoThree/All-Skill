@@ -12,6 +12,10 @@ metadata:
     - "漏斗转化率怎么这么低"
     - "用户行为有什么异常"
   interaction_mode: "ai_auto"
+execution_depth:
+  default: standard
+  quick_description: "直接输出行为模式和使用洞察"
+  deep_description: "完整分析 + 行为序列挖掘 + 用户分群深度分析 + 行为预测模型"
 ---
 
 # 行为数据自动分析
@@ -80,7 +84,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：漏斗健康度诊断
+### Step 1：漏斗健康度诊断 [核心]
 
 - 计算漏斗各步骤转化率
 - 识别转化率异常低的步骤（低于行业基准或历史均值1个标准差）
@@ -88,7 +92,7 @@ metadata:
 - 计算漏斗整体健康度评分（0-100）
 - 输出：漏斗诊断报告，包含各步骤转化率、流失分析、健康度评分
 
-### Step 2：行为路径分析
+### Step 2：行为路径分析 [核心]
 
 - 提取用户实际行为路径（非预设路径）
 - 识别高频路径和异常路径
@@ -96,7 +100,7 @@ metadata:
 - 识别用户"迷失"行为（在多个页面间反复跳转）
 - 输出：行为路径图，标注高频路径、绕路、迷失点
 
-### Step 3：功能使用深度分析
+### Step 3：功能使用深度分析 [核心]
 
 - 统计各功能的使用率（触达用户数 / 活跃用户数）
 - 分析功能使用深度（仅发现 → 尝试 → 深度使用 → 付费转化）
@@ -104,7 +108,7 @@ metadata:
 - 识别低价值但高使用率的功能（可能误导用户）
 - 输出：功能使用矩阵（使用率 × 价值度）
 
-### Step 4：异常检测
+### Step 4：异常检测 [核心]
 
 - 对关键行为指标进行时序异常检测
 - 检测维度：日活、留存、核心功能使用率、转化率
@@ -113,6 +117,14 @@ metadata:
 - 输出：异常事件列表，包含异常类型、影响范围、可能原因、置信度
 
 ---
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 行为模式和使用洞察 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 行为序列挖掘 + 用户分群深度分析 + 行为预测模型 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -141,21 +153,42 @@ metadata:
 |----------|------|------|------|
 | funnel_health.overall_score | number | 是 | 漏斗整体健康度评分，0-100 |
 | funnel_health.steps | array | 是 | 漏斗各步骤数据，每项须含step_name、conversion_rate、drop_off_rate、confidence |
+| funnel_health.steps[].step_name | string | 是 | 步骤名称，不可为空 |
+| funnel_health.steps[].conversion_rate | number | 是 | 转化率，0-1 |
+| funnel_health.steps[].drop_off_rate | number | 是 | 流失率，0-1 |
 | funnel_health.steps[].is_anomaly | boolean | 是 | 该步骤是否异常 |
 | funnel_health.steps[].confidence | number | 是 | 步骤置信度，0-1 |
 | funnel_health.trend | string | 是 | 趋势枚举：improving/stable/declining |
 | aha_moment_candidates | array | 是 | Aha Moment候选列表，每项须含behavior_pattern、correlation_with_retention、predictive_power、confidence |
+| aha_moment_candidates[].behavior_pattern | string | 是 | 行为模式描述，不可为空 |
 | aha_moment_candidates[].correlation_with_retention | number | 是 | 与留存的相关性，<0.3标记"预测力不足" |
 | aha_moment_candidates[].predictive_power | number | 是 | 预测力评分，0-1 |
 | aha_moment_candidates[].confidence | number | 是 | 候选置信度，0-1 |
 | feature_usage | array | 是 | 功能使用列表，每项须含feature_name、adoption_rate、value_score、usage_vs_value_quadrant、confidence |
+| feature_usage[].feature_name | string | 是 | 功能名称，不可为空 |
+| feature_usage[].adoption_rate | number | 是 | 使用率，0-1 |
+| feature_usage[].value_score | number | 是 | 价值评分，0-1 |
 | feature_usage[].usage_vs_value_quadrant | string | 是 | 象限枚举：high_value_high_use/high_value_low_use/low_value_high_use/low_value_low_use |
 | feature_usage[].confidence | number | 是 | 功能置信度，0-1 |
 | behavior_paths.top_paths | array | 否 | 高频路径列表 |
+| behavior_paths.top_paths[].path | string[] | 是 | 路径步骤序列 |
+| behavior_paths.top_paths[].user_count | number | 是 | 使用该路径的用户数 |
+| behavior_paths.top_paths[].avg_completion_time | number | 是 | 平均完成时间（秒） |
 | behavior_paths.detour_patterns | array | 否 | 绕路模式列表 |
+| behavior_paths.detour_patterns[].description | string | 是 | 绕路描述，不可为空 |
+| behavior_paths.detour_patterns[].affected_user_ratio | number | 是 | 受影响用户占比，0-1 |
+| behavior_paths.detour_patterns[].possible_cause | string | 是 | 可能原因 |
 | behavior_paths.lost_patterns | array | 否 | 迷失模式列表 |
+| behavior_paths.lost_patterns[].description | string | 是 | 迷失描述，不可为空 |
+| behavior_paths.lost_patterns[].affected_user_ratio | number | 是 | 受影响用户占比，0-1 |
+| behavior_paths.lost_patterns[].loop_pages | string[] | 是 | 循环跳转页面列表 |
 | anomalies | array | 否 | 异常事件列表，每项须含metric、anomaly_type、detected_date、magnitude、possible_causes、confidence |
+| anomalies[].metric | string | 是 | 异常指标名称，不可为空 |
 | anomalies[].anomaly_type | string | 是 | 异常类型枚举：spike/gradual/cyclical |
+| anomalies[].detected_date | string | 是 | 检测日期，ISO 8601格式 |
+| anomalies[].magnitude | number | 是 | 变化幅度 |
+| anomalies[].possible_causes | string[] | 是 | 可能原因列表 |
+| anomalies[].impact_scope | string | 否 | 影响范围 |
 | anomalies[].confidence | number | 是 | 异常置信度，0-1 |
 | metadata.analysis_timestamp | string | 是 | 分析时间戳 |
 | metadata.data_quality_flags | string[] | 是 | 数据质量标记 |
@@ -266,14 +299,22 @@ metadata:
 
 ## 质量检查
 
-| 检查项 | 标准 | 不达标处理 |
-|--------|------|-----------|
-| 漏斗数据完整性 | 所有步骤有数据 | 缺失步骤标记"数据缺失"，健康度评分标注"不完整" |
-| Aha Moment候选有预测力验证 | 与留存的相关性 ≥ 0.3 | 低于0.3的候选标记"预测力不足" |
-| 行为路径样本量 | ≥ 1000条路径 | 不足时标记"样本量不足"，结论降级 |
-| 异常检测假阳性控制 | 异常事件需有人工可理解的原因假设 | 无原因假设的异常标记"待确认" |
-| 所有输出标注置信度 | 100% | 缺失置信度的字段补填默认值0.3并标记 |
-| 热力图数据时效性 | 最近30天内 | 超期标记"数据过期" |
+### P0 检查（quick/standard/deep 都必须通过）
+
+- [ ] 漏斗数据完整性（所有步骤有数据）
+- [ ] Aha Moment候选有预测力验证（与留存的相关性 ≥ 0.3）
+
+### P1 检查（standard/deep 必须通过）
+
+- [ ] 行为路径样本量（≥ 1000条路径）
+- [ ] 异常检测假阳性控制（异常事件需有人工可理解的原因假设）
+- [ ] 所有输出标注置信度（100%）
+- [ ] 热力图数据时效性（最近30天内）
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -281,13 +322,13 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| 所有数据源均缺失 | 提示用户先提供行为数据，或基于用户提供的事件数据/漏斗数据直接执行分析 | funnel_health、feature_usage等字段为空，置信度降为0 |
-| 若用户未提供event_data | 提示用户提供行为事件日志，否则缺乏核心行为数据来源 | aha_moment_candidates和behavior_paths无法生成，功能使用分析缺失 |
-| 若用户未提供funnel_data | 提示用户提供漏斗数据，否则无法执行漏斗健康度诊断 | funnel_health字段标注"数据缺失"，整体健康度评分不可用 |
-| 若用户未提供heatmap_data | 跳过该输入相关步骤，热力图数据不参与分析 | 行为路径分析缺少热力图维度，页面级洞察缺失 |
-| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 | 使用默认配置，异常检测灵敏度和漏斗粒度可能非最优 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| 所有数据源均缺失 | 提示用户先提供行为数据，或基于用户提供的事件数据/漏斗数据直接执行分析 | funnel_health、feature_usage等字段为空，置信度降为0 | 要求用户提供行为事件日志和漏斗数据 |
+| 若用户未提供event_data | 提示用户提供行为事件日志，否则缺乏核心行为数据来源 | aha_moment_candidates和behavior_paths无法生成，功能使用分析缺失 | 要求用户提供用户行为事件日志（含事件名、时间戳、用户ID） |
+| 若用户未提供funnel_data | 提示用户提供漏斗数据，否则无法执行漏斗健康度诊断 | funnel_health字段标注"数据缺失"，整体健康度评分不可用 | 要求用户提供漏斗各步骤用户数和转化率数据 |
+| 若用户未提供heatmap_data | 跳过该输入相关步骤，热力图数据不参与分析 | 行为路径分析缺少热力图维度，页面级洞察缺失 | 要求用户提供页面热力图数据或点击分布数据 |
+| 若用户未提供analysis_config | 跳过该输入相关步骤，使用默认分析配置 | 使用默认配置，异常检测灵敏度和漏斗粒度可能非最优 | 要求用户提供异常检测灵敏度、漏斗粒度等分析参数配置 |
 
 ## 数据获取说明
 

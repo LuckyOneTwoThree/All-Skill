@@ -10,6 +10,10 @@ metadata:
     - "How many people does the project need"
     - "What to do when resources are insufficient"
     - "How to allocate workforce"
+execution_depth:
+  default: standard
+  quick_description: "Output resource allocation and bottleneck identification"
+  deep_description: "Full allocation + resource optimization simulation + bottleneck mitigation plan + multi-scenario resource planning"
 ---
 
 # Resource Requirements Auto-planning
@@ -43,7 +47,7 @@ metadata:
 
 ## Execution Steps
 
-### Step 1: Workload Estimation
+### Step 1: Workload Estimation [Core]
 
 **Actions**:
 - Analyze project scope, identify work items
@@ -67,7 +71,7 @@ metadata:
 }
 ```
 
-### Step 2: Resource Type Requirements Identification
+### Step 2: Resource Type Requirements Identification [Core]
 
 **Actions**:
 - Analyze skill types required for work items
@@ -97,7 +101,7 @@ metadata:
 }
 ```
 
-### Step 3: Team Capability Matching
+### Step 3: Team Capability Matching [Core]
 
 **Actions**:
 - Load team capability data (skill matrix, availability, historical performance)
@@ -129,7 +133,7 @@ metadata:
 }
 ```
 
-### Step 4: Resource Conflict Detection
+### Step 4: Resource Conflict Detection [Core]
 
 **Actions**:
 - Check matching between resource requirements and available resources
@@ -169,7 +173,7 @@ metadata:
 }
 ```
 
-### Step 5: Resource Allocation Plan Generation
+### Step 5: Resource Allocation Plan Generation [Core]
 
 **Actions**:
 - Generate resource allocation plan based on the above analysis
@@ -212,6 +216,14 @@ metadata:
 ```
 
 ---
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | resource allocation and bottleneck identification | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full allocation + resource optimization simulation + bottleneck mitigation plan + multi-scenario resource planning | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -297,10 +309,20 @@ This Pipeline depends on the following upstream data:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Resource estimation based on WBS decomposition
 - [ ] Key resource gaps identified and marked
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Schedule has no resource conflicts
 - [ ] Estimation confidence annotated
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 

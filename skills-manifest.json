@@ -1,0 +1,1909 @@
+{
+  "schema_version": "1.0",
+  "generated_from": [
+    "pm-skill",
+    "ui-skill",
+    "backend-skill",
+    "cross-domain"
+  ],
+  "generated_at": "2026-05-19T18:27:19.982Z",
+  "counts": {
+    "pm-skill": 102,
+    "ui-skill": 9,
+    "backend-skill": 10,
+    "cross-domain": 2
+  },
+  "skills": [
+    {
+      "name": "acquisition-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品增长与运营",
+      "sub_module": "获客",
+      "path": "pm-skill/pm-06-growth/skills/acquisition-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "acquisition-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品增长与运营",
+      "sub_module": "获客",
+      "path": "pm-skill/pm-06-growth/orchestrators/acquisition-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-growth"
+      ],
+      "dependencies": [
+        "acquisition-analysis"
+      ]
+    },
+    {
+      "name": "activation-aha",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "激活",
+      "path": "pm-skill/pm-06-growth/skills/activation-aha/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "activation-onboarding",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "激活",
+      "path": "pm-skill/pm-06-growth/skills/activation-onboarding/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "activation-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品增长与运营",
+      "sub_module": "激活",
+      "path": "pm-skill/pm-06-growth/orchestrators/activation-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-growth"
+      ],
+      "dependencies": [
+        "activation-aha",
+        "activation-onboarding"
+      ]
+    },
+    {
+      "name": "agile-daily-sync",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/skills/agile-daily-sync/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "agile-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "9.0",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/orchestrators/agile-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-project"
+      ],
+      "dependencies": [
+        "agile-daily-sync",
+        "agile-review",
+        "agile-sprint-planning"
+      ]
+    },
+    {
+      "name": "agile-review",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/skills/agile-review/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "agile-sprint-planning",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/skills/agile-sprint-planning/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring",
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "analysis-anomaly",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "数据分析",
+      "path": "pm-skill/pm-05-metrics-ops/skills/analysis-anomaly/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "analysis-funnel",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "数据分析",
+      "path": "pm-skill/pm-05-metrics-ops/skills/analysis-funnel/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "analysis-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.1",
+      "module": "产品度量运营",
+      "sub_module": "数据分析",
+      "path": "pm-skill/pm-05-metrics-ops/orchestrators/analysis-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": [
+        "analysis-anomaly",
+        "analysis-funnel",
+        "analysis-retention",
+        "data-analysis-report"
+      ]
+    },
+    {
+      "name": "analysis-retention",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "数据分析",
+      "path": "pm-skill/pm-05-metrics-ops/skills/analysis-retention/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "api-design-impl",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "API设计",
+      "path": "backend-skill/backend-01-api-design/skills/api-design-impl/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/pm-design",
+        "output/ui-frontend"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "api-design-orchestrator",
+      "domain": "backend-skill",
+      "type": "orchestrator",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "API设计",
+      "path": "backend-skill/backend-01-api-design/orchestrators/api-design-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/phase-reports",
+        "output/pm-design",
+        "output/ui-frontend"
+      ],
+      "dependencies": [
+        "api-design-impl",
+        "api-design-spec"
+      ]
+    },
+    {
+      "name": "api-design-spec",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "API设计",
+      "path": "backend-skill/backend-01-api-design/skills/api-design-spec/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/pm-design",
+        "output/ui-frontend"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "api-integration",
+      "domain": "ui-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "前端集成",
+      "path": "ui-skill/ui-03-frontend-integration/api-integration/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/ui-frontend",
+        "output/ui-frontend-integration"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "backend-architecture-impl",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "后端架构",
+      "path": "backend-skill/backend-03-backend-architecture/skills/backend-architecture-impl/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "backend-architecture-orchestrator",
+      "domain": "backend-skill",
+      "type": "orchestrator",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "后端架构",
+      "path": "backend-skill/backend-03-backend-architecture/orchestrators/backend-architecture-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/phase-reports",
+        "output/pm-design"
+      ],
+      "dependencies": [
+        "backend-architecture-impl",
+        "backend-architecture-spec"
+      ]
+    },
+    {
+      "name": "backend-architecture-spec",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "后端架构",
+      "path": "backend-skill/backend-03-backend-architecture/skills/backend-architecture-spec/SKILL.md",
+      "output_prefixes": [
+        "output/backend-architecture",
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "backend-orchestrator",
+      "domain": "backend-skill",
+      "type": "orchestrator",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "全流程编排",
+      "path": "backend-skill/orchestrators/backend-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/backend-design-review",
+        "output/phase-reports",
+        "output/pm-design",
+        "output/ui-frontend"
+      ],
+      "dependencies": [
+        "api-design-impl",
+        "api-design-spec",
+        "backend-architecture-impl",
+        "backend-architecture-spec",
+        "data-architecture-impl",
+        "data-architecture-spec"
+      ]
+    },
+    {
+      "name": "business-model-canvas",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "商业模式设计",
+      "path": "pm-skill/pm-02-strategy/skills/business-model-canvas/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "business-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.1",
+      "module": "产品商业与战略",
+      "sub_module": "商业模式设计",
+      "path": "pm-skill/pm-02-strategy/orchestrators/business-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-strategy"
+      ],
+      "dependencies": [
+        "business-model-canvas",
+        "business-pricing",
+        "business-strategy-report",
+        "business-value-fit"
+      ]
+    },
+    {
+      "name": "business-pricing",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "商业模式设计",
+      "path": "pm-skill/pm-02-strategy/skills/business-pricing/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "business-strategy-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "商业战略",
+      "path": "pm-skill/pm-02-strategy/skills/business-strategy-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "business-value-fit",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "商业模式设计",
+      "path": "pm-skill/pm-02-strategy/skills/business-value-fit/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "change-impact-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "设计评审",
+      "path": "pm-skill/pm-03-design/skills/change-impact-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "competitor-monitoring-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品监控与迭代",
+      "sub_module": "问题诊断",
+      "path": "pm-skill/pm-07-monitoring/skills/competitor-monitoring-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "data-analysis-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "数据分析",
+      "path": "pm-skill/pm-05-metrics-ops/skills/data-analysis-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "data-architecture-impl",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "数据架构",
+      "path": "backend-skill/backend-02-data-architecture/skills/data-architecture-impl/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "data-architecture-orchestrator",
+      "domain": "backend-skill",
+      "type": "orchestrator",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "数据架构",
+      "path": "backend-skill/backend-02-data-architecture/orchestrators/data-architecture-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/phase-reports",
+        "output/pm-design"
+      ],
+      "dependencies": [
+        "data-architecture-impl",
+        "data-architecture-spec"
+      ]
+    },
+    {
+      "name": "data-architecture-spec",
+      "domain": "backend-skill",
+      "type": "pipeline",
+      "version": "5.0",
+      "module": "后端架构与开发",
+      "sub_module": "数据架构",
+      "path": "backend-skill/backend-02-data-architecture/skills/data-architecture-spec/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "decision-culture",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "决策闭环",
+      "path": "pm-skill/pm-05-metrics-ops/skills/decision-culture/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "decision-dace",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品度量运营",
+      "sub_module": "决策闭环",
+      "path": "pm-skill/pm-05-metrics-ops/skills/decision-dace/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "decision-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品度量运营",
+      "sub_module": "决策闭环",
+      "path": "pm-skill/pm-05-metrics-ops/orchestrators/decision-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": [
+        "decision-culture",
+        "decision-dace"
+      ]
+    },
+    {
+      "name": "design-handoff-spec",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品构思与设计",
+      "sub_module": "设计交付",
+      "path": "pm-skill/pm-03-design/skills/design-handoff-spec/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/ui-frontend",
+        "output/ui-project-init"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "design-ia",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/skills/design-ia/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "design-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "10.1",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/orchestrators/design-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-design"
+      ],
+      "dependencies": [
+        "change-impact-analysis",
+        "design-handoff-spec",
+        "design-ia",
+        "design-prd",
+        "design-prototype",
+        "design-userflow",
+        "interaction-spec"
+      ]
+    },
+    {
+      "name": "design-prd",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.3",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/skills/design-prd/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/pm-discovery",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "design-prototype",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.2",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/skills/design-prototype/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "design-userflow",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/skills/design-userflow/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "diagnosis-competition",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品监控与迭代",
+      "sub_module": "问题诊断",
+      "path": "pm-skill/pm-07-monitoring/skills/diagnosis-competition/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "diagnosis-health",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品监控与迭代",
+      "sub_module": "问题诊断",
+      "path": "pm-skill/pm-07-monitoring/skills/diagnosis-health/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "diagnosis-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "10.0",
+      "module": "产品监控与迭代",
+      "sub_module": "问题诊断",
+      "path": "pm-skill/pm-07-monitoring/orchestrators/diagnosis-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-monitoring"
+      ],
+      "dependencies": [
+        "competitor-monitoring-report",
+        "diagnosis-competition",
+        "diagnosis-health",
+        "product-sunset-plan"
+      ]
+    },
+    {
+      "name": "experiment-design",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量运营",
+      "sub_module": "实验验证",
+      "path": "pm-skill/pm-05-metrics-ops/skills/experiment-design/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "experiment-execution",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品度量运营",
+      "sub_module": "实验验证",
+      "path": "pm-skill/pm-05-metrics-ops/skills/experiment-execution/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "experiment-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "8.0",
+      "module": "产品度量运营",
+      "sub_module": "实验验证",
+      "path": "pm-skill/pm-05-metrics-ops/orchestrators/experiment-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": [
+        "experiment-design",
+        "experiment-execution"
+      ]
+    },
+    {
+      "name": "ext-frontend-design",
+      "domain": "ui-skill",
+      "type": "extension",
+      "version": "1.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "前端设计扩展",
+      "path": "ui-skill/extensions/ext-frontend-design/SKILL.md",
+      "output_prefixes": [],
+      "dependencies": []
+    },
+    {
+      "name": "ext-impeccable",
+      "domain": "ui-skill",
+      "type": "extension",
+      "version": "3.1.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "Impeccable设计扩展",
+      "path": "ui-skill/extensions/ext-impeccable/SKILL.md",
+      "output_prefixes": [],
+      "dependencies": []
+    },
+    {
+      "name": "ext-interaction-design",
+      "domain": "ui-skill",
+      "type": "extension",
+      "version": "1.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "交互设计扩展",
+      "path": "ui-skill/extensions/ext-interaction-design/SKILL.md",
+      "output_prefixes": [],
+      "dependencies": []
+    },
+    {
+      "name": "ext-ui-ux-pro-max",
+      "domain": "ui-skill",
+      "type": "extension",
+      "version": "1.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "UI/UX Pro Max扩展",
+      "path": "ui-skill/extensions/ext-ui-ux-pro-max/SKILL.md",
+      "output_prefixes": [],
+      "dependencies": []
+    },
+    {
+      "name": "growth-model",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品增长与运营",
+      "sub_module": "增长模式",
+      "path": "pm-skill/pm-06-growth/skills/growth-model/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth",
+        "output/pm-metrics-ops"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "growth-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "8.0",
+      "module": "产品增长与运营",
+      "sub_module": "增长模式",
+      "path": "pm-skill/pm-06-growth/orchestrators/growth-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-growth"
+      ],
+      "dependencies": [
+        "acquisition-orchestrator",
+        "activation-orchestrator",
+        "growth-model",
+        "growth-strategy-report",
+        "gtm-strategy",
+        "product-operations-manual",
+        "retention-orchestrator",
+        "revenue-orchestrator"
+      ]
+    },
+    {
+      "name": "growth-strategy-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "增长模式",
+      "path": "pm-skill/pm-06-growth/skills/growth-strategy-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "gtm-strategy",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "增长模式",
+      "path": "pm-skill/pm-06-growth/skills/gtm-strategy/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "ideation-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品构思与设计",
+      "sub_module": "创意发散与方案构思",
+      "path": "pm-skill/pm-03-design/orchestrators/ideation-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-design"
+      ],
+      "dependencies": [
+        "ideation-workshop"
+      ]
+    },
+    {
+      "name": "ideation-workshop",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品构思与设计",
+      "sub_module": "创意发散与方案构思",
+      "path": "pm-skill/pm-03-design/skills/ideation-workshop/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "insight-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品探索与发现",
+      "sub_module": "需求洞察",
+      "path": "pm-skill/pm-01-discovery/skills/insight-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "insight-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "9.0",
+      "module": "产品探索与发现",
+      "sub_module": "需求洞察",
+      "path": "pm-skill/pm-01-discovery/orchestrators/insight-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-discovery"
+      ],
+      "dependencies": [
+        "insight-analysis"
+      ]
+    },
+    {
+      "name": "interaction-spec",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品构思与设计",
+      "sub_module": "产品设计与原型",
+      "path": "pm-skill/pm-03-design/skills/interaction-spec/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "iteration-decision",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品监控与迭代",
+      "sub_module": "迭代优化",
+      "path": "pm-skill/pm-07-monitoring/skills/iteration-decision/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring",
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "iteration-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "10.0",
+      "module": "产品监控与迭代",
+      "sub_module": "迭代优化",
+      "path": "pm-skill/pm-07-monitoring/orchestrators/iteration-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-monitoring"
+      ],
+      "dependencies": [
+        "iteration-decision"
+      ]
+    },
+    {
+      "name": "market-competitor-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品探索与发现",
+      "sub_module": "市场竞品",
+      "path": "pm-skill/pm-01-discovery/skills/market-competitor-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "market-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "9.0",
+      "module": "产品探索与发现",
+      "sub_module": "市场竞品",
+      "path": "pm-skill/pm-01-discovery/orchestrators/market-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-discovery"
+      ],
+      "dependencies": [
+        "market-competitor-analysis",
+        "market-pest",
+        "market-tam-som"
+      ]
+    },
+    {
+      "name": "market-pest",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "市场竞品",
+      "path": "pm-skill/pm-01-discovery/skills/market-pest/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "market-tam-som",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "市场竞品",
+      "path": "pm-skill/pm-01-discovery/skills/market-tam-som/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "metrics-dashboard",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量设计",
+      "sub_module": "度量设计",
+      "path": "pm-skill/pm-04-metrics-design/skills/metrics-dashboard/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "metrics-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "6.1",
+      "module": "产品度量设计",
+      "sub_module": "度量设计",
+      "path": "pm-skill/pm-04-metrics-design/orchestrators/metrics-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-metrics-design"
+      ],
+      "dependencies": [
+        "metrics-dashboard",
+        "metrics-system",
+        "tracking-plan"
+      ]
+    },
+    {
+      "name": "metrics-system",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量设计",
+      "sub_module": "指标体系",
+      "path": "pm-skill/pm-04-metrics-design/skills/metrics-system/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "monitoring-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "9.0",
+      "module": "产品监控与迭代",
+      "sub_module": "监控预警",
+      "path": "pm-skill/pm-07-monitoring/orchestrators/monitoring-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-monitoring"
+      ],
+      "dependencies": [
+        "monitoring-pipeline",
+        "user-feedback-loop-report"
+      ]
+    },
+    {
+      "name": "monitoring-pipeline",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品监控与迭代",
+      "sub_module": "监控预警",
+      "path": "pm-skill/pm-07-monitoring/skills/monitoring-pipeline/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design",
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "opportunity-definition",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品探索与发现",
+      "sub_module": "机会识别",
+      "path": "pm-skill/pm-01-discovery/skills/opportunity-definition/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "opportunity-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "8.0",
+      "module": "产品探索与发现",
+      "sub_module": "机会识别",
+      "path": "pm-skill/pm-01-discovery/orchestrators/opportunity-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-discovery"
+      ],
+      "dependencies": [
+        "opportunity-definition"
+      ]
+    },
+    {
+      "name": "page-builder",
+      "domain": "ui-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "UI前端生成",
+      "path": "ui-skill/ui-02-ui-frontend/page-builder/SKILL.md",
+      "output_prefixes": [
+        "output/checkpoints",
+        "output/pm-design",
+        "output/ui-frontend",
+        "output/ui-project-init"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-kickoff",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "项目规划",
+      "path": "pm-skill/pm-08-project/skills/planning-kickoff/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-north-star",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "战略规划与路线图",
+      "path": "pm-skill/pm-02-strategy/skills/planning-north-star/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-okr",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "战略规划与路线图",
+      "path": "pm-skill/pm-02-strategy/skills/planning-okr/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "10.0",
+      "module": "产品商业与战略",
+      "sub_module": "战略规划与路线图",
+      "path": "pm-skill/pm-02-strategy/orchestrators/planning-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-strategy"
+      ],
+      "dependencies": [
+        "product-proposal",
+        "strategic-analysis"
+      ]
+    },
+    {
+      "name": "planning-project-charter",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "项目规划",
+      "path": "pm-skill/pm-08-project/skills/planning-project-charter/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-resource",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "项目规划",
+      "path": "pm-skill/pm-08-project/skills/planning-resource/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "planning-roadmap",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "战略规划与路线图",
+      "path": "pm-skill/pm-02-strategy/skills/planning-roadmap/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "pm-00-guide",
+      "domain": "pm-skill",
+      "type": "guide",
+      "version": "3.0",
+      "module": "产品方法论",
+      "sub_module": "导航入口",
+      "path": "pm-skill/pm-00-guide/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/pm-discovery",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "positioning-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "8.0",
+      "module": "产品商业与战略",
+      "sub_module": "产品定位与差异化",
+      "path": "pm-skill/pm-02-strategy/orchestrators/positioning-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-strategy"
+      ],
+      "dependencies": [
+        "positioning-strategy"
+      ]
+    },
+    {
+      "name": "positioning-strategy",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品商业与战略",
+      "sub_module": "产品定位与差异化",
+      "path": "pm-skill/pm-02-strategy/skills/positioning-strategy/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "product-iteration-orchestrator",
+      "domain": "cross-domain",
+      "type": "orchestrator",
+      "version": "10.0",
+      "module": "跨领域协调",
+      "sub_module": "产品迭代",
+      "path": "cross-domain/orchestrators/product-iteration-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/backend-design-review",
+        "output/cross-domain",
+        "output/phase-reports",
+        "output/pm-design",
+        "output/ui-frontend",
+        "output/ui-frontend-integration",
+        "output/ui-project-init"
+      ],
+      "dependencies": [
+        "backend-orchestrator",
+        "change-impact-analysis",
+        "design-orchestrator",
+        "monitoring-orchestrator",
+        "release-orchestrator",
+        "ui-orchestrator"
+      ]
+    },
+    {
+      "name": "product-launch-orchestrator",
+      "domain": "cross-domain",
+      "type": "orchestrator",
+      "version": "8.0",
+      "module": "跨领域协调",
+      "sub_module": "产品启动",
+      "path": "cross-domain/orchestrators/product-launch-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/backend-data-architecture",
+        "output/backend-design-review",
+        "output/cross-domain",
+        "output/phase-reports",
+        "output/pm-design",
+        "output/pm-monitoring",
+        "output/ui-frontend",
+        "output/ui-frontend-integration",
+        "output/ui-project-init"
+      ],
+      "dependencies": [
+        "agile-orchestrator",
+        "backend-orchestrator",
+        "business-orchestrator",
+        "design-orchestrator",
+        "insight-orchestrator",
+        "iteration-orchestrator",
+        "market-orchestrator",
+        "metrics-orchestrator",
+        "monitoring-orchestrator",
+        "positioning-orchestrator",
+        "release-orchestrator",
+        "ui-orchestrator"
+      ]
+    },
+    {
+      "name": "product-operations-manual",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "增长模式",
+      "path": "pm-skill/pm-06-growth/skills/product-operations-manual/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "product-proposal",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品商业与战略",
+      "sub_module": "产品立项",
+      "path": "pm-skill/pm-02-strategy/skills/product-proposal/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "product-sunset-plan",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品监控与迭代",
+      "sub_module": "问题诊断",
+      "path": "pm-skill/pm-07-monitoring/skills/product-sunset-plan/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "production-ready",
+      "domain": "ui-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "UI设计与前端开发",
+      "sub_module": "前端集成",
+      "path": "ui-skill/ui-03-frontend-integration/production-ready/SKILL.md",
+      "output_prefixes": [
+        "output/ui-frontend",
+        "output/ui-frontend-integration"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "project-init",
+      "domain": "ui-skill",
+      "type": "pipeline",
+      "version": "1.7",
+      "module": "UI设计与前端开发",
+      "sub_module": "设计系统",
+      "path": "ui-skill/ui-01-design-system/project-init/SKILL.md",
+      "output_prefixes": [
+        "output/checkpoints",
+        "output/pm-design",
+        "output/pm-strategy",
+        "output/ui-project-init"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "project-planning-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "项目管理与执行",
+      "sub_module": "项目规划",
+      "path": "pm-skill/pm-08-project/orchestrators/project-planning-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-project"
+      ],
+      "dependencies": [
+        "planning-kickoff",
+        "planning-project-charter",
+        "planning-resource"
+      ]
+    },
+    {
+      "name": "quality-acceptance",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "产品监控与迭代",
+      "sub_module": "质量保障",
+      "path": "pm-skill/pm-07-monitoring/skills/quality-acceptance/SKILL.md",
+      "output_prefixes": [
+        "output/backend-api-design",
+        "output/backend-architecture",
+        "output/pm-design",
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "release-auto-checklist",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品监控与迭代",
+      "sub_module": "发布上线",
+      "path": "pm-skill/pm-07-monitoring/skills/release-auto-checklist/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "release-gradual",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品监控与迭代",
+      "sub_module": "发布上线",
+      "path": "pm-skill/pm-07-monitoring/skills/release-gradual/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "release-notes",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品监控与迭代",
+      "sub_module": "发布上线",
+      "path": "pm-skill/pm-07-monitoring/skills/release-notes/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design",
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "release-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "1.0",
+      "module": "产品监控与迭代",
+      "sub_module": "发布交付",
+      "path": "pm-skill/pm-07-monitoring/orchestrators/release-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-monitoring"
+      ],
+      "dependencies": [
+        "quality-acceptance",
+        "release-auto-checklist",
+        "release-gradual",
+        "release-notes"
+      ]
+    },
+    {
+      "name": "retention-management",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品增长与运营",
+      "sub_module": "留存",
+      "path": "pm-skill/pm-06-growth/skills/retention-management/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "retention-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品增长与运营",
+      "sub_module": "留存",
+      "path": "pm-skill/pm-06-growth/orchestrators/retention-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-growth"
+      ],
+      "dependencies": [
+        "retention-management"
+      ]
+    },
+    {
+      "name": "revenue-funnel",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "变现",
+      "path": "pm-skill/pm-06-growth/skills/revenue-funnel/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "revenue-nrr",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "变现",
+      "path": "pm-skill/pm-06-growth/skills/revenue-nrr/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "revenue-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品增长与运营",
+      "sub_module": "变现",
+      "path": "pm-skill/pm-06-growth/orchestrators/revenue-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-growth"
+      ],
+      "dependencies": [
+        "revenue-funnel",
+        "revenue-nrr",
+        "revenue-upsell"
+      ]
+    },
+    {
+      "name": "revenue-upsell",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品增长与运营",
+      "sub_module": "变现",
+      "path": "pm-skill/pm-06-growth/skills/revenue-upsell/SKILL.md",
+      "output_prefixes": [
+        "output/pm-growth"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "risk-identification",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.1",
+      "module": "项目管理与执行",
+      "sub_module": "风险管理",
+      "path": "pm-skill/pm-08-project/skills/risk-identification/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "risk-management",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "项目管理与执行",
+      "sub_module": "风险管理",
+      "path": "pm-skill/pm-08-project/skills/risk-management/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "risk-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "项目管理与执行",
+      "sub_module": "风险管理",
+      "path": "pm-skill/pm-08-project/orchestrators/risk-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-project"
+      ],
+      "dependencies": [
+        "risk-identification",
+        "risk-management"
+      ]
+    },
+    {
+      "name": "stakeholder-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品商业与战略",
+      "sub_module": "利益相关者管理",
+      "path": "pm-skill/pm-02-strategy/skills/stakeholder-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "stakeholder-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "7.0",
+      "module": "产品商业与战略",
+      "sub_module": "Stakeholder对齐",
+      "path": "pm-skill/pm-02-strategy/orchestrators/stakeholder-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-strategy"
+      ],
+      "dependencies": [
+        "stakeholder-analysis"
+      ]
+    },
+    {
+      "name": "strategic-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "3.0",
+      "module": "产品商业与战略",
+      "sub_module": "战略规划与路线图",
+      "path": "pm-skill/pm-02-strategy/skills/strategic-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery",
+        "output/pm-strategy"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "tracking-plan",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品度量设计",
+      "sub_module": "埋点方案",
+      "path": "pm-skill/pm-04-metrics-design/skills/tracking-plan/SKILL.md",
+      "output_prefixes": [
+        "output/pm-metrics-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "ui-orchestrator",
+      "domain": "ui-skill",
+      "type": "orchestrator",
+      "version": "7.3",
+      "module": "UI设计与前端开发",
+      "sub_module": "UI总指挥",
+      "path": "ui-skill/orchestrators/ui-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/checkpoints",
+        "output/phase-reports",
+        "output/pm-strategy",
+        "output/ui-frontend"
+      ],
+      "dependencies": [
+        "api-integration",
+        "ext-frontend-design",
+        "ext-impeccable",
+        "ext-interaction-design",
+        "ext-ui-ux-pro-max",
+        "page-builder",
+        "production-ready",
+        "project-init"
+      ]
+    },
+    {
+      "name": "user-feedback-loop-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品监控与迭代",
+      "sub_module": "监控预警",
+      "path": "pm-skill/pm-07-monitoring/skills/user-feedback-loop-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "user-research-behavior-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/skills/user-research-behavior-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "user-research-interview-assist",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/skills/user-research-interview-assist/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "user-research-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "8.2",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/orchestrators/user-research-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-discovery"
+      ],
+      "dependencies": [
+        "user-research-behavior-analysis",
+        "user-research-interview-assist",
+        "user-research-report",
+        "user-research-user-modeling",
+        "user-research-voice-analysis"
+      ]
+    },
+    {
+      "name": "user-research-report",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/skills/user-research-report/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "user-research-user-modeling",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/skills/user-research-user-modeling/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "user-research-voice-analysis",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品探索与发现",
+      "sub_module": "用户研究",
+      "path": "pm-skill/pm-01-discovery/skills/user-research-voice-analysis/SKILL.md",
+      "output_prefixes": [
+        "output/pm-discovery"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "validation-assumption-map",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "方案验证",
+      "path": "pm-skill/pm-03-design/skills/validation-assumption-map/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "validation-experiment",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "方案验证",
+      "path": "pm-skill/pm-03-design/skills/validation-experiment/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "validation-mvp",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "方案验证",
+      "path": "pm-skill/pm-03-design/skills/validation-mvp/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "validation-orchestrator",
+      "domain": "pm-skill",
+      "type": "orchestrator",
+      "version": "6.1",
+      "module": "产品构思与设计",
+      "sub_module": "方案验证",
+      "path": "pm-skill/pm-03-design/orchestrators/validation-orchestrator/SKILL.md",
+      "output_prefixes": [
+        "output/approvals",
+        "output/phase-reports",
+        "output/pm-design"
+      ],
+      "dependencies": [
+        "validation-assumption-map",
+        "validation-experiment",
+        "validation-mvp",
+        "validation-usability"
+      ]
+    },
+    {
+      "name": "validation-usability",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.1",
+      "module": "产品构思与设计",
+      "sub_module": "方案验证",
+      "path": "pm-skill/pm-03-design/skills/validation-usability/SKILL.md",
+      "output_prefixes": [
+        "output/pm-design"
+      ],
+      "dependencies": []
+    }
+  ]
+}

@@ -12,6 +12,10 @@ metadata:
     - "Generate Docker configuration"
     - "Generate CI configuration"
     - "Project initialization code"
+execution_depth:
+  default: standard
+  quick_description: "Output implementation plan and critical path"
+  deep_description: "Full implementation + real runtime validation + integration testing + deployment verification"
 ---
 
 # Backend Architecture Code Implementation
@@ -45,7 +49,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Project Entry and Configuration Generation
+### Step 1: Project Entry and Configuration Generation [Core]
 
 Generate application entry and configuration management:
 
@@ -60,7 +64,7 @@ Generate application entry and configuration management:
 
 **Stage Gate**: app.ts correctly mounts all routes and middleware, configuration supports multiple environments
 
-### Step 2: Service Layer and Communication Layer Generation
+### Step 2: Service Layer and Communication Layer Generation [Core]
 
 Generate service layer and communication layer based on service design:
 
@@ -75,7 +79,7 @@ Generate service layer and communication layer based on service design:
 
 **Stage Gate**: Service layer aligned with api-design-impl resource-level Services, communication method matches architecture decisions
 
-### Step 3: Infrastructure Code Generation
+### Step 3: Infrastructure Code Generation [Core]
 
 Generate error handling, logging, health check and other infrastructure code:
 
@@ -92,7 +96,7 @@ Generate error handling, logging, health check and other infrastructure code:
 
 **Stage Gate**: Error handling is unified, health check endpoint is accessible
 
-### Step 4: Containerization and CI/CD Generation
+### Step 4: Containerization and CI/CD Generation [Core]
 
 Generate Docker and CI/CD configuration:
 
@@ -108,7 +112,7 @@ Generate Docker and CI/CD configuration:
 
 **Stage Gate**: Docker image can be built, CI pipeline is complete
 
-### Step 5: Architecture Alignment Check and Code Self-Review
+### Step 5: Architecture Alignment Check and Code Self-Review [Core]
 
 **Architecture Alignment Check**:
 - Project directory structure consistent with bounded context division
@@ -126,7 +130,7 @@ Generate Docker and CI/CD configuration:
 
 **Stage Gate**: Project can start (npm run dev succeeds or equivalent command verification), health check endpoint accessible (/health returns 200), architecture decisions 100% reflected in code, code self-review P0 issues=0
 
-### Step 6: Architecture Test Code Generation
+### Step 6: Architecture Test Code Generation [Core]
 
 Generate test code for the architecture layer:
 
@@ -136,6 +140,14 @@ Generate test code for the architecture layer:
 - Test files output to src/__tests__/integration/
 
 **Stage Gate**: Health check and inter-service communication have test skeletons
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | implementation plan and critical path | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full implementation + real runtime validation + integration testing + deployment verification | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -163,8 +175,13 @@ Adopts **dual output mode**:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Project can start (npm run dev succeeds or equivalent command verification)
 - [ ] Health check endpoint accessible (/health returns 200)
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Architecture decisions 100% reflected in code
 - [ ] app.ts correctly integrates api-design-impl routes and data-architecture-impl database/cache initialization
 - [ ] Configuration management supports multiple environments
@@ -173,6 +190,45 @@ Adopts **dual output mode**:
 - [ ] CI pipeline includes lint + test + build
 - [ ] Code self-review P0 issues=0
 - [ ] Health check and inter-service communication have test skeletons
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
+### Real Runtime Validation Strategy
+
+**Framework Identification & Adaptation Matrix**:
+
+| Framework | Identification Signal | Entry File | Route Style | Middleware Style |
+|------|---------|---------|---------|-----------|
+| Express | package.json contains "express" | src/app.ts or src/index.ts | Router() | app.use() |
+| NestJS | package.json contains "@nestjs/core" | src/main.ts | @Controller() decorator | @UseGuards() decorator |
+| Fastify | package.json contains "fastify" | src/app.ts | fastify.route() | app.register() |
+| Koa | package.json contains "koa" | src/app.ts | router.get/post | app.use() |
+
+**ORM Identification & Adaptation Matrix**:
+
+| ORM | Identification Signal | Model Style | Migration Command | Seed Command |
+|-----|---------|-----------|---------------|----------|
+| Prisma | package.json contains "@prisma/client" | schema.prisma | npx prisma migrate dev | npx prisma db seed |
+| TypeORM | package.json contains "typeorm" | @Entity() decorator | npm run typeorm migration:run | — |
+| Sequelize | package.json contains "sequelize" | sequelize.define() | npx sequelize-cli db:migrate | npx sequelize-cli db:seed |
+| Mongoose | package.json contains "mongoose" | mongoose.Schema() | — (Schema-first) | — |
+
+**Validation Command List**:
+
+| Validation Dimension | Discovery Strategy | Execution Command | Pass Criteria | Failure Handling |
+|---------|---------|---------|---------|---------|
+| Dependency Install | package.json exists | npm install / pnpm install | Zero errors | Mark dependency conflicts |
+| Compile Check | tsconfig.json exists | npx tsc --noEmit | Zero type errors | Mark type errors |
+| Build Check | package.json scripts.build | npm run build | Zero-error exit | Mark build errors |
+| DB Migration (dry-run) | After ORM identification | npx prisma migrate status / npm run typeorm migration:show | Migration status consistent | Mark pending migrations |
+| Health Check | After framework identification | curl /health or check after npm run start | HTTP 200 | Mark startup failure reason |
+| API Type Consistency | openapi.yaml exists | Compare route definitions with OpenAPI | 100% endpoint coverage | Mark uncovered endpoints |
+| Tests | package.json scripts.test | npm run test | Pass rate ≥80% | Mark failed test cases |
+
+**Validation Execution Order**: Framework Identification → Dependency Install → Compile Check → Build Check → DB Migration (dry-run) → Health Check → API Type Consistency → Tests
 
 ## Degradation Strategy
 

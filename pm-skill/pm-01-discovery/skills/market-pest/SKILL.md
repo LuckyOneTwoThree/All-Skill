@@ -12,6 +12,10 @@ metadata:
     - "政策对我们有什么影响"
     - "帮我扫描一下外部环境"
   interaction_mode: "ai_auto"
+execution_depth:
+  default: standard
+  quick_description: "直接输出PEST分析结论"
+  deep_description: "完整分析 + 政策影响推演 + 趋势预测 + 战略应对建议"
 ---
 
 # PEST自动扫描
@@ -36,7 +40,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: 定时扫描
+### Step 1: 定时扫描 [核心]
 
 按四个维度进行信息采集与监控：
 
@@ -47,7 +51,7 @@ metadata:
 | 社会趋势（Social） | 人口结构变化、消费习惯迁移、文化趋势、用户偏好演变、生活方式变化 | 社交媒体趋势、用户调研报告、人口普查数据、生活方式研究 |
 | 技术动态（Technological） | 新技术成熟度、技术采用曲线、基础设施演进、技术标准变化、专利趋势 | 技术媒体、专利数据库、Gartner/IDC技术报告、开源社区动态 |
 
-### Step 2: 趋势摘要
+### Step 2: 趋势摘要 [核心]
 
 对每个维度采集的信息进行结构化摘要：
 
@@ -56,7 +60,7 @@ metadata:
 - 标注趋势强度（强/中/弱）
 - 关联品类影响路径
 
-### Step 3: 关键变化信号
+### Step 3: 关键变化信号 [核心]
 
 从趋势摘要中识别关键变化信号：
 
@@ -64,7 +68,7 @@ metadata:
 - 信号时效：已发生 / 正在发生 / 预计发生
 - 信号来源与可验证性
 
-### Step 4: 影响评估
+### Step 4: 影响评估 [核心]
 
 对每个关键变化信号进行影响评估：
 
@@ -76,13 +80,21 @@ metadata:
 | 影响范围 | 仅影响品类 / 影响整个行业 / 跨行业影响 |
 | 应对建议 | 利用策略 / 规避策略 / 监控策略 |
 
-### Step 5: 重大变化告警
+### Step 5: 重大变化告警 [核心]
 
 对高影响信号触发告警：
 
 - 筛选影响程度≥4的信号
 - 生成告警摘要：信号描述 + 影响评估 + 应对建议
 - 实时推送给人类PM
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | PEST分析结论 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 政策影响推演 + 趋势预测 + 战略应对建议 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -116,16 +128,72 @@ metadata:
 | scan_timestamp | string | 是 | ISO 8601格式的扫描时间戳 |
 | political | object | 是 | 政策法规维度，不可缺失 |
 | political.trends | array | 是 | 至少包含1条趋势，每条须含trend、direction、strength、impact_path |
+| political.trends[].trend | string | 是 | 趋势描述，不可为空 |
+| political.trends[].direction | string | 是 | 趋势方向，枚举：上升/下降/平稳/新兴 |
+| political.trends[].strength | string | 是 | 趋势强度，枚举：强/中/弱 |
+| political.trends[].impact_path | string | 是 | 品类影响路径，不可为空 |
 | political.key_signals | array | 是 | 信号列表，每条须含signal、type、timing、source、impact |
+| political.key_signals[].signal | string | 是 | 信号描述，不可为空 |
+| political.key_signals[].type | string | 是 | 信号类型，枚举：新政策发布/指标突变/趋势转折/技术突破 |
+| political.key_signals[].timing | string | 是 | 信号时效，枚举：已发生/正在发生/预计发生 |
+| political.key_signals[].source | string | 是 | 信号来源，不可为空 |
+| political.key_signals[].impact | object | 是 | 影响评估，须含direction、degree、time_window、scope、recommendation |
+| political.key_signals[].impact.direction | string | 是 | 影响方向，枚举：正面/负面/中性 |
+| political.key_signals[].impact.degree | integer | 是 | 影响程度，1-5 |
+| political.key_signals[].impact.time_window | string | 是 | 影响时间窗口，枚举：短期/中期/长期 |
+| political.key_signals[].impact.scope | string | 是 | 影响范围 |
+| political.key_signals[].impact.recommendation | string | 是 | 应对建议 |
 | economic | object | 是 | 经济指标维度，不可缺失，数据不足时用行业基准值填充并标注"推断值" |
 | economic.trends | array | 是 | 至少包含1条趋势，每条须含trend、direction、strength、impact_path |
+| economic.trends[].trend | string | 是 | 趋势描述，不可为空 |
+| economic.trends[].direction | string | 是 | 趋势方向，枚举：上升/下降/平稳/新兴 |
+| economic.trends[].strength | string | 是 | 趋势强度，枚举：强/中/弱 |
+| economic.trends[].impact_path | string | 是 | 品类影响路径，不可为空 |
 | economic.key_signals | array | 是 | 信号列表，每条须含signal、type、timing、source、impact |
+| economic.key_signals[].signal | string | 是 | 信号描述，不可为空 |
+| economic.key_signals[].type | string | 是 | 信号类型，枚举：新政策发布/指标突变/趋势转折/技术突破 |
+| economic.key_signals[].timing | string | 是 | 信号时效，枚举：已发生/正在发生/预计发生 |
+| economic.key_signals[].source | string | 是 | 信号来源，不可为空 |
+| economic.key_signals[].impact | object | 是 | 影响评估，须含direction、degree、time_window、scope、recommendation |
+| economic.key_signals[].impact.direction | string | 是 | 影响方向，枚举：正面/负面/中性 |
+| economic.key_signals[].impact.degree | integer | 是 | 影响程度，1-5 |
+| economic.key_signals[].impact.time_window | string | 是 | 影响时间窗口，枚举：短期/中期/长期 |
+| economic.key_signals[].impact.scope | string | 是 | 影响范围 |
+| economic.key_signals[].impact.recommendation | string | 是 | 应对建议 |
 | social | object | 是 | 社会趋势维度，不可缺失，数据不足时用行业基准值填充并标注"推断值" |
 | social.trends | array | 是 | 至少包含1条趋势，每条须含trend、direction、strength、impact_path |
+| social.trends[].trend | string | 是 | 趋势描述，不可为空 |
+| social.trends[].direction | string | 是 | 趋势方向，枚举：上升/下降/平稳/新兴 |
+| social.trends[].strength | string | 是 | 趋势强度，枚举：强/中/弱 |
+| social.trends[].impact_path | string | 是 | 品类影响路径，不可为空 |
 | social.key_signals | array | 是 | 信号列表，每条须含signal、type、timing、source、impact |
+| social.key_signals[].signal | string | 是 | 信号描述，不可为空 |
+| social.key_signals[].type | string | 是 | 信号类型，枚举：新政策发布/指标突变/趋势转折/技术突破 |
+| social.key_signals[].timing | string | 是 | 信号时效，枚举：已发生/正在发生/预计发生 |
+| social.key_signals[].source | string | 是 | 信号来源，不可为空 |
+| social.key_signals[].impact | object | 是 | 影响评估，须含direction、degree、time_window、scope、recommendation |
+| social.key_signals[].impact.direction | string | 是 | 影响方向，枚举：正面/负面/中性 |
+| social.key_signals[].impact.degree | integer | 是 | 影响程度，1-5 |
+| social.key_signals[].impact.time_window | string | 是 | 影响时间窗口，枚举：短期/中期/长期 |
+| social.key_signals[].impact.scope | string | 是 | 影响范围 |
+| social.key_signals[].impact.recommendation | string | 是 | 应对建议 |
 | technological | object | 是 | 技术动态维度，不可缺失，数据不足时用行业基准值填充并标注"推断值" |
 | technological.trends | array | 是 | 至少包含1条趋势，每条须含trend、direction、strength、impact_path |
+| technological.trends[].trend | string | 是 | 趋势描述，不可为空 |
+| technological.trends[].direction | string | 是 | 趋势方向，枚举：上升/下降/平稳/新兴 |
+| technological.trends[].strength | string | 是 | 趋势强度，枚举：强/中/弱 |
+| technological.trends[].impact_path | string | 是 | 品类影响路径，不可为空 |
 | technological.key_signals | array | 是 | 信号列表，每条须含signal、type、timing、source、impact |
+| technological.key_signals[].signal | string | 是 | 信号描述，不可为空 |
+| technological.key_signals[].type | string | 是 | 信号类型，枚举：新政策发布/指标突变/趋势转折/技术突破 |
+| technological.key_signals[].timing | string | 是 | 信号时效，枚举：已发生/正在发生/预计发生 |
+| technological.key_signals[].source | string | 是 | 信号来源，不可为空 |
+| technological.key_signals[].impact | object | 是 | 影响评估，须含direction、degree、time_window、scope、recommendation |
+| technological.key_signals[].impact.direction | string | 是 | 影响方向，枚举：正面/负面/中性 |
+| technological.key_signals[].impact.degree | integer | 是 | 影响程度，1-5 |
+| technological.key_signals[].impact.time_window | string | 是 | 影响时间窗口，枚举：短期/中期/长期 |
+| technological.key_signals[].impact.scope | string | 是 | 影响范围 |
+| technological.key_signals[].impact.recommendation | string | 是 | 应对建议 |
 | alerts | array | 是 | 影响程度≥4的告警列表，无高影响信号时为空数组 |
 | alerts[].signal | string | 是（alerts非空时） | 告警信号描述 |
 | alerts[].dimension | string | 是（alerts非空时） | 所属PEST维度 |
@@ -218,12 +286,12 @@ metadata:
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| 无强依赖 | 本Skill可独立运行，用户提供品类和目标市场即可执行 | 输出完整，无影响 |
-| 所有上游文件均缺失 | 用户提供品类关键词和目标市场 → 基于AI知识库扫描PEST四维度趋势 | 趋势数据基于AI知识库推断，置信度标注为"推断值"，时效性可能滞后 |
-| 若用户未提供category_keywords | 提示用户提供品类关键词，否则无法确定扫描范围 | 无法生成输出，流程中断 |
-| 若用户未提供target_market | 提示用户提供目标市场，否则默认使用"中国大陆" | 目标市场默认为"中国大陆"，其他市场的趋势可能遗漏 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| 无强依赖 | 本Skill可独立运行，用户提供品类和目标市场即可执行 | 输出完整，无影响 | 要求用户提供品类关键词和目标市场 |
+| 所有上游文件均缺失 | 用户提供品类关键词和目标市场 → 基于AI知识库扫描PEST四维度趋势 | 趋势数据基于AI知识库推断，置信度标注为"推断值"，时效性可能滞后 | 要求用户提供品类关键词（如"在线教育"）和目标市场（如"中国大陆"） |
+| 若用户未提供category_keywords | 提示用户提供品类关键词，否则无法确定扫描范围 | 无法生成输出，流程中断 | 要求用户提供品类关键词（如"在线教育""SaaS CRM"） |
+| 若用户未提供target_market | 提示用户提供目标市场，否则默认使用"中国大陆" | 目标市场默认为"中国大陆"，其他市场的趋势可能遗漏 | 要求用户提供目标市场名称（如"北美""东南亚"） |
 
 ## 数据获取说明
 

@@ -18,6 +18,10 @@ metadata:
     - "sprint结束了怎么总结"
     - "迭代效果怎么样"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "仅输出迭代方向建议"
+  deep_description: "完整决策 + 竞品迭代对比 + 技术债务影响分析 + 长期路线评估"
 ---
 
 # 迭代决策全流程 🤖
@@ -66,11 +70,11 @@ metadata:
 
 ## 执行步骤
 
-### Step 1: Backlog整理（from iteration-backlog）
+### Step 1: Backlog整理 [核心]（from iteration-backlog）
 
 **目标**：整理与优化问题Backlog，完成关联分析与重组
 
-#### 1.1 问题优先级评估
+#### 1.1 问题优先级评估 [核心]
 
 **评估模型**：
 
@@ -117,7 +121,7 @@ priority_score:
   final_score: {weighted_sum}
 ```
 
-#### 1.2 技术债务影响分析
+#### 1.2 技术债务影响分析 [条件]
 
 **影响类型**：
 
@@ -144,7 +148,7 @@ technical_debt_impact:
     interest_accrued: {story_points_per_sprint}
 ```
 
-#### 1.3 关联分析
+#### 1.3 关联分析 [条件]
 
 **关联类型**：
 
@@ -172,7 +176,7 @@ linked_issues:
         impact: "导致开发效率降低 20%"
 ```
 
-#### 1.4 Backlog 重组
+#### 1.4 Backlog 重组 [深度]
 
 **重组策略**：
 
@@ -200,11 +204,11 @@ reorganization_suggestions:
       value_delivered: {description}
 ```
 
-### Step 2: 优先级评估（from iteration-prioritization）
+### Step 2: 优先级评估 [核心]（from iteration-prioritization）
 
 **目标**：基于数据评估问题优先级，生成调整方案与风险评估
 
-#### 2.1 变更影响评估
+#### 2.1 变更影响评估 [核心]
 
 **影响维度**：
 
@@ -247,7 +251,7 @@ impact_assessment:
     impact_assessment: {description}
 ```
 
-#### 2.2 调整方案生成
+#### 2.2 调整方案生成 [核心]
 
 **方案类型**：
 
@@ -295,7 +299,7 @@ adjustment_options:
   # ... 同结构可扩展
 ```
 
-#### 2.3 风险评估
+#### 2.3 风险评估 [条件]
 
 **风险矩阵**：
 
@@ -331,7 +335,7 @@ risk_assessment:
       action: {description}
 ```
 
-#### 2.4 沟通草案
+#### 2.4 沟通草案 [深度]
 
 **干系人**：
 - 团队成员
@@ -360,11 +364,11 @@ communication_draft:
       content: "{contact_info}"
 ```
 
-### Step 3: 迭代回顾（from iteration-retrospective）
+### Step 3: 迭代回顾 [条件]（from iteration-retrospective）
 
 **目标**：回顾迭代执行效果，总结经验与改进点
 
-#### 3.1 数据收集
+#### 3.1 数据收集 [条件]
 
 **数据源**：
 
@@ -405,9 +409,9 @@ data_collection:
     incidents: {count}
 ```
 
-#### 3.2 多维度分析
+#### 3.2 多维度分析 [条件]
 
-##### 3.2.1 交付分析
+##### 3.2.1 交付分析 [条件]
 
 **指标**：
 
@@ -432,7 +436,7 @@ delivery_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.2 质量分析
+##### 3.2.2 质量分析 [条件]
 
 **指标**：
 
@@ -455,7 +459,7 @@ quality_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.3 协作分析
+##### 3.2.3 协作分析 [深度]
 
 **指标**：
 
@@ -480,7 +484,7 @@ collaboration_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.4 效率分析
+##### 3.2.4 效率分析 [深度]
 
 **指标**：
 
@@ -506,7 +510,7 @@ efficiency_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-#### 3.3 问题识别
+#### 3.3 问题识别 [条件]
 
 **问题分类**：
 
@@ -540,7 +544,7 @@ problem_identification:
       quality_impact: {description}
 ```
 
-#### 3.4 改进建议
+#### 3.4 改进建议 [深度]
 
 **建议格式**：
 
@@ -571,6 +575,15 @@ improvement_suggestions:
 
 
 **输出文件路径**：`output/pm-monitoring/iteration-decision/`
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 迭代方向建议 | 核心结论 + 最小可行产物，仅输出Step 1.1优先级排序和Step 2.1-2.2核心调整方案 |
+| standard | 完整迭代决策（当前默认） | 完整产物，包含Step 1-3全部输出 |
+| deep | 完整决策 + 扩展分析 | 完整产物 + 竞品迭代对比 + 技术债务影响分析 + 长期路线评估 + 决策记录 + 风险评估 |
+
 **输出Schema**：
 
 ```json
@@ -654,16 +667,20 @@ improvement_suggestions:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 优先级评分覆盖率 100%
+- [ ] 变更影响评估覆盖率 100%
+- [ ] 调整方案数量 ≥ 2
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 关联关系识别完整
 - [ ] 技术债务影响评估准确
 - [ ] 重组建议可执行
 - [ ] Sprint 容量匹配
 - [ ] 无关键依赖遗漏
-- [ ] 变更影响评估覆盖率 100%
-- [ ] 调整方案数量 ≥ 2
 - [ ] 风险评估完整性
-- [ ] 沟通草案覆盖所有干系人
 - [ ] 决策标记准确性
 - [ ] 方案可执行性 ≥ 80%
 - [ ] 数据收集完整率 ≥ 95%
@@ -671,7 +688,14 @@ improvement_suggestions:
 - [ ] 问题识别准确率 ≥ 80%
 - [ ] 建议可执行率 ≥ 75%
 - [ ] 改进建议有明确负责人
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 沟通草案覆盖所有干系人
 - [ ] 与上一迭代对比分析完整
+- [ ] 竞品迭代对比已完成（竞品功能迭代节奏、策略差异分析、市场趋势对标）
+- [ ] 技术债务影响分析完整（债务利息率趋势、偿还优先级排序、对交付速率的量化影响）
+- [ ] 长期路线评估已生成（3-6个月迭代路线图、关键里程碑、资源需求预测）
 
 ## 降级策略
 

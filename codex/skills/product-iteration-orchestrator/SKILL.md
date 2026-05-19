@@ -31,7 +31,8 @@ The core difference between product iteration and product launch is: existing pr
 3. **API Design**: Conditionally execute API design orchestrator, produce API contracts for Backend and UI to consume in parallel
 4. **Backend Implementation**: Conditionally execute data architecture and backend architecture orchestrators, can run in parallel with UI changes
 5. **UI Changes**: Conditionally execute UI orchestrator, based on API contracts in parallel with Backend implementation
-6. **Delivery and Launch**: Invoke release-orchestrator + monitoring-orchestrator to complete quality acceptance -> release checks -> gradual rollout -> monitoring setup
+6. **Integration Alignment**: When both API and UI need changes, verify API changes are synced to frontend (type definitions/request functions/Mock data) and UI change required API endpoints are covered
+7. **Delivery and Launch**: Invoke release-orchestrator + monitoring-orchestrator to complete quality acceptance -> release checks -> gradual rollout -> monitoring setup
 
 ## Orchestration Protocol
 
@@ -93,9 +94,20 @@ stages:
       condition: "UI development and integration verification passed"
       fail_action: "Fix integration issues"
 
+  - id: phase-alignment
+    name: "Integration Alignment"
+    depends_on: [phase-4, phase-5]
+    trigger: Both API and UI need changes
+    type: cross-validation
+    skills: []
+    gate:
+      condition: "API changes synced to frontend (type definitions/request functions/Mock data), UI change required API endpoints covered, unaligned items=0"
+      fail_action: "Roll back to backend-orchestrator or ui-orchestrator to fix alignment differences"
+
   - id: phase-6
     name: "Delivery and Launch"
     depends_on: [phase-4, phase-5]
+    optional_depends_on: [phase-alignment]
     skills: [release-orchestrator, monitoring-orchestrator]
     gate:
       condition: "P0 issues = 0, gradual rollout passed"
@@ -189,6 +201,39 @@ Validation: Frontend code review passed, frontend-backend integration passed
 Mode: AI->Human
 ```
 
+### Stage: Integration Alignment (Conditional Execution)
+
+When both API and UI need changes, the orchestrator reads backend API change and frontend UI change outputs from `artifact-index.json`, performing cross-domain alignment checks:
+
+```
+Action: API/UI Change Alignment Check
+Input:
+  API change contract: artifact-index.json -> backend-orchestrator -> output/backend-api-design/api-design-spec/openapi.yaml
+  UI page data requirements: artifact-index.json -> ui-orchestrator -> output/ui-frontend/page-builder/pages.json
+  Change impact report: output/cross-domain/product-iteration-orchestrator/impact-report.md
+Output: output/cross-domain/integration-alignment.json
+Validation: API changes synced to frontend (type definitions/request functions/Mock data), UI change required API endpoints covered, unaligned items=0
+Mode: AI->Human
+```
+
+#### Alignment Check Rules
+
+| Check Dimension | Check Item | Pass Standard |
+|----------------|-----------|---------------|
+| API->Frontend Sync | For new/modified API endpoints, are frontend TypeScript type definitions updated | All changed endpoints have corresponding type definitions |
+| API->Frontend Sync | For new/modified API endpoints, are frontend request functions (API Service layer) added/updated | All changed endpoints have corresponding request functions |
+| API->Frontend Sync | For new/modified API endpoints, are frontend Mock data updated accordingly | Mock data structure consistent with latest API response structure |
+| Frontend->API Coverage | For data required by new UI pages/components, are corresponding API endpoints available | All UI data requirements have API endpoint coverage |
+| Frontend->API Coverage | Are API calls involved in UI changes consistent with latest API contract (path/parameters/response structure) | No outdated API calls |
+| Deprecated Item Cleanup | For deprecated API endpoints, have frontend calls been removed | No frontend calls pointing to deprecated endpoints |
+| Deprecated Item Cleanup | For removed frontend pages/components, do redundant API-only-called-by-them still exist in backend | No redundant API endpoints |
+
+#### Gate Standard
+
+- **Unaligned items = 0**: All check items above pass
+- Alignment check results written to `integration-alignment.json`, containing: aligned items list, unaligned items list (with difference description and suggested fix direction), overall alignment rate
+- When unaligned items != 0, roll back to corresponding orchestrator for fix based on difference description: API side missing -> roll back to backend-orchestrator, frontend side missing -> roll back to ui-orchestrator
+
 ### Stage 6: Delivery and Launch
 
 #### Invoke release-orchestrator
@@ -256,6 +301,7 @@ Downstream connections:
 | API changes confirmed | api-design-orchestrator output files generated and non-empty | Adjust API design |
 | Backend review passed | backend-review output files generated and non-empty | Fix P0 issues |
 | UI integration verified | ui-integration output files generated and non-empty | Fix integration issues |
+| Integration alignment | integration-alignment.json generated and unaligned items=0 | Roll back to backend-orchestrator or ui-orchestrator to fix alignment differences |
 | Delivery and launch | release output files generated and non-empty | Fix blocking issues and re-verify |
 | Stage summary generated | output/phase-reports/cross-domain/product-iteration-orchestrator.md generated and all 6 structural items non-empty | Supplement missing structural items and regenerate |
 
@@ -265,6 +311,7 @@ Downstream connections:
 |--------|----------|----------|
 | PRD confirmation | design-orchestrator completed | Confirm PRD changes can be distributed to affected domains |
 | Impact scope confirmation | change-impact-analysis completed | Confirm which domains need changes, whether anything is missing |
+| Alignment conflict arbitration | Integration alignment phase discovers API and frontend inconsistency | Decide whether to fix API side or frontend side |
 | Release decision | Delivery and launch stage completed | Confirm whether to release |
 
 ## Exception Handling
@@ -278,4 +325,7 @@ Downstream connections:
 | Change scope exceeds expectations | Pause execution, human decides whether to split into multiple iteration phases |
 | Pure UI change but design tokens need adjustment | Handled by ui-orchestrator for unified design token update and frontend development |
 | Pure backend change but affects existing API | Must execute api-design-orchestrator to evaluate API compatibility |
+| API changes not synced to frontend | Integration alignment phase detects unsynced items, roll back to ui-orchestrator to supplement type definitions/request functions/Mock data |
+| UI changes lack API endpoint support | Integration alignment phase detects uncovered endpoints, roll back to backend-orchestrator to supplement API design |
+| Alignment check rolled back multiple times without passing | Pause orchestration, human arbitrates conflict direction, mark "alignment blocked" |
 | Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |

@@ -10,6 +10,10 @@ metadata:
     - "How to get users to upgrade their plan"
     - "Which users are suitable for upsell"
     - "How to implement cross-selling"
+execution_depth:
+  default: standard
+  quick_description: "Output upsell strategies and opportunity list"
+  deep_description: "Full strategy + upsell trigger design + customer tiered upsell model + upsell experiment plan"
 ---
 
 # Upgrade Conversion Automation
@@ -68,7 +72,7 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Upgrade Signal Identification
+### Step 1: Upgrade Signal Identification [Core]
 
 #### Signal Detection Rules
 ```yaml
@@ -115,7 +119,7 @@ upgrade_score = (
 | P2 | 0.4-0.6 | Some upgrade signals | Scenario-based upgrade guidance |
 | P3 | <0.4 | Potential upgrade need | Continuous nurturing |
 
-### Step 2: Upgrade Content Personalization
+### Step 2: Upgrade Content Personalization [Core]
 
 #### Personalization Elements
 | Element | Content Source | Description |
@@ -144,7 +148,7 @@ Upgrade to {Recommended Plan}, you can:
 [Upgrade Now] [Learn More]
 ```
 
-### Step 3: Outreach Timing Optimization
+### Step 3: Outreach Timing Optimization [Deep]
 
 #### Optimal Outreach Timing
 | Timing | Trigger Condition | Effect |
@@ -162,7 +166,7 @@ Upgrade to {Recommended Plan}, you can:
 | Low-activity users | Email + SMS | Reinforced |
 | High-value users | Email + Phone | Full-channel |
 
-### Step 4: A/B Test Design
+### Step 4: A/B Test Design [Core]
 
 #### Test Types
 | Test Type | Test Content | Objective |
@@ -200,6 +204,14 @@ success_criteria:
   - primary_metric_lift: ">=10%"
   - guardrail_metrics: "No significant decline"
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | upsell strategies and opportunity list | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full strategy + upsell trigger design + customer tiered upsell model + upsell experiment plan | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -288,12 +300,28 @@ success_criteria:
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
 | upgrade_signals | array | Yes | Upgrade signal user list, at least 1 user |
+| upgrade_signals[].user_id | string | No | User ID |
+| upgrade_signals[].current_plan | string | No | Current plan |
 | upgrade_signals[].overall_score | number | Yes | Upgrade score, range 0-1 |
+| upgrade_signals[].signal_type | string | No | Signal type, enum: usage/feature/behavior/intent |
+| upgrade_signals[].strength | string | No | Signal strength, enum: strong/medium/weak |
+| upgrade_signals[].description | string | No | Signal description |
 | upgrade_signals[].recommended_plan | string | Yes | Recommended plan, cannot be empty |
 | personalized_offers | array | Yes | Personalized offer list, at least 1 |
+| personalized_offers[].offer_type | string | No | Offer type, enum: upgrade/addon/trial_discount |
+| personalized_offers[].headline | string | No | Offer headline |
 | personalized_offers[].value_proposition | string | Yes | Value proposition, cannot be empty |
+| personalized_offers[].incentive | string | No | Incentive content |
+| personalized_offers[].cta_text | string | No | Call-to-action text |
 | ab_tests | array | No | A/B test list, each item must contain test_id/hypothesis |
+| ab_tests[].test_id | string | Yes | Test ID |
+| ab_tests[].test_name | string | No | Test name |
+| ab_tests[].hypothesis | string | Yes | Test hypothesis |
+| ab_tests[].variants | array | No | Variant list |
+| ab_tests[].primary_metric | string | No | Primary metric |
 | tracking | object | No | Effect tracking, must contain upgrade_conversion_rate/roi |
+| tracking.upgrade_conversion_rate | number | No | Upgrade conversion rate |
+| tracking.roi | number | No | Upgrade ROI |
 
 ## Decision Rules
 
@@ -306,28 +334,31 @@ success_criteria:
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Upgrade signal identification covers 4 signal types (usage/feature/behavioral/intent)
 - [ ] Personalized content includes username, usage, benefits 3 elements
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] A/B test design includes guardrail metrics
 - [ ] Upgrade ROI calculation includes outreach cost
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|----------|----------|----------|
-| User behavior data missing | User describes paid user characteristics -> generate upgrade strategy | Upgrade signals based on user description, lacking behavioral data validation |
-| Payment history missing | Skip payment pattern analysis, use generic upgrade trigger rules | Upgrade timing judgment based on generic rules |
-| User behavior + payment history both missing | User describes paid user characteristics -> generate upgrade strategy | Output based on description upgrade strategy, marked "pending data validation" |
-- If user has not provided product usage data, prompt user to provide or skip steps related to that input
-
-### Data Acquisition Notes
-
-When upstream files are missing, users need to provide the following information to support degraded generation:
-- **Paid user characteristics**: Current paid users' usage behavior and payment patterns
-- **Product tiers** (optional): Pricing and feature differences across paid tiers
-- **Upgrade barriers** (optional): Known reasons users don't upgrade
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|----------|----------|----------|----------|
+| User behavior data missing | User describes paid user characteristics -> generate upgrade strategy | Upgrade signals based on user description, lacking behavioral data validation | Request user to describe paid user usage patterns and upgrade triggers, or upload behavior_data.json |
+| Payment history missing | Skip payment pattern analysis, use generic upgrade trigger rules | Upgrade timing judgment based on generic rules | Request user to provide payment history and upgrade patterns, or upload payment_history.json |
+| User behavior + payment history both missing | User describes paid user characteristics -> generate upgrade strategy | Output based on description upgrade strategy, marked "pending data validation" | Request user to describe paid user characteristics and product tiers, or execute revenue-nrr first |
+| Product usage data not provided | Prompt user to provide or skip steps related to that input | Cannot identify usage-based upgrade signals | Prompt user to provide product usage data for upgrade signal detection |
 
 ## Upstream Change Response
 

@@ -13,6 +13,10 @@ metadata:
     - "Help me produce a complete A/B test report"
     - "Experiment is done, write a summary report"
     - "Organize experiment results into a presentable document"
+execution_depth:
+  default: standard
+  quick_description: "Output experiment results and conclusions only"
+  deep_description: "Full execution + statistical deep dive + segment analysis + experiment learning repository"
 ---
 
 # A/B Test Auto-Execution, Analysis and Report
@@ -61,7 +65,7 @@ Trigger: Termination condition reached
 
 ## Execution Steps
 
-### Step 1: Experiment Monitoring and Result Analysis
+### Step 1: Experiment Monitoring and Result Analysis [Core]
 
 Statistical testing, practical significance assessment, multi-dimensional drilldown, novelty effect detection
 
@@ -286,7 +290,7 @@ decision_recommendation:
       - "If Android performance remains poor, consider rollback"
 ```
 
-### Step 2: A/B Test Report Generation
+### Step 2: A/B Test Report Generation [Core]
 
 Experiment overview, statistical conclusions, effect analysis, action recommendations
 
@@ -332,6 +336,14 @@ Generate tiered action recommendations based on statistical conclusions and effe
 #### 2.5 Report Assembly
 
 Assemble the above content into a complete report.
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | experiment results and conclusions only | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full execution + statistical deep dive + segment analysis + experiment learning repository | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -591,8 +603,13 @@ When experiment results/report itself changes, notification mechanism to downstr
 
 ## Quality Checks
 
+### P0 Checks (must pass for quick/standard/deep)
+
 - [ ] Experiment group traffic allocation correct
 - [ ] Guardrail metrics not triggered
+
+### P1 Checks (must pass for standard/deep)
+
 - [ ] Experiment data collection complete
 - [ ] Statistical significance calculation correct
 - [ ] Statistical conclusions consistent with data
@@ -600,25 +617,22 @@ When experiment results/report itself changes, notification mechanism to downstr
 - [ ] Guardrail metrics fully covered
 - [ ] Heterogeneous effects analyzed (at least 3 segment dimensions)
 
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
+
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|---------------|-----------------|---------------|
-| Experiment configuration missing | Cannot auto-monitor, user must provide experiment result data | Cannot execute running monitoring |
-| Experiment data missing | User provides experiment result data -> direct analysis | Cannot perform trend analysis and novelty effect detection |
-| Experiment configuration + Experiment data both missing | User provides experiment result data -> direct analysis | Output analysis results based on user data, trend and novelty effect annotated as "to be supplemented" |
-| No experiment design plan | Reverse-engineer experiment design elements from execution results, annotate as "design info missing" | Experiment overview chapter incomplete |
-| No product background | Focus on statistical conclusions themselves, action recommendations annotated as "need business context" | Action recommendations may lack business relevance |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, the following information is needed from the user to support degraded generation:
-- **Experiment result data**: Sample size, metric mean, standard deviation, etc. for treatment and control groups
-- **Experiment configuration** (optional): Traffic split ratio, run time, metric definitions
-- **Statistical significance requirements** (optional): Desired confidence level and statistical power
-- **Product background** (optional): Product stage, business goals, and historical experiments
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|---------------|-----------------|---------------|----------|
+| Experiment configuration missing | Cannot auto-monitor, user must provide experiment result data | Cannot execute running monitoring | Request user to provide experiment configuration (traffic split, run time, metric definitions), or upload experiment-config.json |
+| Experiment data missing | User provides experiment result data -> direct analysis | Cannot perform trend analysis and novelty effect detection | Request user to provide experiment result data (sample size, metric mean, standard deviation per group) |
+| Experiment configuration + Experiment data both missing | User provides experiment result data -> direct analysis | Output analysis results based on user data, trend and novelty effect annotated as "to be supplemented" | Request user to provide treatment and control group data, or upload experiment-data.json |
+| No experiment design plan | Reverse-engineer experiment design elements from execution results, annotate as "design info missing" | Experiment overview chapter incomplete | Request user to describe experiment hypothesis and design, or upload experiment-design.json |
+| No product background | Focus on statistical conclusions themselves, action recommendations annotated as "need business context" | Action recommendations may lack business relevance | Request user to provide product stage, business goals, and historical experiments |
 
 ### Execution Frequency
 

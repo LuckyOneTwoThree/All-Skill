@@ -12,6 +12,10 @@ metadata:
     - "老客户续费情况怎么样"
     - "收入留存趋势怎么看"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出NRR分析和留存策略"
+  deep_description: "完整分析 + 客户健康评分 + 流失预警模型 + 增购机会识别"
 ---
 
 # NRR自动追踪与预警
@@ -58,7 +62,7 @@ NRR = (期初收入 - 流失收入 + 扩张收入) / 期初收入
 
 ## 执行步骤
 
-### Step 1: NRR自动计算
+### Step 1: NRR自动计算 [核心]
 
 #### 收入数据处理
 1. 计算期初收入：月初MRR
@@ -80,7 +84,7 @@ nrr = (start_mrr - churned_mrr + expansion_mrr) / start_mrr
 - 按用户规模计算NRR
 - 按行业计算NRR
 
-### Step 2: NRR趋势分析
+### Step 2: NRR趋势分析 [核心]
 
 #### 趋势指标
 | 指标 | 说明 |
@@ -101,7 +105,7 @@ nrr = (start_mrr - churned_mrr + expansion_mrr) / start_mrr
 - 基准预测
 - 悲观预测
 
-### Step 3: 流失预警
+### Step 3: 流失预警 [核心]
 
 #### 流失风险信号
 | 信号类型 | 具体信号 | 风险权重 |
@@ -137,7 +141,7 @@ warning_rules:
     action: "feedback_followup"
 ```
 
-### Step 4: 扩张机会识别
+### Step 4: 扩张机会识别 [核心]
 
 #### 扩张信号
 | 信号类型 | 具体信号 | 扩张潜力 |
@@ -164,6 +168,14 @@ expansion_score = (
 | 升级 | 使用量达到上限 | 升级引导+优惠 |
 | 增购 | 团队规模扩大 | 席位增购推荐 |
 | 扩展 | 新业务需求 | 新产品线推荐 |
+
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | NRR分析和留存策略 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整分析 + 客户健康评分 + 流失预警模型 + 增购机会识别 | 完整产物 + 扩展分析 + 深度推演 |
 
 ## 输出
 
@@ -244,11 +256,35 @@ expansion_score = (
 | current_nrr | number | 是 | 当前NRR，须>0 |
 | nrr_breakdown | object | 是 | NRR分解，须含expansion_revenue_ratio/contraction_revenue_ratio/churned_revenue_ratio |
 | nrr_breakdown.expansion_revenue_ratio | number | 是 | 扩张收入占比，须≥0 |
+| nrr_breakdown.contraction_revenue_ratio | number | 否 | 收缩收入占比 |
 | nrr_breakdown.churned_revenue_ratio | number | 是 | 流失收入占比，须≥0 |
 | trend | array | 否 | NRR趋势数据，每项须含month/nrr |
+| trend[].month | string | 是 | 月份标识 |
+| trend[].nrr | number | 是 | NRR值 |
+| trend[].expansion | number | 否 | 扩张收入 |
+| trend[].contraction | number | 否 | 收缩收入 |
+| trend[].churn | number | 否 | 流失收入 |
 | churn_warnings | array | 否 | 流失预警列表，每项须含user_id/risk_signals/risk_level |
+| churn_warnings[].user_id | string | 是 | 用户ID |
+| churn_warnings[].company_name | string | 否 | 公司名称 |
+| churn_warnings[].monthly_revenue | number | 否 | 月收入 |
+| churn_warnings[].risk_signals | string[] | 是 | 风险信号列表 |
+| churn_warnings[].risk_level | string | 是 | 风险等级，枚举：high/medium/low |
+| churn_warnings[].recommended_action | string | 否 | 推荐行动 |
 | expansion_opportunities | array | 否 | 扩张机会列表，每项须含user_id/expansion_signals/recommended_upgrade |
+| expansion_opportunities[].user_id | string | 是 | 用户ID |
+| expansion_opportunities[].company_name | string | 否 | 公司名称 |
+| expansion_opportunities[].current_plan | string | 否 | 当前套餐 |
+| expansion_opportunities[].expansion_signals | string[] | 是 | 扩张信号列表 |
+| expansion_opportunities[].recommended_upgrade | string | 是 | 推荐升级套餐 |
+| expansion_opportunities[].expected_revenue_increase | number | 否 | 预期收入增长 |
 | summary | object | 否 | 收入汇总，须含total_active_revenue |
+| summary.total_active_revenue | number | 是 | 总活跃收入 |
+| summary.expansion_this_month | number | 否 | 本月扩张收入 |
+| summary.churn_this_month | number | 否 | 本月流失收入 |
+| summary.net_new_revenue | number | 否 | 净新增收入 |
+| summary.at_risk_revenue | number | 否 | 风险收入 |
+| summary.expansion_pipeline | number | 否 | 扩张管线 |
 
 ## 决策规则
 
@@ -261,21 +297,31 @@ expansion_score = (
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] NRR计算包含扩张、收缩、流失三部分
 - [ ] 流失预警覆盖活跃度、功能、财务、组织4类信号
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 扩张机会识别有评分和推荐策略
 - [ ] 分维度NRR计算覆盖用户分群和产品线
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 
 ### 上游文件缺失降级方案
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|----------|----------|----------|
-| 收入数据缺失 | 用户提供收入和流失数据 → 计算NRR | NRR计算基于用户提供的汇总数据 |
-| 账户数据缺失 | 跳过账户级NRR分析，仅计算整体NRR | 无法识别高流失风险账户 |
-| 收入数据 + 账户数据均缺失 | 用户提供收入和流失数据 → 计算NRR | 输出基础NRR计算，账户级分析标注"待补充" |
-- 若用户未提供用户行为数据，提示用户提供或跳过该输入相关步骤
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|----------|----------|----------|------------|
+| 收入数据缺失 | 用户提供收入和流失数据 → 计算NRR | NRR计算基于用户提供的汇总数据 | 要求用户提供月初MRR、扩张MRR、收缩MRR、流失MRR |
+| 账户数据缺失 | 跳过账户级NRR分析，仅计算整体NRR | 无法识别高流失风险账户 | 要求用户提供付费账户列表、付费状态和产品配置信息 |
+| 用户行为数据缺失 | 跳过行为驱动的流失信号分析，仅基于收入和账户数据预警 | 流失预警缺少行为维度，预警精准度降低 | 要求用户提供用户活跃度、功能使用频率和互动数据 |
+| 收入数据 + 账户数据均缺失 | 用户提供收入和流失数据 → 计算NRR | 输出基础NRR计算，账户级分析标注"待补充" | 要求用户提供收入汇总数据和客户分层分布 |
 
 ### 数据获取说明
 

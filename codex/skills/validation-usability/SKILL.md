@@ -10,6 +10,10 @@ metadata:
     - "How to conduct usability testing"
     - "Help me design test tasks"
     - "How to do user experience testing"
+execution_depth:
+  default: standard
+  quick_description: "Output usability issues and improvement suggestions"
+  deep_description: "Full assessment + usability scoring system + priority ranking + improvement roadmap"
 ---
 
 # Usability Testing Assistant
@@ -56,7 +60,7 @@ Usability testing is the only phase that **must be led by a human researcher**. 
 
 ### Pre-Test AI Assistance
 
-#### Step 1: Determine Test Objectives
+#### Step 1: Determine Test Objectives [Core]
 
 Determine usability test objectives based on the assumption map:
 
@@ -72,7 +76,7 @@ Determine usability test objectives based on the assumption map:
 }
 ```
 
-#### Step 2: Generate Task Scripts
+#### Step 2: Generate Task Scripts [Core]
 
 **Rule**: Each task corresponds to a usability assumption to be validated
 
@@ -90,7 +94,7 @@ Determine usability test objectives based on the assumption map:
 }
 ```
 
-#### Step 3: Generate Recruitment Screening Survey
+#### Step 3: Generate Recruitment Screening Survey [Conditional]
 
 **Screening Criteria**:
 - Target user profile match
@@ -114,7 +118,7 @@ Determine usability test objectives based on the assumption map:
 }
 ```
 
-#### Step 4: Generate Observation Record Template
+#### Step 4: Generate Observation Record Template [Conditional]
 
 ```json
 {
@@ -138,7 +142,7 @@ Determine usability test objectives based on the assumption map:
 
 ### Post-Test AI Assistance
 
-#### Step 5: Test Record Structured Organization
+#### Step 5: Test Record Structured Organization [Core]
 
 Convert raw test records into structured data:
 
@@ -161,7 +165,7 @@ Convert raw test records into structured data:
 }
 ```
 
-#### Step 6: Problem Auto-Clustering
+#### Step 6: Problem Auto-Clustering [Deep]
 
 **Clustering Dimensions**:
 
@@ -195,7 +199,7 @@ Convert raw test records into structured data:
 }
 ```
 
-#### Step 7: Insight Extraction
+#### Step 7: Insight Extraction [Deep]
 
 **Three Types of Insights**:
 
@@ -218,7 +222,7 @@ Convert raw test records into structured data:
 }
 ```
 
-#### Step 8: Generate Improvement Suggestions
+#### Step 8: Generate Improvement Suggestions [Deep]
 
 **Priority Ranking Rules**:
 
@@ -241,6 +245,14 @@ Convert raw test records into structured data:
   ]
 }
 ```
+
+### Output Depth Grading
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | usability issues and improvement suggestions | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (default) | Complete output including all Steps |
+| deep | Full assessment + usability scoring system + priority ranking + improvement roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -300,23 +312,31 @@ Convert raw test records into structured data:
 
 ## Quality Checks
 
-| Check Item | Pass Condition | Result |
-|-----------|---------------|--------|
-| Problem severity grading | P0/P1/P2/P3 grading is reasonable | pass/fail |
-| Insight assumption linkage | Insights correspond to assumption map | pass/fail |
-| Improvement suggestions actionable | Suggestions are clear and actionable | pass/fail |
-| Data completeness | Test data is complete without omissions | pass/fail |
+### P0 Checks (must pass for quick/standard/deep)
+
+- [ ] Problem severity grading (P0/P1/P2/P3 grading is reasonable)
+- [ ] Insight assumption linkage (Insights correspond to assumption map)
+
+### P1 Checks (must pass for standard/deep)
+
+- [ ] Improvement suggestions actionable (Suggestions are clear and actionable)
+- [ ] Data completeness (Test data is complete without omissions)
+
+### P2 Checks (must pass for deep only)
+
+- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ---
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|-----------------|---------------|
-| Prototype data missing | User provides design description, generate test scripts | Lacks prototype data, test tasks may be less precise |
-| Assumption map missing | User provides design description, generate test scripts | Lacks assumption map data, test objectives may be less focused |
-| Both prototype and assumption map missing | User provides design description, generate test scripts | Overall confidence reduced, test scripts may be less complete |
-| All upstream files missing | Prompt user to execute prior stages first, or generate test scripts based on user description | Output is only basic test framework |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|------------------------|-----------------|---------------|----------|
+| Prototype data missing | User provides design description, generate test scripts | Lacks prototype data, test tasks may be less precise | Request user to describe page layouts and interaction flows, or upload prototype.json |
+| Assumption map missing | User provides design description, generate test scripts | Lacks assumption map data, test objectives may be less focused | Request user to describe key assumptions to validate, or upload assumption-map.json |
+| Both prototype and assumption map missing | User provides design description, generate test scripts | Overall confidence reduced, test scripts may be less complete | Request user to describe design and assumptions, or execute design-prototype and validation-assumption-map first |
+| All upstream files missing | Prompt user to execute prior stages first, or generate test scripts based on user description | Output is only basic test framework | Request user to describe design features and test objectives, or execute design-prototype and validation-assumption-map first |
 
 ## Output Validation Rules
 

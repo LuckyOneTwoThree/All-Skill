@@ -12,6 +12,10 @@ metadata:
     - "kickoff会议怎么准备"
     - "项目启动会怎么开"
   interaction_mode: "human_ai_collaborate"
+execution_depth:
+  default: standard
+  quick_description: "直接输出项目启动计划和目标"
+  deep_description: "完整启动 + 团队对齐方案 + 风险预案 + 沟通机制设计"
 ---
 
 # Kickoff会议自动化
@@ -218,6 +222,14 @@ metadata:
 
 ---
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 项目启动计划和目标 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整启动 + 团队对齐方案 + 风险预案 + 沟通机制设计 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-project/planning-kickoff/`
@@ -378,10 +390,20 @@ metadata:
 
 ## 质量检查
 
+### P0 检查（quick/standard/deep 都必须通过）
+
 - [ ] 议程覆盖项目目标、范围、角色、时间线
 - [ ] 关键利益相关方确认参会
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 行动项有明确负责人和截止日期
 - [ ] 会议材料提前发送至参会者
+
+### P2 检查（仅 deep 必须通过）
+
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ## 降级策略
 

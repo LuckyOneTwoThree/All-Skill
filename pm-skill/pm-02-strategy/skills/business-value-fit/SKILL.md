@@ -11,6 +11,10 @@ metadata:
     - "我们的价值主张对不对"
     - "用户真的需要这个功能吗"
   interaction_mode: "ai_suggest_human_approve"
+execution_depth:
+  default: standard
+  quick_description: "直接输出价值-市场匹配度评估"
+  deep_description: "完整评估 + 价值-市场匹配矩阵 + 差距分析 + 优化路线图"
 ---
 
 # 价值主张匹配度自动评估
@@ -91,7 +95,7 @@ metadata:
 
 ## 执行步骤
 
-### Step 1：痛点对齐度评估
+### Step 1：痛点对齐度评估 [核心]
 
 **任务**：系统性评估每个Pain Reliever与用户痛点的覆盖情况。
 
@@ -151,7 +155,7 @@ metadata:
 - 每个痛点有明确覆盖状态
 - 遗漏痛点包含改进建议
 
-### Step 2：收益创造验证
+### Step 2：收益创造验证 [核心]
 
 **任务**：评估Gain Creators与用户期望收益的匹配情况。
 
@@ -200,7 +204,7 @@ metadata:
 - 未覆盖收益已识别并评估重要性
 - 可实现性评估合理
 
-### Step 3：匹配度总评
+### Step 3：匹配度总评 [核心]
 
 **任务**：综合痛点覆盖和收益创造，计算整体匹配度评分。
 
@@ -239,6 +243,14 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 }
 ```
 
+### 输出深度分级
+
+| 深度级别 | 输出范围 | 说明 |
+|----------|----------|------|
+| quick | 价值-市场匹配度评估 | 核心结论 + 最小可行产物 |
+| standard | 完整产物（当前默认） | 完整产物，包含全部Step输出 |
+| deep | 完整评估 + 价值-市场匹配矩阵 + 差距分析 + 优化路线图 | 完整产物 + 扩展分析 + 深度推演 |
+
 ## 输出
 
 **存储路径**：`output/pm-strategy/business-value-fit/`
@@ -255,14 +267,36 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 | evaluation_report.evaluation_metadata.gains_analyzed | number | 是 | 已分析收益数量 |
 | evaluation_report.evaluation_metadata.confidence | string | 是 | high/medium/low |
 | evaluation_report.pain_alignment.covered_pains | array | 是 | 已覆盖痛点列表 |
+| evaluation_report.pain_alignment.covered_pains[].pain_id | string | 是 | 痛点ID，不可为空 |
+| evaluation_report.pain_alignment.covered_pains[].coverage_score | number | 是 | 覆盖评分，0-5 |
+| evaluation_report.pain_alignment.covered_pains[].coverage_quality | string | 是 | 覆盖质量，枚举：full/partial/edge/none |
 | evaluation_report.pain_alignment.uncovered_pains | array | 是 | 未覆盖痛点列表，每项含recommendation |
+| evaluation_report.pain_alignment.uncovered_pains[].pain_id | string | 是 | 痛点ID，不可为空 |
+| evaluation_report.pain_alignment.uncovered_pains[].frequency | string | 是 | 出现频率，枚举：high/medium/low |
+| evaluation_report.pain_alignment.uncovered_pains[].severity | string | 是 | 严重程度，枚举：high/medium/low |
+| evaluation_report.pain_alignment.uncovered_pains[].recommendation | string | 是 | 改进建议，不可为空 |
 | evaluation_report.pain_alignment.pain_coverage_summary | object | 是 | 覆盖率统计 |
+| evaluation_report.pain_alignment.pain_coverage_summary.total_pains | number | 是 | 痛点总数 |
+| evaluation_report.pain_alignment.pain_coverage_summary.fully_covered | number | 是 | 完全覆盖数 |
+| evaluation_report.pain_alignment.pain_coverage_summary.uncovered | number | 是 | 未覆盖数 |
 | evaluation_report.gain_validation.covered_gains | array | 是 | 已覆盖收益列表 |
+| evaluation_report.gain_validation.covered_gains[].gain_id | string | 是 | 收益ID，不可为空 |
+| evaluation_report.gain_validation.covered_gains[].coverage_status | string | 是 | 覆盖状态，枚举：covered/partial/not_covered |
+| evaluation_report.gain_validation.covered_gains[].realizability | string | 是 | 可实现性，枚举：高/中/低 |
 | evaluation_report.gain_validation.uncovered_gains | array | 是 | 未覆盖收益列表，每项含recommendation |
+| evaluation_report.gain_validation.uncovered_gains[].gain_id | string | 是 | 收益ID，不可为空 |
+| evaluation_report.gain_validation.uncovered_gains[].importance | string | 是 | 重要性，枚举：high/medium/low |
+| evaluation_report.gain_validation.uncovered_gains[].recommendation | string | 是 | 改进建议，不可为空 |
 | evaluation_report.overall_fit_score | number | 是 | 综合匹配度评分0-5 |
 | evaluation_report.coverage_rate | object | 是 | 覆盖率指标 |
 | evaluation_report.improvement_suggestions | array | 是 | 改进建议列表 |
+| evaluation_report.improvement_suggestions[].priority | string | 是 | 优先级，枚举：high/medium/low |
+| evaluation_report.improvement_suggestions[].category | string | 是 | 建议类别，枚举：add_pain_coverage/enhance_gain/clarify_message/reposition |
+| evaluation_report.improvement_suggestions[].description | string | 是 | 建议描述，不可为空 |
 | evaluation_report.warnings | array | 是 | 警告列表 |
+| evaluation_report.warnings[].warning_type | string | 是 | 警告类型，如high_frequency_uncovered |
+| evaluation_report.warnings[].description | string | 是 | 警告描述，不可为空 |
+| evaluation_report.warnings[].severity | string | 是 | 严重程度，枚举：high/medium/low |
 
 ### 完整评估报告
 
@@ -336,28 +370,22 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 
 ## 质量检查
 
-### 自检清单
+### P0 检查（quick/standard/deep 都必须通过）
 
 - [ ] 所有Pain Relievers已评估
 - [ ] 所有Gain Creators已验证
+
+### P1 检查（standard/deep 必须通过）
+
 - [ ] 遗漏清单完整无遗漏
 - [ ] 评分逻辑一致
 - [ ] 权重设置合理
 - [ ] 警告规则正确触发
 
-### 质量标准
+### P2 检查（仅 deep 必须通过）
 
-1. **评分一致性**：
-   - 相同痛点-价值主张组合的评分应保持一致
-   - 评分理由充分且可解释
-
-2. **覆盖完整性**：
-   - 痛点覆盖不能为0（除非明确选择不覆盖某些痛点）
-   - 高频高严重度痛点必须有覆盖
-
-3. **建议可操作性**：
-   - 改进建议具体可执行
-   - 优先级排序合理
+- [ ] 扩展分析完整（深度推演和路线图已生成）
+- [ ] 决策记录完整（关键决策有依据和替代方案）
 
 ---
 
@@ -365,12 +393,12 @@ Overall Fit Score = (Pain Alignment Score × 0.6) + (Gain Validation Score × 0.
 
 当上游文件不存在时，本Skill仍可独立执行：
 
-| 缺失的上游输入 | 降级方案 | 输出影响 |
-|---------------|---------|---------|
-| bmc.json | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏BMC结构化数据，价值主张可能不完整 |
-| 用户研究数据（voice-analysis / persona） | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏用户研究数据，痛点频率和严重度缺乏实证 |
-| bmc.json + 用户研究数据 | 用户提供价值主张和用户痛点描述 → 直接评估匹配度 | 整体置信度降低，评分缺乏数据锚定 |
-| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供价值主张和用户痛点直接评估匹配度 | 整体置信度显著降低，评估仅为假设推断 |
+| 缺失的上游输入 | 降级方案 | 输出影响 | 数据获取说明 |
+|---------------|---------|---------|------------|
+| bmc.json | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏BMC结构化数据，价值主张可能不完整 | 要求用户提供产品价值主张描述或上传bmc.json文件 |
+| 用户研究数据（voice-analysis / persona） | 用户提供价值主张和用户痛点 → 直接评估匹配度 | 缺乏用户研究数据，痛点频率和严重度缺乏实证 | 要求用户提供用户痛点描述或上传persona.json/voice-analysis.json文件 |
+| bmc.json + 用户研究数据 | 用户提供价值主张和用户痛点描述 → 直接评估匹配度 | 整体置信度降低，评分缺乏数据锚定 | 要求用户提供价值主张描述和用户痛点信息 |
+| 所有上游文件均缺失 | 提示用户先执行前序阶段，或基于用户提供价值主张和用户痛点直接评估匹配度 | 整体置信度显著降低，评估仅为假设推断 | 要求用户提供产品价值主张、目标用户痛点和核心功能描述 |
 
 ## 数据获取说明
 
