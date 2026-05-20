@@ -1,18 +1,20 @@
 ---
 name: planning-project-charter
-description: "Use when generating a project charter document. Automates project charter creation, transforming product background, strategic objectives, and resource constraints into a formal charter including background, objectives & scope, success criteria, stakeholders, preliminary risk assessment, resource requirements, and timeline. Keywords: project charter, project objectives, project scope, success criteria, project definition."
+description: Use when generating a project charter document. Project charter auto-generation, transforming product background, strategic objectives, and resource constraints into a formal project charter document, including background, objectives & scope, success criteria, stakeholders, preliminary risk assessment, resource requirements, and timeline. Keywords: project charter, project articles of association, project objectives, project scope, success criteria, project definition.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Project Planning"
   type: "pipeline"
-  version: "1.0"
+  version: "3.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "How to write a project charter"
     - "Help me create a project charter"
     - "How to define project objectives and scope"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output project charter and objectives"
+  quick_description: "Output project charter and objectives directly"
   deep_description: "Full charter + stakeholder alignment + risk contingency + governance mechanism design"
 ---
 
@@ -26,7 +28,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI->Human AI Suggests, Human Approves**
+**🤖→👤 AI Suggests, Human Approves**
 
 - AI automatically completes Step 1-6, generating a complete project charter draft
 - Human review focus: objective definition, scope boundaries, success criteria, stakeholder identification
@@ -41,7 +43,7 @@ execution_depth:
 |--------|------|------|------|------|
 | product_background | string | Yes | User provided | Product background information |
 | strategic_goals | string[] | Yes | User provided | Strategic objectives list |
-| resource_constraints | object | O | User provided | Resource constraint conditions |
+| resource_constraints | object | ○ | User provided | Resource constraint conditions |
 
 ---
 
@@ -213,8 +215,8 @@ execution_depth:
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | project charter and objectives | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
+| quick | Project charter and objectives | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (current default) | Complete deliverables including all Step outputs |
 | deep | Full charter + stakeholder alignment + risk contingency + governance mechanism design | Full deliverables + extended analysis + deep simulation |
 
 ## Output
@@ -297,7 +299,7 @@ Each Step output must include confidence annotation:
 
 | Confidence | Meaning | Action |
 |--------|------|------|
-| High (>=0.8) | Sufficient data, reasonable inference | Can be used directly |
+| High (≥0.8) | Sufficient data, reasonable inference | Can be used directly |
 | Medium (0.6-0.8) | Basically sufficient data, some inference | Recommend human confirmation |
 | Low (<0.6) | Insufficient data or high inference uncertainty | Must be reviewed by human |
 

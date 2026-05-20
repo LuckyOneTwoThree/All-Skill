@@ -1,15 +1,17 @@
 ---
 name: metrics-dashboard
-description: "Use when configuring product metrics dashboards. Dashboard auto-configuration based on metric hierarchy, auto-assigning metrics to dashboards, configuring alert rules and thresholds. Keywords: Dashboard configuration, data dashboard, metric visualization, alert configuration, monitoring panel."
+description: "Use when configuring product metrics dashboards. Dashboard auto-configuration based on metric hierarchy, auto-assigning metrics to dashboards, configuring alert rules and thresholds. Keywords: Dashboard configuration, data dashboard, metric visualization, alert configuration, monitoring panel, dashboard setup, data reports."
 metadata:
   module: "Product Metrics Design"
   sub-module: "Metrics Design"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "Help me build a data dashboard"
     - "Configure a monitoring panel"
     - "Create a Dashboard to display all key metrics"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output core metrics dashboard design"
@@ -27,16 +29,16 @@ execution_depth:
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
+|--------|------|------|------|------|
 | metric_system | JSON | Yes | output/pm-metrics-design/metrics-system/metric_system.json | Metric system (including North Star, L1/L2/actionable metrics) |
 | tracking_plan | JSON array | Yes | output/pm-metrics-design/tracking-plan/tracking_plan.json | Tracking plan |
-| user_roles | string[] | O | User provided | Dashboard user roles |
-| dashboard_platform | string | O | User provided | Visualization platform (amplitude/grafana/datadog) |
+| user_roles | string[] | ○ | User provided | Dashboard user roles |
+| dashboard_platform | string | ○ | User provided | Visualization platform (amplitude/grafana/datadog) |
 
 ```json
 {
@@ -94,12 +96,12 @@ AI->Human AI suggests, human approves
 **Task**: Configure alert rules for key metrics
 
 **Rules**:
-- North Star metric: Configure daily MoM alert (threshold: +/-15%)
-- L1 metrics: Configure weekly MoM alert (threshold: +/-10%)
+- North Star metric: Configure daily MoM alert (threshold: ±15%)
+- L1 metrics: Configure weekly MoM alert (threshold: ±10%)
 - Anomaly detection triggered metrics: Automatically inherit anomaly detection alert configuration
 
 **Execution**:
-1. Generate alert rules based on statistical thresholds (mean+/-2σ) or historical baselines
+1. Generate alert rules based on statistical thresholds (mean±2σ) or historical baselines
 2. Determine alert severity (P0/P1/P2/P3)
 3. Configure notification channels and recipients
 
@@ -192,7 +194,7 @@ AI->Human AI suggests, human approves
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | dashboards | array | Yes | Dashboard configuration list, at least 1 strategic dashboard |
 | dashboards[].name | string | Yes | Dashboard name, cannot be empty |
 | dashboards[].type | string | Yes | Dashboard type, enum: strategic/tactical/operational |
@@ -215,7 +217,7 @@ AI->Human AI suggests, human approves
 When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | North Star metric change | Strategic Dashboard KPI Widget and alert rules | Update Strategic Dashboard core Widget, recalculate alert thresholds, flag for human confirmation |
 | L1/L2 metric addition/removal | Tactical/Operational Dashboard Widget assignment | Re-execute metric auto-assignment, flag added/removed Widgets, preserve human-confirmed layouts |
 | Actionable metric change | Operational Dashboard Widgets and alerts | Update Operational Dashboard, re-evaluate alert configuration |
@@ -225,7 +227,7 @@ When upstream inputs change, this Skill's response strategy:
 When Dashboard configuration itself changes, notification mechanism to downstream:
 
 | Configuration Change Type | Notification Scope | Notification Method |
-|--------------------------|-------------------|---------------------|
+|-------------|----------|----------|
 | Dashboard structure change | Module 7 (Product Metrics Operations) | Flag dashboard structure change, trigger monitoring configuration update |
 | Alert rule change | Ops team, Product team | Flag alert change, trigger alert notification configuration update |
 | Widget addition/removal | Module 7 (Product Metrics Operations) | Flag Widget change, trigger data source verification |
@@ -239,7 +241,7 @@ When Dashboard configuration itself changes, notification mechanism to downstrea
 - Alert thresholds configured with default values
 
 ### Human Decision Points
-- Dashboard layout requires human confirmation (AI->Human)
+- Dashboard layout requires human confirmation (🤖→👤)
 - Alert thresholds can be adjusted based on actual conditions
 - Dashboard naming and ownership determined by humans
 
@@ -278,12 +280,19 @@ When Dashboard configuration itself changes, notification mechanism to downstrea
 ### Upstream File Missing Degradation Plan
 
 | Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|-----------------|---------------|----------|
+|----------|----------|----------|------------|
 | Metric system missing | Prompt user to provide core metric list, generate basic Dashboard configuration based on metric list | Dashboard hierarchy simplified, no strategic/tactical/operational layering | Request user to provide core metric names and definitions, or upload metrics-system.json |
 | Tracking plan missing | Skip data source marking step, Widget data source marked as "pending configuration" | Cannot confirm data collection feasibility | Request user to provide tracking event list, or upload tracking-plan.json |
 | Metric system + Tracking plan both missing | User provides core metric list -> generate basic Dashboard configuration | Output basic Dashboard configuration, data source and refresh frequency marked as "to be confirmed" | Request user to provide core metric list and target user roles, or execute metrics-system and tracking-plan first |
 | user_roles missing | If user does not provide user_roles, prompt user to provide or skip related steps | Dashboard role layering missing, use default role configuration | Prompt user to specify Dashboard user roles (Management/PM/Operations) |
 | dashboard_platform missing | If user does not provide dashboard_platform, prompt user to provide or skip related steps | Use generic JSON configuration format, platform-specific configuration marked as "to be specified" | Prompt user to specify visualization platform (Amplitude/Grafana/Datadog, etc.) |
+
+### Data Acquisition Instructions
+
+When upstream files are missing, the user needs to provide the following information to support degraded generation:
+- **Core metric list**: Key metric names and definitions to monitor
+- **Target user roles** (optional): Primary Dashboard user roles (Management/PM/Operations)
+- **Dashboard platform** (optional): Visualization platform to use (Amplitude/Grafana/Datadog, etc.)
 
 ---
 

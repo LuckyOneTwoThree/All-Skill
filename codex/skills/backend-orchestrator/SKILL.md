@@ -1,79 +1,90 @@
 ---
 name: backend-orchestrator
-description: 当需要完成后端从设计到代码实现的全流程时使用。后端全流程指挥官，协调"先全量设计、再统一实现"的两阶段流程：设计阶段按架构→数据→API顺序产出设计规范，经统一设计审查后，实现阶段按数据→API→架构顺序生成可运行代码。关键词：后端全流程、后端开发、后端设计+实现、后端整体方案。
+description: "Use when completing the full backend flow from design to code implementation. Backend full-flow commander, orchestrating the two-phase flow of 'design all first, then implement uniformly': design phase produces specifications in architecture->data->API order, after unified design review, implementation phase generates runnable code in data->API->architecture order. Keywords: backend full flow, backend development, backend design+implementation, backend overall solution."
 metadata:
-  module: "后端架构与开发"
-  sub-module: "全流程编排"
+  module: "Backend Architecture & Development"
+  sub-module: "Full Flow Orchestration"
   type: "orchestrator"
   version: "5.0"
-  domain_tags: ["电商", "SaaS", "金融", "通用"]
+  domain_tags: ["E-commerce", "SaaS", "Finance", "General"]
   trigger_examples:
-    - "完成后端开发全流程"
-    - "从设计到代码一步到位"
-    - "后端整体方案设计和实现"
-    - "后端从零开始搭建"
+    - "Complete backend development full flow"
+    - "From design to code in one step"
+    - "Backend overall solution design and implementation"
+    - "Build backend from scratch"
 ---
 
-# 后端全流程指挥官
+# Backend Full-Flow Orchestrator
 
-## 核心原则
+## Code Write Boundary
 
-架构约束先行，数据驱动契约，设计审查闭环，实现步步可编译。
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
 
-1. **架构约束先行**：架构决策从根本上影响数据模型和API设计，必须最先确定
-2. **数据驱动契约**：API契约基于已确认的数据模型设计，字段定义有据可依
-3. **先全量设计再统一实现**：设计阶段只产出文档，三份设计交叉验证后统一审查，避免设计冲突导致代码返工
-4. **实现步步可编译**：实现阶段按数据→API→架构顺序，每步产出都可独立编译运行
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
-## 执行步骤
+## Core Principles
 
-1. **设计阶段串行**：架构→数据→API，后一步消费前一步产出
-2. **统一设计审查**：编排器读取三份设计产出执行交叉验证，确保一致性后人类统一确认
-3. **实现阶段串行**：数据→API→架构，每步可编译
-4. **最终验证**：项目可启动，健康检查通过
+Architecture constraints first, data-driven contracts, design review closed-loop, implementation step-by-step compilable.
 
-## 编排协议
+1. **Architecture Constraints First**: Architecture decisions fundamentally affect data models and API design, must be determined first
+2. **Data-Driven Contracts**: API contracts designed based on confirmed data models, field definitions evidence-based
+3. **Design All First Then Implement Uniformly**: Design phase only produces documents, three designs cross-validated then uniformly reviewed, avoiding design conflicts causing code rework
+4. **Implementation Step-by-Step Compilable**: Implementation phase in data->API->architecture order, each step's output can independently compile and run
 
-> 协议源头：[orchestrator-protocol.md](../../../templates/orchestrator-protocol.md)（仅供维护者追踪，本文件已内联完整协议内容，可独立使用）
+## Execution Steps
 
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
+1. **Design Phase Serial**: Architecture->Data->API, later step consumes earlier step's output
+2. **Unified Design Review**: Orchestrator reads three design outputs and performs cross-validation, ensures consistency then human unified confirmation
+3. **Implementation Phase Serial**: Data->API->Architecture, each step compilable
+4. **Final Validation**: Project can start, health check passes
 
-### 调用规则
+## Orchestration Protocol
 
-1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
-2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
-7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
+> Protocol source: [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md) (for maintainers tracking only, this file has the complete protocol inlined and can be used independently)
 
-### 上下文管理
+You are an orchestrator, responsible for **dispatching sub-Skills by stage**, not proxy-executing sub-Skill logic. Strictly follow the protocol below:
 
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
+### Invocation Rules
 
-### 阶段卡口标准
+1. **Dual-Mode Invocation**: When the platform supports the Skill tool, explicitly invoke sub-Skills; when the platform does not support it, execute compatible dispatching based on sub-Skill's `name`, input contract, output contract, and stage gates.
+2. **No Proxy Expansion**: During compatible dispatching, do not copy sub-Skill internal methodology into orchestrator context, nor rewrite sub-Skill logic; only pass necessary input, output paths, and validation conditions.
+3. **Contract-Driven**: Only focus on sub-Skill input contracts, output contracts, and validation conditions, not internal implementation details.
+4. **State Transfer**: Pass current stage output as next stage input, transfer data via file paths and artifact index.
+5. **Validate Before Proceeding**: Only advance to next stage after current stage output validation passes.
+6. **Stage Summary (Mandatory)**: After all Pipeline stages complete, **must immediately** execute the `post_pipeline` defined stage summary action to generate summary document. This is not optional; if stage summary is not generated, orchestrator execution is considered incomplete.
+7. **Cross-Sub-Skill Validation**: When consistency constraints exist between outputs of multiple sub-Skills, the orchestrator may perform cross-validation between stages (reading multiple outputs to compare consistency). This is the orchestrator's coordination responsibility, not proxy-executing sub-Skill logic. Cross-validation rules are explicitly defined in the orchestrator SKILL.md.
 
-编排器的阶段卡口只校验以下3类条件，不深入子Skill内部字段：
+### Context Management
 
-| 卡口类型 | 校验内容 | 示例 |
-|----------|----------|------|
-| 输出存在性 | 输出文件已生成且非空 | "api-design-spec输出文件已生成" |
-| 顶层结构完整性 | JSON顶层必填字段存在 | "prd.json包含features/pages/entities" |
-| 人类决策确认 | 关键决策点已获人类确认 | "设计审查人类确认通过" |
+- After each sub-Skill invocation completes, only retain **output file paths** and **key conclusion summaries**
+- Detailed outputs written to `output/{domain-path}/{skill-name}/` directory
+- If context approaches limits, prioritize retaining current stage content and pending stage sub-Skill names
 
-### 通用异常处理
+### Stage Gate Standards
 
-| 异常类型 | 处理策略 |
-|----------|----------|
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-| 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
-| 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
-| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板，整体置信度设为0.3，强制人类确认是否继续 |
+The orchestrator's stage gates only validate the following 3 categories of conditions, not sub-Skill internal fields:
 
-## Pipeline 定义
+| Gate Type | Validation Content | Example |
+|-----------|-------------------|---------|
+| Output Existence | Output files generated and non-empty | "api-design-spec output files generated" |
+| Top-level Structure Integrity | JSON top-level required fields exist | "prd.json contains features/pages/entities" |
+| Human Decision Confirmation | Key decision points have human confirmation | "Design review human confirmation passed" |
+
+### General Exception Handling
+
+| Exception Type | Handling Strategy |
+|---------------|-------------------|
+| Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestrator completion |
+| Key decision point lacks human confirmation | Pause orchestration, output pending confirmation list, wait for human confirmation before continuing |
+| Upstream data missing | Mark missing data items, fill with reasonable assumptions (mark confidence <=0.3), continue execution and highlight in output |
+| All upstream data missing | Mark "all data missing" status, output minimal template, set overall confidence to 0.3, force human confirmation whether to continue |
+
+## Pipeline Definition
 
 ```yaml
 pipeline: backend-orchestrator
@@ -85,317 +96,362 @@ post_pipeline:
 
 stages:
   - id: arch-design
-    name: "架构设计"
+    name: "Architecture Design"
     skills:
       - backend-architecture-spec
     gate:
-      condition: "backend-architecture-spec输出文件已生成且非空 + 人类审查通过"
-      fail_action: "缺失项必须补充"
+      condition: "backend-architecture-spec output files generated and non-empty + human review passed"
+      fail_action: "Missing items must be supplemented"
 
   - id: data-design
-    name: "数据架构设计"
+    name: "Data Architecture Design"
     depends_on: [arch-design]
     skills:
       - data-architecture-spec
     gate:
-      condition: "data-architecture-spec输出文件已生成且非空 + 人类审查通过"
-      fail_action: "缺失项必须补充"
+      condition: "data-architecture-spec output files generated and non-empty + human review passed"
+      fail_action: "Missing items must be supplemented"
 
   - id: api-design
-    name: "API设计"
+    name: "API Design"
     depends_on: [data-design]
     skills:
       - api-design-spec
     gate:
-      condition: "api-design-spec输出文件已生成且非空 + 人类审查通过"
-      fail_action: "缺失项必须补充"
+      condition: "api-design-spec output files generated and non-empty + human review passed"
+      fail_action: "Missing items must be supplemented"
 
   - id: design-review
-    name: "统一设计审查"
+    name: "Unified Design Review"
     depends_on: [arch-design, data-design, api-design]
     type: cross-validation
     validation_rules:
       - id: api-er-alignment
-        name: "API资源↔ER模型对齐"
-        check: "每个API资源有对应ER模型实体，API字段100%有Model字段支撑"
-        fail_action: "补充缺失的实体或字段"
+        name: "API Resource <-> ER Model Alignment"
+        check: "Each API resource has corresponding ER model entity, API fields 100% have Model field support"
+        fail_action: "Supplement missing entities or fields"
       - id: api-service-alignment
-        name: "API分组↔服务边界一致"
-        check: "API按限界上下文分组，与服务设计一致"
-        fail_action: "调整API分组或服务边界"
+        name: "API Grouping <-> Service Boundary Consistency"
+        check: "APIs grouped by bounded context, consistent with service design"
+        fail_action: "Adjust API grouping or service boundaries"
       - id: tech-stack-consistency
-        name: "技术栈一致性"
-        check: "三个设计产出引用的技术栈统一"
-        fail_action: "统一技术栈决策"
+        name: "Tech Stack Consistency"
+        check: "Tech stack referenced across three design outputs is unified"
+        fail_action: "Unify tech stack decision"
       - id: cache-api-alignment
-        name: "缓存策略↔API访问模式对齐"
-        check: "高频API有对应缓存策略"
-        fail_action: "补充缓存策略"
+        name: "Cache Strategy <-> API Access Pattern Alignment"
+        check: "High-frequency APIs have corresponding cache strategies"
+        fail_action: "Supplement cache strategies"
       - id: data-api-ownership
-        name: "数据归属↔API归属一致"
-        check: "API资源归属的服务与数据归属的服务一致"
-        fail_action: "调整归属关系"
+        name: "Data Ownership <-> API Ownership Consistency"
+        check: "Service owning API resource is consistent with service owning data"
+        fail_action: "Adjust ownership relationships"
     output: output/backend-design-review/review-report.json
     gate:
-      condition: "交叉验证全部通过 + 人类统一确认"
-      fail_action: "不一致项必须修正后重新审查"
+      condition: "Cross-validation all passed + human unified confirmation"
+      fail_action: "Inconsistent items must be corrected then re-reviewed"
 
   - id: data-impl
-    name: "数据层实现"
+    name: "Data Layer Implementation"
     depends_on: [design-review]
     skills:
       - data-architecture-impl
     gate:
-      condition: "data-architecture-impl输出文件已生成且非空 + 人类确认通过"
-      fail_action: "缺失项补充后重新验证"
+      condition: "data-architecture-impl output files generated and non-empty + human confirmation passed"
+      fail_action: "Missing items supplemented then re-validated"
 
   - id: api-impl
-    name: "API层实现"
+    name: "API Layer Implementation"
     depends_on: [data-impl]
     skills:
       - api-design-impl
     gate:
-      condition: "api-design-impl输出文件已生成且非空 + 人类确认通过"
-      fail_action: "缺失项补充后重新验证"
+      condition: "api-design-impl output files generated and non-empty + human confirmation passed"
+      fail_action: "Missing items supplemented then re-validated"
 
   - id: arch-impl
-    name: "架构层实现"
+    name: "Architecture Layer Implementation"
     depends_on: [api-impl]
     skills:
       - backend-architecture-impl
     gate:
-      condition: "backend-architecture-impl输出文件已生成且非空 + 人类确认通过"
-      fail_action: "缺失项补充后重新验证"
+      condition: "backend-architecture-impl output files generated and non-empty + human confirmation passed"
+      fail_action: "Missing items supplemented then re-validated"
 ```
 
-## 阶段执行计划
+## Stage Execution Plan
 
-### 阶段A：全量设计
+### Phase A: Full Design
 
-#### A1：架构设计 → 调用 backend-architecture-spec
+#### A1: Architecture Design -> Invoke backend-architecture-spec
 
 ```
 Skill: backend-architecture-spec
-输入:
+Input:
   PRD: output/pm-design/design-prd/prd.md
-  PRD结构化数据: output/pm-design/design-prd/prd.json
-  业务规模: 用户提供
-  技术约束: 用户提供（可选）
-输出: output/backend-architecture/backend-architecture-spec/
-关键产出:
-  - architecture_decision.json — 架构方案+拓扑图
-  - service_design.json — 服务划分+限界上下文
-  - service_data_ownership.json — 服务数据归属（供data-architecture-spec消费）
-  - tech_stack_decision.json — 技术栈决策（供所有impl Skill统一消费）
-  - adr.json — 架构决策记录
-  - review_report.json — 审查问题清单
-  - tech_debt_register.json — 技术债登记册
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+  PRD Structured Data: output/pm-design/design-prd/prd.json
+  Business Scale: User provided
+  Technical Constraints: User provided (optional)
+Output: output/backend-architecture/backend-architecture-spec/
+Key Outputs:
+  - architecture_decision.json -- Architecture plan + topology diagram
+  - service_design.json -- Service division + bounded contexts
+  - service_data_ownership.json -- Service data ownership (for data-architecture-spec consumption)
+  - tech_stack_decision.json -- Tech stack decision (for all impl Skills unified consumption)
+  - adr.json -- Architecture Decision Records
+  - review_report.json -- Review issue list
+  - tech_debt_register.json -- Tech debt register
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-⏸ **架构设计审查卡口**
+**Architecture Design Review Gate**
 
-#### A2：数据架构设计 → 调用 data-architecture-spec
+#### A2: Data Architecture Design -> Invoke data-architecture-spec
 
 ```
 Skill: data-architecture-spec
-输入:
+Input:
   PRD: output/pm-design/design-prd/prd.md
-  PRD结构化数据: output/pm-design/design-prd/prd.json
-  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
-  服务数据归属: output/backend-architecture/backend-architecture-spec/service_data_ownership.json
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
-  数据量预估: 用户提供（可选）
-  并发量预估: 用户提供（可选）
-  当前Schema: 用户提供（可选）
-输出: output/backend-data-architecture/data-architecture-spec/
-关键产出:
-  - data_dictionary.json — 业务数据字典
-  - er_model.json — ER模型+DDL+索引策略
-  - cache_strategy.json — 缓存方案
-  - migration_plan.json — 迁移方案（增量项目）
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+  PRD Structured Data: output/pm-design/design-prd/prd.json
+  Architecture Plan: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  Service Data Ownership: output/backend-architecture/backend-architecture-spec/service_data_ownership.json
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  Data Volume Estimate: User provided (optional)
+  Concurrency Estimate: User provided (optional)
+  Current Schema: User provided (optional)
+Output: output/backend-data-architecture/data-architecture-spec/
+Key Outputs:
+  - data_dictionary.json -- Business data dictionary
+  - er_model.json -- ER model + DDL + index strategy
+  - cache_strategy.json -- Cache scheme
+  - migration_plan.json -- Migration plan (incremental projects)
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-⏸ **数据架构设计审查卡口**
+**Data Architecture Design Review Gate**
 
-#### A3：API设计 → 调用 api-design-spec
+#### A3: API Design -> Invoke api-design-spec
 
 ```
 Skill: api-design-spec
-输入:
+Input:
   PRD: output/pm-design/design-prd/prd.md
-  PRD结构化数据: output/pm-design/design-prd/prd.json
-  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
-  业务数据字典: output/backend-data-architecture/data-architecture-spec/data_dictionary.json（可选）
-  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
-  服务设计: output/backend-architecture/backend-architecture-spec/service_design.json
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json（可选）
-  业务流程: output/pm-design/design-userflow/userflow.json（可选）
-  安全等级: 用户提供
-  合规要求: 用户提供（可选）
-  多租户需求: 用户提供（可选）
-  前端页面数据需求: output/ui-frontend/page-builder/pages.json（可选）
-输出: output/backend-api-design/api-design-spec/
-关键产出:
-  - openapi.yaml — OpenAPI 3.0规范
-  - security-policy.json — 安全策略
-  - auth-scheme.json — 认证鉴权方案
-  - compliance-checklist.json — 合规检查清单
-  - api-coverage.json — PRD/前端对齐覆盖报告
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+  PRD Structured Data: output/pm-design/design-prd/prd.json
+  Data Model: output/backend-data-architecture/data-architecture-spec/er_model.json
+  Business Data Dictionary: output/backend-data-architecture/data-architecture-spec/data_dictionary.json (optional)
+  Architecture Plan: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  Service Design: output/backend-architecture/backend-architecture-spec/service_design.json
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json (optional)
+  Business Process: output/pm-design/design-userflow/userflow.json (optional)
+  Security Level: User provided
+  Compliance Requirements: User provided (optional)
+  Multi-tenant Requirements: User provided (optional)
+  Frontend Page Data Requirements: output/ui-frontend/page-builder/pages.json (optional)
+Output: output/backend-api-design/api-design-spec/
+Key Outputs:
+  - openapi.yaml -- OpenAPI 3.0 specification
+  - security-policy.json -- Security policy
+  - auth-scheme.json -- Authentication and authorization scheme
+  - compliance-checklist.json -- Compliance checklist
+  - api-coverage.json -- PRD/frontend alignment coverage report
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-#### A4：统一设计审查 → 编排器执行交叉验证
+#### A4: Unified Design Review -> Orchestrator Executes Cross-Validation
 
-三份设计产出完成后，编排器读取三份产出执行跨子Skill交叉验证：
+After three design outputs are complete, the orchestrator reads three outputs and performs cross-sub-Skill validation:
 
 ```
-动作: 统一设计审查（编排器协调职责）
-输入:
-  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
-  服务设计: output/backend-architecture/backend-architecture-spec/service_design.json
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
-  ER模型: output/backend-data-architecture/data-architecture-spec/er_model.json
-  缓存策略: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
-  OpenAPI规范: output/backend-api-design/api-design-spec/openapi.yaml
-输出: output/backend-design-review/review-report.json
-验证规则:
-  - API资源↔ER模型对齐：每个API资源有对应ER模型实体，API字段100%有Model字段支撑
-  - API分组↔服务边界一致：API按限界上下文分组，与服务设计一致
-  - 技术栈一致性：三个设计产出引用的技术栈统一
-  - 缓存策略↔API访问模式对齐：高频API有对应缓存策略
-  - 数据归属↔API归属一致：API资源归属的服务与数据归属的服务一致
-验证: 交叉验证全部通过 + 人类统一确认
-模式: 🤖→👤
+Action: Unified Design Review (orchestrator coordination responsibility)
+Input:
+  Architecture Plan: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  Service Design: output/backend-architecture/backend-architecture-spec/service_design.json
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  ER Model: output/backend-data-architecture/data-architecture-spec/er_model.json
+  Cache Strategy: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
+  OpenAPI Specification: output/backend-api-design/api-design-spec/openapi.yaml
+Output: output/backend-design-review/review-report.json
+Validation Rules:
+  - API Resource <-> ER Model Alignment: Each API resource has corresponding ER model entity, API fields 100% have Model field support
+  - API Grouping <-> Service Boundary Consistency: APIs grouped by bounded context, consistent with service design
+  - Tech Stack Consistency: Tech stack referenced across three design outputs is unified
+  - Cache Strategy <-> API Access Pattern Alignment: High-frequency APIs have corresponding cache strategies
+  - Data Ownership <-> API Ownership Consistency: Service owning API resource is consistent with service owning data
+Validation: Cross-validation all passed + human unified confirmation
+Mode: AI->Human
 ```
 
-⏸ **统一设计审查卡口**：交叉验证全部通过 + 人类统一确认 → 不一致项修正后重新审查
+**Unified Design Review Gate**: Cross-validation all passed + human unified confirmation -> Inconsistent items corrected then re-reviewed
 
-### 阶段B：统一实现
+### Phase B: Unified Implementation
 
-#### B1：数据层实现 → 调用 data-architecture-impl
+#### B1: Data Layer Implementation -> Invoke data-architecture-impl
 
 ```
 Skill: data-architecture-impl
-输入:
-  ER模型: output/backend-data-architecture/data-architecture-spec/er_model.json
-  缓存策略: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
-  迁移方案: output/backend-data-architecture/data-architecture-spec/migration_plan.json（可选）
-  API契约: output/backend-api-design/api-design-spec/openapi.yaml（可选，用于API对齐检查）
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
-  project_dir: 用户提供
-输出: 代码写入 {project_dir}/src/ + 元数据 output/backend-data-architecture/data-architecture-impl/
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+Input:
+  ER Model: output/backend-data-architecture/data-architecture-spec/er_model.json
+  Cache Strategy: output/backend-data-architecture/data-architecture-spec/cache_strategy.json
+  Migration Plan: output/backend-data-architecture/data-architecture-spec/migration_plan.json (optional)
+  API Contract: output/backend-api-design/api-design-spec/openapi.yaml (optional, for API alignment check)
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  project_dir: User provided
+Output: Code written to {project_dir}/src/ + metadata output/backend-data-architecture/data-architecture-impl/
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-#### B2：API层实现 → 调用 api-design-impl
+#### B2: API Layer Implementation -> Invoke api-design-impl
 
 ```
 Skill: api-design-impl
-输入:
-  OpenAPI规范: output/backend-api-design/api-design-spec/openapi.yaml
-  安全策略: output/backend-api-design/api-design-spec/security-policy.json
-  认证鉴权方案: output/backend-api-design/api-design-spec/auth-scheme.json
-  合规检查清单: output/backend-api-design/api-design-spec/compliance-checklist.json（可选）
+Input:
+  OpenAPI Specification: output/backend-api-design/api-design-spec/openapi.yaml
+  Security Policy: output/backend-api-design/api-design-spec/security-policy.json
+  Authentication & Authorization Scheme: output/backend-api-design/api-design-spec/auth-scheme.json
+  Compliance Checklist: output/backend-api-design/api-design-spec/compliance-checklist.json (optional)
   PRD: output/pm-design/design-prd/prd.md
-  PRD结构化数据: output/pm-design/design-prd/prd.json
-  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
-  数据层实现报告: output/backend-data-architecture/data-architecture-impl/impl-report.json
-  前端页面数据需求: output/ui-frontend/page-builder/pages.json（可选）
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
-  project_dir: 用户提供
-输出: 代码写入 {project_dir}/src/ + 元数据 output/backend-api-design/api-design-impl/
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+  PRD Structured Data: output/pm-design/design-prd/prd.json
+  Data Model: output/backend-data-architecture/data-architecture-spec/er_model.json
+  Data Layer Implementation Report: output/backend-data-architecture/data-architecture-impl/impl-report.json
+  Frontend Page Data Requirements: output/ui-frontend/page-builder/pages.json (optional)
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  project_dir: User provided
+Output: Code written to {project_dir}/src/ + metadata output/backend-api-design/api-design-impl/
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-#### B3：架构层实现 → 调用 backend-architecture-impl
+#### B3: Architecture Layer Implementation -> Invoke backend-architecture-impl
 
 ```
 Skill: backend-architecture-impl
-输入:
-  架构方案: output/backend-architecture/backend-architecture-spec/architecture_decision.json
-  服务设计: output/backend-architecture/backend-architecture-spec/service_design.json
+Input:
+  Architecture Plan: output/backend-architecture/backend-architecture-spec/architecture_decision.json
+  Service Design: output/backend-architecture/backend-architecture-spec/service_design.json
   ADR: output/backend-architecture/backend-architecture-spec/adr.json
-  审查报告: output/backend-architecture/backend-architecture-spec/review_report.json（可选）
-  技术债登记册: output/backend-architecture/backend-architecture-spec/tech_debt_register.json（可选）
-  API契约: output/backend-api-design/api-design-spec/openapi.yaml
-  数据模型: output/backend-data-architecture/data-architecture-spec/er_model.json
-  缓存策略: output/backend-data-architecture/data-architecture-spec/cache_strategy.json（可选）
-  技术栈决策: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
-  project_dir: 用户提供
-输出: 代码写入 {project_dir}/ + 元数据 output/backend-architecture/backend-architecture-impl/
-验证: 输出文件已生成且非空
-模式: 🤖→👤
+  Review Report: output/backend-architecture/backend-architecture-spec/review_report.json (optional)
+  Tech Debt Register: output/backend-architecture/backend-architecture-spec/tech_debt_register.json (optional)
+  API Contract: output/backend-api-design/api-design-spec/openapi.yaml
+  Data Model: output/backend-data-architecture/data-architecture-spec/er_model.json
+  Cache Strategy: output/backend-data-architecture/data-architecture-spec/cache_strategy.json (optional)
+  Tech Stack Decision: output/backend-architecture/backend-architecture-spec/tech_stack_decision.json
+  project_dir: User provided
+Output: Code written to {project_dir}/ + metadata output/backend-architecture/backend-architecture-impl/
+Validation: Output files generated and non-empty
+Mode: AI->Human
 ```
 
-### 阶段总结（post_pipeline）
+### Stage Summary (post_pipeline)
 
-所有子Skill执行完成后，必须生成阶段总结文档，写入 `output/phase-reports/backend/backend-orchestrator.md`，包含以下6项结构（均不可为空）：
+After all sub-Skills complete, must generate stage summary document, written to `output/phase-reports/backend/backend-orchestrator.md`, containing the following 6 structures (none can be empty):
 
-1. **执行概览**：编排器名称与版本、执行时间、子Skill执行状态（成功/失败/降级）
-2. **关键发现**：每个子Skill的核心输出摘要（1-3条）、跨子Skill的交叉洞察
-3. **决策记录**：人类决策点及决策结果、AI自动决策及依据
-4. **产出清单**：所有输出文件路径及内容摘要、产出质量评估（是否通过验证）
-5. **风险与待办**：未通过验证的项、降级执行的项、建议后续跟进的事项
-6. **下游衔接**：本编排器产出可被哪些下游编排器消费、推荐的下一步编排器
+1. **Execution Overview**: Orchestrator name and version, execution time, sub-Skill execution status (success/failure/degraded)
+2. **Key Findings**: Core output summary for each sub-Skill (1-3 items), cross-sub-Skill insights
+3. **Decision Records**: Human decision points and decision results, AI automatic decisions and basis
+4. **Output Inventory**: All output file paths and content summaries, output quality assessment (whether validation passed)
+5. **Risks and TODOs**: Items that failed validation, items executed with degradation, recommended follow-up items
+6. **Downstream Handoff**: Which downstream orchestrators can consume this orchestrator's outputs, recommended next orchestrator
 
-| 参数 | 值 |
-|------|-----|
-| 子Skill输出路径 | output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ + output/backend-design-review/ |
-| 总结输出路径 | output/phase-reports/backend/backend-orchestrator.md |
+| Parameter | Value |
+|-----------|-------|
+| Sub-Skill output path | output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ + output/backend-design-review/ |
+| Summary output path | output/phase-reports/backend/backend-orchestrator.md |
+| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
 
-下游衔接:
-  primary: release-orchestrator（后端全流程完成后，进入质量验收和发布流程）
+Downstream handoff:
+  primary: release-orchestrator (After backend full flow completes, enter quality acceptance and release flow)
   alternatives:
     - target: ui-orchestrator
-      reason: 后端就绪后启动UI前端开发与集成
-      condition: 前端尚未开发+需要后端API支撑时
+      reason: After backend is ready, start UI frontend development and integration
+      condition: Frontend not yet developed + need backend API support
   special_cases:
     - target: api-design-spec
-      reason: 仅需补充API设计，无需完整后端流程
-      condition: 架构和数据层已就绪，仅需API设计时，无需完整编排流
+      reason: Only need to supplement API design, no full backend flow needed
+      condition: Architecture and data layer ready, only need API design, no full orchestration flow needed
 
-## 阶段卡口
+## Stage Gates
 
-| 卡口 | 条件 | 未通过处理 |
-|------|------|------------|
-| 架构设计完成 | backend-architecture-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
-| 数据架构设计完成 | data-architecture-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
-| API设计完成 | api-design-spec输出文件已生成且非空 + 人类审查通过 | 缺失项必须补充 |
-| 统一设计审查通过 | 交叉验证全部通过 + 人类统一确认 | 不一致项修正后重新审查 |
-| 数据层实现完成 | data-architecture-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
-| API层实现完成 | api-design-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
-| 架构层实现完成 | backend-architecture-impl输出文件已生成且非空 + 人类确认通过 | 缺失项补充后重新验证 |
-| 阶段总结已生成 | output/phase-reports/backend/backend-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
+| Gate | Condition | Failure Handling |
+|------|-----------|-----------------|
+| Architecture design complete | backend-architecture-spec output files generated and non-empty + human review passed | Missing items must be supplemented |
+| Data architecture design complete | data-architecture-spec output files generated and non-empty + human review passed | Missing items must be supplemented |
+| API design complete | api-design-spec output files generated and non-empty + human review passed | Missing items must be supplemented |
+| Unified design review passed | Cross-validation all passed + human unified confirmation | Inconsistent items corrected then re-reviewed |
+| Data layer implementation complete | data-architecture-impl output files generated and non-empty + human confirmation passed | Missing items supplemented then re-validated |
+| API layer implementation complete | api-design-impl output files generated and non-empty + human confirmation passed | Missing items supplemented then re-validated |
+| Architecture layer implementation complete | backend-architecture-impl output files generated and non-empty + human confirmation passed | Missing items supplemented then re-validated |
+| Stage summary generated | output/phase-reports/backend/backend-orchestrator.md generated and all 6 structures non-empty | Supplement missing structure items then regenerate |
 
-## 人类决策点
+## Human Decision Points
 
-| 决策点 | 触发条件 | 决策内容 |
-|--------|----------|----------|
-| 架构模式选择 | backend-architecture-spec执行时 | 单体/微服务/Serverless，人类最终确认 |
-| 服务拆分粒度 | backend-architecture-spec执行时 | 拆分过细增加复杂度，拆分过粗失去灵活性 |
-| 技术栈确认 | backend-architecture-spec执行时 | 确认统一技术栈决策，影响后续所有实现 |
-| 范式vs反范式 | data-architecture-spec执行时 | 读写比决定，人类确认平衡点 |
-| 缓存一致性级别 | data-architecture-spec执行时 | 强一致vs最终一致，人类确认 |
-| API风格选择 | api-design-spec执行时 | RESTful vs GraphQL，人类确认 |
-| 安全等级确认 | api-design-spec执行时 | 标准vs高安全，影响限流/加密/审计策略 |
-| 统一设计审查确认 | 三份设计完成后 | 审查三份设计的一致性，确认后才进入实现 |
-| 数据迁移执行确认 | data-architecture-impl输出完成 | 迁移方案和回滚脚本生成完成，人类确认是否执行迁移 |
-| 架构就绪确认 | backend-architecture-impl审查通过后 | 代码实现完成，人类确认架构可进入开发 |
+| Decision Point | Trigger Condition | Decision Content |
+|---------------|-------------------|-----------------|
+| Architecture pattern selection | During backend-architecture-spec execution | Monolithic/Microservices/Serverless, human final confirmation |
+| Service division granularity | During backend-architecture-spec execution | Too fine increases complexity, too coarse loses flexibility |
+| Tech stack confirmation | During backend-architecture-spec execution | Confirm unified tech stack decision, affects all subsequent implementation |
+| Normalization vs denormalization | During data-architecture-spec execution | Read/write ratio determines, human confirms balance point |
+| Cache consistency level | During data-architecture-spec execution | Strong consistency vs eventual consistency, human confirmation |
+| API style selection | During api-design-spec execution | RESTful vs GraphQL, human confirmation |
+| Security level confirmation | During api-design-spec execution | Standard vs high security, affects rate limiting/encryption/audit strategy |
+| Unified design review confirmation | After three designs complete | Review consistency of three designs, confirm before entering implementation |
+| Data migration execution confirmation | After data-architecture-impl output completes | Migration plan and rollback scripts generated, human confirms whether to execute migration |
+| Architecture readiness confirmation | After backend-architecture-impl review passes | Code implementation complete, human confirms architecture is ready for development |
 
-## 异常处理
+## Exception Handling
 
-| 异常类型 | 处理策略 |
-|----------|----------|
-| 架构模式争议 | 提供单体+微服务双方案对比，人类决策 |
-| 服务循环依赖 | 自动检测并告警，必须消除后才能进入审查 |
-| 数据模型与API冲突 | 统一设计审查阶段解决，以数据模型为准调整API |
-| 设计审查不通过 | 根据人类修改意见调整设计，重新审查 |
-| 代码自审P0问题 | 自动修复后重新自审，无法修复则阻塞输出 |
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
+| Exception Type | Handling Strategy |
+|---------------|-------------------|
+| Architecture pattern dispute | Provide monolithic + microservices dual-plan comparison, human decision |
+| Service circular dependency | Auto-detect and alert, must eliminate before entering review |
+| Data model and API conflict | Resolve in unified design review phase, adjust API based on data model |
+| Design review not passed | Adjust design based on human feedback, re-review |
+| Code self-review P0 issues | Auto-fix then re-review, block output if unfixable |
+| Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestrator completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through a parent orchestrator), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests capabilities within this orchestrator's domain
+- Triggered as an independent skill by external systems
+- Parent orchestrator not executed, but user only needs this orchestrator's capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Get from user conversation | Last Resort: AI knowledge base inference |
+|---------------|---------------------------|-------------------------------------|---------------------------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user for PRD document or verbal requirements | Infer requirements from user description (low confidence, mark "PRD is AI-inferred") |
+| project_dir | — | Ask user for project directory path | Cannot infer, user must provide |
+| Business Scale | — | Ask user for business scale | Default medium scale (low confidence, mark "scale pending confirmation") |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest user execute upstream orchestrators in the following priority:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|--------------|-------------------------------|-------------|
+| PRD | pm-design related orchestrator | PRD is the business basis for backend-orchestrator, missing will result in execution without business foundation |
+
+Backtracking suggestion output format:
+```
+Critical input missing detected, suggest executing upstream orchestrator first:
+1. [Priority] pm-design related orchestrator -> Produces PRD
+Continue with AI-inferred values? (Inferred values confidence <=0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, must pass the following additional checks before executing Pipeline:
+
+| Gate Item | Check Content | Failure Handling |
+|-----------|--------------|-----------------|
+| PRD existence | prd.md or equivalent requirements document available | Block execution, suggest user provide PRD |
+| project_dir validity | User provided valid project directory path | Block execution, user must provide valid project_dir |
+| Input confidence assessment | All required input acquisition methods determined, overall confidence >=0.5 | When confidence <0.5, force human confirmation whether to continue execution |
+
+Gate execution order: PRD existence -> project_dir validity -> Input confidence assessment

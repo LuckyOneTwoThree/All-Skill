@@ -1,18 +1,20 @@
 ---
 name: agile-daily-sync
-description: "Use when automating the daily standup process. Automates Daily Sync with pre-meeting AI preparation (progress summary, blocker identification, daily work item suggestions), in-meeting human sync, and post-meeting AI processing (records, action items, risk flags). Keywords: daily standup, Daily Sync, progress sync, blocker tracking, agile daily, standup."
+description: Use when automating the daily standup process. Daily Sync automation, including pre-meeting AI preparation (progress summary, blocker identification, daily work item suggestions), in-meeting human sync, and post-meeting AI processing (records, action items, risk flags), outputting a daily sync report. Keywords: daily standup, Daily Sync, progress sync, blocker tracking, agile daily report, standup, what to do today.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Agile Execution"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "Daily standups take too much time"
     - "How to run standups efficiently"
     - "Help me prepare today's standup content"
+  interaction_mode: "ai_auto"
 execution_depth:
   default: standard
-  quick_description: "Output blocker list and daily priorities"
+  quick_description: "Output blocker list and daily priorities directly"
   deep_description: "Full sync + blocker root cause analysis + risk trend tracking + team collaboration optimization suggestions"
 ---
 
@@ -26,7 +28,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI AI Auto-execution (human participation required for sync meeting)**
+**🤖 AI Auto-execution (human participation required for sync meeting)**
 
 - **Pre-meeting**: AI automatically generates reporting materials (Step 1-3)
 - **In-meeting**: Humans participate in brief sync (assisted by AI-generated materials)
@@ -41,7 +43,7 @@ execution_depth:
 | sprint_backlog | object | Yes | output/pm-project/agile-sprint-planning/sprint_plan | Current Sprint Stories |
 | team_assignments | object | Yes | output/pm-project/agile-sprint-planning/sprint_plan | Team member task assignments |
 | previous_daily_sync | object | Yes | output/pm-project/agile-daily-sync/daily_sync | Previous Daily Sync status |
-| blocker_log | object[] | O | output/pm-project/agile-daily-sync/blocker_log | Recorded blockers list |
+| blocker_log | object[] | ○ | output/pm-project/agile-daily-sync/blocker_log | Recorded blockers list |
 | current_date | ISO date | Yes | System generated | Current date |
 
 ---
@@ -50,7 +52,7 @@ execution_depth:
 
 ### Pre-meeting AI: Preparation Phase
 
-#### Step 1: Progress Auto-summary [Core]
+#### Step 1: Progress Auto-summary
 
 **Actions**:
 - Scan all Stories for status updates
@@ -90,7 +92,7 @@ execution_depth:
 }
 ```
 
-#### Step 2: Blocker Auto-identification [Conditional]
+#### Step 2: Blocker Auto-identification
 
 **Actions**:
 - Check active blockers in blocker_log
@@ -119,7 +121,7 @@ execution_depth:
 }
 ```
 
-#### Step 3: Daily Work Item Suggestions [Deep]
+#### Step 3: Daily Work Item Suggestions
 
 **Actions**:
 - Generate today's work suggestions based on progress and blockers
@@ -150,7 +152,7 @@ execution_depth:
 
 ### Post-meeting AI: Follow-up Phase
 
-#### Step 4: Meeting Notes Auto-generation [Core]
+#### Step 4: Meeting Notes Auto-generation
 
 **Actions**:
 - Compile sync meeting content
@@ -179,7 +181,7 @@ execution_depth:
 }
 ```
 
-#### Step 5: Action Items Auto-extraction [Conditional]
+#### Step 5: Action Items Auto-extraction
 
 **Actions**:
 - Identify action items from meeting content
@@ -200,7 +202,7 @@ execution_depth:
 }
 ```
 
-#### Step 6: Risk Flag Auto-update [Deep]
+#### Step 6: Risk Flag Auto-update
 
 **Actions**:
 - Update risk status based on Daily Sync
@@ -233,8 +235,8 @@ execution_depth:
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | blocker list and daily priorities | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
+| quick | Blocker list and daily priorities | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (current default) | Complete deliverables including all Step outputs |
 | deep | Full sync + blocker root cause analysis + risk trend tracking + team collaboration optimization suggestions | Full deliverables + extended analysis + deep simulation |
 
 ## Output
@@ -282,7 +284,7 @@ execution_depth:
 
 | Team Size | Recommended Duration |
 |----------|----------|
-| <= 5 people | 10-15 minutes |
+| ≤ 5 people | 10-15 minutes |
 | 6-10 people | 15-20 minutes |
 | > 10 people | Consider split sync |
 

@@ -1,89 +1,95 @@
 ---
 name: iteration-decision
-description: "Use when optimizing product Backlog priorities or adjusting iteration decisions. End-to-end flow from Backlog grooming and priority assessment to iteration retrospective. Keywords: Backlog optimization, requirement pool management, Backlog grooming, requirement restructuring, priority adjustment, iteration priority, RICE scoring, iteration planning, iteration retrospective, continuous improvement, action item tracking, iteration review."
+description: Use when optimizing product Backlog priorities or adjusting iteration decisions. End-to-end iteration decision pipeline, from Backlog grooming, priority assessment to iteration retrospective. Keywords: Backlog optimization, requirement pool management, requirement linking, Backlog grooming, requirement reorganization, messy requirement pool, what to do first, priority adjustment, iteration priority, RICE scoring, requirement ranking, iteration planning, inserting requirements, re-ranking priorities, iteration retrospective, Sprint retrospective, continuous improvement, action item tracking, iteration review, iteration summary, how did this iteration go.
 metadata:
   module: "Product Monitoring & Iteration"
   sub-module: "Iteration Optimization"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
-    - "Requirement pool is messy, how to organize"
+    - "Requirement pool is too messy, how to organize"
     - "How to rank backlog priorities"
     - "Too many requirements, which to do first"
-    - "Need to adjust iteration plan"
+    - "Iteration plan needs adjustment, what to do"
     - "Need to insert a requirement, how to prioritize"
+    - "How to re-rank priorities"
+    - "This iteration needs retrospective"
+    - "Sprint ended, how to summarize"
+    - "How did the iteration go"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output iteration decision and priority actions only"
-  deep_description: "Full decision + impact simulation + alternative analysis + iteration evolution roadmap"
+  quick_description: "Only output iteration direction suggestions"
+  deep_description: "Complete decision + competitive iteration comparison + technical debt impact analysis + long-term roadmap assessment"
 ---
 
-# Iteration Decision Full Pipeline AI
+# Iteration Decision Pipeline 🤖
 
 ## Core Principles
 
-1. **Priority is the quantified expression of resource allocation**: The essence of Backlog ordering is deciding where resources go; every priority change means resource reallocation
-2. **Linkage is leverage**: Identifying dependencies and synergies between requirements; linked requirements done together are 3x more efficient than done separately
-3. **Technical debt is a hidden cost that must be made visible**: If technical debt doesn't enter the Backlog it will never be repaid; it must have weight in priority scoring
-4. **Priority adjustment is not re-sorting but resource reallocation**: Every adjustment means breaking existing commitments; chain effects must be evaluated
-5. **Change impact assessment precedes adjustment decisions**: Quantify impact first then decide on adjustment; avoid snap decisions that create greater chaos
-6. **Risk assessment is the guardrail for adjustments**: Every adjustment must include risk assessment, ensuring adjustments don't introduce bigger problems
-7. **Retrospective purpose is improvement not blame**: Retrospectives must establish psychological safety, otherwise teams will only report good news
+1. **Priority is the quantitative expression of resource allocation**: The essence of Backlog ranking is deciding where resources go. Every ranking change means reallocation of resources
+2. **Correlation is leverage**: Identifying dependency and synergy relationships between requirements. Correlated requirements done together are 3x more efficient than done separately
+3. **Technical debt is a hidden cost that must be made explicit**: Technical debt not in the Backlog will never be paid back. It must carry weight in priority scoring
+4. **Priority adjustment is not re-ranking, but re-allocating resources**: Every adjustment means breaking existing commitments. Chain effects must be evaluated
+5. **Change impact assessment precedes adjustment decisions**: Quantify impact first, then decide on adjustments. Avoid snap decisions causing greater chaos
+6. **Risk assessment is the guardrail for adjustments**: Every adjustment must come with a risk assessment, ensuring adjustments don't introduce bigger problems
+7. **The purpose of retrospective is improvement, not blame**: Retrospectives must establish psychological safety, otherwise teams will only report good news and hide problems
 8. **Data-driven attribution, not subjective impressions**: Use metric data to validate "feelings", avoiding impression bias masking real issues
 9. **Improvement suggestions must be trackable and verifiable**: Every improvement suggestion must have an owner and verification criteria, otherwise retrospectives are just going through the motions
 
 ### Trigger Conditions
 
 | Trigger Condition | Description | Priority |
-|-------------------|-------------|----------|
-| Monitoring anomaly | Monitoring system detects anomaly | P0 |
-| Major feedback | Large volume of user complaints or key customer feedback | P0 |
-| Strategic change | Major business strategy or market environment change | P1 |
-| Resource change | Team member additions/reductions or available time changes | P2 |
+|----------|------|--------|
+| Monitoring Anomaly | Monitoring system detects anomaly | P0 |
+| Major Feedback | Large volume of user complaints or important customer feedback | P0 |
+| Strategic Change | Major change in business strategy or market environment | P1 |
+| Resource Change | Team member additions/reductions or available time changes | P2 |
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI Suggests Human Approval
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Requirement Pool | JSON array | Yes | Project management system -> Requirement pool | User stories, feature requirements, Bugs |
-| Technical Debt | JSON | Yes | Code quality platform -> Technical debt | Debt list, impact assessment |
-| Monitoring Alerts | JSON | No | output/pm-monitoring/monitoring-pipeline/alert-data | Unresolved technical issues |
-| User Feedback | JSON | No | Feedback system -> User feedback | Complaints, feature requests, suggestions |
+|--------|------|------|------|------|
+| Requirement Pool | JSON Array | Yes | Project Management System → Requirement Pool | User stories, feature requests, Bugs |
+| Technical Debt | JSON | Yes | Code Quality Platform → Technical Debt | Debt list, impact assessment |
+| Monitoring Alerts | JSON | No | output/pm-monitoring/monitoring-pipeline/alert_data | Technical issues to resolve |
+| User Feedback | JSON | No | Feedback System → User Feedback | Complaints, feature requests, suggestions |
 | Current Iteration Plan | JSON | Yes | output/pm-project/agile-sprint-planning/sprint_plan | Sprint Backlog, committed items |
-| Trigger Event | JSON | Yes | Monitoring system/Feedback system -> Trigger event | Anomaly details, feedback content, strategic change |
+| Trigger Event | JSON | Yes | Monitoring System/Feedback System → Trigger Event | Anomaly details, feedback content, strategic change |
 | Resource Constraints | JSON | Yes | output/pm-project/planning-resource/resource_plan | Team capacity, available time, dependencies |
-| Change Request | JSON | Yes | User provided | Items to add/modify/remove |
-| Iteration Completion | JSON | Yes | output/pm-project/agile-daily-sync/daily_sync | Completed/incomplete items, story points |
-| Quality Metrics | JSON | Yes | Testing platform/CI/CD -> Quality data | Defect count, code coverage, rework rate |
-| Team Feedback | JSON | No | Retro tool -> Team feedback | Retro meeting notes, voting results |
-| Monitoring Data | JSON | No | output/pm-monitoring/monitoring-pipeline/monitoring-data | Stability, performance change data |
+| Change Requirements | JSON | Yes | User provided | Items to add/modify/remove |
+| Iteration Completion Status | JSON | Yes | output/pm-project/agile-daily-sync/daily_sync | Completed/incomplete items, story points |
+| Quality Metrics | JSON | Yes | Test Platform/CI/CD → Quality Data | Defect count, code coverage, rework rate |
+| Team Feedback | JSON | No | Retro Tool → Team Feedback | Retro meeting notes, voting results |
+| Monitoring Data | JSON | No | output/pm-monitoring/monitoring-pipeline/monitoring_data | Stability, performance change data |
 
 ## Execution Steps
 
-### Step 1: Backlog Grooming (from iteration-backlog) [Core]
+### Step 1: Backlog Grooming [Core] (from iteration-backlog)
 
-**Goal**: Groom and optimize the issue Backlog, complete linkage analysis and restructuring
+**Objective**: Groom and optimize the issue Backlog, complete correlation analysis and reorganization
 
-#### 1.1 Issue Priority Assessment
+#### 1.1 Issue Priority Assessment [Core]
 
 **Assessment Model**:
 
 ```
-Priority Score = Business Impact x User Value x Urgency x Effort Adjusted
+Priority Score = Business Impact × User Value × Urgency × Effort Adjusted
 ```
 
 **Scoring Dimensions**:
 
 | Dimension | Weight | Scoring Criteria |
-|-----------|--------|------------------|
+|------|------|----------|
 | Business Impact | 30% | Revenue impact, brand impact, strategic value |
 | User Value | 25% | User request frequency, pain point intensity |
 | Urgency | 25% | Alert impact, competitive threat, compliance requirements |
-| Effort Adjusted | 20% | Resource needs, dependencies, risk |
+| Effort Adjusted | 20% | Resource requirements, dependencies, risk |
 
 **Scoring Formula**:
 
@@ -115,15 +121,15 @@ priority_score:
   final_score: {weighted_sum}
 ```
 
-#### 1.2 Technical Debt Impact Analysis
+#### 1.2 Technical Debt Impact Analysis [Conditional]
 
 **Impact Types**:
 
 | Type | Impact Metric | Quantification Method |
-|------|---------------|----------------------|
+|------|----------|----------|
 | Development Efficiency | Extra effort ratio | Debt vs new features within Sprint |
-| Defect Rate | Bug density | Bugs per thousand lines |
-| Performance Loss | Response time increment | Before/after optimization comparison |
+| Defect Rate | Bug density | Bugs per thousand lines of code |
+| Performance Degradation | Response time increment | Before/after optimization comparison |
 | Maintenance Cost | Code complexity | Cyclomatic Complexity |
 
 **Debt Classification**:
@@ -142,18 +148,18 @@ technical_debt_impact:
     interest_accrued: {story_points_per_sprint}
 ```
 
-#### 1.3 Linkage Analysis
+#### 1.3 Correlation Analysis [Conditional]
 
-**Linkage Types**:
+**Correlation Types**:
 
-| Type | Description | Handling |
-|------|-------------|----------|
-| Dependency | A must be before B | Enforce order |
-| Synergy | A and B together are more effective | Suggest combination |
-| Mutual Exclusion | A and B cannot be done simultaneously | Mark conflict |
-| Technical Debt Linkage | New feature affected by debt | Debt first |
+| Type | Description | Handling Method |
+|------|------|----------|
+| Dependency | A must come before B | Enforce order |
+| Synergy | A and B work better together | Suggest combining |
+| Mutual Exclusion | A and B cannot be done simultaneously | Flag conflict |
+| Technical Debt Link | New feature affected by debt | Debt takes priority |
 
-**Linkage Output**:
+**Correlation Output**:
 
 ```yaml
 linked_issues:
@@ -167,22 +173,22 @@ linked_issues:
         reason: "Maximize value when implemented together"
     technical_debt_blockers:
       - debt_id: {id}
-        impact: "Causes 20% development efficiency reduction"
+        impact: "Causes 20% reduction in development efficiency"
 ```
 
-#### 1.4 Backlog Restructuring
+#### 1.4 Backlog Reorganization [Deep]
 
-**Restructuring Strategies**:
+**Reorganization Strategies**:
 
-| Strategy | Applicable Scenario | Operation |
-|----------|---------------------|-----------|
+| Strategy | Applicable Scenarios | Operation |
+|------|----------|------|
 | Urgent First | Alerts/Major Bugs | Elevate priority, mark P0 |
-| Batch Combination | Linked debt/features | Package as Epic |
-| Defer | Low-priority long-tail requirements | Move to Icebox |
+| Batch Combination | Related debt/features | Package as Epic |
+| Defer | Low priority long-tail requirements | Move to Icebox |
 | Split | Large granularity items | Split into smaller stories |
 | Dependency Ordering | Items with prerequisites | Sort by dependency chain |
 
-**Restructuring Suggestion Format**:
+**Reorganization Suggestion Format**:
 
 ```yaml
 reorganization_suggestions:
@@ -198,16 +204,16 @@ reorganization_suggestions:
       value_delivered: {description}
 ```
 
-### Step 2: Priority Assessment (from iteration-prioritization) [Core]
+### Step 2: Priority Assessment [Core] (from iteration-prioritization)
 
-**Goal**: Assess issue priorities based on data, generate adjustment plans and risk assessments
+**Objective**: Data-driven assessment of issue priorities, generate adjustment plans and risk assessments
 
-#### 2.1 Change Impact Assessment
+#### 2.1 Change Impact Assessment [Core]
 
 **Impact Dimensions**:
 
 | Dimension | Assessment Content | Metric |
-|-----------|-------------------|--------|
+|------|----------|------|
 | Scope Impact | Which items need adjustment | Item count, story points |
 | Schedule Impact | Impact on delivery timeline | Days delayed |
 | Quality Impact | Impact on quality standards | Risk level |
@@ -245,16 +251,16 @@ impact_assessment:
     impact_assessment: {description}
 ```
 
-#### 2.2 Adjustment Plan Generation
+#### 2.2 Adjustment Plan Generation [Core]
 
 **Plan Types**:
 
-| Plan Type | Applicable Scenario | Cost |
-|-----------|---------------------|------|
+| Plan Type | Applicable Scenarios | Cost |
+|----------|----------|------|
 | Insert | P0 urgent issue must be handled | Delay other items |
 | Replace | Lower priority item of equal value exists | Abandon some features |
 | Postpone | Lower priority items can be deferred | Delayed delivery |
-| Split | Partial features can be delivered first | Batch delivery |
+| Split | Partial features can be delivered first | Phased delivery |
 
 **Plan Generation**:
 
@@ -293,12 +299,12 @@ adjustment_options:
   # ... same structure extensible
 ```
 
-#### 2.3 Risk Assessment
+#### 2.3 Risk Assessment [Conditional]
 
 **Risk Matrix**:
 
 | Risk Category | Assessment Dimension | Scoring Method |
-|---------------|---------------------|----------------|
+|----------|----------|----------|
 | Technical Risk | Complexity, dependencies, technical challenges | 1-5 score |
 | Schedule Risk | Time pressure, change frequency | 1-5 score |
 | Quality Risk | Test coverage, defect rate | 1-5 score |
@@ -329,7 +335,7 @@ risk_assessment:
       action: {description}
 ```
 
-#### 2.4 Communication Draft
+#### 2.4 Communication Draft [Deep]
 
 **Stakeholders**:
 - Team members
@@ -358,18 +364,18 @@ communication_draft:
       content: "{contact_info}"
 ```
 
-### Step 3: Iteration Retrospective (from iteration-retrospective) [Core]
+### Step 3: Iteration Retrospective [Conditional] (from iteration-retrospective)
 
-**Goal**: Review iteration execution effectiveness, summarize learnings and improvement points
+**Objective**: Review iteration execution effectiveness, summarize learnings and improvement areas
 
-#### 3.1 Data Collection
+#### 3.1 Data Collection [Conditional]
 
 **Data Sources**:
 
 | Data Type | Data Source | Collection Method |
-|-----------|-------------|-------------------|
+|----------|--------|----------|
 | Delivery Data | Project management system | API/Export |
-| Quality Data | Testing platform, CI/CD | API/Export |
+| Quality Data | Test platform, CI/CD | API/Export |
 | Team Feedback | Retro tool, meeting notes | Text/Export |
 | Monitoring Data | Monitoring system, log platform | API/Export |
 
@@ -403,16 +409,16 @@ data_collection:
     incidents: {count}
 ```
 
-#### 3.2 Multi-dimensional Analysis
+#### 3.2 Multi-dimensional Analysis [Conditional]
 
-##### 3.2.1 Delivery Analysis
+##### 3.2.1 Delivery Analysis [Conditional]
 
 **Metrics**:
 
 | Metric | Definition | Target |
-|--------|------------|--------|
-| Delivery Completion Rate | Completed story points / Planned story points | >= 85% |
-| Delivery Prediction Accuracy | Actual / Planned | 0.9-1.1 |
+|------|------|------|
+| Delivery Completion Rate | Completed story points / Planned story points | ≥ 85% |
+| Delivery Forecast Accuracy | Actual / Planned | 0.9-1.1 |
 | Requirement Change Rate | Changed items / Total items | < 15% |
 
 **Analysis**:
@@ -430,15 +436,15 @@ delivery_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.2 Quality Analysis
+##### 3.2.2 Quality Analysis [Conditional]
 
 **Metrics**:
 
 | Metric | Definition | Target |
-|--------|------------|--------|
-| Bug Density | Bug count / Story points | < 0.5 |
-| Bug Leakage Rate | Production Bugs / Test-discovered Bugs | < 5% |
-| Code Coverage | Covered code lines / Total code lines | >= 80% |
+|------|------|------|
+| Bug Density | Bug count / Story point count | < 0.5 |
+| Bug Leakage Rate | Production bugs / Test-discovered bugs | < 5% |
+| Code Coverage | Covered code lines / Total code lines | ≥ 80% |
 
 **Analysis**:
 
@@ -453,12 +459,12 @@ quality_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.3 Collaboration Analysis
+##### 3.2.3 Collaboration Analysis [Deep]
 
 **Metrics**:
 
 | Metric | Definition | Data Source |
-|--------|------------|-------------|
+|------|------|----------|
 | Team Satisfaction | Team satisfaction score for iteration | Retro |
 | Cross-team Collaboration | Collaboration effectiveness with other teams | Retro |
 | Communication Efficiency | Information alignment level | Subjective evaluation |
@@ -478,14 +484,14 @@ collaboration_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-##### 3.2.4 Efficiency Analysis
+##### 3.2.4 Efficiency Analysis [Deep]
 
 **Metrics**:
 
-| Metric | Definition | Calculation |
-|--------|------------|-------------|
+| Metric | Definition | Calculation Method |
+|------|------|----------|
 | Team Throughput | Story points / Person-days | Total points / Total person-days |
-| Context Switches | Task interruption count | Statistical data |
+| Context Switching | Task interruption count | Statistical data |
 | Blocked Time Ratio | Blocked time / Total time | Log statistics |
 
 **Analysis**:
@@ -504,16 +510,16 @@ efficiency_analysis:
   assessment: good | acceptable | needs_improvement
 ```
 
-#### 3.3 Problem Identification
+#### 3.3 Problem Identification [Conditional]
 
 **Problem Classification**:
 
 | Category | Identification Method | Priority |
-|----------|----------------------|----------|
+|------|----------|--------|
 | Process Issues | Recurring blockers, changes | P1 |
 | Technical Issues | Defect patterns, performance bottlenecks | P1 |
 | Collaboration Issues | Communication gaps, dependency issues | P2 |
-| Environment Issues | Unstable tools, environment problems | P2 |
+| Environment Issues | Tool instability, environment issues | P2 |
 
 **Problem Identification Output**:
 
@@ -538,7 +544,7 @@ problem_identification:
       quality_impact: {description}
 ```
 
-#### 3.4 Improvement Suggestions
+#### 3.4 Improvement Suggestions [Deep]
 
 **Suggestion Format**:
 
@@ -565,18 +571,19 @@ improvement_suggestions:
     recommendation_score: {score}
 ```
 
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | iteration decision and priority actions only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full decision + impact simulation + alternative analysis + iteration evolution roadmap | Full deliverables + extended analysis + deep simulation |
-
 ## Output
 
 
-**Output file path**: `output/pm-monitoring/iteration-decision/`
+**Output File Path**: `output/pm-monitoring/iteration-decision/`
+
+### Output Depth Classification
+
+| Depth Level | Output Scope | Description |
+|----------|----------|------|
+| quick | Iteration direction suggestions | Core conclusions + minimum viable output, only Step 1.1 priority ranking and Step 2.1-2.2 core adjustment plans |
+| standard | Complete iteration decision (current default) | Complete output, including all Step 1-3 outputs |
+| deep | Complete decision + extended analysis | Complete output + competitive iteration comparison + technical debt impact analysis + long-term roadmap assessment + decision records + risk assessment |
+
 **Output Schema**:
 
 ```json
@@ -584,11 +591,11 @@ improvement_suggestions:
   "type": "object",
   "required": ["prioritized_items", "backlog_size", "trigger_id", "impact_assessment", "options", "iteration_id", "summary", "metrics_analysis"],
   "properties": {
-    "generated_at": {"type": "string", "description": "Generation time"},
+    "generated_at": {"type": "string", "description": "Generation timestamp"},
     "backlog_size": {"type": "object", "description": "Backlog size, including total item count and total story points"},
-    "prioritized_items": {"type": "array", "description": "Sorted requirement list, including scores, impact and linkages"},
+    "prioritized_items": {"type": "array", "description": "Prioritized requirement list, including scores, impact and correlations"},
     "technical_debt_priority": {"type": "array", "description": "Technical debt priority list, including interest and priority"},
-    "reorganization_summary": {"type": "object", "description": "Restructuring suggestion summary, including elevated/combined/deferred/split counts"},
+    "reorganization_summary": {"type": "object", "description": "Reorganization suggestion summary, including elevate/combine/postpone/split counts"},
     "trigger_id": {"type": "string", "description": "Trigger event ID"},
     "trigger_type": {"type": "string", "description": "Trigger type: monitoring_alert/feedback/strategy_change"},
     "impact_assessment": {"type": "object", "description": "Impact assessment, including scope/schedule/quality impact"},
@@ -600,7 +607,7 @@ improvement_suggestions:
     "summary": {"type": "object", "description": "Iteration summary, including completion rate, quality status and score"},
     "metrics_analysis": {"type": "object", "description": "Metrics analysis, including delivery/quality/collaboration/efficiency four dimensions"},
     "problem_identification": {"type": "object", "description": "Problem identification, including total count and P1/P2 counts"},
-    "improvement_suggestions": {"type": "object", "description": "Improvement suggestions, including total count and high-priority count"}
+    "improvement_suggestions": {"type": "object", "description": "Improvement suggestions, including total count and high priority count"}
   }
 }
 ```
@@ -638,24 +645,24 @@ improvement_suggestions:
 ## Decision Rules
 
 | Scenario | Decision Rule |
-|----------|---------------|
-| Alert-linked items | Auto-elevate priority +2 (max P0) |
-| Technical debt interest rate >=0.7 (fix cost/delay cost) | Mark as "recommend priority repayment", priority +1 |
-| Dependency chain conflict | Sort by longest chain first, blocking item priority >= blocked item |
-| Team capacity utilization >=90% | Freeze low-priority items (score <=3), prioritize high-value items |
-| Team capacity utilization 70%-90% | Normal scheduling, low-priority items optional |
-| New high-priority item added (score >=8) | Evaluate replacing lowest-scored item in current Sprint |
-| New medium-priority item added (score 5-7) | Add to Backlog, evaluate next Sprint |
-| Item score <=3 with no alert linkage | Downgrade to "watch", remove if no progress for 2 consecutive Sprints |
+|------|----------|
+| Alert-correlated items | Auto-elevate priority +2 (max P0) |
+| Technical debt interest rate ≥ 0.7 (fix cost/delay cost) | Mark as "recommend priority repayment", priority +1 |
+| Dependency chain conflict | Sort by longest chain first, blocking item priority ≥ blocked item |
+| Team capacity utilization ≥ 90% | Freeze low priority items (score ≤ 3), prioritize high value items |
+| Team capacity utilization 70%-90% | Normal scheduling, low priority items optional |
+| New high priority item (score ≥ 8) | Evaluate replacing lowest scored item in current Sprint |
+| New medium priority item (score 5-7) | Add to Backlog, evaluate next Sprint |
+| Requirement score ≤ 3 with no alert correlation | Downgrade to "watch", remove if no progress for 2 consecutive Sprints |
 | P0 monitoring anomaly | Auto-recommend insertion, mark for human confirmation |
-| Impact > 50% scope | Mark as needing PO decision |
-| Multiple available options | Recommend highest-scored option, list comparison |
+| Impact > 50% scope | Flag as needing PO decision |
+| Multiple available options | Recommend highest scored option, list comparison |
 | No available replacement items | Suggest delay or split |
-| Team objection | Mark as needing additional communication |
-| Completion rate < 70% | Mark key issues, analyze root causes |
+| Team objection | Flag as needing additional communication |
+| Completion rate < 70% | Flag as key issue, analyze root cause |
 | Bug leakage rate > 10% | Trigger quality process review |
-| Team satisfaction < 3/5 | Mark collaboration issues, need targeted improvement |
-| Same type of issue for 2 consecutive iterations | Mark as systemic defect |
+| Team satisfaction < 3/5 | Flag collaboration issue, needs targeted improvement |
+| Same type of issue in two consecutive iterations | Flag as systemic defect |
 | Cannot auto-identify root cause | Suggest manual specialized analysis |
 
 ## Quality Checks
@@ -663,78 +670,79 @@ improvement_suggestions:
 ### P0 Checks (must pass for quick/standard/deep)
 
 - [ ] Priority scoring coverage 100%
-- [ ] Linkage identification complete
+- [ ] Change impact assessment coverage 100%
+- [ ] Adjustment plan count ≥ 2
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Technical debt impact assessment accurate
-- [ ] Restructuring suggestions actionable
-- [ ] Sprint capacity matched
-- [ ] No critical dependency omissions
-- [ ] Change impact assessment coverage 100%
-- [ ] Adjustment options count >= 2
+- [ ] Correlation identification is complete
+- [ ] Technical debt impact assessment is accurate
+- [ ] Reorganization suggestions are actionable
+- [ ] Sprint capacity matches
+- [ ] No critical dependencies missed
 - [ ] Risk assessment completeness
-- [ ] Communication draft covers all stakeholders
-- [ ] Decision marking accuracy
-- [ ] Plan executability >= 80%
-- [ ] Data collection completeness >= 95%
+- [ ] Decision tagging accuracy
+- [ ] Plan actionability ≥ 80%
+- [ ] Data collection completeness rate ≥ 95%
 - [ ] Analysis covers all four dimensions
-- [ ] Problem identification accuracy >= 80%
-- [ ] Suggestion executability >= 75%
+- [ ] Problem identification accuracy ≥ 80%
+- [ ] Suggestion actionability rate ≥ 75%
 - [ ] Improvement suggestions have clear owners
-- [ ] Comparison with previous iteration complete
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Communication draft covers all stakeholders
+- [ ] Comparison analysis with previous iteration is complete
+- [ ] Competitive iteration comparison completed (competitor feature iteration pace, strategy difference analysis, market trend benchmarking)
+- [ ] Technical debt impact analysis complete (debt interest rate trends, repayment priority ranking, quantified impact on delivery velocity)
+- [ ] Long-term roadmap assessment generated (3-6 month iteration roadmap, key milestones, resource demand forecast)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
-| Requirement pool | User provides current requirement list (title + brief description), AI re-sorts based on user input | Priority ranking based on user input, lacking system data support |
-| Technical debt | Skip technical debt impact analysis, debt weight set to zero in priority scoring | Sorted results without debt impact |
-| Monitoring alerts | Skip alert linkage analysis, urgent-first strategy unavailable | Sorted results without alert linkage |
-| User feedback | User value score inferred from requirement descriptions, mark low confidence | Low confidence user value scores |
-| Current iteration plan | User describes adjustment reason and expectations, AI generates adjustment plan based on description | Adjustment plan based on user description, lacking plan data validation |
-| Trigger event | User provides adjustment trigger reason (anomaly/feedback/strategic change), AI assesses accordingly | Impact assessment based on user input |
-| Resource constraints | Skip capacity verification, mark "need human confirmation of capacity" in plan | Adjustment plan without capacity verification |
-| Change request | User verbally describes items to add/remove/modify, AI structures into change requirements | Structured change list from verbal user input |
-| Iteration completion | User provides iteration completion status (completed/incomplete items, story points), AI generates retrospective based on provided data | Retrospective report based on user input, lacking system data |
-| Quality metrics | User provides defect count and rework situation, AI performs quality analysis directly | Quality analysis based on user input |
-| Team feedback | Skip collaboration analysis dimension, mark "lacking team feedback data" | Retrospective lacking collaboration dimension |
-| Monitoring data | Skip monitoring data analysis, mark "lacking stability data" in retrospective | Retrospective lacking stability dimension |
+|---------------|---------|---------|
+| Requirement Pool | User provides current requirement list (title + brief description), AI re-ranks based on user input | Priority ranking based on user input, lacking system data support |
+| Technical Debt | Skip technical debt impact analysis, debt weight set to zero in priority scoring | Ranking results without debt impact |
+| Monitoring Alerts | Skip alert correlation analysis, urgent-first strategy unavailable | Ranking results without alert correlation |
+| User Feedback | User value score inferred from requirement descriptions, annotate low confidence | Low confidence user value scoring |
+| Current Iteration Plan | User describes reasons for adjustment and expectations, AI generates adjustment plan based on description | Adjustment plan based on user description, lacking plan data validation |
+| Trigger Event | User provides adjustment trigger reason (anomaly/feedback/strategic change), AI assesses accordingly | Impact assessment based on user input |
+| Resource Constraints | Skip capacity verification, annotate in plan "needs human capacity confirmation" | Adjustment plan without capacity verification |
+| Change Requirements | User verbally states items to add/remove/modify, AI structures into change requirements | User verbal input converted to structured change list |
+| Iteration Completion Status | User provides iteration completion status (completed/incomplete items, story points), AI generates retrospective based on provided data | Retrospective report based on user input, lacking system data |
+| Quality Metrics | User provides defect count and rework status, AI performs quality analysis directly | Quality analysis based on user input |
+| Team Feedback | Skip collaboration analysis dimension, annotate "missing team feedback data" | Retrospective missing collaboration dimension |
+| Monitoring Data | Skip monitoring data analysis, annotate in retrospective "missing stability data" | Retrospective missing stability dimension |
 
 ### Data Acquisition Instructions
 
 When upstream files are missing, obtain necessary data through the following methods:
 
-1. **Requirement pool missing**: Ask user to provide current requirement list, including requirement title, brief description and type (feature/Bug/optimization), AI will score and sort priorities based on provided information
-2. **Technical debt missing**: Skip debt impact analysis step, remove debt-related weights from priority scoring formula, recommend supplementing debt list later to improve sorting
-3. **Monitoring alerts missing**: Skip alert linkage analysis, cannot auto-elevate urgent item priorities, recommend user manually mark urgent items
-4. **User feedback missing**: User value dimension scoring will be inferred from requirement descriptions, mark low confidence for this dimension in output, recommend human confirmation
-5. **Current iteration plan missing**: Ask user to describe adjustment reason (e.g., "payment feature has production issue, needs insertion"), AI will generate adjustment plan based on description, including insert/replace/postpone options
-6. **Trigger event missing**: Ask user to explain adjustment trigger reason and urgency, AI will perform impact assessment and plan generation accordingly
-7. **Resource constraints missing**: Skip capacity matching verification during plan generation, mark all plans "need human confirmation of team capacity support", recommend supplementing resource data later
-8. **Iteration completion missing**: Ask user to provide iteration completion status, including: planned story points/actual completed story points, incomplete items and reasons, requirement change status, AI will generate retrospective report based on provided data
-9. **Quality metrics missing**: Ask user to provide key quality data (Bug count, severity distribution, rework count), AI will perform quality dimension analysis accordingly
-10. **Team feedback missing**: Skip collaboration analysis dimension, mark data missing for this dimension in retrospective, recommend supplementing through Retro meeting later
-11. **Monitoring data missing**: Skip stability analysis, mark lacking stability data in retrospective, recommend exporting from monitoring system to supplement
+1. **Requirement Pool Missing**: Ask user to provide current requirement list, including requirement title, brief description and type (feature/Bug/optimization), AI will perform priority scoring and ranking based on provided information
+2. **Technical Debt Missing**: Skip debt impact analysis step, remove debt-related weights from priority scoring formula, suggest supplementing debt list later to improve ranking
+3. **Monitoring Alerts Missing**: Skip alert correlation analysis, cannot auto-elevate urgent item priority, suggest user manually flag urgent items
+4. **User Feedback Missing**: User value dimension scoring will be inferred from requirement descriptions, annotate low confidence for this dimension in output, suggest human confirmation
+5. **Current Iteration Plan Missing**: Ask user to describe reasons for adjustment (e.g., "payment feature has production issue, needs insertion"), AI will generate adjustment plan based on description, including insert/replace/postpone options
+6. **Trigger Event Missing**: Ask user to explain adjustment trigger reason and urgency level, AI will perform impact assessment and plan generation accordingly
+7. **Resource Constraints Missing**: Skip capacity matching verification during plan generation, annotate all plans "needs human confirmation of team capacity support", suggest supplementing resource data later
+8. **Iteration Completion Status Missing**: Ask user to provide iteration completion status, including: planned story points/actual completed story points, incomplete items and reasons, requirement change status, AI will generate retrospective report based on provided data
+9. **Quality Metrics Missing**: Ask user to provide key quality data (Bug count, severity distribution, rework count), AI will perform quality dimension analysis accordingly
+10. **Team Feedback Missing**: Skip collaboration analysis dimension, annotate missing data in retrospective, suggest supplementing through Retro meeting later
+11. **Monitoring Data Missing**: Skip stability analysis, annotate missing stability data in retrospective, suggest exporting from monitoring system to supplement
 
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
-| prioritized_items | array | Yes | Priority-sorted requirement list, each must contain id/title/priority_score |
+|----------|------|------|------|
+| prioritized_items | array | Yes | Priority-ranked requirement list, each must contain id/title/priority_score |
 | prioritized_items[].priority_score | number | Yes | Priority score, range 0-100 |
-| linked_issues | object | No | Linkage relationships, must contain dependency/synergy |
+| linked_issues | object | No | Correlation relationships, must contain dependency/synergy |
 | technical_debt_impact | object | No | Technical debt impact assessment |
-| reorganization_suggestions | array | No | Restructuring suggestion list |
+| reorganization_suggestions | array | No | Reorganization suggestion list |
 | impact_assessment | object | Yes | Change impact assessment, must contain affected_items/scope/severity |
-| adjustment_options | array | Yes | Adjustment option list, at least 2 options |
+| adjustment_options | array | Yes | Adjustment plan list, at least 2 plans |
 | adjustment_options[].recommendation_score | number | Yes | Recommendation score, range 0-100 |
 | risk_assessment | object | No | Risk assessment, must contain risk_level/mitigation |
 | communication_draft | object | No | Communication draft, must contain stakeholders/message |
@@ -742,24 +750,24 @@ When upstream files are missing, obtain necessary data through the following met
 | summary | object | Yes | Iteration summary, must contain delivery_completion/quality_status/overall_score |
 | metrics_analysis | object | Yes | Metrics analysis, must contain delivery/quality/collaboration/efficiency four dimensions |
 | problem_identification | object | No | Problem identification, must contain total_problems/p1_count |
-| improvement_suggestions | array | No | Improvement suggestion list, each must contain owner and verification criteria |
+| improvement_suggestions | array | No | Improvement suggestion list, each must have owner and verification criteria |
 
 ## Upstream Change Response
 
 ### Upstream Change Impact Table
 
 | Upstream Source | Change Type | Impact Scope | Response Action |
-|-----------------|-------------|--------------|-----------------|
-| Project management system | Requirement status change | Priority sorting and linkage analysis | Recalculate priority scores |
-| Code quality platform | Technical debt update | Debt impact assessment and weights | Update debt weights and impact scores |
-| monitoring-pipeline | Alert data update | Urgent-first strategy | Update alert linkage and priority elevation |
+|----------|----------|----------|----------|
+| Project Management System | Requirement status change | Priority ranking and correlation analysis | Recalculate priority scores |
+| Code Quality Platform | Technical debt update | Debt impact assessment and weights | Update debt weights and impact scores |
+| monitoring-pipeline | Alert data update | Urgent-first strategy | Update alert correlation and priority elevation |
 | agile-sprint-planning | Iteration plan change | Change impact assessment baseline | Re-evaluate change impact |
 | planning-resource | Resource constraint change | Plan capacity verification | Re-verify plan feasibility |
 | agile-daily-sync | Iteration completion data update | Delivery dimension analysis | Update completion rate and story point statistics |
-| Testing platform/CI/CD | Quality metric change | Quality dimension analysis | Update defect statistics and coverage |
+| Test Platform/CI/CD | Quality metric change | Quality dimension analysis | Update defect statistics and coverage |
 
 ### Downstream Notification Mechanism Table
 
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
-|---------------------|------------------------|---------------------|----------------------|
-| iteration-orchestrator | Iteration decision full workflow completed | Output file update | Decision completion status and key conclusions |
+|------------|----------|----------|----------|
+| iteration-orchestrator | Iteration decision pipeline completed | Output file update | Decision completion status and key conclusions |

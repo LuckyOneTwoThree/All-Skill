@@ -1,62 +1,64 @@
 ---
 name: quality-acceptance
-description: "Use when generating acceptance execution plans and sign-off reports. Generates acceptance plans based on Given-When-Then criteria (P0/P1 failures block release), integrating acceptance criteria, open issues and sign-off confirmation. Keywords: acceptance execution plan, acceptance testing, Given-When-Then, quality gate, release check, acceptance report, sign-off report, UAT report, acceptance confirmation."
+description: Use when generating acceptance execution plans and sign-off reports. Acceptance execution plan generation + sign-off report generation, generating acceptance execution plans based on Given-When-Then format acceptance criteria (P0/P1 failures block release), integrating acceptance execution plans, acceptance criteria, open issues and sign-off confirmation to produce a signable acceptance report. 🤖 AI generates plan + AI suggests human approval. Keywords: acceptance execution plan, acceptance testing, Given-When-Then, quality gate, release check, acceptance report, sign-off report, UAT report, acceptance confirmation.
 metadata:
   module: "Product Monitoring & Iteration"
   sub-module: "Quality Assurance"
   type: "pipeline"
-  version: "1.0"
+  version: "3.1"
+  domain_tags: ["Internet", "General"]
   trigger_examples:
-    - "Run acceptance tests automatically"
+    - "Auto-run acceptance tests"
     - "Help me execute acceptance checks"
-    - "Check if it passes quality gate"
+    - "See if it can pass the quality gate"
     - "Generate acceptance report"
     - "Version needs acceptance, help me produce the report"
     - "Organize acceptance results"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output acceptance verdict and critical issues only"
-  deep_description: "Full acceptance + regression analysis + quality trend + quality improvement roadmap"
+  quick_description: "Only output P0 acceptance results"
+  deep_description: "Complete report + regression test matrix + performance baseline comparison + security audit checklist"
 ---
 
-# Acceptance Execution Plan Generation & Sign-off Report Generation
+# Acceptance Execution Plan Generation & Sign-Off Report Generation
 
 ## Core Principles
 
-1. **Trigger-driven**: Auto-triggered by Story completion and build success events, not waiting for manual initiation
-2. **Acceptance plan generation**: Auto-parse acceptance criteria, generate test environment configuration suggestions, auto-generate execution instructions and judgment rules
-3. **Continuous deployment**: Passing acceptance means ready for release; P0/P1 failures immediately block
-4. **Real-time review**: Acceptance results generated instantly, failed cases analyzed for root cause immediately
-5. **Criteria first**: Acceptance criteria must be defined before testing, not after testing is complete
-6. **Data speaks**: Pass/fail is determined by data, not by people
-7. **Open issues trackable**: Failed items must have resolution plans and tracking IDs
-8. **Sign-off auditable**: Sign-off records are traceable, responsibilities are definable
+1. **Trigger-Driven**: Acceptance is automatically triggered by Story completion and build success events, rather than waiting for manual initiation
+2. **Acceptance Plan Generation**: Acceptance criteria auto-parsed, test environment configuration suggestions generated, execution instructions and judgment rules auto-generated
+3. **Continuous Deployment**: Passing acceptance means release-ready, P0/P1 failures immediately block
+4. **Real-time Review**: Acceptance results generated instantly, failed cases root-caused immediately
+5. **Standards First**: Acceptance criteria must be defined before testing, not after testing is complete
+6. **Data Speaks**: Pass/fail is determined by data, not by people
+7. **Open Issues Trackable**: Failed items must have resolution plans and tracking IDs
+8. **Sign-off Auditable**: Sign-off records are traceable, accountability can be established
 
 ## Interaction Mode
 
-AI **AI generates plan** (Step 1) -> Human **AI suggests, human approves** (Step 2)
+🤖 **AI Generates Plan** (Step 1) → 👤 **AI Suggests Human Approval** (Step 2)
 
-Trigger Conditions:
+Trigger conditions:
 - Story development completed event
-- Code merged to main branch event
+- Code merged to trunk event
 - Build success event
 - Manual trigger (acceptance lead request)
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
+|--------|------|------|------|------|
 | Story Acceptance Criteria | JSON | Yes | PRD | Given-When-Then format |
-| Test Cases | JSON array | Yes | PRD | Test cases derived from PRD acceptance criteria |
-| Test Environment Configuration | JSON | Yes | Testing system | Environment parameters and Mock configuration suggestions |
-| Build Artifact | File/Reference | Yes | CI/CD | Build version for acceptance |
+| Test Cases | JSON Array | Yes | PRD | Test cases derived from PRD acceptance criteria |
+| Test Environment Configuration | JSON | Yes | Test System | Environment parameters and Mock configuration suggestions |
+| Build Artifacts | File/Reference | Yes | CI/CD | Build version to be accepted |
 | Test Results | JSON | No | CI/CD | Automated test execution results |
-| SRS Document | Markdown | No | output/pm-design/design-prd/prd.md | Requirements specification (including acceptance criteria, already covered by design-prd) |
+| SRS Document | Markdown | No | output/pm-design/design-prd/prd.md | Requirements specification (contains acceptance criteria, already covered by design-prd) |
 | Version Number | string | Yes | User provided | Version number for acceptance |
 | Acceptance Scope | string | Yes | User provided | Feature scope for this acceptance |
 | Acceptance Party | string | No | User provided | Acceptance lead/team |
 | Backend Review Report | JSON | No | output/backend-architecture/backend-architecture-spec/review_report.json | Backend architecture review results |
-| API Coverage Report | JSON | No | output/backend-api-design/api-design-spec/api-coverage.json | PRD/frontend alignment coverage report |
+| API Coverage Report | JSON | No | output/backend-api-design/api-design-spec/api-coverage.json | PRD/Frontend alignment coverage report |
 
 ### Story Acceptance Criteria Structure Example
 
@@ -70,10 +72,11 @@ Trigger Conditions:
     {
       "id": "AC001",
       "format": "given_when_then",
-      "content": "Given user is on login page\nWhen user enters valid phone number 13800138000\nAnd clicks get verification code button\nThen system sends 6-digit verification code to that phone number\nAnd page displays send success notification",
+      "content": "Given user is on the login page\nWhen user enters valid phone number 13800138000\nAnd clicks get verification code button\nThen system sends 6-digit verification code to that phone number\nAnd page displays send success message",
       "automatable": true,
       "priority": "P0"
     }
+    // ... same structure extensible
   ]
 }
 ```
@@ -82,12 +85,12 @@ Trigger Conditions:
 
 ### Step 1: Acceptance Execution Plan Generation [Core]
 
-#### 1.1 Acceptance Criteria Parsing
+#### 1.1 Acceptance Criteria Parsing [Core]
 
 **GWT Format Standardization**:
 
-| GWT Component | Parse Result | Purpose |
-|---------------|--------------|---------|
+| GWT Component | Parse Result | Usage |
+|---------|----------|------|
 | Given | Precondition array | Setup steps |
 | When | Action step array | Execution steps |
 | And | Append to previous When | Continuous actions |
@@ -102,7 +105,7 @@ Trigger Conditions:
       "criteria_id": "AC001",
       "setup": [
         "Open login page",
-        "Confirm page has loaded"
+        "Confirm page has finished loading"
       ],
       "actions": [
         "Enter phone number: 13800138000",
@@ -111,7 +114,7 @@ Trigger Conditions:
       "assertions": [
         "Verify SMS send API was called",
         "Verify success response returned",
-        "Verify page displays send success notification"
+        "Verify page displays send success message"
       ],
       "priority": "P0",
       "automatable": true
@@ -120,14 +123,14 @@ Trigger Conditions:
 }
 ```
 
-#### 1.2 Test Strategy Selection
+#### 1.2 Test Strategy Selection [Core]
 
 **Strategy Types**:
 
-| Strategy | Applicable Scenario | Execution Instruction Generation Method |
-|----------|---------------------|----------------------------------------|
+| Strategy | Applicable Scenarios | Execution Instruction Generation Method |
+|------|----------|------------------|
 | E2E Automation | Complete user flows | Selenium/Cypress execution instruction generation |
-| API Automation | Pure backend features | RestAssured/Postman execution instruction generation |
+| API Automation | Pure backend functionality | RestAssured/Postman execution instruction generation |
 | Unit Testing | Independent function logic | Jest/JUnit execution instruction generation |
 | Integration Testing | Inter-module interaction | Mixed strategy execution instruction generation |
 
@@ -144,7 +147,7 @@ Trigger Conditions:
     },
     "AC002": {
       "selected_strategy": "e2e_automation",
-      "reason": "Includes page navigation and other UI verification",
+      "reason": "Contains page navigation and other UI verification",
       "test_framework": "cypress",
       "script_location": "tests/e2e/test_login.py::test_verify_code_login"
     }
@@ -152,7 +155,7 @@ Trigger Conditions:
 }
 ```
 
-#### 1.3 Test Data Preparation
+#### 1.3 Test Data Preparation [Conditional]
 
 ```json
 {
@@ -172,12 +175,12 @@ Trigger Conditions:
 }
 ```
 
-#### 1.4 Test Environment Configuration Suggestions
+#### 1.4 Test Environment Configuration Suggestions [Conditional]
 
 **Environment Readiness Check**:
 
 | Check Item | Check Content | Timeout |
-|------------|---------------|---------|
+|--------|----------|----------|
 | Application Service | Service started and health check passed | 60s |
 | Database | Database connection normal, data ready | 30s |
 | Cache Service | Redis connection normal | 15s |
@@ -217,7 +220,7 @@ Trigger Conditions:
 }
 ```
 
-#### 1.5 Execution Instruction Generation
+#### 1.5 Execution Instruction Generation [Core]
 
 **Execution Plan Generation**:
 
@@ -230,8 +233,9 @@ Trigger Conditions:
         "group_id": "group_1",
         "criteria": ["AC001", "AC002"],
         "execution_mode": "sequential",
-        "reason": "Dependency exists (AC002 depends on AC001 data)"
+        "reason": "Dependency exists (AC002 depends on AC001's data)"
       }
+      // ... same structure extensible
     ],
     "estimated_duration_minutes": 25
   }
@@ -265,7 +269,7 @@ Trigger Conditions:
 }
 ```
 
-#### 1.6 Judgment Rule Generation
+#### 1.6 Judgment Rule Generation [Core]
 
 **Result Aggregation**:
 
@@ -292,12 +296,12 @@ Trigger Conditions:
 
 **Gate Decision**:
 
-| Condition | Decision | Handling |
-|-----------|----------|----------|
+| Condition | Decision Result | Handling Method |
+|------|----------|----------|
 | P0 has failures | **Block** | Block release, send alert |
-| P1 failure count > 2 | **Block** | Block release, require fix |
+| P1 failures > 2 | **Block** | Block release, require fix |
 | Automation rate < 90% | **Block** | Block release, increase automation |
-| P2 failure count > 5 | **Warning** | Allow release, require fix commitment |
+| P2 failures > 5 | **Warning** | Allow release, commit to fix |
 
 **Gate Output**:
 
@@ -310,29 +314,29 @@ Trigger Conditions:
       {
         "criteria_id": "AC002",
         "priority": "P0",
-        "failure_reason": "No redirect to homepage after successful login"
+        "failure_reason": "Did not redirect to homepage after successful login"
       }
     ],
     "release_allowed": false,
     "next_actions": [
-      "Fix defect corresponding to AC002",
+      "Fix the defect corresponding to AC002",
       "Re-execute acceptance"
     ]
   }
 }
 ```
 
-#### 1.7 Failure Analysis Rule Generation
+#### 1.7 Failure Analysis Rule Generation [Deep]
 
 **Failure Classification**:
 
 | Failure Type | Characteristics | Handling Strategy |
-|--------------|-----------------|-------------------|
+|----------|------|----------|
 | Code Defect | Feature not working as expected | Submit Bug, require fix |
 | Environment Issue | Environment configuration or data issue | Fix environment, re-execute |
 | Test Issue | Test script defect itself | Fix test script |
 | Data Issue | Inaccurate test data | Update test data |
-| Requirement Change | Requirement and implementation out of sync | Confirm whether to update requirement |
+| Requirement Change | Requirements and implementation out of sync | Confirm whether to update requirements |
 
 **Classification Output**:
 
@@ -349,7 +353,7 @@ Trigger Conditions:
         "screenshots": ["screenshots/ac002_failure_1.png"],
         "logs": ["logs/browser_console.log"]
       },
-      "root_cause_hypothesis": "Frontend route navigation logic not executing correctly after successful login",
+      "root_cause_hypothesis": "Frontend routing navigation logic not correctly executed after successful login",
       "likely_location": "frontend/router/index.ts",
       "confidence": 0.85
     }
@@ -391,126 +395,126 @@ Trigger Conditions:
 }
 ```
 
-### Step 2: Sign-off Report Generation [Core]
+### Step 2: Sign-Off Report Generation [Core]
 
-#### 2.1 Acceptance Criteria Extraction
+#### 2.1 Acceptance Criteria Extraction [Core]
 
 Extract acceptance criteria from PRD and acceptance criteria data:
 
 **Acceptance Criteria Classification**:
 
 | Category | Description | Pass Condition |
-|----------|-------------|----------------|
-| Functional Acceptance | Core features implemented per requirements | All Must requirements pass |
-| Performance Acceptance | Performance metrics meet targets | Key metric achievement rate 100% |
-| Security Acceptance | Security requirements met | No high/critical vulnerabilities |
-| Compatibility Acceptance | Target platforms compatible | All target platforms pass |
-| User Experience Acceptance | Core flows smooth | No P0-level UX issues |
+|------|------|---------|
+| Functional Acceptance | Whether core features are implemented per requirements | All Must requirements pass |
+| Performance Acceptance | Whether performance metrics meet targets | Key metric achievement rate 100% |
+| Security Acceptance | Whether security requirements are met | No high/critical vulnerabilities |
+| Compatibility Acceptance | Whether target platforms are compatible | All target platforms pass |
+| User Experience Acceptance | Whether core flows are smooth | No P0-level UX issues |
 
 **Each Acceptance Criterion**:
 
 | ID | Criterion Description | Source (PRD ID) | Priority | Verification Method |
-|----|----------------------|-----------------|----------|---------------------|
-| AC-001 | User can complete registration in 3 steps | FR-AUTH-001 | Must | Functional testing |
-| AC-002 | Page first screen load <2s | NFR-PERF-001 | Must | Performance testing |
+|------|---------|---------------|--------|---------|
+| AC-001 | User can complete registration within 3 steps | FR-AUTH-001 | Must | Functional testing |
+| AC-002 | Page first screen load < 2s | NFR-PERF-001 | Must | Performance testing |
 
-#### 2.2 Test Results Integration
+#### 2.2 Test Results Integration [Core]
 
 Integrate test results, map to acceptance criteria:
 
 **Test Results Summary**:
 
 | Acceptance Criterion | Test Case Count | Passed | Failed | Blocked | Pass Rate | Status |
-|---------------------|-----------------|--------|--------|---------|-----------|--------|
-| AC-001 | 5 | 5 | 0 | 0 | 100% | [OK] |
-| AC-002 | 3 | 2 | 1 | 0 | 67% | [X] |
+|----------|-----------|------|------|------|--------|------|
+| AC-001 | 5 | 5 | 0 | 0 | 100% | ✅ |
+| AC-002 | 3 | 2 | 1 | 0 | 67% | ❌ |
 
 **Overall Statistics**:
 
 | Metric | Value |
-|--------|-------|
-| Total Test Cases | |
+|------|------|
+| Total test cases | |
 | Passed | |
 | Failed | |
 | Blocked | |
 | Skipped | |
-| Overall Pass Rate | |
-| Must Requirement Pass Rate | |
+| Overall pass rate | |
+| Must requirement pass rate | |
 
-#### 2.3 Defect Analysis
+#### 2.3 Defect Analysis [Conditional]
 
-Defect analysis for failed and blocked test cases:
+Perform defect analysis on failed and blocked test cases:
 
 **Defect List**:
 
-| Defect ID | Linked Acceptance Criterion | Severity | Description | Reproduction Steps | Status | Owner |
-|-----------|----------------------------|----------|-------------|-------------------|--------|-------|
+| Defect ID | Related Acceptance Criterion | Severity | Description | Reproduction Steps | Status | Owner |
+|----------|------------|---------|------|---------|------|--------|
 | BUG-001 | AC-002 | Critical | First screen load timeout | 1.Open homepage 2.Wait | Pending fix | |
 
 **Severity Definition**:
 
 | Level | Definition | Acceptance Impact |
-|-------|------------|-------------------|
+|------|------|---------|
 | Fatal | System crash/Data loss | Blocks acceptance |
 | Critical | Core feature unavailable | Blocks acceptance |
 | Major | Feature limited but workaround exists | Can accept with known issues |
 | Minor | UX issue | Can accept with known issues |
 | Suggestion | Optimization suggestion | Does not affect acceptance |
 
-#### 2.4 Open Issues Assessment
+#### 2.4 Open Issues Assessment [Conditional]
 
 **Open Issues List**:
 
 | ID | Description | Severity | Impact Scope | Resolution Plan | Estimated Fix Time | Risk Assessment |
-|----|-------------|----------|--------------|-----------------|-------------------|-----------------|
+|------|------|---------|---------|---------|------------|---------|
 | | | | | Fix/Workaround/Accept | | |
 
 **Open Issues Acceptance Impact Judgment**:
 
 | Condition | Acceptance Recommendation |
-|-----------|--------------------------|
-| Fatal/Critical defects unfixed | [X] Recommend not passing acceptance |
-| Only Major/Minor defects | [OK] Recommend conditional pass, open issues listed for next version |
-| No open issues | [OK] Recommend passing acceptance |
+|------|---------|
+| Fatal/Critical defects unfixed | ❌ Do not recommend passing acceptance |
+| Only Major/Minor defects | ✅ Recommend conditional pass, open issues listed for next version |
+| No open issues | ✅ Recommend passing acceptance |
 
-#### 2.5 Acceptance Conclusion
+#### 2.5 Acceptance Conclusion [Core]
 
 **Acceptance Conclusion Template**:
 
 ```
-Acceptance Conclusion: [OK] Pass / [!] Conditional Pass / [X] Fail
+Acceptance Conclusion: ✅ Pass / ⚠️ Conditional Pass / ❌ Fail
 
-Acceptance Scope: {version} {feature scope}
+Acceptance Scope: {version_number} {feature_scope}
 Acceptance Date: {date}
-Acceptance Party: {acceptance party}
+Acceptance Party: {acceptance_party}
 
 Passed Items: {N} items ({X}%)
 Failed Items: {N} items ({X}%)
 Must Requirement Pass Rate: {X}%
 
-Open Issues: {N}
-- Fatal/Critical: {N}
-- Major/Minor: {N}
+Open Issues: {N} items
+- Fatal/Critical: {N} items
+- Major/Minor: {N} items
 
 Acceptance Recommendation:
-{specific recommendations}
+{specific_recommendations}
 ```
 
 **Sign-off Confirmation**:
 
 | Role | Name | Sign-off Opinion | Signature | Date |
-|------|------|-----------------|-----------|------|
+|------|------|---------|------|------|
 | Product Owner | | Agree/Disagree/Conditional Agree | | |
 | Technical Lead | | Agree/Disagree/Conditional Agree | | |
-| Test Lead | | Agree/Disagree/Conditional Agree | | |
+| QA Lead | | Agree/Disagree/Conditional Agree | | |
 | Business Representative | | Agree/Disagree/Conditional Agree | | |
 
-#### 2.6 Document Assembly
+#### 2.6 Document Assembly [Conditional]
 
 **Report Structure**:
 
 ```
-# {Product Name} v{Version} Acceptance Test Report
+# {Product Name} v{Version Number} Acceptance Test Report
 
 ## 1. Acceptance Overview
 ### 1.1 Acceptance Scope
@@ -550,22 +554,22 @@ Acceptance Recommendation:
 - Failed case analysis details
 ```
 
-### Output Depth Grading
+## Output
+
+**Storage Path**: `output/pm-monitoring/quality-acceptance/`
+
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | acceptance verdict and critical issues only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full acceptance + regression analysis + quality trend + quality improvement roadmap | Full deliverables + extended analysis + deep simulation |
-
-## Output
-
-**Storage path**: `output/pm-monitoring/quality-acceptance/`
+| quick | P0 acceptance results | Core conclusions + minimum viable output, only P0 case pass/fail results and gate decision |
+| standard | Complete acceptance report (current default) | Complete output, including all Step 1-2 outputs |
+| deep | Complete report + extended analysis | Complete output + regression test matrix + performance baseline comparison + security audit checklist + decision records + risk assessment |
 
 **Output Files**:
 
 | File | Format | Description |
-|------|--------|-------------|
+|------|------|------|
 | acceptance-report.md | Markdown | Complete acceptance test report (including acceptance execution plan and sign-off confirmation) |
 | acceptance-report.json | JSON | Structured data |
 
@@ -583,7 +587,7 @@ Acceptance Recommendation:
     "acceptance_date": {"type": "string", "description": "Acceptance date"},
     "acceptance_scope": {"type": "string", "description": "Acceptance feature scope"},
     "acceptance_party": {"type": "string", "description": "Acceptance party"},
-    "executed_at": {"type": "string", "description": "Execution time"},
+    "executed_at": {"type": "string", "description": "Execution timestamp"},
     "acceptance_report": {"type": "object", "description": "Acceptance report body, including summary and item-by-item results"},
     "failed_cases_analysis": {"type": "array", "description": "Failed case analysis, including root cause and fix suggestions"},
     "gate_decision": {"type": "object", "description": "Quality gate decision result, including pass/fail and blocking items"},
@@ -602,12 +606,12 @@ Acceptance Recommendation:
   "output_id": "acceptance_report_xxx",
   "story_id": "story_001",
   "version": "2.3.0",
-  "acceptance_report": { /* see output validation rules */ },
-  "failed_cases_analysis": [ { /* see Step 1.7 failure analysis */ } ],
-  "gate_decision": { /* see Step 1.6 gate output */ },
-  "defects": [ { /* see Step 2.3 defect analysis */ } ],
+  "acceptance_report": { /* see Output Validation Rules */ },
+  "failed_cases_analysis": [ { /* see Step 1.7 Failure Analysis */ } ],
+  "gate_decision": { /* see Step 1.6 Gate Output */ },
+  "defects": [ { /* see Step 2.3 Defect Analysis */ } ],
   "open_issues": [],
-  "conclusion": { /* see Step 2.5 acceptance conclusion */ }
+  "conclusion": { /* see Step 2.5 Acceptance Conclusion */ }
 }
 ```
 
@@ -618,14 +622,14 @@ See Output Schema and Output Validation Rules.
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
-| auto_acceptance | object | Yes | Auto acceptance root object |
+|----------|------|------|------|
+| auto_acceptance | object | Yes | Auto-acceptance root object |
 | auto_acceptance.execution_summary | object | Yes | Execution summary |
 | auto_acceptance.execution_summary.total_checks | number | Yes | Total check items |
 | auto_acceptance.execution_summary.auto_passed | number | Yes | Auto-passed count |
 | auto_acceptance.execution_summary.auto_failed | number | Yes | Auto-failed count |
 | auto_acceptance.execution_summary.manual_required | number | Yes | Manual verification required count |
-| auto_acceptance.checks | array | Yes | Check item list |
+| auto_acceptance.checks | array | Yes | Check items list |
 | auto_acceptance.checks[].id | string | Yes | Check item ID |
 | auto_acceptance.checks[].type | string | Yes | Check type, enum: functional/performance/security/compatibility |
 | auto_acceptance.checks[].method | string | Yes | Acceptance method, enum: automated/semi_auto/manual |
@@ -636,10 +640,10 @@ See Output Schema and Output Validation Rules.
 | acceptance_report | object | Yes | Acceptance report root object |
 | acceptance_report.summary | object | Yes | Acceptance summary |
 | acceptance_report.summary.total_items | number | Yes | Total acceptance items |
-| acceptance_report.summary.passed | number | Yes | Passed items |
-| acceptance_report.summary.failed | number | Yes | Failed items |
-| acceptance_report.summary.blocked | number | Yes | Blocked items |
-| acceptance_report.items | array | Yes | Acceptance item list |
+| acceptance_report.summary.passed | number | Yes | Passed items count |
+| acceptance_report.summary.failed | number | Yes | Failed items count |
+| acceptance_report.summary.blocked | number | Yes | Blocked items count |
+| acceptance_report.items | array | Yes | Acceptance items list |
 | acceptance_report.items[].id | string | Yes | Acceptance item ID |
 | acceptance_report.items[].category | string | Yes | Acceptance category |
 | acceptance_report.items[].description | string | Yes | Acceptance description |
@@ -652,12 +656,12 @@ See Output Schema and Output Validation Rules.
 
 ## Upstream Change Response
 
-When upstream input changes, this skill's response strategy:
+When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|--------------|-------------------|
-| Acceptance criteria change | Check items and methods | Regenerate affected check items, preserve passed historical records |
-| Test case change | Auto acceptance check items | Update linked acceptance check items, mark for human confirmation |
+|----------|----------|----------|
+| Acceptance criteria change | Check items and methods | Regenerate affected check items, retain passed historical records |
+| Test case change | Auto-acceptance check items | Update related acceptance check items, mark for human confirmation |
 | PRD requirement change | Acceptance coverage | Re-evaluate acceptance coverage, mark for human confirmation |
 | Code change | Acceptance execution plan | Regenerate affected acceptance execution plan |
 | Security requirement change | Security acceptance items | Update security acceptance items, re-evaluate security risk |
@@ -665,10 +669,10 @@ When upstream input changes, this skill's response strategy:
 When acceptance results themselves change, downstream notification mechanism:
 
 | Acceptance Change Type | Notification Scope | Notification Method |
-|------------------------|-------------------|---------------------|
+|-------------|----------|----------|
 | Gate result change | release-orchestrator | Mark gate change, trigger release decision update |
 | P0/P1 check failure | change-impact-analysis | Mark failed items, trigger impact assessment |
-| Manual verification items | release-orchestrator | Mark pending items, trigger manual acceptance process |
+| Manual verification required | release-orchestrator | Mark pending verification items, trigger manual acceptance process |
 | P0/P1 failure | release-orchestrator | Mark blocking items, block release process |
 | Sign-off status change | release-orchestrator | Mark sign-off status, trigger release decision |
 
@@ -679,62 +683,81 @@ When acceptance results themselves change, downstream notification mechanism:
 ### Release Blocking Rules
 
 | Condition | Decision |
-|-----------|----------|
-| P0 failures exist | **Immediate block**, send emergency alert |
-| P1 failures > 2 | **Immediate block**, require fix |
-| Automated execution rate < 90% | **Block**, require increasing automation rate |
+|------|------|
+| P0 failure exists | **Immediately block**, send urgent alert |
+| P1 failures > 2 | **Immediately block**, require fix |
+| Automation execution rate < 90% | **Block**, require increasing automation rate |
 | Environment configuration suggestions missing | **Block**, investigate environment configuration |
-| Must requirement pass rate <100% | Acceptance conclusion is "fail" |
+| Must requirement pass rate < 100% | Acceptance conclusion is "fail" |
 | Fatal/Critical defects unfixed | Acceptance conclusion is "fail" |
 | Major defects > 5 | Recommend fix and re-acceptance |
 
 ### Pass Conditions
 
 | Condition | Requirement |
-|-----------|-------------|
+|------|------|
 | P0 cases | 100% pass |
-| P1 cases | <= 2 failures |
-| P2 cases | <= 5 failures |
-| Automation rate | >= 90% |
+| P1 cases | ≤ 2 failures |
+| P2 cases | ≤ 5 failures |
+| Automation rate | ≥ 90% |
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] P0 case pass rate (100%)
-- [ ] Automated execution rate (>= 90%)
+| Check Item | Standard | Non-compliance Handling |
+|--------|------|------------|
+| P0 case pass rate | 100% | Block |
+
+- [ ] All P0 case execution instructions generated
+- [ ] P0 case pass rate 100%
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Test environment configuration (All configuration suggestion items output)
-- [ ] Failure analysis completeness (Includes root cause and suggestions)
+| Check Item | Standard | Non-compliance Handling |
+|--------|------|------------|
+| Automation execution rate | ≥ 90% | Block |
+| Test environment configuration | All configuration suggestion items output | Block |
+| Failure analysis completeness | Includes root cause and suggestions | Alert |
+
+- [ ] Automation execution rate meets target
+- [ ] Failed case analysis rules generated
+- [ ] Failed cases have fix suggestions
+- [ ] Environment configuration suggestions output
+- [ ] Acceptance criteria have item-by-item results
+- [ ] Must requirement pass rate calculated
+- [ ] Defects classified by severity
+- [ ] Open issues have resolution plans
+- [ ] Acceptance conclusion is clear (pass/conditional pass/fail)
+- [ ] Sign-off confirmation table included
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Regression test matrix generated (affected modules, regression case coverage, risk level annotation)
+- [ ] Performance baseline comparison completed (key metrics vs previous version baseline, performance regression detection)
+- [ ] Security audit checklist output (security acceptance items, vulnerability scan results, compliance checks)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
 | Missing Scope | Degradation Plan | Output Impact |
-|---------------|------------------|---------------|
-| Acceptance criteria missing | User provides Given-When-Then acceptance criteria -> generate acceptance checklist | Acceptance criteria need manual writing |
-| Test environment missing | Generate acceptance checklist and execution instructions, environment configuration marked as to-be-filled | Only checklist and execution instructions output, environment configuration marked as to-be-filled |
-| Both acceptance criteria + test environment missing | User provides Given-When-Then acceptance criteria -> generate acceptance checklist | Output acceptance checklist, environment configuration marked "pending configuration" |
+|----------|----------|----------|
+| Acceptance criteria missing | User provides Given-When-Then acceptance criteria → generate acceptance checklist | Acceptance criteria need manual writing |
+| Test environment missing | Generate acceptance checklist and execution instructions, environment configuration marked as to-be-filled | Only output checklist and execution instructions, environment configuration marked as to-be-filled |
+| Both acceptance criteria and test environment missing | User provides Given-When-Then acceptance criteria → generate acceptance checklist | Output acceptance checklist, environment configuration marked "to be configured" |
 | Test results missing | Generate to-be-filled report template based on acceptance criteria | Cannot auto-determine pass/fail |
 | SRS missing (already covered by design-prd) | Acceptance criteria provided by user | Need manual definition of acceptance criteria |
 | Acceptance party missing | If user does not provide acceptance party, prompt user to provide or skip steps related to this input | Sign-off confirmation table marked "acceptance party to be designated" |
 | Backend review report missing | Accept based on functional acceptance criteria only | May miss backend architecture quality issues |
-| API coverage report missing | Accept based on PRD acceptance criteria only | May miss API coverage incompleteness issues |
+| API coverage report missing | Accept based on PRD acceptance criteria only | May miss API coverage completeness issues |
 
 ### Data Acquisition Instructions
 
-When upstream files are missing, user needs to provide the following information to support degraded generation:
+When upstream files are missing, users need to provide the following information to support degraded generation:
 - **Given-When-Then acceptance criteria**: Given/When/Then description for each acceptance condition
 - **Test environment information** (optional): Test environment address, accounts and other configuration
-- **Build version** (optional): Build version number for acceptance
+- **Build version** (optional): Build version number to be accepted
 
 ## Execution Log
 
@@ -748,6 +771,7 @@ When upstream files are missing, user needs to provide the following information
   "completed_at": "ISO8601",
   "steps": [
     {"step": "criteria_parsing", "status": "completed", "duration_ms": 200}
+    // ... same structure extensible
   ],
   "gate_decision": {
     "passed": false,

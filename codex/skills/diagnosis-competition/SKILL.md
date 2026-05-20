@@ -1,50 +1,52 @@
 ---
 name: diagnosis-competition
-description: "Use when tracking competitor dynamics and formulating response strategies. Competitor dynamics tracking and response, monitoring competitor feature changes, evaluating dynamic shifts in competitive advantage, generating response strategies and tracking effectiveness. Keywords: competitor tracking, competitor analysis, competitor monitoring, feature changes, competitive analysis, competitor shifts, competitor dynamics."
+description: Use when you need to track competitor dynamics and develop response strategies. Competitor Dynamic Tracking & Response, monitors competitor feature changes, evaluates dynamic changes in own advantages, generates response strategies, and tracks effectiveness. Keywords: competitor tracking, competitor analysis, competitor monitoring, feature changes, competitive analysis, competitor changes, competitor dynamics, competitor changed, competitor made a move.
 metadata:
   module: "Product Monitoring & Iteration"
   sub-module: "Issue Diagnosis"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
-    - "Competitors updated again, what to do"
+    - "Competitor updated again, what should I do"
     - "Competitor added a new feature, how to respond"
     - "How to track competitor dynamics"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output competitor diagnosis and feature comparison"
-  deep_description: "Full diagnosis + competitor strategy simulation + differentiation opportunity identification + competitive response roadmap"
+  quick_description: "Directly output competitor diagnosis and feature comparison"
+  deep_description: "Complete diagnosis + competitor strategic inference + differentiation opportunity identification + competitive response roadmap"
 ---
 
-# Competitor Dynamics Tracking & Response AI
+# Competitor Dynamic Tracking & Response 🤖
 
 ## Core Principles
 
-1. **Feature changes are signals not noise**: Every competitor feature change reflects their strategic intent; the key is identifying intent, not listing changes
-2. **Advantage is dynamic not static**: Competitive advantage changes at any time; yesterday's lead doesn't guarantee tomorrow's
-3. **Response strategies must be trackable**: The value of a strategy lies in execution and effectiveness verification, not just remaining at suggestions
+1. **Feature changes are signals, not noise**: Every competitor feature change reflects their strategic intent; the key is identifying intent, not listing changes
+2. **Advantages are dynamic, not static**: Competitive advantages are constantly changing; yesterday's lead doesn't guarantee tomorrow's lead
+3. **Response strategies must be trackable**: The value of a strategy lies in execution and effectiveness verification, not停留在 the recommendation level
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Competitor Data | JSON | Yes | Competitor monitoring system -> Competitor data | Feature list, version updates, user reviews |
-| Self Data | JSON | Yes | Product data platform -> Self data | Feature list, user reviews, satisfaction |
-| Market Data | JSON | No | Industry reports -> Market data | Industry trends, user demand changes |
-| Historical Tracking | JSON | No | output/pm-monitoring/diagnosis-competition/historical-reports | Historical competitor analysis reports |
+|--------|------|------|------|------|
+| Competitor data | JSON | Yes | Competitor monitoring system → Competitor data | Feature list, version updates, user reviews |
+| Own data | JSON | Yes | Product data platform → Own data | Feature list, user reviews, satisfaction |
+| Market data | JSON | ○ | Industry reports → Market data | Industry trends, user demand changes |
+| Historical tracking | JSON | ○ | output/pm-monitoring/diagnosis-competition/Historical reports | Historical competitor analysis reports |
 
 ## Execution Steps
 
-### Step 1: Feature Change Monitoring [Core]
+### Step 1: Feature Change Monitoring [Conditional]
 
 **Goal**: Identify recent competitor feature changes
 
 **Monitoring Channels**:
-- Competitor websites/update logs
+- Competitor websites / changelogs
 - App store update records
 - User review aggregation
 - Social media discussions
@@ -53,12 +55,12 @@ AI->Human AI suggests, human approves
 **Change Type Classification**:
 
 | Type | Definition | Attention Level |
-|------|------------|-----------------|
-| New Feature | Competitor-unique new capability | P0 |
-| Feature Enhancement | Experience/performance improvement of existing feature | P1 |
-| Feature Deprecation | Discontinued feature support | P2 |
-| Pricing Adjustment | Pricing strategy change | P1 |
-| Ecosystem Expansion | Partner/integration change | P2 |
+|------|------|----------|
+| New feature | New capability unique to competitor | P0 |
+| Feature optimization | Experience/performance improvement of existing feature | P1 |
+| Feature retirement | Feature no longer supported | P2 |
+| Pricing adjustment | Pricing strategy change | P1 |
+| Ecosystem expansion | Partner/integration changes | P2 |
 
 **Output Format**:
 
@@ -79,17 +81,17 @@ feature_changes:
 
 ### Step 2: Advantage Dynamic Assessment [Core]
 
-**Goal**: Assess changes in competitive advantage relative to competitors
+**Goal**: Evaluate changes in own strengths and weaknesses relative to competitors
 
 **Assessment Dimensions**:
 
 | Dimension | Metric | Data Source |
-|-----------|--------|-------------|
-| Feature Leadership | Unique feature count vs competitors | Feature comparison matrix |
-| User Experience | Rating comparison, feature usability | App Store/Google Play |
-| Performance Metrics | Response time, stability comparison | Third-party reviews |
-| Value Perception | Price-performance ratio, brand perception | User research |
-| Ecosystem Richness | Integration count, API openness | Technical documentation |
+|------|------|----------|
+| Feature leadership | Unique feature count vs competitor | Feature comparison matrix |
+| User experience | Rating comparison, feature usability | App Store/Google Play |
+| Performance metrics | Response time, stability comparison | Third-party reviews |
+| Value perception | Price-performance ratio, brand awareness | User research |
+| Ecosystem richness | Integration count, API openness | Technical documentation |
 
 **Assessment Methods**:
 - Radar chart multi-dimensional comparison
@@ -116,7 +118,7 @@ advantage_changes:
     direction: gaining | holding | losing
     confidence: {percentage}
   critical_changes:
-    - description: "Competitor X launched Y feature, narrowing feature gap"
+    - description: "Competitor X launched feature Y, narrowing the feature gap"
       impact_level: high | medium | low
 ```
 
@@ -127,11 +129,11 @@ advantage_changes:
 **Strategy Types**:
 
 | Strategy Type | Applicable Scenario | Execution Requirements |
-|---------------|---------------------|------------------------|
+|----------|----------|----------|
 | Accelerate | Competitor capturing market share | Rapid iteration, high priority |
 | Differentiate | Competitor feature homogenization | Find unique value points |
-| Defend | Competitor threatening core features | Consolidate moat |
-| Monitor | Uncertain impact | Continuous monitoring, reserve plans |
+| Defend | Competitor threatening core features | Strengthen moat |
+| Monitor | Impact uncertain | Continuous monitoring, reserve plans |
 
 **Strategy Generation Rules**:
 
@@ -167,11 +169,11 @@ response_strategy:
 
 ### Step 4: Effectiveness Tracking [Conditional]
 
-**Goal**: Track execution effectiveness of response strategies
+**Goal**: Track the execution effectiveness of response strategies
 
 **Tracking Metrics**:
 - Strategy execution completion rate
-- User feedback after feature release
+- User feedback after feature launch
 - Market share changes
 - User rating changes
 
@@ -195,18 +197,18 @@ effect_tracking:
       status_change: improved | unchanged | declined
 ```
 
-### Output Depth Grading
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | competitor diagnosis and feature comparison | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full diagnosis + competitor strategy simulation + differentiation opportunity identification + competitive response roadmap | Full deliverables + extended analysis + deep simulation |
+| quick | Competitor diagnosis and feature comparison | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Complete output, including all Step outputs |
+| deep | Complete diagnosis + competitor strategic inference + differentiation opportunity identification + competitive response roadmap | Complete output + extended analysis + deep inference |
 
 ## Output
 
 
-**Output file path**: `output/pm-monitoring/diagnosis-competition/`
+**Output File Path**: `output/pm-monitoring/diagnosis-competition/`
 **Output Schema**:
 
 ```json
@@ -214,12 +216,12 @@ effect_tracking:
   "type": "object",
   "required": ["report_id", "feature_changes", "advantage_changes", "response_strategy"],
   "properties": {
-    "report_id": {"type": "string", "description": "Report unique identifier"},
+    "report_id": {"type": "string", "description": "Unique report identifier"},
     "generated_at": {"type": "string", "description": "Generation time"},
-    "period": {"type": "object", "description": "Analysis period, including start and end times"},
-    "feature_changes": {"type": "object", "description": "Feature change summary, including total and P0/P1 counts"},
+    "period": {"type": "object", "description": "Analysis period, including start and end time"},
+    "feature_changes": {"type": "object", "description": "Feature change summary, including total count and P0/P1 counts"},
     "advantage_changes": {"type": "object", "description": "Advantage changes, including gaining/holding/losing dimensions"},
-    "response_strategy": {"type": "array", "description": "Response strategy list, including competitor, feature and priority"}
+    "response_strategy": {"type": "array", "description": "Response strategy list, including competitor, feature, and priority"}
   }
 }
 ```
@@ -264,9 +266,9 @@ competition_response:
 ## Decision Rules
 
 | Scenario | Decision Rule |
-|----------|---------------|
+|------|----------|
 | Competitor launches disruptive feature | Immediately generate response strategy, mark P0 |
-| Advantage gap narrowing < 10% | Generate defense strategy |
+| Advantage gap narrows < 10% | Generate defense strategy |
 | Multiple competitors homogenizing | Trigger differentiation strategy generation |
 | Strategy execution delayed | Re-evaluate priority |
 | Major market environment change | Re-evaluate overall strategy |
@@ -275,19 +277,19 @@ competition_response:
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Competitor coverage completeness >= 90%
-- [ ] Feature change identification timeliness <= 7 days
+- [ ] Competitor coverage completeness ≥ 90%
+- [ ] Feature change identification timeliness ≤ 7 days
 
 ### P1 Checks (must pass for standard/deep)
 
 - [ ] Advantage assessment consistent with actual market feedback
-- [ ] Strategy executability >= 80%
+- [ ] Strategy executability ≥ 80%
 - [ ] Effectiveness tracking coverage 100%
 - [ ] Report completeness (all dimensions)
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Extended analysis complete (deep inference and roadmap generated)
 - [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
@@ -295,45 +297,45 @@ competition_response:
 ### Upstream File Missing Degradation Plan
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
-| Competitor data | User provides competitor name list, AI tracks competitor dynamics based on public information and industry knowledge | Competitor tracking report based on AI knowledge, data sources and confidence need to be marked |
-| Self data | User provides own product feature list and user reviews, AI performs manual comparison | Advantage/disadvantage analysis based on user input, lacking data validation |
-| Market data | Skip industry trend analysis, strategy suggestions based solely on feature comparison | Strategy suggestions without industry trends |
-| Historical tracking | Skip historical trend analysis, output current snapshot only | Competitor current snapshot report, no trend comparison |
+|---------------|---------|---------|
+| Competitor data | User provides competitor name list, AI tracks competitor dynamics based on public information and industry knowledge | AI knowledge-based competitor tracking report, data sources and confidence levels need to be annotated |
+| Own data | User provides own product feature list and user reviews, AI performs manual comparison | User input-based strength/weakness analysis, lacking data validation |
+| Market data | Skip industry trend analysis, strategy recommendations based on feature comparison only | Strategy recommendations without industry trends |
+| Historical tracking | Skip historical trend analysis, output current snapshot only | Competitor status snapshot report, no trend comparison |
 
-### Data Acquisition Instructions
+### Data Acquisition Notes
 
 When upstream files are missing, obtain necessary data through the following methods:
 
-1. **Competitor data missing**: Ask user to provide competitor name list, AI will track competitor feature dynamics based on public information (websites, app stores, industry reports, etc.) and AI knowledge base, marking data sources and confidence in output
-2. **Self data missing**: Ask user to provide own product feature list and core metrics (user ratings, feature coverage, etc.), AI will perform manual comparison analysis with competitors based on user input
-3. **Market data missing**: AI skips industry trend analysis, response strategies generated based solely on feature comparison results, recommend supplementing market data later to improve strategies
+1. **Competitor data missing**: Request user to provide competitor name list, AI will track competitor feature dynamics based on public information (websites, app stores, industry reports, etc.) and AI knowledge base, annotating data sources and confidence levels in the output
+2. **Own data missing**: Request user to provide own product feature list and core metrics (user ratings, feature coverage, etc.), AI will perform manual comparison analysis with competitors based on user input
+3. **Market data missing**: AI skips the industry trend analysis phase, response strategies are generated based on feature comparison results only, recommending subsequent supplementation of market data to improve strategy
 
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
-| report_id | string | Yes | Report unique identifier |
-| feature_changes | object | Yes | Feature change summary, must contain total/p0_count/p1_count |
-| feature_changes.total | number | Yes | Total changes, must be >=0 |
-| advantage_changes | object | Yes | Advantage changes, must contain gaining/holding/losing |
-| response_strategy | array | Yes | Response strategy list, each must contain id/competitor/feature/approach/priority |
-| response_strategy[].priority | string | Yes | Priority, only P0/P1/P2 allowed |
+|----------|------|------|------|
+| report_id | string | Yes | Unique report identifier |
+| feature_changes | object | Yes | Feature change summary, must include total/p0_count/p1_count |
+| feature_changes.total | number | Yes | Total change count, must be ≥0 |
+| advantage_changes | object | Yes | Advantage changes, must include gaining/holding/losing |
+| response_strategy | array | Yes | Response strategy list, each item must include id/competitor/feature/approach/priority |
+| response_strategy[].priority | string | Yes | Priority, only allows P0/P1/P2 |
 
 ## Upstream Change Response
 
 ### Upstream Change Impact Table
 
 | Upstream Source | Change Type | Impact Scope | Response Action |
-|-----------------|-------------|--------------|-----------------|
+|----------|----------|----------|----------|
 | Competitor monitoring system | Competitor data format change | Feature change parsing and classification | Adapt to new format, update change type classification |
-| Product data platform | Self feature list change | Advantage comparison matrix | Update comparison baseline, re-evaluate advantages/disadvantages |
-| Industry reports | Market data update | Industry trends and strategy suggestions | Update trend analysis, adjust strategy priorities |
+| Product data platform | Own feature list change | Advantage comparison matrix | Update comparison baseline, re-evaluate strengths/weaknesses |
+| Industry reports | Market data update | Industry trends and strategy recommendations | Update trend analysis, adjust strategy priorities |
 
 ### Downstream Notification Mechanism Table
 
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
-|---------------------|------------------------|---------------------|----------------------|
-| competitor-monitoring-report | Competitor tracking data updated | Write to output file | Feature changes and advantage changes |
-| diagnosis-orchestrator | Competitor tracking completed | Output file update | Tracking completion status and key findings |
-| iteration-decision | P0-level competitor change | Write to output file | Emergency response strategy and priority |
+|------------|----------|----------|----------|
+| competitor-monitoring-report | Competitor tracking data update | Write to output file | Feature changes and advantage changes |
+| diagnosis-orchestrator | Competitor tracking complete | Output file update | Tracking completion status and key findings |
+| iteration-decision | P0-level competitor change | Write to output file | Urgent response strategy and priority |

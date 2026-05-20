@@ -1,45 +1,47 @@
 ---
 name: release-notes
-description: "Use when releasing a product version. Automated release notes generation, based on change records and PRD diffs, generating user/customer-facing version update notes, supporting multi-language and multi-platform formats. Keywords: release notes, Release Notes, changelog, version update, update notes, release description, what was updated."
+description: Use when you need to generate release notes, changelogs, or version announcements for a product release. Automated release notes generation, based on change records and PRD diffs, generating user/customer-facing version update descriptions, supporting multi-language and multi-platform formats. Keywords: release notes, changelog, version update, update description, version announcement, what's new.
 metadata:
   module: "Product Monitoring & Iteration"
-  sub-module: "Release & Go-live"
+  sub-module: "Release & Go-Live"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
+  domain_tags: ["Internet", "General"]
   trigger_examples:
     - "Help me write version update notes"
     - "Generate release notes"
-    - "What was updated in this version, organize it"
+    - "What's new in this version, organize it"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output release notes and change list"
-  deep_description: "Full notes + change impact analysis + upgrade guide + rollback contingency"
+  quick_description: "Directly output release notes and change list"
+  deep_description: "Complete notes + change impact analysis + upgrade guide + rollback contingency plan"
 ---
 
-# Version Release Notes Auto-Generation
+# Automated Release Notes Generation
 
 ## Core Principles
 
-1. **User perspective** -- Users care about "what impact does this have on me", not "what code changed"
-2. **Tiered presentation** -- Important changes highlighted, minor changes not buried
-3. **Honest and transparent** -- Known issues not hidden, breaking changes communicated in advance
-4. **Action-oriented** -- What users need to do (upgrade/configure/attention) must be clear
+1. **User perspective** — Users care about "what impact does this have on me", not "what code changed"
+2. **Tiered presentation** — Important changes are prominent; minor changes are not buried
+3. **Honest and transparent** — Known issues are not hidden; breaking changes are communicated in advance
+4. **Action-oriented** — What users need to do (upgrade/configure/pay attention) must be explicit
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Requirement Change Log | Markdown/JSON | No | output/pm-monitoring/release-auto-checklist/release_checklist.json | Requirement changes for this version |
-| PRD Document | Markdown | No | output/pm-design/design-prd/prd.md | Product requirements reference |
-| SRS Document | Markdown | No | output/pm-design/design-prd/prd.md | Requirements specification reference (already covered by design-prd) |
-| Version Number | string | Yes | User provided | e.g., v2.3.0 |
-| Release Date | string | Yes | User provided | e.g., 2025-03-15 |
-| Release Type | string | Yes | User provided | major / minor / patch / hotfix |
-| Target Audience | string | No | User provided | End users / Enterprise customers / Developers / Internal team |
+|--------|------|------|------|------|
+| Requirement change records | Markdown/JSON | ○ | output/pm-monitoring/release-auto-checklist/release_checklist.json | Requirement changes for this version |
+| PRD document | Markdown | ○ | output/pm-design/design-prd/prd.md | Product requirement reference |
+| SRS document | Markdown | ○ | output/pm-design/design-prd/prd.md | Requirement specification reference (covered by design-prd) |
+| Version number | string | Yes | User provided | e.g., v2.3.0 |
+| Release date | string | Yes | User provided | e.g., 2025-03-15 |
+| Release type | string | Yes | User provided | major / minor / patch / hotfix |
+| Target audience | string | ○ | User provided | End users / Enterprise customers / Developers / Internal team |
 
 ## Execution Steps
 
@@ -50,21 +52,21 @@ Collect all changes for this version and classify by type:
 **Change Classification System**:
 
 | Category | Icon | Description | Example |
-|----------|------|-------------|---------|
-| [NEW] New Feature | [SPARKLE] | New product features | Added social sharing feature |
-| [REFRESH] Improvement | [WRENCH] | Optimization of existing features | Search speed improved 3x |
-| [BUG] Fix | [BUG] | Bug fixes | Fixed login page blank screen issue |
-| [!] Breaking Change | [IMPACT] | Changes requiring user adaptation | API v1 deprecated, please migrate to v2 |
-| [TRASH] Deprecation | [TRASH] | Feature/API removal | Removed legacy export feature |
-| [LOCK] Security | [LOCK] | Security-related fixes | Fixed XSS vulnerability |
+|------|------|------|------|
+| 🆕 New Features | ✨ | Newly added product features | Added social sharing feature |
+| 🔄 Improvements | 🔧 | Optimizations to existing features | Search speed improved 3x |
+| 🐛 Bug Fixes | 🐛 | Bug fixes | Fixed login page white screen issue |
+| ⚠️ Breaking Changes | 💥 | Changes requiring user adaptation | API v1 deprecated, please migrate to v2 |
+| 🗑️ Deprecations | 🗑️ | Feature/API removal | Removed legacy export feature |
+| 🔒 Security | 🔒 | Security-related fixes | Fixed XSS vulnerability |
 
 **Change Source Mapping**:
 
 | Change Source | Extraction Method |
-|--------------|-------------------|
-| requirements-change-log | Extract approved requirement changes from change log |
-| PRD diff | Compare new and old PRD to extract feature changes |
-| User provided | User directly describes change content |
+|----------|---------|
+| requirements-change-log | Extract approved requirement changes from change records |
+| PRD diff | Compare new and old PRDs to extract feature changes |
+| User provided | Changes directly described by the user |
 
 ### Step 2: User Impact Assessment [Core]
 
@@ -73,55 +75,55 @@ Assess the impact of each change on users:
 **Impact Level**:
 
 | Level | Definition | Position in Release Notes |
-|-------|------------|--------------------------|
-| [RED] High Impact | Changes core user workflow or requires user action | Top "Important Changes" section |
-| [YELLOW] Medium Impact | Improves experience but no mandatory action | Listed by category |
-| [GREEN] Low Impact | Optimization imperceptible to users | Collapsed section |
+|------|------|----------------|
+| 🔴 High Impact | Changes user's core workflow or requires user action | Top "Important Changes" section |
+| 🟡 Medium Impact | Improves experience but no mandatory action | Listed by category |
+| 🟢 Low Impact | Optimizations imperceptible to users | Collapsed section |
 
 **User Action Items**:
 
 | Action Type | Description | Example |
-|-------------|-------------|---------|
-| Required Action | Not doing so affects usage | Please reconfigure API key |
-| Recommended Action | Doing so improves experience | Recommend updating mobile app to latest version |
-| No Action Needed | Takes effect automatically | Performance optimization auto-applied |
+|----------|------|------|
+| Required action | Not doing so will affect usage | Please reconfigure your API key |
+| Recommended action | Doing so improves experience | Recommend updating mobile app to latest version |
+| No action needed | Takes effect automatically | Performance optimization has taken effect automatically |
 
-### Step 3: Multi-Format Generation [Core]
+### Step 3: Multi-format Generation [Core]
 
 Generate release notes in different styles based on target audience:
 
-**Format A: End User Edition** (concise, emotional)
+**Format A: End User Version** (concise, emotive)
 
 ```
-## [SPARKLE] New Features
-- **Social Sharing**: One-click share to WeChat/Weibo, let friends use the great tool too
-- **Dark Mode**: Late night work easier on the eyes, toggle in settings
+## ✨ New Features
+- **Social Sharing**: One-click share to WeChat/Weibo, let friends discover great tools too
+- **Dark Mode**: Easier on the eyes for late-night work, toggle in settings
 
-## [WRENCH] Improvements
+## 🔧 Improvements
 - Search speed improved 3x, results appear as you type
-- List loading smoother, goodbye lag
+- List loading smoother, say goodbye to lag
 
-## [BUG] Fixes
+## 🐛 Bug Fixes
 - Fixed occasional login failure issue
-- Fixed export file name garbled text issue
+- Fixed garbled export filenames issue
 ```
 
-**Format B: Enterprise Customer Edition** (professional, structured)
+**Format B: Enterprise Customer Version** (professional, structured)
 
 ```
 ## New Features
 | Feature | Description | Impact Scope |
-|---------|-------------|--------------|
-| Social Sharing | Support sharing to Enterprise WeChat/DingTalk | All platforms |
+|------|------|---------|
+| Social Sharing | Supports sharing to Enterprise WeChat/DingTalk | All platforms |
 | Dark Mode | System-level dark mode adaptation | Desktop |
 
 ## Improvements
-| Improvement | Optimization | Performance Gain |
-|-------------|-------------|------------------|
+| Improvement | Optimization Content | Performance Gain |
+|--------|---------|---------|
 | Search Engine | Rebuilt indexing algorithm | Response time -70% |
 
 ## Security Fixes
-- CVE-2025-XXXX: Fixed XSS vulnerability (High)
+- CVE-2025-XXXX: Fixed XSS vulnerability (High severity)
 - Updated dependency library versions, fixed known security vulnerabilities
 
 ## Breaking Changes
@@ -129,24 +131,24 @@ Generate release notes in different styles based on target audience:
   Migration guide: [Link]
 
 ## Known Issues
-- Safari 14 occasional style misalignment, fixed in next version
+- Occasional style misalignment on Safari 14, fix in next version
 ```
 
-**Format C: Developer Edition** (technical, detailed)
+**Format C: Developer Version** (technical, detailed)
 
 ```
 ## Breaking Changes
-- `POST /api/v1/users` -> `POST /api/v2/users` (added required field `tenant_id`)
+- `POST /api/v1/users` → `POST /api/v2/users` (new required field `tenant_id`)
 - Removed `GET /api/v1/export` (use `GET /api/v2/export` instead)
 
 ## New APIs
-- `POST /api/v2/share` -- Social sharing endpoint
-- `GET /api/v2/preferences/theme` -- Theme preference endpoint
+- `POST /api/v2/share` — Social sharing endpoint
+- `GET /api/v2/preferences/theme` — Theme preference endpoint
 
 ## Changelog
 - feat: Added social sharing module
 - perf: Search engine index rebuild, response time optimized 70%
-- fix: Fixed login Token not auto-refreshing after expiry
+- fix: Fixed login token not auto-refreshing after expiration
 - security: Fixed XSS vulnerability CVE-2025-XXXX
 ```
 
@@ -157,17 +159,17 @@ Generate release notes in different styles based on target audience:
 ```
 # {Product Name} v{Version} Release Notes
 
-[CALENDAR] Release Date: {Date}
-[LABEL] Version Type: {major/minor/patch/hotfix}
-[LINK] Upgrade Guide: {Link}
-[LIST] Full Changelog: {Link}
+📅 Release Date: {Date}
+🏷️ Version Type: {major/minor/patch/hotfix}
+🔗 Upgrade Guide: {Link}
+📋 Full Changelog: {Link}
 ```
 
 **Version Number Semantics**:
 
 | Type | Semantics | User Expectation |
-|------|-----------|------------------|
-| major | Major update, may have breaking changes | Expect new experience, watch migration cost |
+|------|------|---------|
+| major | Major update, may have breaking changes | Expect new experience, mindful of migration cost |
 | minor | Feature update, backward compatible | Expect new features |
 | patch | Bug fixes, backward compatible | Expect stability improvement |
 | hotfix | Emergency fix | Expect issue resolution |
@@ -179,31 +181,31 @@ Generate release notes in different styles based on target audience:
 ```
 # {Product Name} v{Version} Release Notes
 
-## [!] Important Changes (if breaking changes or required actions)
+## ⚠️ Important Changes (if breaking changes or required actions exist)
 - ...
 
-## [SPARKLE] New Features
-- **Feature Name**: Description (Impact Level)
+## ✨ New Features
+- **Feature name**: Description (impact level)
 - ...
 
-## [WRENCH] Improvements
-- Description (Impact Level)
+## 🔧 Improvements
+- Description (impact level)
 - ...
 
-## [BUG] Fixes
+## 🐛 Bug Fixes
 - Description
 - ...
 
-## [LOCK] Security Fixes (if any)
+## 🔒 Security Fixes (if any)
 - Description
 
-## [TRASH] Deprecation Notices (if any)
-- Description and alternative
+## 🗑️ Deprecation Notices (if any)
+- Description and alternatives
 
-## [!] Known Issues (if any)
-- Description and workaround
+## ⚠️ Known Issues (if any)
+- Description and workarounds
 
-## [LIST] Upgrade Guide (if needed)
+## 📋 Upgrade Guide (if needed)
 ### Prerequisites
 ### Upgrade Steps
 ### Rollback Plan
@@ -211,25 +213,25 @@ Generate release notes in different styles based on target audience:
 ## Acknowledgments (optional)
 ```
 
-### Output Depth Grading
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | release notes and change list | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full notes + change impact analysis + upgrade guide + rollback contingency | Full deliverables + extended analysis + deep simulation |
+| quick | Release notes and change list | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Full output including all Step outputs |
+| deep | Complete notes + change impact analysis + upgrade guide + rollback contingency plan | Complete output + extended analysis + deep inference |
 
 ## Output
 
-**Storage path**: `output/pm-monitoring/release-notes/`
+**Storage Path**: `output/pm-monitoring/release-notes/`
 
 **Output Files**:
 
 | File | Format | Description |
-|------|--------|-------------|
-| release-notes-v{version}.md | Markdown | Complete release notes (end user edition) |
-| release-notes-v{version}-enterprise.md | Markdown | Enterprise customer edition |
-| release-notes-v{version}-developer.md | Markdown | Developer edition |
+|------|------|------|
+| release-notes-v{version}.md | Markdown | Complete release notes (end user version) |
+| release-notes-v{version}-enterprise.md | Markdown | Enterprise customer version |
+| release-notes-v{version}-developer.md | Markdown | Developer version |
 | release-notes-v{version}.json | JSON | Structured data |
 
 **Output Schema**:
@@ -244,7 +246,7 @@ Generate release notes in different styles based on target audience:
     "release_type": {"type": "string", "description": "Release type: major/minor/patch/hotfix"},
     "target_audience": {"type": "string", "description": "Target audience"},
     "high_impact_changes": {"type": "array", "description": "High impact change list"},
-    "changes": {"type": "object", "description": "Change list, classified by category"},
+    "changes": {"type": "object", "description": "Change list, classified by category", "properties": {"new_features": {"type": "array"}, "improvements": {"type": "array"}, "bug_fixes": {"type": "array"}}},
     "known_issues": {"type": "array", "description": "Known issues list"},
     "breaking_changes": {"type": "array", "description": "Breaking changes list"},
     "upgrade_guide": {"type": "object", "description": "Upgrade guide"}
@@ -252,10 +254,35 @@ Generate release notes in different styles based on target audience:
 }
 ```
 
+**release-notes.json Structure**:
+
+```json
+{
+  "version": "2.3.0",
+  "release_date": "2025-03-15",
+  "release_type": "minor",
+  "target_audience": "End Users",
+  "high_impact_changes": [],
+  "changes": [
+    {
+      "category": "New Feature/Improvement/Fix/Security/Deprecation/Breaking Change",
+      "title": "Change title",
+      "description": "Change description",
+      "impact_level": "High/Medium/Low",
+      "user_action": "Required action/Recommended action/No action needed",
+      "related_requirement": "FR-XXX"
+    }
+  ],
+  "known_issues": [],
+  "breaking_changes": [],
+  "upgrade_guide": {}
+}
+```
+
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | release_notes | object | Yes | Release notes root object |
 | release_notes.version | string | Yes | Version number |
 | release_notes.release_date | string | Yes | Release date |
@@ -266,30 +293,42 @@ Generate release notes in different styles based on target audience:
 | release_notes.changes | object | Yes | Change classification |
 | release_notes.changes.new_features | array | Yes | New features list |
 | release_notes.changes.improvements | array | Yes | Improvements list |
-| release_notes.changes.bug_fixes | array | Yes | Fixes list |
+| release_notes.changes.bug_fixes | array | Yes | Bug fixes list |
 | release_notes.changes.breaking_changes | array | No | Breaking changes list |
-| release_notes.changes.deprecations | array | No | Deprecation list |
-| release_notes.upgrade_guide | object | Conditional | Upgrade guide, required when breaking_changes exist |
+| release_notes.changes.deprecations | array | No | Deprecated features list |
+| release_notes.upgrade_guide | object | Conditionally required | Upgrade guide, required when breaking_changes exist |
 | release_notes.known_issues | array | No | Known issues list |
 | release_notes.acknowledgments | array | No | Acknowledgments list |
 
 ## Upstream Change Response
 
+When upstream inputs change, this skill's response strategy:
+
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|--------------|-------------------|
+|----------|----------|----------|
 | PRD requirement change | New features and improvement descriptions | Update change classification and descriptions, mark for human confirmation |
-| Gradual rollout results | Known issues and upgrade guide | Update known issues list, supplement upgrade notes |
-| Acceptance report change | Change classification and completeness | Re-evaluate change classification, ensure all changes covered |
+| Gradual release result | Known issues and upgrade guide | Update known issues list, supplement upgrade notes |
+| Acceptance report change | Change classification and completeness | Re-evaluate change classification, ensure all changes are covered |
 | Checklist change | Release notes completeness | Update release notes, ensure consistency with checklist |
+
+When the release notes themselves change, the downstream notification mechanism:
+
+| Notes Change Type | Notification Scope | Notification Method |
+|-------------|----------|----------|
+| New breaking change added | All downstream | Mark breaking change, trigger impact assessment |
+| New known issue added | agile-review | Mark known issue, trigger review input |
+| Version number changed | release-gradual | Mark version change, trigger gradual configuration update |
+
+---
 
 ## Decision Rules
 
 | Condition | Decision |
-|-----------|----------|
-| Breaking changes exist | Must be prominently displayed in top "Important Changes" section |
-| Security fixes exist | Must include security fixes section, note CVE numbers |
-| Change items > 20 | Sort by impact level, collapse low impact |
-| hotfix type | Only list fix items, no new features or improvements |
+|------|------|
+| Has breaking changes | Must be prominently displayed in the top "Important Changes" section |
+| Has security fixes | Must include security fixes section, annotate CVE numbers |
+| Change items > 20 | Sort by impact level, collapse low impact items |
+| hotfix type | Only list fix items, do not list new features and improvements |
 | major version | Must include upgrade guide and rollback plan |
 
 ## Quality Checks
@@ -301,21 +340,21 @@ Generate release notes in different styles based on target audience:
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Breaking changes highlighted
-- [ ] User action items clear
+- [ ] Breaking changes prominently displayed
+- [ ] User action items explicit
 - [ ] Known issues listed
-- [ ] Multi-format generated (user/enterprise/developer editions)
-- [ ] No technical jargon leaked into end user edition
+- [ ] Multiple formats generated (user/enterprise/developer versions)
+- [ ] No technical terminology leaked into end user version
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Extended analysis complete (deep inference and roadmap generated)
 - [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
-| Change log missing | Generate based on user-provided change descriptions | Changes may be incomplete |
-| PRD missing | Cannot auto-extract feature changes | Need manual supplement of feature descriptions |
-| Target audience not specified | Default generate end user edition | May need to supplement other editions |
+|---------------|---------|---------|
+| Change records missing | Generate based on user-provided change descriptions | Changes may be incomplete |
+| PRD missing | Cannot automatically extract feature changes | Manual supplementation of feature descriptions needed |
+| Target audience not specified | Default to generating end user version | Other versions may need to be supplemented |

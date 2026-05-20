@@ -1,18 +1,20 @@
 ---
 name: agile-sprint-planning
-description: "Use when planning a Sprint. Automates Sprint Planning, transforming Product Backlog into Sprint Backlog with Sprint Goal suggestions, auto Story selection, workload estimation, and capacity matching validation. Keywords: Sprint planning, Sprint plan, iteration planning, Story selection, capacity matching, scheduling."
+description: Use when planning a Sprint. Sprint Planning automation, transforming Product Backlog into Sprint Backlog, including Sprint Goal suggestions, Story auto-selection, workload estimation, and capacity matching validation, outputting a complete Sprint plan. Keywords: Sprint planning, Sprint plan, iteration planning, Story selection, capacity matching, scheduling, what to do this iteration.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Agile Execution"
   type: "pipeline"
-  version: "1.0"
+  version: "3.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "How to plan the next Sprint"
     - "Which requirements for this iteration"
     - "How to schedule the Sprint plan"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output Sprint plan and story allocation"
+  quick_description: "Output Sprint plan and Story allocation directly"
   deep_description: "Full plan + risk buffer design + dependency analysis + capacity optimization suggestions"
 ---
 
@@ -26,7 +28,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI->Human AI Suggests, Human Approves**
+**🤖→👤 AI Suggests, Human Approves**
 
 - AI automatically completes Step 1-5, generating a complete Sprint plan
 - Human review focus: Sprint Goal accuracy, Story selection reasonableness, capacity appropriateness
@@ -40,7 +42,7 @@ execution_depth:
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
 | product_backlog | object[] | Yes | output/pm-monitoring/iteration-decision/prioritized_items | Product backlog |
-| sprint_goal | string | O | User provided | Sprint goal description |
+| sprint_goal | string | ○ | User provided | Sprint goal description |
 | team_capacity | object | Yes | output/pm-project/planning-resource/resource_plan | Team capacity data |
 | sprint_duration_days | number | Yes | User provided | Sprint duration in days |
 
@@ -121,10 +123,10 @@ execution_depth:
 }
 ```
 
-### Step 4: Capacity Matching Validation [Conditional]
+### Step 4: Capacity Matching Validation [Core]
 
 **Actions**:
-- Calculate team available capacity (person-days x team size)
+- Calculate team available capacity (person-days × team size)
 - Compare planned points with capacity
 - Validate within safe range (recommend 80% utilization)
 - If exceeding capacity, suggest adjustments
@@ -192,8 +194,8 @@ execution_depth:
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | Sprint plan and story allocation | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
+| quick | Sprint plan and Story allocation | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (current default) | Complete deliverables including all Step outputs |
 | deep | Full plan + risk buffer design + dependency analysis + capacity optimization suggestions | Full deliverables + extended analysis + deep simulation |
 
 ## Output
@@ -268,7 +270,7 @@ execution_depth:
 ## Capacity Calculation Rules
 
 ```
-Available Capacity = Team Size x Available Hours Per Person Per Day x Sprint Days x Utilization Factor
+Available Capacity = Team Size × Available Hours Per Person Per Day × Sprint Days × Utilization Factor
 
 Recommended Configuration:
 - Utilization Factor: 0.8 (reserve 20% for meetings, ad-hoc tasks)
@@ -290,14 +292,14 @@ Recommended Configuration:
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Sprint Goal is clear and contains >=1 quantifiable acceptance criteria
-- [ ] Selected Stories total points <= team available capacity x 1.1 (10% buffer)
+- [ ] Sprint Goal is clear and contains ≥1 quantifiable acceptance criteria
+- [ ] Selected Stories total points ≤ team available capacity × 1.1 (10% buffer reserved)
 
 ### P1 Checks (must pass for standard/deep)
 
 - [ ] 100% of cross-team dependencies identified with resolution plan or timeline
-- [ ] Each Story estimate confirmed by >=2 team members
-- [ ] Sprint includes >=1 tech debt or improvement item (if backlog exists)
+- [ ] Each Story estimate confirmed by ≥2 team members
+- [ ] Sprint includes ≥1 tech debt or improvement item (if backlog exists)
 - [ ] No P0 risks excluded from Sprint consideration
 
 ### P2 Checks (must pass for deep only)
@@ -314,7 +316,7 @@ Recommended Configuration:
 | Product Backlog | User provides requirements list (title + priority + estimate), AI generates Sprint plan accordingly | Sprint plan generated from user input, lacking structured Backlog data support |
 | Sprint goal | AI infers Sprint Goal from high-priority Stories, marks for PO confirmation | Sprint Goal is AI-inferred, requires Product Owner confirmation before execution |
 | Team capacity | Skip capacity validation, mark "Requires manual confirmation of capacity matching" in plan | Sprint plan has no capacity validation result, requires manual supplementation |
-| Sprint duration | If user does not provide Sprint days, prompt user or skip related steps | Capacity calculation and scheduling lack time range, requires manual supplementation |
+| Sprint duration | If user does not provide Sprint days, prompt user to provide or skip related steps | Capacity calculation and scheduling lack time range, requires manual supplementation |
 
 ### Data Acquisition Instructions
 

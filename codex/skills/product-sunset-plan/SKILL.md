@@ -1,411 +1,330 @@
 ---
 name: product-sunset-plan
-description: "Use when planning product sunset or end-of-life. Product sunset plan generation, assessing sunset impact, formulating user migration plans, data disposal strategies and timeline. Keywords: product sunset, product end-of-life, product offline, product decommission, user migration, data disposal, sunset plan, EOL, product retirement."
+description: Use when you need to create a product or feature sunset plan. Automated product sunset plan generation, including sunset decision assessment, user migration plan, data disposal strategy, timeline, and communication plan. Keywords: product sunset, feature sunset, product retirement, Sunset, sunset plan, user migration, data disposal, feature deprecation, service shutdown.
 metadata:
   module: "Product Monitoring & Iteration"
-  sub-module: "Product Sunset"
+  sub-module: "Issue Diagnosis"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
-    - "Plan product sunset"
-    - "Product needs to go offline"
-    - "How to migrate users to new product"
-    - "Product end-of-life plan"
+    - "How to sunset this feature"
+    - "Product is shutting down, how to arrange"
+    - "Old feature needs to be retired, what to do"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output sunset plan and risk checklist"
-  deep_description: "Full sunset plan + user migration plan + data archival strategy + impact assessment report"
+  quick_description: "Directly output sunset plan and risk list"
+  deep_description: "Complete sunset plan + user migration plan + data archival strategy + impact assessment report"
 ---
 
-# Product Sunset Plan Generation AI->Human
+# Product Sunset Plan Generation
 
 ## Core Principles
 
-1. **Sunset is responsible exit, not abandonment**: Every sunset must ensure users have a clear migration path and data is properly handled
-2. **Impact assessment must be comprehensive**: Users, revenue, brand, data -- missing any dimension means irresponsible sunset
-3. **Timeline must leave buffer**: Users need time to adapt; too aggressive a timeline leads to forced migration and brand damage
+**Sunset is the final respect for users**
+
+The core value of a product sunset plan is to minimize the impact of product retirement on users. A good sunset is not a sudden disappearance, but an orderly transition. The time and data users have invested deserve to be taken seriously.
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Health Diagnosis | JSON | Yes | diagnosis-health -> Health diagnosis | Product health score and bottleneck analysis |
-| Retention Data | JSON | No | retention-management -> Retention data | User retention and churn data |
-| Sunset Target | string | Yes | User provided | Product/module to sunset |
-| Sunset Reason | string | Yes | User provided | Reason for sunset (strategic/business/technical) |
+|--------|------|------|------|------|
+| Health diagnosis | markdown | No | diagnosis-health | Product health score, trends |
+| Retention data | markdown | No | retention-management | User retention, churn trends |
+| Sunset target | text | Yes | User input | Product/feature name and scope to be sunset |
+| Sunset reason | text | Yes | User input | Business decision rationale |
+
+### Degradation Strategy
+
+| Missing Input | Degradation Plan |
+|----------|----------|
+| No health diagnosis | Assess sunset impact based on user-provided information, mark as "pending health diagnosis" |
+| No retention data | Estimate affected user count based on user-provided information, mark as "pending retention data verification" |
+| No sunset target/reason | Cannot generate; require user to provide basic information |
 
 ## Execution Steps
 
-### Step 1: Sunset Impact Assessment [Core]
+### Step 1: Sunset Decision Assessment [Core]
 
-**Goal**: Comprehensively assess the impact of product sunset
+Assess the rationality and impact of the sunset decision:
 
-**Impact Dimensions**:
-
-| Dimension | Assessment Content | Metric |
-|-----------|-------------------|--------|
-| User Impact | Affected user count, migration difficulty | Active user count, paying user count |
-| Revenue Impact | Revenue loss, refund liability | MRR, ARR, contract commitments |
-| Brand Impact | Brand reputation, user trust | NPS change, social media sentiment |
-| Data Impact | Data volume, compliance requirements | Data classification, retention period |
-| Technical Impact | Dependency chain, system coupling | Dependent service count, API call count |
-| Team Impact | Team restructuring, capability transfer | Headcount, skill overlap |
-
-**Assessment Output**:
-
-```yaml
-sunset_impact:
-  - dimension: user
-    severity: high | medium | low
-    affected_users:
-      active: {count}
-      paying: {count}
-      free: {count}
-    migration_difficulty: easy | moderate | hard
-    key_concerns:
-      - "Paying users need refund handling"
-      - "Data export functionality needed"
-  - dimension: revenue
-    severity: high | medium | low
-    financial_impact:
-      mrr_loss: {amount}
-      arr_loss: {amount}
-      refund_liability: {amount}
-    contract_obligations:
-      active_contracts: {count}
-      earliest_expiry: {date}
-  - dimension: brand
-    severity: high | medium | low
-    risk_assessment:
-      nps_impact: {delta}
-      social_sentiment: {assessment}
-    mitigation:
-      - "Communicate sunset decision in advance"
-      - "Provide high-quality migration plan"
-  - dimension: data
-    severity: high | medium | low
-    data_inventory:
-      total_records: {count}
-      pii_records: {count}
-      compliance_requirements: [{requirement}]
-  - dimension: technical
-    severity: high | medium | low
-    dependency_map:
-      upstream_services: {count}
-      downstream_services: {count}
-      api_consumers: {count}
-  - dimension: team
-    severity: high | medium | low
-    team_impact:
-      affected_headcount: {count}
-      skill_transfer_needed: [{skill}]
-```
+1. **Sunset reason verification**:
+   - Business metrics consistently declining (revenue/users/activity)
+   - Strategic direction shift (no longer aligned with product positioning)
+   - Excessive technical cost (maintenance cost > output value)
+   - Compliance requirements (regulatory changes)
+2. **Alternative evaluation**: Are there alternatives to sunsetting
+3. **Impact scope assessment**:
+   - Number and percentage of affected users
+   - Amount and percentage of affected revenue
+   - Affected partners
+   - Brand impact assessment
 
 ### Step 2: User Migration Plan [Core]
 
-**Goal**: Formulate detailed user migration plan
+Develop a migration strategy for users from the sunset product to alternatives:
 
-**Migration Strategy**:
-
-| Strategy | Applicable Scenario | Risk |
-|----------|---------------------|------|
-| Guided Migration | Alternative product exists | Low |
-| Data Export | No alternative product | Medium |
-| Gradual Transition | Large user base | Low |
-| Immediate Cutover | Small user base | High |
-
-**Migration Plan**:
-
-```yaml
-migration_plan:
-  strategy: guided_migration
-  target_product: {product_name}
-  phases:
-    - phase: notification
-      duration: 30 days
-      actions:
-        - "Send sunset notification email"
-        - "In-app sunset announcement"
-        - "Publish migration guide"
-    - phase: assisted_migration
-      duration: 60 days
-      actions:
-        - "One-click migration tool online"
-        - "Dedicated customer service support"
-        - "Migration incentive program"
-    - phase: grace_period
-      duration: 30 days
-      actions:
-        - "Product read-only mode"
-        - "Data export feature online"
-        - "Final migration reminder"
-    - phase: decommission
-      duration: 7 days
-      actions:
-        - "Product offline"
-        - "Data archiving"
-        - "Service closure"
-  migration_tools:
-    - tool: one_click_migration
-      description: "One-click migrate all data to new product"
-      availability: {date_range}
-    - tool: data_export
-      description: "Export all user data as standard format"
-      formats: [csv, json, pdf]
-  support_plan:
-    dedicated_support:
-      channel: email | chat | phone
-      hours: 9x5 | 7x24
-      duration: {period}
-    faq_document: {url}
-    migration_guide: {url}
-```
+1. **Alternative identification**:
+   - Internal replacement product/feature
+   - Third-party alternatives
+   - No alternative (must be clearly communicated)
+2. **Migration path design**:
+   - Data export → import process
+   - Feature mapping table (old feature → new feature)
+   - Migration tools/scripts
+3. **Migration incentives**:
+   - Migration discounts/offers
+   - Dedicated migration support
+   - Data migration guarantee commitment
+4. **Special user handling**:
+   - Enterprise customers: 1-on-1 migration support
+   - High-value users: Dedicated migration plan
+   - Long-term users: Gratitude rewards
 
 ### Step 3: Data Disposal Strategy [Core]
 
-**Goal**: Formulate compliant data disposal plan
+Develop a data disposal plan for user data:
 
-**Data Classification**:
+1. **Data classification**:
+   - User-generated content (UGC)
+   - User configurations/settings
+   - Usage history/behavioral data
+   - Payment/transaction records
+2. **Disposal methods**:
+   - Exportable: Provide standard format export tools
+   - Migratable: Automatically migrate to replacement product
+   - Must retain: Legal retention period and access methods
+   - Must delete: Deletion timeline and confirmation mechanism
+3. **Data retention periods**:
+   - Legal retention (transaction records ≥ 5 years)
+   - User-selected retention period
+   - Final deletion timeline
 
-| Data Type | Retention Period | Disposal Method |
-|-----------|-----------------|-----------------|
-| Personal Identification Info | Per privacy policy | Anonymize or delete |
-| Transaction Records | Per financial regulations | Archive or delete |
-| User Content | Per user choice | Export or delete |
-| System Logs | Per retention policy | Archive or delete |
-| Analytics Data | Per business needs | Archive or delete |
+### Step 4: Sunset Timeline [Core]
 
-**Disposal Plan**:
+Develop a phased sunset timeline:
 
-```yaml
-data_disposal:
-  - data_type: personal_identification
-    classification: pii
-    retention_policy: "Delete within 30 days after sunset"
-    disposal_method: secure_delete
-    compliance: [GDPR, CCPA]
-    verification: "Third-party audit confirmation"
-  - data_type: transaction_records
-    classification: financial
-    retention_policy: "Archive for 7 years per financial regulations"
-    disposal_method: encrypted_archive
-    compliance: [SOX]
-    verification: "Finance team confirmation"
-  - data_type: user_content
-    classification: user_data
-    retention_policy: "User chooses export or delete"
-    disposal_method: user_choice
-    compliance: [GDPR]
-    verification: "User confirmation + system log"
-```
-
-### Step 4: Timeline Formulation [Core]
-
-**Goal**: Formulate executable sunset timeline
-
-**Timeline Template**:
-
-```yaml
-sunset_timeline:
-  announcement_date: {date}
-  phases:
-    - phase: announcement
-      start: {date}
-      end: {date}
-      milestones:
-        - "Official sunset announcement published"
-        - "Migration guide online"
-        - "Customer service team trained"
-    - phase: migration_period
-      start: {date}
-      end: {date}
-      milestones:
-        - "Migration tool online"
-        - "50% users migrated"
-        - "90% users migrated"
-    - phase: grace_period
-      start: {date}
-      end: {date}
-      milestones:
-        - "Product enters read-only mode"
-        - "Data export feature online"
-        - "Final migration reminder sent"
-    - phase: decommission
-      start: {date}
-      end: {date}
-      milestones:
-        - "Product officially offline"
-        - "Data archiving completed"
-        - "All services closed"
-    - phase: post_sunset
-      start: {date}
-      end: {date}
-      milestones:
-        - "Data disposal completed"
-        - "Compliance audit passed"
-        - "Sunset process closed"
-  key_dates:
-    announcement: {date}
-    migration_start: {date}
-    read_only_mode: {date}
-    service_end: {date}
-    data_disposal_complete: {date}
-```
+1. **Announcement period** (T-90 days):
+   - Publish sunset announcement
+   - Enable data export
+   - Stop new user registration
+2. **Transition period** (T-60 days):
+   - Stop paid subscription renewals
+   - Push migration guidance
+   - Provide migration support
+3. **Read-only period** (T-30 days):
+   - Feature read-only, no new creation/modification
+   - Final data export window
+   - Dedicated customer support
+4. **Sunset day** (T-0):
+   - Service stops
+   - Data enters retention period
+   - Sunset page goes live
+5. **Cleanup period** (T+30 days):
+   - Data deleted/archived per strategy
+   - Final confirmation report
 
 ### Step 5: Communication Plan [Core]
 
-**Goal**: Formulate comprehensive communication plan
+Develop a communication plan for all stakeholders:
 
-**Communication Objects**:
+1. **User communication**:
+   - Announcement copy (versions for each channel)
+   - FAQ document
+   - Migration tutorials
+   - Customer service scripts
+2. **Internal communication**:
+   - Team notification
+   - Customer service training
+   - Sales script updates
+3. **External communication**:
+   - Partner notification
+   - Media messaging
+   - Community announcement
 
-| Object | Communication Content | Channel | Time Point |
-|--------|----------------------|---------|------------|
-| Users | Sunset notification, migration guide | Email, In-app | Announcement day |
-| Paying Users | Refund plan, exclusive migration support | Dedicated email, Phone | Announcement day |
-| Enterprise Customers | Contract handling, dedicated migration plan | Dedicated email, Meeting | 7 days before announcement |
-| Partners | API offline schedule, alternative solutions | Email, Developer docs | 14 days before announcement |
-| Internal Team | Sunset process, responsibility assignment | Internal email, Meeting | 14 days before announcement |
-| Public | Sunset announcement | Official website, Social media | Announcement day |
+### Step 6: Report Assembly [Core]
 
-**Communication Template**:
+Assemble the above content into a complete sunset plan.
 
-```yaml
-communication_templates:
-  user_notification:
-    subject: "Important: {product_name} Service Adjustment Notice"
-    key_points:
-      - "Service end date: {date}"
-      - "Migration guide: {url}"
-      - "Support channel: {contact}"
-    tone: "Professional, empathetic, clear"
-  enterprise_customer:
-    subject: "Dedicated Notice: {product_name} Service Adjustment"
-    key_points:
-      - "Dedicated contact person"
-      - "Custom migration plan"
-      - "Contract handling plan"
-    tone: "Professional, proactive, solution-oriented"
-```
-
-### Output Depth Grading
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | sunset plan and risk checklist | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full sunset plan + user migration plan + data archival strategy + impact assessment report | Full deliverables + extended analysis + deep simulation |
+| quick | Sunset plan and risk list | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Full output including all Step outputs |
+| deep | Complete sunset plan + user migration plan + data archival strategy + impact assessment report | Complete output + extended analysis + deep inference |
 
 ## Output
 
+### Output Files
 
-**Output file path**: `output/pm-monitoring/product-sunset-plan/`
+| File | Path | Description |
+|------|------|------|
+| Product sunset plan | `output/pm-monitoring/product-sunset-plan/product-sunset-plan.md` | Human-readable complete plan |
+| Structured data | `output/pm-monitoring/product-sunset-plan/product-sunset-plan.json` | Machine-consumable structured data |
+
 **Output Schema**:
 
 ```json
 {
   "type": "object",
-  "required": ["plan_id", "sunset_target", "impact_assessment", "migration_plan", "data_disposal", "timeline"],
+  "required": ["product_name", "sunset_date", "decision_assessment", "migration_plan"],
   "properties": {
-    "plan_id": {"type": "string", "description": "Plan unique identifier"},
-    "generated_at": {"type": "string", "description": "Generation time"},
-    "sunset_target": {"type": "string", "description": "Product/module to sunset"},
-    "sunset_reason": {"type": "string", "description": "Sunset reason"},
-    "impact_assessment": {"type": "array", "description": "Impact assessment, including user/revenue/brand/data/technical/team dimensions"},
-    "migration_plan": {"type": "object", "description": "User migration plan, including strategy, phases and tools"},
-    "data_disposal": {"type": "array", "description": "Data disposal strategy, including classification and disposal methods"},
-    "timeline": {"type": "object", "description": "Sunset timeline, including phases and key dates"},
-    "communication_plan": {"type": "object", "description": "Communication plan, including objects and templates"}
+    "product_name": {"type": "string", "description": "Product name"},
+    "sunset_date": {"type": "string", "description": "Sunset date"},
+    "report_date": {"type": "string", "description": "Report date"},
+    "decision_assessment": {"type": "object", "description": "Sunset decision assessment, including reasons, alternatives, and impact"},
+    "migration_plan": {"type": "object", "description": "User migration plan, including alternatives, paths, and incentives"},
+    "data_disposal": {"type": "object", "description": "Data disposal strategy, including classification, methods, and retention periods"},
+    "timeline": {"type": "object", "description": "Sunset timeline, including announcement/transition/read-only/sunset/cleanup"},
+    "communication_plan": {"type": "object", "description": "Communication plan, including user/internal/external communication"},
+    "risks": {"type": "array", "description": "Risk list"}
   }
 }
 ```
 
-```
-├── {date}/
-│   ├── impact_assessment.yaml
-│   ├── migration_plan.yaml
-│   ├── data_disposal.yaml
-│   ├── timeline.yaml
-│   ├── communication_plan.yaml
-│   └── full_plan.md
-└── latest/
-    └── sunset_plan.md
+### Markdown Report Structure
+
+```markdown
+# Product Sunset Plan: {Product/Feature Name}
+
+## 1. Sunset Decision Assessment
+- Sunset reasons and verification
+- Alternative evaluation
+- Impact scope assessment
+
+## 2. User Migration Plan
+- Alternatives
+- Migration paths and tools
+- Migration incentives
+- Special user handling
+
+## 3. Data Disposal Strategy
+- Data classification
+- Disposal methods
+- Retention periods
+- Deletion timeline
+
+## 4. Sunset Timeline
+- Announcement period (T-90)
+- Transition period (T-60)
+- Read-only period (T-30)
+- Sunset day (T-0)
+- Cleanup period (T+30)
+
+## 5. Communication Plan
+- User communication (announcement/FAQ/tutorials)
+- Internal communication (team/customer service/sales)
+- External communication (partners/media/community)
+
+## 6. Risks and Contingency
+- Migration failure contingency plan
+- Legal compliance risks
+- Brand reputation risks
 ```
 
-## Decision Rules
+### JSON Structure
 
-| Scenario | Decision Rule |
-|----------|---------------|
-| Paying user count > 1000 | Must provide dedicated migration support |
-| Active contracts not expired | Cannot sunset before contract expiry |
-| PII data involved | Must comply with GDPR/CCPA requirements |
-| Downstream service dependencies exist | Must provide alternative API or migration period |
-| Brand impact assessed as high | Must formulate PR crisis plan |
+```json
+{
+  "product_name": "",
+  "sunset_date": "",
+  "report_date": "",
+  "decision_assessment": {
+    "reasons": [],
+    "alternatives_evaluated": [],
+    "impact": {
+      "affected_users": 0,
+      "affected_revenue": 0,
+      "brand_impact": ""
+    }
+  },
+  "migration_plan": {
+    "alternatives": [],
+    "migration_paths": [],
+    "incentives": [],
+    "special_handling": []
+  },
+  "data_disposal": {
+    "categories": [],
+    "disposal_methods": [],
+    "retention_periods": [],
+    "deletion_timeline": ""
+  },
+  "timeline": {
+    "announcement": "",
+    "transition": "",
+    "read_only": "",
+    "sunset": "",
+    "cleanup": ""
+  },
+  "communication_plan": {
+    "user_communication": [],
+    "internal_communication": [],
+    "external_communication": []
+  },
+  "risks": []
+}
+```
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Impact assessment complete (users/revenue/brand/data/technical/team 6 dimensions)
-- [ ] Migration plan feasible (has tools, support, timeline)
+- [ ] Impact assessment complete (all 3 dimensions assessed: users/revenue/brand)
+- [ ] Migration plan feasible (each user category has a clear migration path)
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Data disposal compliant (complies with privacy regulations)
-- [ ] Timeline executable (has buffer, milestones clear)
-- [ ] Communication plan complete (covers all stakeholders)
-- [ ] P0 unresolved issues listed
+- [ ] Data disposal compliant (legally retained data has retention plan)
+- [ ] Timeline executable (5 phases have clear dates and deliverables)
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Extended analysis complete (deep inference and roadmap generated)
 - [ ] Decision records complete (key decisions have rationale and alternatives)
+
+## Decision Rules
+
+- When affected users > 10%, the sunset timeline must include a transition period of ≥ 60 days
+- When the product involves paid users, a refund or migration compensation plan must be included
+- When data involves personal privacy, the data disposal strategy must include a compliant deletion plan
+- Decision points requiring human confirmation: sunset decision confirmation, migration plan selection, data retention period, communication messaging approval
 
 ## Degradation Strategy
 
-### Upstream File Missing Degradation Plan
-
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
-| Health diagnosis | User provides product health status description, AI assesses sunset necessity based on description | Impact assessment based on user description, lacking data validation |
-| Retention data | Skip user retention analysis, use active user count to estimate migration difficulty | Migration plan lacking retention data support |
-| Sunset target | Cannot execute, must be provided by user | -- |
-| Sunset reason | Cannot execute, must be provided by user | -- |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, obtain necessary data through the following methods:
-
-1. **Health diagnosis missing**: Ask user to describe product health status (e.g., "DAU declining, revenue shrinking"), AI will assess sunset necessity and impact based on description
-2. **Retention data missing**: Ask user to provide active user count and approximate churn rate, AI will estimate migration difficulty and formulate migration plan accordingly
-3. **Sunset target and reason missing**: These are required inputs, must be provided by user
+|----------|----------|----------|
+| No health diagnosis | User describes product status; AI assesses sunset necessity based on description | Sunset decision lacks health data support |
+| No retention data | Skip user impact quantification; mark as "retention data to be supplemented" | User impact assessment is qualitative description |
+| No health diagnosis + no retention data | User describes product status and user scale; AI generates sunset plan based on description | Sunset plan based on qualitative description; key data marked as "to be confirmed" |
 
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
-| plan_id | string | Yes | Plan unique identifier |
-| sunset_target | string | Yes | Sunset target, cannot be empty |
-| impact_assessment | array | Yes | Impact assessment, must cover at least 4 dimensions |
-| migration_plan | object | Yes | Migration plan, must contain strategy/phases |
-| data_disposal | array | Yes | Data disposal strategy, must contain classification/disposal_method |
-| timeline | object | Yes | Timeline, must contain phases/key_dates |
+|----------|------|------|------|
+| sunset_object | string | Yes | Sunset target name, cannot be empty |
+| impact_assessment | object | Yes | Impact assessment, must include users/revenue/brand dimensions |
+| migration_plan | object | Yes | Migration plan, must include migration path for each user category |
+| data_disposal | object | Yes | Data disposal strategy, must include retention_policy/compliance |
+| timeline | object | Yes | Timeline, must include dates and deliverables for 5 phases |
 
 ## Upstream Change Response
 
 ### Upstream Change Impact Table
 
 | Upstream Source | Change Type | Impact Scope | Response Action |
-|-----------------|-------------|--------------|-----------------|
-| diagnosis-health | Health score change | Sunset necessity assessment | Re-evaluate sunset decision |
-| retention-management | Retention data update | Migration plan and timeline | Update migration plan and timeline |
+|----------|----------|----------|----------|
+| diagnosis-health | Health score change | Sunset decision assessment | Reassess sunset necessity |
+| retention-management | Retention data update | User impact assessment | Update affected user scale and migration plan |
 
 ### Downstream Notification Mechanism Table
 
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
-|---------------------|------------------------|---------------------|----------------------|
-| diagnosis-orchestrator | Product sunset plan completed | Output file update | Plan completion status and key decisions |
-| iteration-decision | Sunset plan confirmed | Write to output file | Sunset timeline and resource requirements |
+|------------|----------|----------|----------|
+| diagnosis-orchestrator | Sunset plan generation completed | Output file updated | Plan completion status and key conclusions |

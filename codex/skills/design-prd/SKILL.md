@@ -5,11 +5,13 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototyping"
   type: "pipeline"
-  version: "1.0"
+  version: "3.3"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "Help me write a PRD document"
     - "Generate a product requirements document"
     - "How to write a requirements document"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Generate PRD-L level document with core sections (background, feature specs, acceptance criteria) and basic quality checks"
@@ -33,6 +35,11 @@ This Skill is responsible for automatically transforming upstream stage outputs 
 3. [Core] Execute 4 quality gate checks -- Completeness/Consistency/Ambiguity elimination/Traceability; auto-correct if not passed
 4. [Conditional] Version lifecycle management -- Create->Review->Finalize->Change; each change recorded in changelog
 5. [Conditional] Upstream-downstream alignment -- Ensure PRD is traceable to upstream requirements, downstream design can directly consume PRD output
+
+**Key Output Requirements**:
+- **entities[].fields must be complete**: Each entity must include at least an identifier field (id), name field, status field, and business core fields. Field granularity should be at the level of "backend can directly use for ER model design"; do not provide only entity names without fields
+- **pages[].data_requirements must be complete**: Each page must specify what data is needed, data operation types (read/create/update/delete), which entity it relates to, and which fields are required. This is the direct input for UI page generation and API design
+- **entities[].api_endpoints are advisory**: The PRD stage defines business operation requirements (e.g., "users need to view course list"); specific API paths are designed by api-design-spec
 
 See detailed descriptions in each section below.
 
@@ -338,20 +345,14 @@ AI->Human AI suggests, human approves
 | opportunity_definition | JSON/object | O | output/pm-discovery/opportunity-definition / upstream discovery stage | Opportunity definition output, replaces original requirements-understanding/prioritization input, provides requirements understanding and prioritization |
 | exploration_outputs | JSON/object | O | Upstream discovery stage | User insights, problem statement |
 | strategy_outputs | JSON/object | O | Upstream strategy stage | OKR, roadmap |
+| north_star_metric | JSON/object | O | output/pm-strategy/planning-north-star/north_star.json | North Star Metric and driven features |
+| okr_candidates | JSON/object | O | output/pm-strategy/planning-okr/okr.json | OKR candidates and driven features |
 | ideation_outputs | JSON/object | O | Upstream ideation stage | Solutions, feature list |
 | design_outputs | JSON/object | O | Upstream design stage | Prototypes, user flows |
 | metrics_outputs | JSON/object | O | Upstream metrics stage | Metrics system, tracking plan |
 | requirement | JSON/object | Yes | User provided | Requirements context and manual override configuration |
 
 **Complete Input Data Structure and Validation Rules**: See [Reference/input-schema.md](Reference/input-schema.md)
-
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | Generate PRD-L level document with core sections (background, feature specs, acceptance criteria) and basic quality checks | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Generate PRD-X level document with upstream conflict decision records, self-correction loop logs, open issue management, version change traceability chain, and degradation impact assessment | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -403,6 +404,12 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
       "priority": "must | should | could | wont",
       "status": "planned | in_progress | completed | cancelled",
       "goal_id": "string",
+      "driven_by": {
+        "north_star_metric": "string | null",
+        "okr_objective": "string | null",
+        "kr_id": "string | null",
+        "expected_lift": "string"
+      },
       "acceptance_criteria": [
         {
           "criterion_id": "string",
@@ -426,8 +433,10 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
         {
           "data_name": "string",
           "source": "api | local | cache",
-          "api_endpoint": "string | null",
-          "fields": ["string"]
+          "data_operations": ["read | create | update | delete"],
+          "related_entity": "entity_id | null",
+          "fields": ["string"],
+          "description": "string"
         }
       ],
       "functional_areas": ["string"],
@@ -573,11 +582,15 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 - [ ] Quality gates passed: All 4 quality gates passed
 - [ ] No residual ambiguity: No fuzzy quantifiers or dangling references
 - [ ] prd.json completeness: features/pages/entities/user_flows arrays are all non-empty
+- [ ] prd.json entities field completeness: Each entity's fields array is non-empty and contains at least core fields (id/name/status etc.), relationships array is non-empty
+- [ ] prd.json pages data requirements completeness: Each page's data_requirements array is non-empty, with data source (api/local/cache) and required fields clearly marked
 - [ ] prd.json reference consistency: feature.related_pages page_id exists in pages[], feature.related_entities entity_id exists in entities[]
 - [ ] prd.json traceability complete: Every feature has a corresponding traceability entry
 - [ ] prd.json and prd.md consistency: Feature names, priorities, and acceptance criteria in prd.json are consistent with prd.md
 - [ ] prd.json tracking_plan completeness: tracking_plan.events is non-empty, each event's properties is non-empty
 - [ ] prd.json NFR completeness: All 4 dimension arrays of non_functional_requirements are non-empty
+- [ ] prd.json feature driven_by completeness: Every P0/P1 feature's driven_by field is non-empty, explicitly linked to North Star Metric or OKR
+- [ ] prd.json feature priority and metric alignment consistency: feature.priority is positively correlated with driven_by.expected_lift
 
 ## Decision Rules (Detailed)
 
@@ -590,11 +603,11 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 **Gate Status Mapping**:
 | Gate Status | Enter Development | Finalize | Release |
 |------------|-------------------|----------|---------|
-| All passed | [OK] | [OK] | [OK] |
-| Gate 1 failed | [X] | [X] | [X] |
-| Gate 2 failed | [X] | [X] | [X] |
-| Gate 3 failed | Requires human confirmation | Requires human confirmation | [X] |
-| Gate 4 failed | Requires supplementation | Requires supplementation | [X] |
+| All passed | ✓ | ✓ | ✓ |
+| Gate 1 failed | ✗ | ✗ | ✗ |
+| Gate 2 failed | ✗ | ✗ | ✗ |
+| Gate 3 failed | Requires human confirmation | Requires human confirmation | ✗ |
+| Gate 4 failed | Requires supplementation | Requires supplementation | ✗ |
 
 ### 9.2 Conflict Escalation Rules
 
@@ -615,7 +628,7 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 6. Update PRD
 ```
 
-### 9.3 Open Question Management
+### 9.3 Open Question Management [Deep]
 
 **Open Question States**:
 - **Open**: Unresolved
@@ -629,23 +642,7 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 
 ## Quality Checks (Detailed)
 
-### P0 Checks (must pass for quick/standard/deep)
-
-- [ ] Structure completeness: All 9 sections exist
-- [ ] Field completeness: Required fields 100% populated
-
-### P1 Checks (must pass for standard/deep)
-
-- [ ] Consistency: Goal traceability chain OKR->Metrics->Features->Acceptance end-to-end
-- [ ] Ambiguity elimination: No fuzzy quantifiers, no dangling references, no logical contradictions
-- [ ] Executability: Acceptance format correct (Given-When-Then), judgment clarity, coverage completeness
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
-
-### 10.1 Completeness Standards
+### 10.1 Completeness Standards (P0)
 
 | Check Item | Standard | Check Method |
 |-----------|----------|-------------|
@@ -654,7 +651,7 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 | Acceptance coverage | Main flow + boundary + exception fully covered | Given-When-Then coverage rate |
 | State coverage | All 5 state types defined | State type enumeration matching |
 
-### 10.2 Consistency Standards
+### 10.2 Consistency Standards (P1)
 
 | Check Item | Standard | Check Method |
 |-----------|----------|-------------|
@@ -662,7 +659,7 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 | Priority consistency | MoSCoW consistent across all references | Priority cross-validation |
 | Version consistency | Version number matches changelog | Version number consistency check |
 
-### 10.3 Ambiguity Elimination Standards
+### 10.3 Ambiguity Elimination Standards (P1)
 
 | Check Item | Standard | Check Method |
 |-----------|----------|-------------|
@@ -670,7 +667,7 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 | Dangling references | All references point to existing targets | Reference resolution + existence verification |
 | Logical contradictions | No prerequisite-result contradictions | Logic rule engine check |
 
-### 10.4 Executability Standards
+### 10.4 Executability Standards (P2)
 
 | Check Item | Standard | Check Method |
 |-----------|----------|-------------|
@@ -682,18 +679,17 @@ prd.json is the machine-consumable version of the PRD, for programmatic consumpt
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact |
-|--------------|-----------------|---------------|
-| insight_analysis missing | Supplement user insights based on user description and opportunity_definition, mark "Insight data pending supplementation" | Section 2 user needs section simplified, requirements collection may be less complete |
-| opportunity_definition missing | Infer opportunities and priorities based on user description and insight_analysis, mark "Priorities pending confirmation" | Requirements understanding and prioritization may be less precise |
-| Both insight_analysis and opportunity_definition missing | Execute built-in requirements collection, understanding, and prioritization based on user verbal description (Step 1-3), mark "Requirements management data is AI-inferred" | Full requirements management process relies on AI inference, confidence reduced |
-| Partial upstream missing (e.g., only exploration_outputs missing) | Mark corresponding sections as "Pending supplementation", other sections generated normally | Some sections incomplete, marked as pending |
-| exploration_outputs missing | Background & Goals section marked "Pending supplementation", simplified version based on user description | Section 2 content simplified |
-| strategy_outputs missing | OKR alignment and priority judgment section marked "Pending supplementation" | Section 2.2 goal definition simplified |
-| ideation_outputs missing | Solution design section marked "Pending supplementation", feature list generated based on user description | Section 3 feature specifications simplified |
-| design_outputs missing | Interaction logic and state design marked "Pending supplementation" | Section 3.2 interaction logic simplified |
-| metrics_outputs missing | Data tracking plan marked "Pending supplementation" | Section 6 content simplified |
-| All upstream missing | Generate simplified PRD-L based on user verbal description (200-500 words), with built-in requirements collection, understanding, and prioritization | Output PRD-L level document |
+| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
+|--------------|-----------------|---------------|-------------------------------|
+| insight_analysis missing | Supplement user insights based on user description and opportunity_definition, mark "Insight data pending supplementation" | Section 2 user needs section simplified, requirements collection may be less complete | Request user to provide user insight descriptions or upload insight-analysis.json file |
+| opportunity_definition missing | Infer opportunities and priorities based on user description and insight_analysis, mark "Priorities pending confirmation" | Requirements understanding and prioritization may be less precise | Request user to provide opportunity definition and priority descriptions or upload opportunity-definition.json file |
+| Both insight_analysis and opportunity_definition missing | Execute built-in requirements collection, understanding, and prioritization based on user verbal description (Step 1-3), mark "Requirements management data is AI-inferred" | Full requirements management process relies on AI inference, confidence reduced | Request user to provide core requirements, target users, and priority ranking |
+| exploration_outputs missing | Background & Goals section marked "Pending supplementation", simplified version based on user description | Section 2 content simplified | Request user to provide product background and goal descriptions or upload exploration stage output files |
+| strategy_outputs missing | OKR alignment and priority judgment section marked "Pending supplementation" | Section 2.2 goal definition simplified | Request user to provide strategic goals and OKR or upload strategy stage output files |
+| ideation_outputs missing | Solution design section marked "Pending supplementation", feature list generated based on user description | Section 3 feature specifications simplified | Request user to provide feature solution descriptions or upload ideation stage output files |
+| design_outputs missing | Interaction logic and state design marked "Pending supplementation" | Section 3.2 interaction logic simplified | Request user to provide interaction design descriptions or upload design stage output files |
+| metrics_outputs missing | Data tracking plan marked "Pending supplementation" | Section 6 content simplified | Request user to provide core metrics and tracking requirements or upload metrics stage output files |
+| All upstream missing | Generate simplified PRD-L based on user verbal description (200-500 words), with built-in requirements collection, understanding, and prioritization | Output PRD-L level document | Request user to provide product requirements description, core features, and target users |
 
 ### Data Acquisition Instructions
 

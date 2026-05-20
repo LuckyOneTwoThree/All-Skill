@@ -1,40 +1,42 @@
 ---
 name: ideation-workshop
-description: "Creative workshop integrating multi-method divergence (HMW/SCAMPER/reverse thinking) and creative convergence. Keywords: ideation, creative convergence, HMW, SCAMPER, reverse thinking, creative workshop."
+description: Used when creative divergence, solution ideation, or creative convergence workshops are needed. Integrates multi-method divergence (HMW/SCAMPER/Reverse Thinking) and creative convergence. Keywords: creative divergence, creative convergence, HMW, SCAMPER, reverse thinking, creative workshop.
 metadata:
   module: "Product Ideation & Design"
-  sub-module: "Ideation & Solution Conception"
+  sub-module: "Creative Divergence & Solution Ideation"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "Help me brainstorm ideas"
-    - "Use SCAMPER method for innovation"
+    - "Innovate using SCAMPER method"
     - "Think in reverse"
-    - "Too many solutions, which to choose"
+    - "Too many options, which one to choose"
     - "Let's brainstorm"
     - "Creative workshop"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output top ideas and evaluation matrix only"
-  deep_description: "Full workshop + concept validation + feasibility assessment + innovation roadmap"
+  quick_description: "Generate HMW problem reframing and SCAMPER basic solution list, with initial scoring and filtering"
+  deep_description: "Additionally includes reverse thinking failure path analysis, design constraint conversion, solution deepening (interaction flow/MVP scope/success metrics), 6-dimension comparison matrix, human decision package"
 ---
 
 # Creative Workshop
 
 ## Core Principles
 
-1. **Questions are more important than answers** -- HMW quality determines subsequent solution quality; broad and solution-presuming HMWs are poison to creativity
-2. **Seven dimensions are divergence insurance** -- SCAMPER's seven dimensions ensure thinking doesn't fall into a single pattern; at least 2 solutions per dimension
-3. **Failure is more enlightening than success** -- First figure out "why it would die", then figure out "how to live"; constraints are guardrails for creativity, not shackles
-4. **Convergence is deepening, not elimination** -- Selected solutions must be fully deepened, not simply ranked
-5. **Human decision authority is inalienable** -- AI provides analysis and recommendations; final solution selection must be decided by humans
-6. **Quantity before quality** -- Divergence phase pursues solution quantity; convergence phase filters; early judgment is the enemy of creativity
+1. **Questions are more important than answers** — the quality of HMW determines the quality of subsequent solutions; overly broad and solution-preset HMWs are poison to creativity
+2. **Seven dimensions are the insurance for divergence** — SCAMPER's seven dimensions ensure thinking doesn't fall into a single pattern; at least 2 solutions per dimension
+3. **Failure is more illuminating than success** — first figure out "why we would die," then think about "how to survive"; constraints are guardrails for creativity, not shackles
+4. **Convergence is deepening, not elimination** — selected solutions must undergo complete deepening, not simple ranking
+5. **Human decision-making authority is inalienable** — AI provides analysis and recommendations; final solution selection must be decided by humans
+6. **Quantity before quality** — pursue solution quantity during divergence, filter during convergence; early judgment is the enemy of creativity
 
-The Creative Workshop integrates four methods: HMW problem reframing, SCAMPER structured divergence, reverse thinking, and creative convergence, forming a complete "diverge -> converge" creative process. Step 1 transforms problem statements into open-ended questions through HMW; Step 2 executes SCAMPER and reverse thinking in parallel to maximize divergence output; Step 3 completes creative convergence through filtering, deepening, and comparison matrix, providing structured support for human decision-making.
+The Creative Workshop integrates four methods: HMW problem reframing, SCAMPER structured divergence, Reverse Thinking, and Creative Convergence, forming a complete "diverge → converge" creative process. Step 1 transforms the problem statement into open-ended questions through HMW; Step 2 executes SCAMPER and Reverse Thinking in parallel to maximize divergence output; Step 3 completes creative convergence through filtering, deepening, and comparison matrix, providing structured support for human decision-making.
 
 ### Execution Roles
 
-AI->Human **AI suggests, human approves**
+🤖→👤 **AI suggests, human approves**
 
 - **AI responsible for**: HMW generation, SCAMPER solution generation, reverse thinking analysis, solution filtering, deepening analysis, comparison matrix generation
 - **Human responsible for**: HMW approval, final solution selection, priority confirmation, action item decisions
@@ -43,17 +45,17 @@ AI->Human **AI suggests, human approves**
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Problem Statement | string | Yes | User provided / upstream output | Clearly and specifically describe the problem to be solved; avoid being too abstract or broad |
-| User Research Data | JSON/object | Yes | User provided / upstream output | Must include at least one type of user research data (interviews, surveys, or behavioral data) to ensure HMW generation is evidence-based |
-| Current Solution | JSON/object | O | User provided | Current product's existing solution description, including features and limitations |
-| Competitor Solutions | JSON/array | O | User provided | Analysis of at least 2-3 competitor solutions, including features, strengths, and weaknesses |
-| Product Context | JSON/object | O | User provided | Product strategy and resource constraint information |
+|--------|------|------|------|------|
+| Problem Statement | string | Yes | User provided / Upstream output | Clearly and specifically describe the problem to be solved, avoiding overly abstract or broad descriptions |
+| User Research Data | JSON/object | Yes | User provided / Upstream output | Must include at least one type of user research data (interviews, surveys, or behavior data) to ensure HMW generation is evidence-based |
+| Current Solution | JSON/object | ○ | User provided | Description of the current product's existing solution, including features and limitations |
+| Competitor Solutions | JSON/array | ○ | User provided | Analysis of at least 2-3 competitor solutions, including features, strengths, and weaknesses |
+| Product Context | JSON/object | ○ | User provided | Product strategy and resource constraint information |
 
 ### Input Format
 
@@ -84,7 +86,7 @@ AI->Human AI suggests, human approves
   "current_solution": {
     "description": "Detailed description of current product solution",
     "features": ["Feature 1", "Feature 2"],
-    "limitations": ["Current solution limitations"]
+    "limitations": ["Limitations of current solution"]
   },
   "competitor_solutions": [
     {
@@ -98,7 +100,7 @@ AI->Human AI suggests, human approves
   "product_context": {
     "strategic_goals": ["Strategic goal 1", "Strategic goal 2"],
     "resource_constraints": ["Resource constraint 1", "Resource constraint 2"],
-    "timeline": "Time limit",
+    "timeline": "Time constraint",
     "risk_tolerance": "Risk preference"
   }
 }
@@ -110,11 +112,11 @@ AI->Human AI suggests, human approves
 
 ### Step 1: HMW Problem Reframing [Core]
 
-Based on problem statement and user research data, batch generate HMW statements from 6 dimensions, with quality checks and scoring.
+Based on the problem statement and user research data, batch generate HMW statements from 6 dimensions, and perform quality checks and scoring.
 
-#### 1.1 Generate HMW from 6 Dimensions
+#### 1.1 Generate HMW from 6 Dimensions [Core]
 
-AI must generate HMW statements from the following 6 dimensions for each core problem:
+AI needs to generate HMW statements from the following 6 dimensions for each core problem:
 
 ##### Dimension Descriptions
 
@@ -124,7 +126,7 @@ AI must generate HMW statements from the following 6 dimensions for each core pr
 
 2. **Reduce**
    - Goal: Reduce the effort, time, or complexity required to solve the problem
-   - Question orientation: How might we lower the threshold for users to complete tasks?
+   - Question orientation: How might we lower the barrier for users to complete tasks?
 
 3. **Accelerate**
    - Goal: Speed up the efficiency of users achieving their goals
@@ -135,11 +137,11 @@ AI must generate HMW statements from the following 6 dimensions for each core pr
    - Question orientation: How might we help users better perceive and understand product value?
 
 5. **Expand**
-   - Goal: Expand product usage scenarios or user groups
+   - Goal: Expand the product's usage scenarios or user base
    - Question orientation: How might we apply the product to more usage scenarios?
 
 6. **Rethink**
-   - Goal: Redefine the problem or solution from a completely new perspective
+   - Goal: Redefine the problem or solution from an entirely new perspective
    - Question orientation: How might we fundamentally rethink this problem?
 
 ##### Generation Requirements
@@ -151,20 +153,20 @@ AI must generate HMW statements from the following 6 dimensions for each core pr
   - Be open enough to preserve divergence space
   - Directly relate to insights from user research data
 
-#### 1.2 HMW Quality Check
+#### 1.2 HMW Quality Check [Conditional]
 
 Perform quality checks on each generated HMW statement:
 
-1. **Is it too broad**: Does the HMW cover too many problems, making it unable to guide specific solutions
-2. **Does it presume a solution**: Does the HMW already imply a specific solution
-3. **Is it specific enough**: Is the HMW specific enough to guide solution direction
-4. **Does it have divergence space**: Does the HMW preserve multiple possible solution paths
+1. **Too broad**: Does the HMW cover too many problems, making it unable to guide specific solutions
+2. **Solution-preset**: Does the HMW already imply a specific solution
+3. **Specific enough**: Is the HMW specific enough to guide solution direction
+4. **Divergence space**: Does the HMW preserve multiple possible solution paths
 
-Each HMW must simultaneously satisfy: not too broad, not solution-presuming, specific enough, and has divergence space.
+Each HMW must simultaneously satisfy: not too broad, not solution-preset, specific enough, and has divergence space.
 
-#### 1.3 HMW Scoring
+#### 1.3 HMW Scoring [Deep]
 
-Score divergence potential (1-5) for HMW statements that pass quality check:
+Score HMW statements that pass quality checks on divergence potential (1-5):
 
 - **1 point**: Can only think of 1-2 solutions
 - **2 points**: Can think of 2-3 related solutions
@@ -215,35 +217,35 @@ Score divergence potential (1-5) for HMW statements that pass quality check:
 
 ---
 
-### Step 2: Parallel Divergence (SCAMPER + Reverse Thinking) [Core]
+### Step 2: Parallel Divergence [Conditional] (SCAMPER + Reverse Thinking)
 
 Based on Step 1 HMW output, execute SCAMPER structured divergence and reverse thinking analysis in parallel to maximize creative output.
 
-#### 2A: SCAMPER Structured Solution Generation
+#### 2A: SCAMPER Structured Solution Generation [Core]
 
-For each selected HMW (recommend selecting divergence potential >= 3), generate 2-3 solutions from each of 7 dimensions.
+For each selected HMW (recommend selecting divergence potential ≥ 3), generate 2-3 solutions from each of the 7 dimensions.
 
 ##### SCAMPER Dimension Details
 
-1. **Substitute (S)** -- What can replace existing elements?
-2. **Combine (C)** -- What can be combined?
-3. **Adapt (A)** -- What can be adapted or borrowed?
-4. **Modify (M)** -- How can it be modified?
-5. **Put to other use (P)** -- What other uses are possible?
-6. **Eliminate (E)** -- What can be eliminated?
-7. **Reverse (R)** -- How can it be reversed?
+1. **Substitute (S)** — What can substitute existing elements?
+2. **Combine (C)** — What can be combined?
+3. **Adapt (A)** — What can be adapted or borrowed?
+4. **Modify (M)** — How can it be modified?
+5. **Put to other use (P)** — What other uses are possible?
+6. **Eliminate (E)** — What can be eliminated?
+7. **Reverse (R)** — How can it be reversed?
 
 ##### SCAMPER Generation Requirements
 
 - Generate at least 2 solutions per HMW per dimension
-- Solutions should directly respond to the HMW statement's question
+- Solutions should directly respond to the question in the HMW statement
 - Reflect the core idea of the corresponding SCAMPER dimension
-- Have a certain degree of novelty and differentiation
+- Possess a certain degree of novelty and differentiation
 
-##### Solution Deduplication and Clustering
+##### Solution Deduplication & Clustering
 
 1. **Semantic deduplication**: Identify semantically identical or highly similar solutions, merge or delete duplicates
-2. **Dimension validation**: Ensure the same solution is not repeatedly classified under different dimensions
+2. **Dimension validation**: Ensure the same solution is not repeatedly categorized under different dimensions
 3. **Clustering algorithm**: Cluster based on goal similarity, method similarity, user value similarity, and implementation complexity similarity
 
 ##### SCAMPER Initial Scoring
@@ -253,9 +255,9 @@ Score each solution from 4 dimensions:
 1. **Innovation** 1-5 points
 2. **Feasibility** 1-5 points
 3. **Impact** 1-5 points
-4. **Risk** 1-5 points (reverse scoring, 5 points = almost no risk)
+4. **Risk** 1-5 points (reverse scoring, 5 = almost no risk)
 
-#### 2B: Reverse Thinking Analysis
+#### 2B: Reverse Thinking Analysis [Conditional]
 
 Based on product/feature goals, generate failure paths and reverse-transform them into success conditions and design constraints.
 
@@ -263,27 +265,27 @@ Based on product/feature goals, generate failure paths and reverse-transform the
 
 Based on product/feature goals, generate 10-15 potential failure paths covering 5 levels:
 
-1. **User behavior level**: Users don't use, misunderstand value, steep learning curve
-2. **Technical implementation level**: Feature instability, performance issues, security vulnerabilities
+1. **User behavior level**: Users don't use, misunderstand value, difficult learning curve
+2. **Technical implementation level**: Unstable features, performance issues, security vulnerabilities
 3. **Business operations level**: Cost overruns, compliance issues, poor market timing
 4. **Value perception level**: Users don't perceive value, competitor substitution
-5. **Ecosystem level**: Partner non-cooperation, third-party dependency risks
+5. **Ecosystem level**: Partners don't cooperate, third-party dependency risks
 
 Each failure path includes:
 - **Failure Mode**: Clear description of the specific failure manifestation
 - **Severity** 1-5 points
 - **Likelihood** 1-5 points
-- **Priority** = Severity x Likelihood (Critical >= 15, High 10-14, Medium 6-9, Low < 6)
+- **Priority** = Severity × Likelihood (Critical ≥ 15, High 10-14, Medium 6-9, Low < 6)
 
-##### Reverse-Transform into Success Conditions
+##### Reverse Transform into Success Conditions
 
 Reverse-think each failure path into corresponding success conditions:
-- Not "how to avoid failure", but "under what conditions this failure won't occur"
-- Success conditions must be specific and clear, observable and verifiable, directly related to the failure path, and not presume specific implementation methods
+- Not "how to avoid failure" but "under what conditions this failure would not occur"
+- Success conditions must be specific and clear, observable and verifiable, directly related to the failure path, and not preset a specific implementation method
 
 ##### Transform into Design Constraints
 
-Transform high-priority success conditions into specific, actionable design constraints, classified as:
+Transform high-priority success conditions into specific, actionable design constraints, categorized as:
 
 1. **Functional constraints**: Features that must be provided or prohibited
 2. **Interaction constraints**: Interaction patterns that must be followed or avoided
@@ -362,13 +364,13 @@ Each design constraint must have a clear verification method.
             "constraint": "Checkout process has at most 3 steps",
             "category": "Functional constraint",
             "verifiable": true,
-            "verification_method": "Functional test verifying step count"
+            "verification_method": "Functional testing to verify step count"
           },
           {
             "constraint": "No more than 5 fields per step",
             "category": "Interaction constraint",
             "verifiable": true,
-            "verification_method": "UI review verifying field count"
+            "verification_method": "UI review to verify field count"
           }
         ]
       }
@@ -399,31 +401,31 @@ Each design constraint must have a clear verification method.
 
 ---
 
-### Step 3: Creative Convergence [Core]
+### Step 3: Creative Convergence [Conditional]
 
-From SCAMPER solution list and reverse thinking constraints, filter high-quality candidates, and provide support for human decision-making through deepening and comparison matrix.
+From the SCAMPER solution list and reverse thinking constraints, filter high-quality candidates, and provide support for human decision-making through deepening and comparison matrix.
 
 #### 3.1 Solution Filtering
 
 AI automatically filters high-quality candidate solutions:
 
-1. **Feasibility filtering**: Exclude solutions with feasibility score < 2
-2. **Design constraint conflict detection**: Exclude solutions conflicting with Critical/High level design constraints
-3. **Basic quality threshold**: Composite score = (Innovation + Feasibility + Impact + (6 - Risk)) / 4 >= 3.5, or exceptionally outstanding in one dimension (score >= 4.5)
+1. **Feasibility filter**: Exclude solutions with feasibility score < 2
+2. **Design constraint conflict detection**: Exclude solutions that conflict with Critical/High level design constraints
+3. **Basic quality threshold**: Composite score = (Innovation + Feasibility + Impact + (6 - Risk)) / 4 ≥ 3.5, or exceptionally outstanding in a certain dimension (score ≥ 4.5)
 4. **Multi-dimensional consideration**: Balance, differentiation, coverage
 
 #### 3.2 Solution Deepening
 
-Deep analysis and refinement of Top 5-10 filtered solutions:
+Perform deep analysis and refinement on the Top 5-10 filtered solutions:
 
 1. **Detailed solution description**: Complete solution narrative, core features, user experience flow, differentiation
-2. **Interaction flow design**: Interaction steps for main user scenarios, key pages and components, exception handling
+2. **Interaction flow design**: Interaction steps for main user scenarios, key pages and components, error handling
 3. **Key assumptions**: Technical assumptions, user assumptions, business assumptions, data assumptions
 4. **Risk identification**: Technical risks, user risks, business risks, market risks
 5. **MVP scope definition**: Core MVP / Extended MVP / Excluded
 6. **Success metrics**: Primary Metrics / Secondary Metrics / Guardrail Metrics
 
-#### 3.3 Solution Comparison Matrix
+#### 3.3 Solution Comparison Matrix [Deep]
 
 Build a 6-dimension solution comparison matrix:
 
@@ -434,7 +436,7 @@ Build a 6-dimension solution comparison matrix:
 5. **Strategic Alignment** 1-5 points, weight 0.15
 6. **Scalability** 1-5 points, weight 0.15
 
-AI provides recommendations based on weighted total score method, dimension-optimal method, comprehensive trade-off method, and scenario-fit method, clearly marking confidence and recommendation reasons.
+AI provides recommendation suggestions based on weighted total score method, dimension-optimal method, comprehensive trade-off method, and scenario-fit method, clearly marking confidence level and recommendation rationale.
 
 #### Creative Convergence Output Structure
 
@@ -456,8 +458,8 @@ AI provides recommendations based on weighted total score method, dimension-opti
             {
               "step": 1,
               "action": "User clicks purchase button",
-              "ui_elements": ["Purchase button", "Product info"],
-              "user_goal": "Start purchase flow"
+              "ui_elements": ["Purchase button", "Product information"],
+              "user_goal": "Start purchase process"
             }
           ],
           "main_scenarios": ["Standard purchase flow", "Interrupt recovery flow", "Payment failure retry"]
@@ -556,7 +558,7 @@ AI provides recommendations based on weighted total score method, dimension-opti
       "summary": "Solution convergence summary",
       "ai_recommendation": "AI recommendation explanation",
       "decision_factors": ["Decision consideration factors"],
-      "next_steps": ["Next action items"],
+      "next_steps": ["Follow-up action items"],
       "approval_required": true,
       "decision_maker": "Product Owner"
     }
@@ -566,18 +568,14 @@ AI provides recommendations based on weighted total score method, dimension-opti
 
 ---
 
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | top ideas and evaluation matrix only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full workshop + concept validation + feasibility assessment + innovation roadmap | Full deliverables + extended analysis + deep simulation |
-
 ## Output
 
 **Storage Path**: `output/pm-design/ideation-workshop/`
 **Output Files**: ideation-workshop.json + ideation-workshop.md
+
+### Output Schema
+
+`ideation-workshop.json` must conform to the complete data structure below; field-level constraints are governed by the "Output Validation Rules".
 
 ### ideation-workshop.json Complete Data Structure
 
@@ -618,7 +616,7 @@ Markdown format creative workshop report, including:
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | hmw_ideas | object | Yes | HMW output |
 | hmw_ideas.hmw_statements | array | Yes | HMW statement list |
 | hmw_ideas.hmw_statements[].id | string | Yes | HMW unique identifier |
@@ -637,7 +635,7 @@ Markdown format creative workshop report, including:
 | scamper_ideas.solutions[].source_hmw | object | Yes | Source HMW statement |
 | scamper_ideas.solutions[].scamper_dimension | string | Yes | SCAMPER dimension |
 | scamper_ideas.solutions[].solution | string | Yes | Solution title |
-| scamper_ideas.solutions[].description | string | Yes | Detailed solution description |
+| scamper_ideas.solutions[].description | string | Yes | Solution detailed description |
 | scamper_ideas.solutions[].innovation_score | integer | Yes | Innovation score (1-5) |
 | scamper_ideas.solutions[].feasibility_score | integer | Yes | Feasibility score (1-5) |
 | scamper_ideas.solutions[].impact_score | integer | Yes | Impact score (1-5) |
@@ -655,7 +653,7 @@ Markdown format creative workshop report, including:
 | inversion_ideas.inversion_analysis[].failure_mode | string | Yes | Failure mode description |
 | inversion_ideas.inversion_analysis[].severity | integer | Yes | Severity (1-5) |
 | inversion_ideas.inversion_analysis[].likelihood | integer | Yes | Likelihood (1-5) |
-| inversion_ideas.inversion_analysis[].risk_score | integer | Yes | Risk score (severity x likelihood) |
+| inversion_ideas.inversion_analysis[].risk_score | integer | Yes | Risk score (severity × likelihood) |
 | inversion_ideas.inversion_analysis[].priority | string | Yes | Priority (critical/high/medium/low) |
 | inversion_ideas.inversion_analysis[].success_condition | string | Yes | Success condition |
 | inversion_ideas.inversion_analysis[].design_constraints | array | Yes | Design constraint array |
@@ -683,23 +681,23 @@ Markdown format creative workshop report, including:
 
 ## Decision Rules
 
-### Step 1 HMW Pass Conditions
+### Step 1 HMW Pass Criteria
 
 1. **Quality check**: All HMWs must pass quality check
 2. **Dimension coverage**: All 6 dimensions must have HMW coverage
 3. **Data support**: Each HMW must have corresponding user research data support
 4. **Scoring complete**: All HMWs must have completed divergence potential scoring
 
-### Step 2 Parallel Divergence Pass Conditions
+### Step 2 Parallel Divergence Pass Criteria
 
 1. **SCAMPER solution count**: At least 10 candidate solutions generated
 2. **SCAMPER dimension coverage**: All 7 SCAMPER dimensions must have solution coverage
 3. **SCAMPER scoring completeness**: Each solution must have scores from 4 dimensions
 4. **SCAMPER clustering completeness**: All solutions must belong to a cluster
-5. **Reverse thinking failure paths**: 10-15 failure paths generated, covering 5 dimensions
-6. **Reverse thinking constraint transformation**: Each success condition transformed into specific design constraints
+5. **Reverse thinking failure paths**: 10-15 failure paths generated, covering 5 levels
+6. **Reverse thinking constraint conversion**: Each success condition transformed into specific design constraints
 
-### Step 3 Convergence Pass Conditions
+### Step 3 Convergence Pass Criteria
 
 1. **Solution filtering**: Exclude solutions with feasibility < 2, exclude solutions conflicting with Critical/High constraints
 2. **Solution deepening**: Top 5 solutions deepened, each solution includes all 6 dimensions
@@ -708,84 +706,76 @@ Markdown format creative workshop report, including:
 
 ### Failure Handling
 
-| Failure Scenario | Handling Flow |
-|-----------------|---------------|
+| Failure Scenario | Handling Process |
+|----------|----------|
 | HMW fails quality check | Identify quality issue type, targeted regeneration, re-quality check |
-| HMW dimension coverage incomplete | Check HMW count per dimension, supplement generation for missing dimensions |
-| HMW lacks data support | Link existing data or return to input stage to supplement user research data |
-| SCAMPER solution count insufficient | Supplement generation for scarce dimensions, lower similarity threshold |
-| SCAMPER dimension coverage incomplete | Return to Step 2A, supplement generation for missing dimensions |
-| Reverse thinking failure paths insufficient | Check failure path classification completeness, supplement missing dimensions |
+| HMW dimension coverage incomplete | Check HMW count across 6 dimensions, supplement generation for missing dimensions |
+| HMW lacks data support | Associate existing data or return to input stage to supplement user research data |
+| Insufficient SCAMPER solutions | Supplement generation for scarce dimensions, lower similarity threshold |
+| SCAMPER dimension coverage incomplete | Return to Step 2A, supplement solution generation for missing dimensions |
+| Insufficient reverse thinking failure paths | Check failure path classification completeness, supplement missing dimensions |
 | Design constraints too abstract | Review constraint descriptions, transform into specific actionable descriptions and define verification methods |
-| Converged solutions insufficiently deepened | Supplement missing deepening dimensions |
-| Comparison matrix dimension missing | Supplement missing dimension scores; if scoring impossible, mark "Insufficient data" |
+| Insufficient convergence solution deepening | Supplement missing deepening dimensions |
+| Comparison matrix dimensions missing | Supplement missing dimension scores; if unable to score, mark "insufficient data" |
 
 ---
 
-## Quality Checks
+## Quality Check
 
-### P0 Checks (must pass for quick/standard/deep)
-
-- [ ] HMW dimension coverage (All 6 dimensions covered)
-- [ ] HMW count (At least 6 HMW statements per dimension)
-
-### P1 Checks (must pass for standard/deep)
-
-- [ ] HMW data support (Each HMW has user research data support)
-- [ ] HMW divergence potential scoring (All HMWs have completed divergence potential scoring)
-- [ ] HMW broadness (No overly broad HMWs)
-- [ ] HMW solution-presuming (No solution-presuming HMWs)
-- [ ] SCAMPER dimension coverage (All 7 SCAMPER dimensions covered)
-- [ ] SCAMPER solution count (At least 3 solutions per dimension, at least 10 total)
-- [ ] SCAMPER deduplication (Solution deduplication complete, no obvious duplicates)
-- [ ] SCAMPER clustering (All solutions have cluster attribution)
-- [ ] Reverse thinking failure path count (10-15 failure paths generated)
-- [ ] Reverse thinking failure path scoring (Each failure path has severity and likelihood scores)
-- [ ] Reverse thinking success condition correspondence (Each failure path has a corresponding success condition)
-- [ ] Reverse thinking design constraint actionability (Each design constraint is specific and actionable)
-- [ ] Reverse thinking constraint verification method (Design constraints have clear verification methods)
-- [ ] Converged solution filtering (Exclude solutions with feasibility < 2 and constraint conflicts)
-- [ ] Converged solution deepening (Top 5 solutions deepened, including all 6 dimensions)
-- [ ] Converged comparison matrix (6 dimensions complete, scoring standards unified)
-- [ ] Unique IDs (All entries have unique IDs)
-- [ ] Output format (Output format complies with specification)
-- [ ] Statistical accuracy (Statistical data is accurate)
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+| Check Item | Standard | Non-Compliance Handling |
+|--------|------|------------|
+| HMW dimension coverage (P0) | All 6 dimensions covered | Mark "dimension missing", supplement HMW statements for missing dimensions |
+| HMW count (P0) | At least 6 HMW statements per dimension | Mark "insufficient count", supplement HMW generation for insufficient dimensions |
+| HMW data support (P0) | Each HMW has user research data support | Mark "lacks data support", associate existing data or return to input stage to supplement |
+| HMW divergence potential scoring (P1) | All HMWs have completed divergence potential scoring | Mark "scoring missing", supplement scoring and re-rank |
+| HMW broadness (P1) | No overly broad HMWs | Mark "too broad", narrow problem scope and regenerate |
+| HMW solution-preset (P1) | No solution-preset HMWs | Mark "solution-preset", rephrase as open-ended question format |
+| SCAMPER dimension coverage (P1) | All 7 SCAMPER dimensions covered | Mark "dimension missing", supplement solutions for missing dimensions |
+| SCAMPER solution count (P1) | At least 3 solutions per dimension, at least 10 total | Mark "insufficient count", supplement generation for insufficient dimensions |
+| SCAMPER deduplication (P2) | Solution deduplication completed, no obvious duplicates | Mark "duplicates exist", perform semantic deduplication |
+| SCAMPER clustering (P2) | All solutions have cluster assignments | Mark "clustering missing", supplement cluster assignments |
+| Reverse thinking failure path count (P2) | 10-15 failure paths generated | Mark "insufficient paths" or "too many paths", supplement or streamline |
+| Reverse thinking failure path scoring (P2) | Each failure path has severity and likelihood scores | Mark "scoring missing", supplement scoring and recalculate priority |
+| Reverse thinking success condition correspondence (P2) | Each failure path has a corresponding success condition | Mark "condition missing", reverse-transform to supplement success conditions |
+| Reverse thinking design constraint actionability (P2) | Each design constraint is specific and actionable | Mark "constraint vague", transform abstract constraints into specific actionable descriptions |
+| Reverse thinking constraint verification method (P2) | Design constraints have clear verification methods | Mark "verification missing", define verification methods for each constraint |
+| Convergence solution filtering (P1) | Exclude solutions with feasibility < 2 and constraint conflicts | Mark "filtering incomplete", supplement filtering |
+| Convergence solution deepening (P2) | Top 5 solutions deepened, including all 6 dimensions | Mark "insufficient deepening", supplement missing dimensions |
+| Convergence comparison matrix (P2) | 6 dimensions complete, scoring standards unified | Mark "matrix incomplete", supplement missing dimensions |
+| Unique ID (P0) | All entries have unique IDs | Mark "ID missing", supplement unique identifiers |
+| Output format (P0) | Output format conforms to specification | Mark "format abnormal", correct to standard output format |
+| Statistical accuracy (P1) | Statistical data is accurate | Mark "statistics incorrect", recalculate statistical data |
 
 ---
 
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| Problem Statement missing | User describes problem, generate HMW directly | Lacks structured Problem Statement, HMW may be less focused | Request user to describe the core problem and context, or upload problem-statement.json |
-| User research data missing | User describes problem, generate HMW directly | Lacks user research data support, HMW may deviate from user needs | Request user to describe user needs and pain points, or upload persona.json / voice-analysis.json |
-| Both Problem Statement and user research data missing | User describes problem, generate HMW directly | Overall confidence reduced, HMW may be too broad | Request user to describe problem and user context, or execute user-research and opportunity-definition first |
-| Current solution description missing | Generate solutions directly based on HMW, no improvement baseline | Lacks current solution reference, substitute/modify dimension solutions may be less precise | Request user to describe current solution and its limitations |
-| Competitor solution data missing | Skip competitor borrowing, generate based on HMW and current solution | Lacks competitor solution reference, adapt dimension solutions may be less rich | Request user to provide competitor names and their solutions, or upload competitor-analysis.json |
-| All upstream files missing | Prompt user to execute prior stages first, or generate directly based on user verbal description | Output is only basic HMW list and solution framework | Request user to describe problem, users, and current solutions, or execute pm-01-discovery skills first |
+|---------------|---------|---------|------------|
+| Problem Statement missing | User describes problem, generate HMW directly | Lacks structured Problem Statement, HMW may not be focused enough | Ask user to provide problem description and core pain points or upload opportunity-definition.json file |
+| User research data missing | User describes problem, generate HMW directly | Lacks user research data support, HMW may deviate from user needs | Ask user to provide user research conclusions or upload persona.json/voice-analysis.json file |
+| Both Problem Statement and user research data missing | User describes problem, generate HMW directly | Overall confidence reduced, HMW may be too broad | Ask user to provide problem description and core user pain points |
+| Current solution description missing | Generate solutions directly from HMW, no improvement baseline | Lacks current solution reference, substitute/modify dimension solutions may be less precise | Ask user to provide current product solution description and known shortcomings |
+| Competitor solution data missing | Skip competitor borrowing, generate from HMW and current solution | Lacks competitor solution reference, adapt dimension solutions may be less rich | Ask user to provide competitor solution descriptions or upload competitor-analysis.json file |
+| All upstream files missing | Prompt user to execute prior stages first, or generate directly from user verbal description | Output is only a basic HMW list and solution framework | Ask user to provide problem description, user pain points, and expected solution direction |
 
 ## Upstream Change Response
 
 ### Upstream Change Impact
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | Problem Statement change | HMW statement focus direction | Mark affected HMWs, suggest human confirmation on whether to regenerate |
-| User research data update | HMW data support, source_data linkage | Mark affected HMWs, suggest human confirmation on whether to supplement data linkage |
+| User research data update | HMW data support, source_data association | Mark affected HMWs, suggest human confirmation on whether to supplement data association |
 | Current solution change | SCAMPER substitute/modify dimension solutions | Mark affected dimension solutions, suggest human confirmation on whether to regenerate |
 | Competitor solution data update | SCAMPER adapt dimension solutions | Mark affected adapt solutions, suggest human confirmation on whether to supplement |
-| Product context change | Reverse thinking failure path priorities, convergence strategic alignment scores | Mark affected scoring dimensions, suggest human confirmation on whether to re-score |
+| Product context change | Reverse thinking failure path priority, convergence strategic alignment scoring | Mark affected scoring dimensions, suggest human confirmation on whether to rescore |
 
 ### Downstream Notification Mechanism
 
 | Change Type | Notification Scope | Notification Method |
-|------------|-------------------|---------------------|
-| Converged solution selection change | design-prd, validation-assumption-map | Mark solution change, trigger PRD and assumption map updates |
-| Converged solution deepening content change | design-prd | Mark deepening content change, trigger PRD feature specification update |
+|----------|----------|----------|
+| Converged solution selection change | design-prd, validation-assumption-map | Mark solution change, trigger PRD and assumption map update |
+| Converged solution deepening content change | design-prd | Mark deepening content change, trigger PRD functional specification update |
 | Comparison matrix scoring change | design-prd | Mark scoring change, trigger PRD priority adjustment |
 | MVP scope change | validation-mvp | Mark MVP scope change, trigger MVP definition update |

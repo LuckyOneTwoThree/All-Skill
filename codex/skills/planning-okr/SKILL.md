@@ -1,17 +1,19 @@
 ---
 name: planning-okr
-description: "Use when setting quarterly/annual OKRs, decomposing objectives, or defining performance measurement standards. Auto-generates OKRs from strategic directions including Objective generation, Key Results design, feasibility assessment and OKR alignment checks. Keywords: OKR, objective management, key results, objective decomposition, OKR alignment, goal setting, target breakdown."
+description: Use when you need to set quarterly/annual OKRs, decompose objectives, or define performance evaluation criteria. OKR auto-generation. Generate Objectives and Key Results from strategic direction, including Objective generation, Key Results design, feasibility assessment, and OKR alignment check. Keywords: OKR, objective management, key results, objective decomposition, OKR alignment, set goals, goal breakdown.
 metadata:
   module: "Product Business & Strategy"
   sub-module: "Strategic Planning & Roadmap"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["General"]
   trigger_examples:
     - "Help me set quarterly OKRs"
     - "How to decompose objectives"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output OKRs and key results"
+  quick_description: "Directly output OKRs and key results"
   deep_description: "Full OKR + alignment verification + progress tracking mechanism + quarterly review template"
 ---
 
@@ -19,22 +21,22 @@ execution_depth:
 
 ## Core Principles
 
-1. **Objectives Come From Strategy** -- Objectives must originate from SWOT strategic directions; cannot be set in isolation from strategy
-2. **KRs Must Be Quantifiable** -- Each KR has clear numeric targets and validation methods; vague expressions are rejected
-3. **Feasibility Hard Check** -- Achievement probability <0.3 escalates for target adjustment; >0.9 escalates for increased challenge
-4. **Alignment Closed Loop** -- O and KR logically consistent, KRs mutually supportive, linked to North Star metric
+1. **Objectives come from strategy** — Objectives must originate from SWOT strategic directions, not be set in isolation from strategy
+2. **KRs must be quantifiable** — Each KR has a clear numerical target and verification method; vague expressions are rejected
+3. **Feasibility hard check** — Achievement probability <0.3 escalates for target adjustment; >0.9 escalates for increased challenge
+4. **Alignment closed loop** — O and KR are logically consistent, KRs support each other, and are linked to the North Star metric
 
 ## Interaction Mode
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
-| SWOT Strategic Directions | JSON | Yes | output/pm-strategy/strategic-analysis/strategic-analysis.json | SO/ST/WO/WT strategic directions |
-| North Star Metric | JSON | Yes | output/pm-strategy/planning-north-star/north_star.json | North Star metric and drill-down metrics |
-| BMC Business Model Canvas | JSON | O | output/pm-strategy/business-model-canvas/bmc.json | Value propositions, revenue streams |
-| Business Status Data | JSON | O | User provided | Current business metric baselines |
+| SWOT strategic direction | JSON | Yes | output/pm-strategy/strategic-analysis/strategic-analysis.json | SO/ST/WO/WT strategic directions |
+| North Star metric | JSON | Yes | output/pm-strategy/planning-north-star/north-star.json | North Star metric and drill-down metrics |
+| BMC Business Model Canvas | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | Value proposition, revenue sources |
+| Business status data | JSON | ○ | User provided | Current business metric baselines |
 
 ## Execution Steps
 
@@ -42,47 +44,47 @@ AI->Human AI suggests, human approves
 
 Generate 2-3 Objective candidates
 
-Quality check standards:
-- **Directionality**: Expresses clear direction and intent
-- **Strategic consistency**: Consistent with SWOT strategic directions
+Quality check criteria:
+- **Directional clarity**: Expresses a clear direction and intent
+- **Strategic consistency**: Consistent with SWOT strategic direction
 - **Motivational**: Can motivate the team
-- **Time-bound**: Has a clear cycle
+- **Time-bound**: Has a clear time period
 
 Objective template:
 ```
-O: [Verb] + [What] + [Achieve What]
+O: [Verb] + [What] + [To achieve What]
 ```
 
 ### Step 2: Key Results Generation [Core]
 
-Generate 3-5 Key Results per Objective
+Generate 3-5 Key Results for each Objective
 
-Quality check standards:
+Quality check criteria:
 - **Quantifiable**: Measured with numbers
-- **Verifiable**: Has clear validation methods
+- **Verifiable**: Has clear verification method
 - **Multi-dimensional**: Covers different dimensions (quantity/quality/time/cost)
 - **Challenging**: Requires effort to achieve
 
 KR template:
 ```
-KR: [Time] [Quantity/Percentage] [What to do] reaching [Target value]
+KR: [Time] [Quantity/Percentage] [Do What] reaching [Target Value]
 ```
 
 **KR Achievement Probability Estimation Rules**:
 
-| Scenario | Estimation Method | Confidence |
+| Scenario | Estimation Method | Confidence Level |
 |------|----------|--------|
-| Has historical data | Extrapolate based on historical trends, compare target/baseline ratio with historical growth rate | High (>=0.7) |
+| Has historical data | Extrapolate based on historical trends, compare target/baseline ratio with historical growth rate | High (≥0.7) |
 | Has industry benchmarks | Reference KR achievement rates of same-industry same-stage companies | Medium (0.4-0.7) |
-| No reference data | Delphi method -- AI provides 3 probability tiers (optimistic 0.8/neutral 0.5/conservative 0.2), human selects | Low (<0.4) |
+| No reference data | Based on Delphi method — AI provides 3 probability tiers (optimistic 0.8/neutral 0.5/conservative 0.2), human selects | Low (<0.4) |
 
-Achievement probability < 0.3 KRs labeled needs_human_validation: true, recommend adjusting target or splitting into multiple progressive KRs.
+KRs with achievement probability < 0.3 are marked needs_human_validation: true, suggesting adjustment of target or splitting into multiple progressive KRs.
 
-**North Star Metric Consumption**: Extract core metrics and drill-down metrics from input North Star metric, ensure at least 1 KR's metric is directly linked to the North Star metric, label north_star_alignment: true.
+**North Star Metric Consumption**: Extract core metrics and drill-down metrics from the input North Star metric, ensure at least 1 KR's metric is directly associated with the North Star metric, mark north_star_alignment: true.
 
 ### Step 3: KR Feasibility Assessment [Core]
 
-Conduct feasibility assessment for each KR:
+Perform feasibility assessment for each KR:
 
 ```yaml
 kr_assessment:
@@ -90,53 +92,61 @@ kr_assessment:
   target: Target value
   growth_needed: Required growth rate
   achievability: Achievement probability (0-1)
-  dimension: Dimension classification
+  dimension: Dimension category
   confidence_level: Confidence level
 ```
 
 **achievability Calculation Method**:
 
 ```
-achievability_score = w1 x resource_fit + w2 x historical_trend + w3 x dependency_risk
+achievability_score = w1 × resource_fit + w2 × historical_trend + w3 × dependency_risk
 
 - resource_fit: Team current resources / estimated required resources (0-1), dynamically calibrated based on team size:
   - 1-3 people: 0.3 (resource constrained)
   - 4-6 people: 0.5 (moderate resources)
   - 7-10 people: 0.7 (resource sufficient)
-  - >10 people: 0.8 (resource rich)
+  - >10 people: 0.8 (resource abundant)
   - If team size unknown, default 0.4 (conservative)
 - historical_trend: Achievement probability when based on historical data, 0.5 when no historical data
-- dependency_risk: 1 - (number of external dependencies x 0.15), minimum 0.1
+- dependency_risk: 1 - (number of external dependencies × 0.15), minimum 0.1
 - w1=0.4, w2=0.35, w3=0.25
 
-achievability_score < 0.4 labeled as high-risk KR, needs_human_validation: true
+achievability_score < 0.4 is marked as high-risk KR, needs_human_validation: true
 ```
 
-### Step 4: OKR Alignment Check [Core]
+### Step 4: Driving Feature Mapping [Core]
+
+Define 1-3 feature candidates for each KR that can directly contribute to its achievement:
+
+- Each feature must be marked with priority and expected lift
+- Features must be further refined based on the North Star metric's drives_features
+- Feature descriptions are placeholders, awaiting design-prd to generate specific feature_id
+
+### Step 5: OKR Alignment Check [Core]
 
 Check alignment relationships between OKRs:
-- Aligned with company strategy
-- O and KR logically consistent
-- KRs mutually supportive
-- Timeline reasonable
+- Alignment with company strategy
+- Logical consistency between O and KR
+- KRs support each other
+- Reasonable timeline
 
 **Alignment Check Execution Rules**:
 
 | Check Dimension | Check Method | Pass Condition | Failure Handling |
 |----------|----------|----------|-----------|
-| O-KR consistency | Each KR must directly contribute to corresponding O achievement | All KRs have direct causal relationship with O | Label inconsistent KRs, recommend redefinition |
-| KR independence | KRs should not have inclusion or causal relationships | No logical dependency between any two KRs | Merge dependent KRs or split into independent KRs |
-| North Star alignment | At least 1 KR's metric is directly linked to North Star metric | north_star_alignment=true KRs >=1 | Label North Star alignment gap, recommend adding linked KR |
-| Quantifiable verifiability | Each KR includes numeric target value and deadline | All KRs include metric+target+deadline | Label unverifiable KRs, recommend adding quantifiable metrics |
-| Resource feasibility | achievability_score >= 0.4 | All KRs' achievability >= 0.4 | Label high-risk KRs, recommend adjusting target or increasing resources |
+| O-KR consistency | Each KR must directly contribute to the corresponding O's achievement | All KRs have direct causal relationship with O | Mark inconsistent KRs, suggest redefinition |
+| KR independence | KRs should not have inclusion or causal relationships with each other | No logical dependency between any pair of KRs | Merge dependent KRs or split into independent KRs |
+| North Star alignment | At least 1 KR's metric is directly associated with the North Star metric | KRs with north_star_alignment=true ≥1 | Mark North Star alignment gap, suggest adding associated KR |
+| Quantifiable verifiability | Each KR contains numerical target value and deadline | All KRs contain metric+target+deadline | Mark unverifiable KRs, suggest adding quantifiable metrics |
+| Resource feasibility | achievability_score ≥ 0.4 | All KRs' achievability ≥ 0.4 | Mark high-risk KRs, suggest adjusting target or adding resources |
 
-### Output Depth Grading
+### Output Depth Levels
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | OKRs and key results | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full OKR + alignment verification + progress tracking mechanism + quarterly review template | Full deliverables + extended analysis + deep simulation |
+| quick | OKRs and key results | Core conclusions + minimum viable output |
+| standard | Full output (current default) | Complete output including all Step outputs |
+| deep | Full OKR + alignment verification + progress tracking mechanism + quarterly review template | Full output + extended analysis + deep inference |
 
 ## Output
 
@@ -158,6 +168,9 @@ Check alignment relationships between OKRs:
 | okr_candidates[].key_results[].achievability | number | Yes | Achievement probability 0-1 |
 | okr_candidates[].key_results[].confidence_level | number | Yes | Confidence level 0-1 |
 | okr_candidates[].key_results[].deadline | string | Yes | KR deadline (ISO8601 format) |
+| okr_candidates[].key_results[].drives_features | array | Yes | List of features driven by this KR |
+| okr_candidates[].key_results[].drives_features[].feature_priority | string | Yes | Feature priority (P0/P1/P2) |
+| okr_candidates[].key_results[].drives_features[].feature_description | string | Yes | Feature description (placeholder) |
 | okr_candidates[].alignment_check.strategic_alignment | boolean | Yes | Strategic alignment check |
 | okr_candidates[].alignment_check.kr_coherence | boolean | Yes | KR consistency check |
 | okr_candidates[].alignment_check.timeline_feasibility | boolean | Yes | Timeline feasibility |
@@ -167,14 +180,22 @@ okr_candidates:
   - objective: "O1: Increase user activity"
     key_results:
       - kr: "KR1: DAU reaches 1 million"
-        baseline: 600k
-        target: 1 million
+        baseline: 600K
+        target: 1M
         growth_needed: 67%
         achievability: 0.65
         dimension: "Quantity"
         confidence_level: 0.85
         deadline: "2026-06-30"
-      - kr: "KR2: User next-day retention reaches 45%"
+        north_star_alignment: true
+        drives_features:
+          - feature_priority: "P0"
+            feature_description: "Personalized recommendation homepage"
+            expected_lift: "15% DAU lift"
+          - feature_priority: "P0"
+            feature_description: "Daily check-in system"
+            expected_lift: "8% DAU lift"
+      - kr: "KR2: User D1 retention rate reaches 45%"
         baseline: 35%
         target: 45%
         growth_needed: 29%
@@ -182,6 +203,13 @@ okr_candidates:
         dimension: "Quality"
         confidence_level: 0.80
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P0"
+            feature_description: "Onboarding flow optimization"
+            expected_lift: "10% D1 retention lift"
+          - feature_priority: "P1"
+            feature_description: "First-time experience optimization"
+            expected_lift: "5% D1 retention lift"
       - kr: "KR3: Core feature usage rate reaches 60%"
         baseline: 40%
         target: 60%
@@ -190,6 +218,10 @@ okr_candidates:
         dimension: "Quality"
         confidence_level: 0.75
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P1"
+            feature_description: "Feature discovery guidance"
+            expected_lift: "8% usage rate lift"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -205,6 +237,10 @@ okr_candidates:
         dimension: "Cost"
         confidence_level: 0.75
         deadline: "2026-06-30"
+        drives_features:
+          - feature_priority: "P1"
+            feature_description: "Precision ad targeting optimization"
+            expected_lift: "12% CAC reduction"
     alignment_check:
       strategic_alignment: true
       kr_coherence: true
@@ -214,30 +250,32 @@ okr_candidates:
 
 ## Decision Rules
 
-1. **Achievement Probability Escalation**:
+1. **Achievement probability escalation**:
    - Achievement probability < 0.3: Escalate for target adjustment
    - Achievement probability > 0.9: Escalate for increased challenge
-2. **OKR Final Confirmation**: Must be a human decision
-3. **Resource Matching**: Check whether KR resource requirements can be met
+2. **OKR final confirmation**: Must be a human decision
+3. **Resource matching**: Check if KR resource requirements can be met
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Each O contains 1-sentence description <=30 characters
-- [ ] Each KR contains >=1 numeric target value (metric+target)
+- [ ] Each O contains a 1-sentence description ≤30 characters
+- [ ] Each KR contains ≥1 numerical target value (metric+target)
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Each KR contains deadline field (ISO8601 format)
-- [ ] north_star_alignment=true KRs >=1, O-KR consistency check 100% passed
-- [ ] All KRs' achievability_score calculated and KRs with >=0.4 account for >=60%
+- [ ] Each KR contains a deadline field (ISO8601 format)
+- [ ] KRs with north_star_alignment=true ≥1, O-KR consistency check 100% passed
+- [ ] All KRs' achievability_score calculated and KRs with score ≥0.4 account for ≥60%
 - [ ] Strategic consistency verified
+- [ ] Each KR's drives_features[] is non-empty with at least 1 P0 feature
+- [ ] drives_features have logical association with North Star metric features
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Extended analysis is complete (deep inference and roadmap generated)
+- [ ] Decision records are complete (key decisions have rationale and alternatives)
 
 ---
 
@@ -246,13 +284,21 @@ okr_candidates:
 When upstream files do not exist, this Skill can still execute independently:
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|---------|---------|----------|
-| strategic-analysis.json | User provides business objectives -> Directly generate OKR candidates | Lacks strategic analysis data support, O-strategic direction alignment may be insufficient | Request user to describe strategic direction and priorities, or upload strategic-analysis.json |
-| north-star.json | User provides business objectives -> Directly generate OKR candidates | Lacks North Star metric alignment, KRs may be disconnected from core metrics | Request user to provide North Star metric and sub-metrics, or upload north-star.json |
-| bmc.json | User provides business objectives -> Directly generate OKR candidates | Lacks BMC data, OKR-business model correlation may be weak | Request user to describe business model and revenue streams, or upload bmc.json |
-| strategic-analysis.json + north-star.json + bmc.json | User provides business objectives -> Directly generate OKR candidates | Overall confidence reduced, OKRs lack strategic and metric anchoring | Request user to provide business objectives and key metrics, or upload strategic-analysis.json / north-star.json / bmc.json |
-| All upstream files missing | Prompt user to execute prior phases first, or directly generate OKR candidates based on user-provided business objectives | Overall confidence significantly reduced, OKRs are generic target references only | Request user to describe business objectives and expected key results, or execute strategic-analysis and planning-north-star first |
-| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip related steps | Lacks baseline data, KR target values lack reference | Prompt user to provide current metric values and target expectations |
+|---------------|---------|---------|------------|
+| strategic-analysis.json | User provides business objectives → directly generate OKR candidates | Lacking strategic analysis data support, O alignment with strategic direction may be insufficient | Ask user to provide strategic direction and key challenge descriptions or upload strategic-analysis.json file |
+| north-star.json | User provides business objectives → directly generate OKR candidates | Lacking North Star metric alignment, KRs may be disconnected from core metrics | Ask user to provide North Star metric and current metric values or upload north-star.json file |
+| bmc.json | User provides business objectives → directly generate OKR candidates | Lacking BMC data, OKR correlation with business model may be weak | Ask user to provide key business model elements or upload bmc.json file |
+| strategic-analysis.json + north-star.json + bmc.json | User provides business objectives → directly generate OKR candidates | Overall confidence reduced, OKRs lack strategic and metric anchoring | Ask user to provide strategic direction, North Star metric, and business model description |
+| All upstream files missing | Prompt user to execute prior stages first, or directly generate OKR candidates based on user-provided business objectives | Overall confidence significantly reduced, OKRs are only general goal references | Ask user to provide business objectives, key challenges, and core metrics |
+| Business status data (user provided) | If user has not provided business status data, prompt user to provide or skip steps related to this input | Lacking baseline data, KR target values lack reference | Ask user to provide current core metric values (e.g., DAU, revenue, conversion rate, etc.) |
+
+## Data Acquisition Instructions
+
+This Skill requires strategic analysis, North Star metric, and BMC data. Please provide via one of the following methods:
+  1. Directly describe business objectives and expected key results
+  2. Upload strategic-analysis.json / north-star.json / bmc.json files
+  3. Provide data file paths
+- AI is not responsible for external data collection, only for analysis
 
 ---
 
@@ -263,15 +309,16 @@ When upstream files do not exist, this Skill can still execute independently:
 | Upstream Change | Impact Scope | Response Strategy |
 |----------|----------|----------|
 | strategic-analysis.json strategic direction adjustment | Objective generation needs re-alignment | Re-execute Step 1, update O candidates |
-| north-star.json North Star change | KRs need re-alignment with North Star | Re-execute Step 2, update KRs and linkages |
-| bmc.json business model change | OKR-business model correlation | Re-evaluate OKR alignment with revenue/cost structure |
+| north-star.json North Star change | KRs need re-alignment with North Star | Re-execute Step 2, update KRs and associations |
+| bmc.json business model change | OKR alignment with business model | Re-evaluate OKR alignment with revenue/cost structure |
 
 ### Downstream Notification Mechanism Table
 
 | Change Type | Impact Scope | Notification Method |
 |----------|----------|----------|
-| Objective adjustment | planning-roadmap, business-strategy-report | Output file version number + change summary |
-| KR target value change | planning-roadmap | Output file version number + change summary |
+| Objective adjustment | planning-roadmap, business-strategy-report, design-prd | Output file version number + change summary |
+| KR target value change | planning-roadmap, design-prd | Output file version number + change summary |
+| drives_features change | design-prd | Output file version number + change summary |
 | Alignment check result change | planning-roadmap | Output file version number + change summary |
 
 ## Alignment with prd.json Data Contract

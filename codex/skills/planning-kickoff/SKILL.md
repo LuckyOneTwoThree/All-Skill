@@ -1,34 +1,36 @@
 ---
 name: planning-kickoff
-description: "Use when preparing and executing a project kickoff meeting. Automates kickoff with pre-meeting AI preparation (agenda generation, background materials, question pre-preparation), in-meeting human facilitation, and post-meeting AI processing (minutes generation, action item extraction, follow-up reminders). Keywords: Kickoff, project launch, kickoff meeting, action items, project start."
+description: Use when preparing and executing project Kickoff meetings. Kickoff meeting automation, including pre-meeting AI preparation (agenda generation, background material compilation, question list pre-preparation), in-meeting human facilitation, post-meeting AI processing (minutes generation, action item extraction, follow-up reminder setup). Keywords: Kickoff, project launch, launch meeting, action items, project kickoff meeting, startup meeting, project initiation.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Project Planning"
   type: "pipeline"
-  version: "1.0"
+  version: "3.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
+    - "Project is starting, how to hold the meeting"
+    - "How to prepare for kickoff meeting"
     - "How to run a project kickoff meeting"
-    - "How to prepare for a kickoff meeting"
-    - "How to conduct a project launch meeting"
+  interaction_mode: "human_ai_collaborate"
 execution_depth:
   default: standard
-  quick_description: "Output project kickoff plan and objectives"
-  deep_description: "Full kickoff + team alignment plan + risk contingency + communication mechanism design"
+  quick_description: "Directly output project kickoff plan and goals"
+  deep_description: "Complete kickoff + team alignment plan + risk contingency plan + communication mechanism design"
 ---
 
 # Kickoff Meeting Automation
 
 ## Core Principles
 
-1. **Transparency Enables Collaboration**: Meeting agenda, background materials, and action items are visible to all participants, ensuring information synchronization
-2. **Risk Early Identification**: Pre-identify potential issues and risks before the meeting, ensuring efficient discussion of key topics
-3. **Automated Tracking**: Action item extraction, follow-up reminders, and completion status are automatically tracked
+1. **Transparency is Collaboration**: Meeting agenda, background materials, action items are visible to all, ensuring information synchronization
+2. **Risk Early Warning**: Pre-identify potential problems and risks before the meeting, ensuring efficient discussion of key topics
+3. **Automated Tracking**: Action item extraction, follow-up reminders, completion status automatically tracked
 
 ## Interaction Mode
 
-**AI AI-Assisted (Kickoff requires human facilitation)**
+**🤖 AI-Assisted (Kickoff requires human facilitation)**
 
-- **Pre-meeting**: AI automatically completes all preparation (Step 1-3)
+- **Pre-meeting**: AI automatically completes all preparation work (Step 1-3)
 - **In-meeting**: Human facilitates the meeting, AI provides real-time assistance (e.g., real-time Q&A suggestions)
 - **Post-meeting**: AI automatically completes minutes and follow-up (Step 4-6)
 
@@ -40,8 +42,8 @@ execution_depth:
 |--------|------|------|------|------|
 | project_charter | object | Yes | output/pm-project/planning-project-charter/project_charter | Project charter |
 | resource_plan | object | Yes | output/pm-project/planning-resource/resource_plan | Resource plan |
-| meeting_attendees | string[] | Yes | User provided | Meeting participant list |
-| preferred_meeting_time | string | O | User provided | Preferred meeting time |
+| meeting_attendees | string[] | Yes | User provided | Meeting attendee list |
+| preferred_meeting_time | string | No | User provided | Preferred meeting time |
 
 ---
 
@@ -49,13 +51,13 @@ execution_depth:
 
 ### Pre-meeting AI: Preparation Phase
 
-#### Step 1: Agenda Auto-generation [Core]
+#### Step 1: Agenda Auto-Generation
 
 **Actions**:
 - Generate meeting agenda based on project charter and resource plan
-- Allocate time for each agenda item
-- Assign presenter for each topic
-- Ensure key information is not overlooked
+- Assign duration for each agenda item
+- Mark the responsible person for each item
+- Ensure key information is not missed
 
 **Output**:
 ```json
@@ -76,11 +78,11 @@ execution_depth:
 }
 ```
 
-#### Step 2: Background Materials Auto-compilation [Conditional]
+#### Step 2: Background Materials Auto-Compilation
 
 **Actions**:
-- Summarize project charter core content into a 1-page summary
-- Compile resource plan highlights
+- Summarize core content of project charter into 1-page summary
+- Organize resource plan highlights
 - Collect related document links
 - Generate visual project overview
 
@@ -106,13 +108,13 @@ execution_depth:
 }
 ```
 
-#### Step 3: Question List Pre-preparation [Conditional]
+#### Step 3: Question List Pre-Preparation
 
 **Actions**:
 - Identify common questions based on project background
-- Predict questions stakeholders may ask
-- Pre-prepare answer points
-- Mark questions requiring specific person to answer
+- Predict questions stakeholders may care about
+- Pre-prepare answer key points
+- Mark questions requiring specific people to answer
 
 **Output**:
 ```json
@@ -129,20 +131,20 @@ execution_depth:
 
 ### In-meeting Human: Meeting Facilitation
 
-**Human Facilitation Points**:
-- Follow the agenda to drive the meeting
-- Ensure each key decision has a conclusion
+**Human Facilitation Key Points**:
+- Advance meeting according to agenda
+- Ensure every key decision has a conclusion
 - Record new questions raised during the meeting
 - Control time, avoid overtime
 
 ### Post-meeting AI: Follow-up Phase
 
-#### Step 4: Meeting Minutes Auto-generation [Core]
+#### Step 4: Meeting Minutes Auto-Generation
 
 **Actions**:
-- Receive meeting records (or transcription)
+- Receive meeting records (or transcript from recording)
 - Extract key discussion points and conclusions
-- Compile unresolved issues
+- Organize unresolved issues
 - Generate formatted meeting minutes
 
 **Output**:
@@ -167,11 +169,11 @@ execution_depth:
 }
 ```
 
-#### Step 5: Action Items Auto-extraction [Conditional]
+#### Step 5: Action Items Auto-Extraction
 
 **Actions**:
 - Identify action items from meeting minutes
-- Extract owner, content, and due date for each action item
+- Extract for each action item: owner, content, due date
 - Assign action item IDs
 - Establish action item tracking
 
@@ -190,7 +192,7 @@ execution_depth:
 }
 ```
 
-#### Step 6: Follow-up Reminder Setup [Deep]
+#### Step 6: Follow-up Reminder Setup
 
 **Actions**:
 - Set reminders based on action item due dates
@@ -220,13 +222,13 @@ execution_depth:
 
 ---
 
-### Output Depth Grading
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | project kickoff plan and objectives | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full kickoff + team alignment plan + risk contingency + communication mechanism design | Full deliverables + extended analysis + deep simulation |
+| quick | Project kickoff plan and goals | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Complete output, including all Step outputs |
+| deep | Complete kickoff + team alignment plan + risk contingency plan + communication mechanism design | Complete output + extended analysis + deep inference |
 
 ## Output
 
@@ -241,8 +243,8 @@ execution_depth:
   "type": "object",
   "required": ["kickoff", "metadata"],
   "properties": {
-    "kickoff": {"type": "object", "description": "Kickoff data including agenda, background materials, prepared questions, and meeting minutes"},
-    "metadata": {"type": "object", "description": "Metadata including meeting arrangement and preparation status"}
+    "kickoff": {"type": "object", "description": "Kickoff meeting data, including agenda, background materials, prepared questions and meeting minutes"},
+    "metadata": {"type": "object", "description": "Metadata, including meeting arrangement and preparation status"}
   }
 }
 ```
@@ -259,21 +261,21 @@ execution_depth:
 | kickoff.background_materials.project_overview.objectives | array | Yes | Project objectives list, at least 1 item |
 | kickoff.background_materials.key_risks | array | No | Key risks list |
 | kickoff.background_materials.success_criteria | array | Yes | Success criteria list, at least 1 item |
-| kickoff.prepared_questions[].priority | string | Yes | Question priority, enum values high/medium/low |
+| kickoff.prepared_questions[].priority | string | Yes | Question priority, enum value high/medium/low |
 | kickoff.minutes.meeting_info.date | string | Yes | Meeting date, ISO 8601 format |
 | kickoff.minutes.key_decisions | array | Yes | Key decisions list, each must contain decision, decision_maker, date |
 | kickoff.action_items[].owner | string | Yes | Action item owner |
 | kickoff.action_items[].due_date | string | Yes | Action item due date, ISO 8601 format |
-| kickoff.action_items[].status | string | Yes | Action item status, enum values open/in_progress/completed |
-| kickoff.follow_up_reminders[].type | string | Yes | Reminder type, enum values action_item/milestone/check_in |
-| metadata.meeting_scheduled | boolean | Yes | Whether the meeting has been scheduled |
+| kickoff.action_items[].status | string | Yes | Action item status, enum value open/in_progress/completed |
+| kickoff.follow_up_reminders[].type | string | Yes | Reminder type, enum value action_item/milestone/check_in |
+| metadata.meeting_scheduled | boolean | Yes | Whether the meeting is scheduled |
 | metadata.preparation_completed_at | string | Yes | Preparation completion time, ISO 8601 format |
 
 ```json
 {
   "kickoff": {
     "agenda": {
-      "meeting_title": "Online Classroom Interactive Features Project Kickoff",
+      "meeting_title": "Online Classroom Interactive Feature Project Kickoff Meeting",
       "duration_minutes": 90,
       "items": [
         {
@@ -288,20 +290,20 @@ execution_depth:
       "buffer_minutes": 10
     },
     "background_materials": {
-      "executive_summary": "This project aims to add real-time classroom interactive features to the online education platform, including student hand-raising, real-time voting, and bullet screen interaction, to improve student engagement and course completion rates.",
+      "executive_summary": "This project aims to add real-time classroom interactive features to the online education platform, including student hand-raising for questions, real-time voting, and bullet screen interaction, to improve student engagement and course completion rate.",
       "project_overview": {
-        "objectives": ["Increase classroom interaction rate to 60%", "Improve course completion rate by 15%"],
+        "objectives": ["Classroom interaction rate increased to 60%", "Course completion rate increased by 15%"],
         "scope": ["Real-time Q&A module", "Classroom voting module", "Bullet screen interaction module"],
         "timeline": "2024-Q2 (10 weeks)",
         "team": ["Zhang Ming (PM)", "Li Wei (Frontend Lead)", "Wang Fang (Backend Lead)", "Chen Gang (QA Lead)"]
       },
       "key_risks": ["WebSocket concurrent performance risk", "Integration complexity with existing player"],
-      "success_criteria": ["Post-launch classroom interaction rate >= 60%", "P0 defect count = 0"],
+      "success_criteria": ["Classroom interaction rate ≥ 60% after interactive feature launch", "P0 defect count = 0"],
       "document_links": [
         {
           "title": "Classroom Interaction PRD",
           "url": "https://wiki.example.com/class-interaction-prd",
-          "description": "Classroom interactive features product requirements document"
+          "description": "Classroom interactive feature product requirements document"
         }
       ]
     },
@@ -309,33 +311,33 @@ execution_depth:
       {
         "question": "Does the interactive feature need to support replay scenarios?",
         "likely_from": "Li Wei (Frontend Lead)",
-        "prepared_answer": "Phase 1 only supports live scenarios; replay scenarios are planned for Phase 2",
+        "prepared_answer": "Phase 1 only supports live scenarios, replay scenarios included in Phase 2 planning",
         "answer_owner": "Zhang Ming",
         "priority": "high"
       }
     ],
     "minutes": {
       "meeting_info": {
-        "title": "Online Classroom Interactive Features Project Kickoff",
+        "title": "Online Classroom Interactive Feature Project Kickoff Meeting",
         "date": "2024-04-01",
         "attendees": ["Zhang Ming", "Li Wei", "Wang Fang", "Chen Gang"],
         "absentees": []
       },
       "key_decisions": [
         {
-          "decision": "Phase 1 only supports live interaction; replay interaction planned for Phase 2",
+          "decision": "Phase 1 only supports live scenario interaction, replay interaction included in Phase 2",
           "decision_maker": "Zhang Ming",
           "date": "2024-04-01"
         }
       ],
-      "discussion_summary": "Team aligned on classroom interactive feature objectives, confirmed Phase 1 focus on live scenarios, technical solution adopts WebSocket+Redis architecture",
-      "unresolved_issues": ["Bullet screen message moderation mechanism pending confirmation"],
-      "next_steps": ["Li Wei to complete technical solution design", "Wang Fang to complete API definition", "Chen Gang to prepare test environment"]
+      "discussion_summary": "Team reached consensus on classroom interactive feature objectives, confirmed Phase 1 focuses on live scenarios, technical solution adopts WebSocket+Redis architecture",
+      "unresolved_issues": ["Bullet screen message review mechanism to be confirmed"],
+      "next_steps": ["Li Wei completes technical solution design", "Wang Fang completes API definition", "Chen Gang prepares test environment"]
     },
     "action_items": [
       {
         "id": "AI-001",
-        "description": "Complete classroom interaction technical solution design document",
+        "description": "Complete classroom interactive technical solution design document",
         "owner": "Li Wei",
         "due_date": "2024-04-08",
         "status": "open",
@@ -384,24 +386,24 @@ execution_depth:
 | Key stakeholder cannot attend | Escalate to human to coordinate time |
 | Major scope change arises during meeting | Trigger charter update process (Pipeline 1) |
 | Action item cannot be assigned an owner | Escalate to project manager for decision |
-| Meeting cannot be held as scheduled | Reschedule and send notification |
+| Meeting cannot be held as scheduled | Reschedule, send notification |
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
 - [ ] Agenda covers project objectives, scope, roles, timeline
-- [ ] Key stakeholders confirmed attendance
+- [ ] Key stakeholders confirmed to attend
 
 ### P1 Checks (must pass for standard/deep)
 
 - [ ] Action items have clear owners and due dates
-- [ ] Meeting materials sent to participants in advance
+- [ ] Meeting materials sent to attendees in advance
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Extended analysis is complete (deep inference and roadmap generated)
+- [ ] Decision records are complete (key decisions have basis and alternatives)
 
 ## Degradation Strategy
 
@@ -409,18 +411,18 @@ execution_depth:
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
 |---------------|---------|---------|
-| Project charter | User describes project objectives and scope, AI generates Kickoff agenda based on description | Kickoff agenda generated from user description, lacking structured charter data support |
-| Resource plan | Skip resource allocation discussion, mark "Resource plan pending confirmation" in agenda | Kickoff materials contain unconfirmed resource items, need post-meeting supplementation |
-| Meeting participants | User provides participant list, AI adjusts agenda and question preparation accordingly | Agenda and question preparation based on user-provided participants, may be incomplete |
-| Preferred meeting time | If user does not provide preferred time, prompt user or skip related steps | Meeting arrangement lacks time information, needs manual supplementation |
+| Project charter | User describes project objectives and scope, AI generates Kickoff agenda based on description | Kickoff agenda generated based on user description, lacking structured charter data support |
+| Resource plan | Skip resource allocation discussion segment, annotate "resource plan to be confirmed" in agenda | Kickoff materials contain unconfirmed resource items, need post-meeting supplementation |
+| Meeting attendees | User provides attendee list, AI adjusts agenda and question preparation accordingly | Based on user-provided attendee configuration, agenda and question pre-preparation may be incomplete |
+| Preferred meeting time | If user does not provide preferred meeting time, prompt user to provide or skip steps related to this input | Meeting arrangement lacks time information, needs manual supplementation |
 
 ### Data Acquisition Instructions
 
 When upstream files are missing, obtain necessary data through the following methods:
 
-1. **Project charter missing**: Ask user to describe project objectives, scope, and key milestones; AI will generate Kickoff agenda and background material summary based on the description
-2. **Resource plan missing**: Skip resource allocation discussion in Kickoff agenda, mark "Resource plan pending confirmation", suggest adding a resource discussion topic in the meeting
-3. **Meeting participants missing**: Ask user to provide participant list and roles; AI will adjust agenda time allocation and question pre-preparation accordingly
+1. **Project charter missing**: Ask user to describe project objectives, scope and key milestones, AI will generate Kickoff agenda and background material summary based on description
+2. **Resource plan missing**: Skip resource allocation discussion segment in Kickoff agenda, annotate "resource plan to be confirmed", suggest adding resource discussion topic in the meeting
+3. **Meeting attendees missing**: Ask user to provide attendee names and roles, AI will adjust agenda time allocation and question pre-preparation accordingly
 
 ## Upstream Change Response
 
@@ -429,13 +431,13 @@ When upstream files are missing, obtain necessary data through the following met
 | Upstream Change | Impact Scope | Response Strategy |
 |----------|----------|----------|
 | Project charter change (objectives/scope/success criteria adjustment) | Agenda content, background materials, question pre-preparation | Regenerate agenda and background materials, update question list |
-| Resource plan change (personnel/budget adjustment) | Resource allocation discussion, team information | Update resource highlights in background materials, adjust related agenda sections |
-| Participant change (additions/removals/role changes) | Agenda time allocation, question pre-preparation, reminder configuration | Readjust agenda and question preparation, update reminder recipients |
+| Resource plan change (personnel/budget adjustment) | Resource allocation discussion segment, team information | Update resource highlights in background materials, adjust related agenda segments |
+| Attendee change (additions/removals/role changes) | Agenda time allocation, question pre-preparation, reminder configuration | Readjust agenda and question preparation, update reminder recipients |
 
 ### Downstream Notification Mechanism Table
 
 | Change Type | Impact Scope | Notification Method |
 |----------|----------|----------|
-| Meeting agenda change | All participants, meeting arrangement | Update kickoff.json, send agenda change notification |
-| Action item change (new/modified/completed) | Action item owner, project manager | Update kickoff.json, notify responsible persons and project manager |
+| Meeting agenda change | All attendees, meeting arrangement | Update kickoff.json, send agenda change notification |
+| Action item change (addition/modification/completion) | Action item owner, project manager | Update kickoff.json, notify relevant responsible persons and project manager |
 | Key decision change | Project charter, subsequent planning Pipeline | Update kickoff.json, notify planning-project-charter |

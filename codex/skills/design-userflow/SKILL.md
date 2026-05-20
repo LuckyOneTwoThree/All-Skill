@@ -5,11 +5,13 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototyping"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "How to map user operation flows"
     - "Help me structure user paths"
     - "How to design task flows"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output Task Flow and exception paths"
@@ -36,7 +38,7 @@ AI->Human AI suggests, human approves
 | Input Item | Type | Required | Source | Description |
 |------------|------|----------|--------|-------------|
 | PRD | markdown | Yes | output/pm-design/design-prd/prd.md | Product requirements document |
-| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing user_flows[]/pages[] for flow design alignment |
+| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing user_flows[]/pages[], for flow design alignment |
 | IA Proposal | JSON | Yes | output/pm-design/design-ia/ia_proposals.json | Information architecture proposal from Pipeline 9 |
 | User Research Data | JSON | O | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | User behavior patterns, task preferences |
 
@@ -59,6 +61,11 @@ Expand into complete user flows:
 - **Exception Paths**: Network errors, no permissions, empty states, etc.
 - **Return Paths**: Operations to go back to previous step
 - **Alternative Paths**: Different ways to accomplish the same goal
+
+Each step must be annotated with:
+- User action and system feedback
+- Page location (page_id)
+- **Data operation type** (read/create/update/delete) and related entity -- This is the direct input for downstream API design, helping api-design-spec precisely map user operations to API endpoints
 
 ### Step 3: Flow Quality Auto-Check [Core]
 
@@ -108,6 +115,13 @@ Propose improvements based on quality check results:
         "system_response": "System Feedback",
         "expected_outcome": "Expected Result",
         "error_handling": "Exception Handling",
+        "data_operations": [
+          {
+            "operation_type": "read | create | update | delete",
+            "related_entity": "entity_id",
+            "description": "Description of data operation triggered by this step"
+          }
+        ],
         "branch": null
       },
       {
@@ -184,11 +198,11 @@ Propose improvements based on quality check results:
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| PRD document missing | User provides feature description, design flow directly | Lacks PRD structured data, flow may miss feature points | Request user to provide feature list and task descriptions, or upload prd.json |
-| IA proposal missing | User provides feature description, design flow directly | Lacks IA data, flow may not match page structure | Request user to describe page structure or upload ia.json |
-| Both PRD and IA missing | User provides feature description, design flow directly | Overall confidence reduced, flow may be less complete | Request user to describe features and page structure, or execute design-prd and design-ia first |
-| All upstream files missing | Prompt user to execute prior stages first, or design flow based on user feature description | Output is only basic flow framework | Request user to describe core user tasks and features, or execute design-prd and design-ia first |
+|------------------------|-----------------|---------------|-------------------------------|
+| PRD document missing | User provides feature description, design flow directly | Lacks PRD structured data, flow may miss feature points | Request user to provide feature list and task descriptions, or upload prd.json file |
+| IA proposal missing | User provides feature description, design flow directly | Lacks IA data, flow may not match page structure | Request user to describe page structure or upload IA proposal file |
+| Both PRD and IA missing | User provides feature description, design flow directly | Overall confidence reduced, flow may be less complete | Request user to describe features and page structure |
+| All upstream files missing | Prompt user to execute prior stages first, or design flow based on user feature description | Output is only basic flow framework | Request user to describe core user tasks and features |
 
 ## Output Validation Rules
 

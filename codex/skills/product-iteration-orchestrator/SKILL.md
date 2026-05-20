@@ -1,11 +1,12 @@
 ---
 name: product-iteration-orchestrator
-description: "Use when performing feature iteration on an existing product. Product iteration commander coordinating incremental updates and integrated delivery across PM/UI/Backend sub-orchestrators based on change impact scope. Keywords: feature iteration, requirement change, incremental update, cross-domain, product optimization, add feature, change requirement, product upgrade, feature enhancement, iterative development."
+description: "Use when performing feature iteration on an existing product. Product iteration commander coordinating incremental updates and integrated delivery across PM/UI/Backend sub-orchestrators based on change impact scope. Keywords: feature iteration, requirement change, incremental update, cross-domain, product optimization, add feature, change requirement, product upgrade, system upgrade, feature enhancement, add module, requirement adjustment, version iteration, feature improvement, iterative development."
 metadata:
   module: "Cross-Domain Coordination"
   sub-module: "Product Iteration"
   type: "orchestrator"
-  version: "1.0"
+  version: "10.0"
+  domain_tags: ["General"]
   trigger_examples:
     - "Add a payment feature to an existing product"
     - "Requirements changed, need to adjust"
@@ -17,6 +18,17 @@ metadata:
 ---
 
 # Product Iteration Commander
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
+
 
 ## Core Principles
 
@@ -28,21 +40,57 @@ The core difference between product iteration and product launch is: existing pr
 
 1. **Requirements and Design**: Invoke design-orchestrator to complete requirement analysis and PRD incremental update
 2. **Change Impact Analysis**: Identify change impact scope, determine whether API/UI/Backend need changes
-3. **API Design**: Conditionally execute API design orchestrator, produce API contracts for Backend and UI to consume in parallel
-4. **Backend Implementation**: Conditionally execute data architecture and backend architecture orchestrators, can run in parallel with UI changes
-5. **UI Changes**: Conditionally execute UI orchestrator, based on API contracts in parallel with Backend implementation
-6. **Integration Alignment**: When both API and UI need changes, verify API changes are synced to frontend (type definitions/request functions/Mock data) and UI change required API endpoints are covered
-7. **Delivery and Launch**: Invoke release-orchestrator + monitoring-orchestrator to complete quality acceptance -> release checks -> gradual rollout -> monitoring setup
+3. **Backend Changes**: Conditionally execute backend-orchestrator, maintain unified API/data/architecture design review
+4. **UI Changes**: Conditionally execute UI orchestrator; if backend changes exist, consume API contracts produced by backend-orchestrator
+5. **Integration Alignment**: When both API and UI need changes, verify API changes are synced to frontend (type definitions/request functions/Mock data) and UI change required API endpoints are covered
+6. **Delivery and Launch**: Invoke release-orchestrator + monitoring-orchestrator to complete quality acceptance -> release checks -> gradual rollout -> monitoring setup
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+> Protocol source: [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md) (for maintainers tracking only, this file has the complete protocol inlined and can be used independently)
+
+You are the orchestrator; your responsibility is to **schedule sub-Skill execution by stage**, not to proxy execute sub-Skill logic. Strictly follow the following protocol:
+
+### Invocation Rules
+
+1. **Dual-mode Invocation**: When the platform supports the Skill tool, explicitly invoke sub-Skills; when the platform doesn't support it, execute compatible scheduling according to the sub-Skill's `name`, input contract, output contract, and stage gates.
+2. **No Proxy Expansion**: During compatible scheduling, do not copy sub-Skill internal methodology into the orchestrator context, nor rewrite sub-Skill logic; only pass necessary inputs, output paths, and validation conditions.
+3. **Contract-Driven**: Only focus on sub-Skill input contracts, output contracts, and validation conditions, not internal implementation details.
+4. **State Passing**: Pass current stage outputs as next stage inputs, transferring data via file paths and artifact index.
+5. **Validate Before Proceeding**: Only advance to the next stage after current stage output validation passes.
+6. **Stage Summary (Mandatory)**: After all Pipeline stages complete, **must immediately** execute the `post_pipeline` defined stage summary action, generating the summary document. This is not an optional step; if the stage summary is not generated, the orchestrator execution is considered incomplete.
+7. **Cross-Sub-Skill Validation**: When consistency constraints exist between outputs of multiple sub-Skills, the orchestrator can perform cross-validation between stages (reading multiple outputs to compare consistency); this is part of the orchestrator's coordination responsibility, not proxy execution of sub-Skill logic. Cross-validation rules are explicitly defined in the orchestrator SKILL.md.
+
+### Context Management
+
+- After each sub-Skill invocation completes, only retain **output file paths** and **key conclusion summaries**
+- Detailed outputs are written to `output/{domain-path}/{skill-name}/` directory
+- If context approaches the limit, prioritize retaining current stage content and pending stage sub-Skill names
+
+### Stage Gate Standards
+
+The orchestrator's stage gates only validate the following 3 types of conditions, not diving into sub-Skill internal fields:
+
+| Gate Type | Validation Content | Example |
+|----------|----------|------|
+| Output Existence | Output files generated and non-empty | "api-design-spec output files generated" |
+| Top-level Structure Completeness | JSON top-level required fields exist | "prd.json contains features/pages/entities" |
+| Human Decision Confirmation | Key decision points have received human confirmation | "Design review human confirmation passed" |
+
+### General Exception Handling
+
+| Exception Type | Handling Strategy |
+|----------|----------|
+| Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
+| Key decision point not confirmed by human | Pause orchestration, output pending confirmation list, wait for human confirmation before continuing |
+| Upstream data missing | Mark missing data items, fill with reasonable assumptions (mark confidence <=0.3), continue execution and highlight in output |
+| All upstream data missing | Mark "all data missing" status, output minimal template, set overall confidence to 0.3, force human confirmation whether to continue |
 
 ## Pipeline
 
 ```yaml
 pipeline: product-iteration-orchestrator
-version: 1.0
+version: 10.0
 
 post_pipeline:
   - action: stage-summary
@@ -66,37 +114,27 @@ stages:
       fail_action: "Supplement missing downstream impact items"
 
   - id: phase-3
-    name: "API Design"
+    name: "Backend Changes"
     depends_on: [phase-2]
-    trigger: API needs changes
-    skills: [api-design-orchestrator]
+    trigger: API/Data/Backend needs changes
+    skills: [backend-orchestrator]
     gate:
-      condition: "API changes confirmed by human"
-      fail_action: "Adjust API design"
-
-  - id: phase-4
-    name: "Backend Implementation"
-    depends_on: [phase-2, phase-3]
-    parallel_with: [phase-5]
-    trigger: Data/Backend needs changes
-    skills: [data-architecture-orchestrator, backend-architecture-orchestrator]
-    gate:
-      condition: "Backend review passed (P0=0)"
-      fail_action: "Fix P0 issues"
+      condition: "Backend unified design review passed + change compatibility confirmed + implementation review passed"
+      fail_action: "Fix backend design/implementation blocking issues"
 
   - id: phase-5
     name: "UI Changes"
-    depends_on: [phase-2, phase-3]
-    parallel_with: [phase-4]
+    depends_on: [phase-2]
+    optional_depends_on: [phase-3]
     trigger: UI needs changes
     skills: [ui-orchestrator]
     gate:
       condition: "UI development and integration verification passed"
       fail_action: "Fix integration issues"
 
-  - id: phase-alignment
+  - id: phase-4
     name: "Integration Alignment"
-    depends_on: [phase-4, phase-5]
+    depends_on: [phase-3, phase-5]
     trigger: Both API and UI need changes
     type: cross-validation
     skills: []
@@ -106,8 +144,8 @@ stages:
 
   - id: phase-6
     name: "Delivery and Launch"
-    depends_on: [phase-4, phase-5]
-    optional_depends_on: [phase-alignment]
+    depends_on: [phase-2]
+    optional_depends_on: [phase-3, phase-5, phase-4]
     skills: [release-orchestrator, monitoring-orchestrator]
     gate:
       condition: "P0 issues = 0, gradual rollout passed"
@@ -116,12 +154,16 @@ stages:
 
 ## Stage Execution Plan
 
+### Cross-Domain Artifact Index
+
+This orchestrator does not require sub-Skills to write artifacts to `output/cross-domain/{skill-name}/`. All sub-Skills still write to their respective domain native paths; this orchestrator records stage, skill, actual output path, summary, and validation status in `output/cross-domain/artifact-index.json`. Cross-domain paths appearing below represent index references only, not rewriting sub-Skill output directories.
+
 ### Stage 1: Requirements and Design
 
 #### Invoke design-orchestrator
 
 ```
-Invoke: ${design-orchestrator}
+Skill: design-orchestrator
 Input:
   User feedback: Iteration user feedback data
   Business requirements: Business requirement changes
@@ -136,7 +178,7 @@ Mode: AI->Human
 #### Invoke change-impact-analysis
 
 ```
-Invoke: ${change-impact-analysis}
+Skill: change-impact-analysis
 Input:
   PRD changes: output/cross-domain/design-orchestrator/
 Output: output/cross-domain/product-iteration-orchestrator/impact-report.md
@@ -144,64 +186,39 @@ Validation: Impact matrix covers all downstream deliverables
 Mode: AI
 ```
 
-### Stage 3: API Design (Conditional Execution)
+### Stage 3: Backend Changes (Conditional Execution)
 
-#### Invoke api-design-orchestrator
+#### Invoke backend-orchestrator
 
 ```
-Invoke: ${api-design-orchestrator}
+Skill: backend-orchestrator
 Input:
-  PRD changes: output/cross-domain/design-orchestrator/
-Output: output/cross-domain/api-design-orchestrator/
-Validation: API changes confirmed by human
+  PRD changes: artifact-index.json -> design-orchestrator -> output/pm-design/design-prd/
+  change-impact: artifact-index.json -> change-impact-analysis
+  project_dir: User provided (existing project directory path)
+Output: output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ + output/backend-design-review/
+Validation: Backend unified design review passed + change compatibility confirmed + implementation review passed
 Mode: AI->Human
 ```
 
-### Stage 4: Backend Implementation (Conditional Execution, Parallel with Stage 5)
-
-#### Invoke data-architecture-orchestrator
-
-```
-Invoke: ${data-architecture-orchestrator}
-Input:
-  PRD changes: output/cross-domain/design-orchestrator/
-  API change output: output/cross-domain/api-design-orchestrator/
-Output: output/cross-domain/data-architecture-orchestrator/
-Validation: Data architecture change review passed
-Mode: AI->Human
-```
-
-#### Invoke backend-architecture-orchestrator
-
-```
-Invoke: ${backend-architecture-orchestrator}
-Input:
-  PRD changes: output/cross-domain/design-orchestrator/
-  API change output: output/cross-domain/api-design-orchestrator/
-  Data architecture change output: output/cross-domain/data-architecture-orchestrator/
-Output: output/cross-domain/backend-architecture-orchestrator/
-Validation: Backend review passed (P0=0)
-Mode: AI->Human
-```
-
-### Stage 5: UI Changes (Conditional Execution, Parallel with Stage 4)
+### Stage 5: UI Changes (Conditional Execution)
 
 #### Invoke ui-orchestrator
 
 ```
-Invoke: ${ui-orchestrator}
+Skill: ui-orchestrator
 Input:
   mode: full (product iteration scenario, requirement changes already confirmed by upstream design-orchestrator, skip exploration phase)
-  PRD changes: output/cross-domain/design-orchestrator/
-  API change output: output/cross-domain/api-design-orchestrator/
+  PRD changes: artifact-index.json -> design-orchestrator -> output/pm-design/design-prd/
+  API change output: artifact-index.json -> backend-orchestrator -> output/backend-api-design/api-design-spec/openapi.yaml
   Target language: User provided (default zh-CN)
   project_dir: User provided (existing project directory path)
-Output: output/cross-domain/ui-orchestrator/
+Output: output/ui-project-init/ + output/ui-frontend/ + output/ui-frontend-integration/
 Validation: Frontend code review passed, frontend-backend integration passed
 Mode: AI->Human
 ```
 
-### Stage: Integration Alignment (Conditional Execution)
+### Stage 4: Integration Alignment (Conditional Execution)
 
 When both API and UI need changes, the orchestrator reads backend API change and frontend UI change outputs from `artifact-index.json`, performing cross-domain alignment checks:
 
@@ -239,7 +256,7 @@ Mode: AI->Human
 #### Invoke release-orchestrator
 
 ```
-Invoke: ${release-orchestrator}
+Skill: release-orchestrator
 Input:
   Change output: output/cross-domain/
   Integration output: output/cross-domain/ui-orchestrator/
@@ -251,7 +268,7 @@ Mode: AI->Human
 #### Invoke monitoring-orchestrator
 
 ```
-Invoke: ${monitoring-orchestrator}
+Skill: monitoring-orchestrator
 Input:
   Release artifacts: output/cross-domain/release-orchestrator/
   Metrics system: output/cross-domain/metrics-orchestrator/ (optional)
@@ -271,12 +288,20 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+After all sub-Skills complete execution, a stage summary document must be generated, written to `output/phase-reports/cross-domain/product-iteration-orchestrator.md`, containing the following 6 structural items (all must be non-empty):
+
+1. **Execution Overview**: Orchestrator name and version, execution time, sub-Skill execution status (success/failure/degraded)
+2. **Key Findings**: Core output summary for each sub-Skill (1-3 items), cross-sub-Skill insights
+3. **Decision Records**: Human decision points and decision results, AI automatic decisions and rationale
+4. **Deliverable Inventory**: All output file paths and content summaries, deliverable quality assessment (whether validation passed)
+5. **Risks and Follow-ups**: Items that failed validation, items executed with degradation, recommended follow-up actions
+6. **Downstream Connections**: Which downstream orchestrators can consume this orchestrator's outputs, recommended next orchestrators
 
 | Parameter | Value |
 |------|-----|
-| Sub-skill output path | output/cross-domain/ |
+| Sub-Skill output path | output/cross-domain/ |
 | Summary output path | output/phase-reports/cross-domain/product-iteration-orchestrator.md |
+| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
 
 Downstream connections:
   primary: monitoring-orchestrator (enter continuous monitoring after iteration release)
@@ -328,4 +353,48 @@ Downstream connections:
 | API changes not synced to frontend | Integration alignment phase detects unsynced items, roll back to ui-orchestrator to supplement type definitions/request functions/Mock data |
 | UI changes lack API endpoint support | Integration alignment phase detects uncovered endpoints, roll back to backend-orchestrator to supplement API design |
 | Alignment check rolled back multiple times without passing | Pause orchestration, human arbitrates conflict direction, mark "alignment blocked" |
-| Stage summary generation failed | Generate partial summary based on completed sub-skill outputs, mark missing items as "data missing", do not block orchestration completion |
+| Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through a parent orchestrator), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests capabilities within this orchestrator's domain
+- Triggered as an independent skill by external systems
+- Parent orchestrator not executed, but user only needs this orchestrator's capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Get from user conversation | Last Resort: AI knowledge base inference |
+|---------------|---------------------------|-------------------------------------|---------------------------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user for PRD document or verbal requirements | Infer requirements from user description (low confidence, mark "PRD is AI-inferred") |
+| project_dir | — | Ask user for project directory path | Cannot infer, user must provide |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest user execute upstream orchestrators in the following priority:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|--------------|-------------------------------|-------------|
+| PRD | pm-design related orchestrator | PRD is the business basis for product-iteration-orchestrator, missing will result in execution without business foundation |
+| Sub-skill outputs | Sub-skill execution | Sub-skills (release-orchestrator, design-orchestrator, ui-orchestrator...) produce domain-specific outputs |
+
+Backtracking suggestion output format:
+```
+Critical input missing detected, suggest executing upstream orchestrator first:
+1. [Priority] pm-design related orchestrator -> Produces PRD
+Continue with AI-inferred values? (Inferred values confidence <=0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, must pass the following additional checks before executing Pipeline:
+
+| Gate Item | Check Content | Failure Handling |
+|-----------|--------------|-----------------|
+| PRD existence | prd.md or equivalent requirements document available | Block execution, suggest user provide PRD |
+| project_dir validity | User provided valid project directory path | Block execution, user must provide valid project_dir |
+| Input confidence assessment | All required input acquisition methods determined, overall confidence >=0.5 | When confidence <0.5, force human confirmation whether to continue execution |
+
+Gate execution order: PRD existence -> project_dir validity -> Input confidence assessment

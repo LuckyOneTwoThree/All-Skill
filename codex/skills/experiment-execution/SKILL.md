@@ -1,54 +1,56 @@
 ---
 name: experiment-execution
-description: "Use when executing A/B tests, analyzing results and generating complete reports. A/B test execution and report generation including statistical testing, practical significance assessment, multi-dimensional drilldown, novelty effect detection, and action recommendations. Keywords: A/B test execution, statistical testing, experiment analysis, novelty effect, experiment monitoring, experiment result analysis, A/B test report."
+description: Use when you need to execute A/B tests, analyze results, and generate complete reports. A/B test automated execution, analysis and report generation. AI automatically executes monitoring during experiment runs and analysis after experiment completion, including statistical testing, practical significance assessment, multi-dimensional drill-down, novelty effect detection, and generates a complete A/B test report including experiment overview, statistical conclusions, effect analysis, and action recommendations. Keywords: A/B test execution, statistical testing, experiment analysis, novelty effect, experiment monitoring, experiment result analysis, AB test is done help me check results, how to read experiment data, is the result significant, A/B test report, experiment report, statistical conclusion, effect analysis, experiment summary, generate an experiment report, AB test summary, experiment result presentation.
 metadata:
-  module: "Product Metrics Operations"
-  sub-module: "Experiment Verification"
+  module: "Product Metrics & Operations"
+  sub-module: "Experiment Validation"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
+  domain_tags: ["Internet", "General"]
   trigger_examples:
-    - "A/B test is done, help me analyze the results"
-    - "Experiment data looks different, is it significant"
+    - "The AB test is done, help me analyze the results"
+    - "The experiment data looks different, is it significant"
     - "Help me monitor a running experiment"
-    - "Help me produce a complete A/B test report"
-    - "Experiment is done, write a summary report"
-    - "Organize experiment results into a presentable document"
+    - "Help me produce a complete AB test report"
+    - "The experiment is done, write a summary report"
+    - "Organize the experiment results into a presentable document"
+  interaction_mode: "ai_auto"
 execution_depth:
   default: standard
-  quick_description: "Output experiment results and conclusions only"
-  deep_description: "Full execution + statistical deep dive + segment analysis + experiment learning repository"
+  quick_description: "Execute statistical significance testing and guardrail metric checks, output experiment conclusions and basic decision recommendations"
+  deep_description: "Additionally includes multi-dimensional drill-down heterogeneity analysis, novelty effect detection, interaction effect checking, complete A/B test report generation, follow-up experiment recommendations"
 ---
 
-# A/B Test Auto-Execution, Analysis and Report
+# A/B Test Automated Execution, Analysis & Reporting
 
 ## Core Principles
 
-1. **Statistically significant != practically effective**: p-value only tells you "a difference exists"; effect size tells you "how large the difference is and whether it's worth doing"
-2. **Heterogeneity is the hidden truth**: Overall positive may mask negative effects for some groups; without drilldown, you don't know the real effect
-3. **Novelty effect is an experiment trap**: Initial effects may decay over time; stability is credibility
-4. **Experiment reports are decision basis, not data dumps**: The core value of a report is transforming statistical conclusions into actionable recommendations, answering "what should we do" and "why"
+1. **Statistically significant ≠ practically effective**: The p-value only tells you "a difference exists"; the effect size tells you "how large the difference is and whether it's worth pursuing"
+2. **Heterogeneity is the hidden truth**: An overall positive effect may mask negative effects in certain segments; without drill-down, you won't know the true impact
+3. **Novelty effect is an experiment trap**: Initial effects may decay over time; stability is what makes results trustworthy
+4. **Experiment reports are the basis for decisions, not data dumps**: The core value of a report lies in translating statistical conclusions into actionable recommendations, answering "what should we do" and "why"
 
 ## Interaction Mode
 
-### Running Monitoring Mode
+### In-Run Monitoring Mode
 
 ```
 Scheduled execution (daily/every 4 hours)
 ├── Data sync check
 ├── Sample size progress
-├── Primary metric trend
-├── Guardrail metric check
+├── Primary metric trends
+├── Guardrail metric checks
 ├── Statistical significance check
 └── Anomaly detection
 ```
 
-### Post-completion Analysis + Report Mode
+### Post-Completion Analysis + Report Mode
 
 ```
-Trigger: Termination condition reached
+Trigger condition: Stop condition reached
 ├── Lock data
 ├── Statistical analysis
-├── Drilldown analysis
+├── Drill-down analysis
 ├── Generate conclusions
 ├── Generate report
 └── Output recommendations
@@ -57,24 +59,24 @@ Trigger: Termination condition reached
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
+|--------|------|------|------|------|
 | Experiment design document | object | Yes | output/pm-metrics-ops/experiment-design/experiment_design.json | Experiment plan output from experiment-design |
 | Experiment data | object | Yes | User provided | Group data, metric data, guardrail metric data |
-| Termination conditions | object | Yes | output/pm-metrics-ops/experiment-design/experiment_design.json | Sample size target, run duration, minimum detectable effect |
-| Product background | text | No | User input | Product stage, business goals, historical experiments |
+| Stop conditions | object | Yes | output/pm-metrics-ops/experiment-design/experiment_design.json | Sample size target, run duration, minimum detectable effect |
+| Product background | text | No | User input | Product stage, business objectives, historical experiments |
 
 ## Execution Steps
 
-### Step 1: Experiment Monitoring and Result Analysis [Core]
+### Step 1: Experiment Monitoring & Result Analysis (original experiment-execution) [Core]
 
-Statistical testing, practical significance assessment, multi-dimensional drilldown, novelty effect detection
+Statistical testing, practical significance assessment, multi-dimensional drill-down, novelty effect detection
 
 #### 1.1 Statistical Significance Testing
 
 ##### Test Method Selection
 
 | Metric Type | Test Method | Description |
-|------------|------------|-------------|
+|---------|---------|------|
 | Proportion (conversion rate) | Z-test / Chi-square test | Binomial distribution |
 | Mean (revenue) | T-test / Mann-Whitney | Normal/non-normal |
 | Distribution (duration) | KS test | Distribution difference |
@@ -112,7 +114,7 @@ statistical_test:
 
 #### 1.2 Practical Significance Assessment
 
-Statistically significant != practically effective
+Statistically significant ≠ practically effective
 
 ```yaml
 practical_significance:
@@ -124,11 +126,11 @@ practical_significance:
 
   assessment:
     is_practically_significant: true
-    business_verdict: "Worth full release"
-    reasoning: "8.2% lift exceeds 5% business threshold, estimated annual revenue increase of 1.2M"
+    business_verdict: "Worth full rollout"
+    reasoning: "8.2% improvement exceeds business threshold of 5%, estimated annual revenue increase of 1.2 million"
 ```
 
-#### 1.3 Multi-Dimensional Drilldown Analysis
+#### 1.3 Multi-Dimensional Drill-Down Analysis [Conditional]
 
 ##### Heterogeneous Effect Detection
 
@@ -148,7 +150,7 @@ heterogeneous_effects:
         p_value: 0.089
         significant: false
 
-      conclusion: "iOS user effect significant, Android not significant"
+      conclusion: "iOS user effect is significant, Android is not"
 
     user_segment:
       new_users:
@@ -173,12 +175,12 @@ heterogeneous_effects:
       conclusion: "More effective for organic traffic"
 
   recommendations:
-    - "Consider full release on iOS only"
-    - "Optimize Android implementation"
-    - "Target new users for promotion"
+    - "Consider full rollout on iOS only"
+    - "Optimize Android version implementation"
+    - "Targeted promotion for new users"
 ```
 
-#### 1.4 Novelty Effect Detection
+#### 1.4 Novelty Effect Detection [Deep]
 
 Detect abnormal initial user behavior:
 
@@ -196,7 +198,7 @@ novelty_check:
     assessment:
       is_novelty_effect: false
       trend_stable: true
-      conclusion: "Effect stable, no novelty effect"
+      conclusion: "Effect is stable, no novelty effect"
 
     actions:
       if_novelty: "Extend experiment period by 2 weeks"
@@ -264,7 +266,7 @@ decision_recommendation:
   heterogeneous_effects:
     summary: "iOS effect significant (+5.2%), Android not significant (+1.8%)"
     recommendations:
-      - "Consider platform-specific release strategy"
+      - "Consider platform-by-platform rollout strategy"
       - "Android version needs further optimization"
 
   novelty_check:
@@ -272,78 +274,70 @@ decision_recommendation:
     trend: "stable"
 
   recommendation:
-    action: "Full release"
+    action: "Full rollout"
     confidence: "high"
 
     reasoning:
-      - "Primary metric lift 8.2%, statistically significant"
+      - "Primary metric improved 8.2%, statistically significant"
       - "Practically significant"
       - "Guardrail metrics safe"
       - "Effect stable, no novelty effect"
 
     risks:
-      - "Android effect uncertain, needs ongoing monitoring"
+      - "Android effect uncertain, needs follow-up monitoring"
 
     next_steps:
-      - "Full release to iOS and Android"
+      - "Full rollout to iOS and Android"
       - "Monitor key metrics for 2 weeks post-release"
       - "If Android performance remains poor, consider rollback"
 ```
 
-### Step 2: A/B Test Report Generation [Core]
+### Step 2: A/B Test Report Generation (from experiment-report) [Conditional]
 
 Experiment overview, statistical conclusions, effect analysis, action recommendations
 
 #### 2.1 Experiment Overview Assembly
 
-Extract core elements from experiment design:
+Extract core elements from the experiment design plan:
 
-1. **Experiment identity**: Experiment name, ID, run period, sample size
-2. **Hypothesis statement**: Null hypothesis H_0 and alternative hypothesis H_1
-3. **Metric system**: Core metrics (OEC), guardrail metrics, secondary metrics
-4. **Traffic split**: Treatment/control group ratio, traffic percentage, layering strategy
+1. **Experiment Identity**: Experiment name, ID, run period, sample size
+2. **Hypothesis Statement**: Null hypothesis H₀ and alternative hypothesis H₁
+3. **Metric System**: Core metric (OEC), guardrail metrics, auxiliary metrics
+4. **Traffic Allocation**: Treatment/control group ratio, traffic percentage, stratification strategy
 
 #### 2.2 Statistical Conclusion Extraction
 
 Extract statistical conclusions from experiment execution results:
 
-1. **Core metric conclusion**: Effect size, confidence interval, p-value, statistical power
-2. **Guardrail metric check**: Whether each guardrail metric triggered alert threshold
-3. **Sample size verification**: Whether actual sample size meets preset MDE requirements
-4. **Statistical significance determination**: Significant/not significant/marginally significant, with determination basis
+1. **Core Metric Conclusion**: Effect size, confidence interval, p-value, statistical power
+2. **Guardrail Metric Check**: Whether each guardrail metric triggered alert thresholds
+3. **Sample Size Verification**: Whether actual sample size meets preset MDE requirements
+4. **Statistical Significance Determination**: Significant/not significant/marginally significant, with determination basis
 
-#### 2.3 In-Depth Effect Analysis
+#### 2.3 Effect Deep Analysis
 
 Multi-dimensional analysis of core effects:
 
-1. **Effect size interpretation**: Absolute lift, relative lift, business impact conversion
-2. **Heterogeneous effects**: Drilldown analysis by user segments (new/returning, platform, region, etc.)
-3. **Novelty effect assessment**: Short-term effect vs. long-term effect prediction
-4. **Interaction effects**: Potential interactions with other running experiments
+1. **Effect Size Interpretation**: Absolute lift, relative lift, business impact conversion
+2. **Heterogeneous Effects**: Drill-down analysis by user segments (new/returning, platform, region, etc.)
+3. **Novelty Effect Assessment**: Short-term effect vs. long-term effect projection
+4. **Interaction Effects**: Potential interactions with other running experiments
 
 #### 2.4 Action Recommendation Generation
 
-Generate tiered action recommendations based on statistical conclusions and effect analysis:
+Based on statistical conclusions and effect analysis, generate tiered action recommendations:
 
 | Conclusion Type | Recommendation Level | Action |
-|----------------|---------------------|--------|
-| Core metric significantly positive + guardrails safe | [GREEN] Strongly recommend full release | Full release + monitoring plan |
-| Core metric significantly positive + guardrails at risk | [YELLOW] Conditionally recommend | Phased full release + guardrail-specific optimization |
-| Core metric not significant | [BLUE] Need more information | Extend period/increase sample/adjust metrics |
-| Core metric significantly negative | [RED] Recommend termination | Terminate experiment + root cause analysis |
-| Heterogeneous effects significant | [ORANGE] Segment strategy | Segment-differentiated release |
+|----------|----------|------|
+| Core metric significantly positive + guardrails safe | 🟢 Strongly recommend full rollout | Full rollout + monitoring plan |
+| Core metric significantly positive + guardrails at risk | 🟡 Conditional recommendation | Phased rollout + guardrail-specific optimization |
+| Core metric not significant | 🔵 More information needed | Extend period/increase sample/adjust metrics |
+| Core metric significantly negative | 🔴 Recommend termination | Terminate experiment + root cause analysis |
+| Heterogeneous effects significant | 🟠 Segment strategy | Differentiated rollout by segment |
 
 #### 2.5 Report Assembly
 
 Assemble the above content into a complete report.
-
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | experiment results and conclusions only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full execution + statistical deep dive + segment analysis + experiment learning repository | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -352,7 +346,7 @@ Assemble the above content into a complete report.
 **Output Files**:
 
 | File | Path | Description |
-|------|------|-------------|
+|------|------|------|
 | Experiment result data | `output/pm-metrics-ops/experiment-execution/experiment_result.json` | Machine-consumable experiment result data |
 | A/B test report | `output/pm-metrics-ops/experiment-execution/experiment-report.md` | Human-readable complete report |
 | Structured report data | `output/pm-metrics-ops/experiment-execution/experiment-report.json` | Machine-consumable structured report data |
@@ -366,17 +360,17 @@ Assemble the above content into a complete report.
   "properties": {
     "experiment_id": {"type": "string", "description": "Experiment ID"},
     "analyzed_at": {"type": "string", "description": "Analysis time"},
-    "experiment_info": {"type": "object", "description": "Experiment info, including name, period, and sample size"},
+    "experiment_info": {"type": "object", "description": "Experiment information, including name, period and sample size"},
     "conclusion": {"type": "string", "description": "Experiment conclusion: positive/negative/neutral/inconclusive"},
     "primary_metric": {"type": "object", "description": "Primary metric results, including control/treatment data and statistical testing"},
     "guardrail_metrics": {"type": "object", "description": "Guardrail metric results, including changes and safety judgments for each metric"},
-    "heterogeneous_effects": {"type": "object", "description": "Heterogeneous effects, segmented by platform/user type"},
+    "heterogeneous_effects": {"type": "object", "description": "Heterogeneous effects, segmented analysis by platform/user type"},
     "novelty_check": {"type": "object", "description": "Novelty effect detection"},
     "experiment_name": {"type": "string", "description": "Experiment name"},
     "report_date": {"type": "string", "description": "Report date"},
-    "summary": {"type": "object", "description": "Statistical conclusion summary, including conclusion, recommendation, and primary metric results"},
+    "summary": {"type": "object", "description": "Statistical conclusion summary, including conclusion, recommendation and primary metric results"},
     "novelty_effect": {"type": "object", "description": "Novelty effect assessment"},
-    "action_recommendation": {"type": "object", "description": "Action recommendations, including decision, rationale, risks, and follow-up experiments"}
+    "action_recommendation": {"type": "object", "description": "Action recommendations, including decision, rationale, risks and follow-up experiments"}
   }
 }
 ```
@@ -456,7 +450,7 @@ ab_test_result:
     action: "full_release"
     confidence: "high"
     reasoning:
-      - "Primary metric lift 8.2%"
+      - "Primary metric improved 8.2%"
       - "Guardrail metrics safe"
       - "No novelty effect"
 ```
@@ -468,26 +462,26 @@ ab_test_result:
 
 ## 1. Experiment Overview
 - Experiment ID / Run period / Sample size
-- Hypothesis statement (H_0 / H_1)
-- Metric system (Core / Guardrail / Secondary)
-- Traffic split
+- Hypothesis statement (H₀ / H₁)
+- Metric system (Core / Guardrail / Auxiliary)
+- Traffic allocation
 
 ## 2. Statistical Conclusions
-- Primary metric: Effect size [CI] (p=xxx)
-- Guardrail metrics: [OK]/[!]/[X] item-by-item check
+- Core metric: Effect size [CI] (p=xxx)
+- Guardrail metrics: ✅/⚠️/❌ item-by-item check
 - Sample size verification: Met/Not met
-- Overall determination: Significant positive / Not significant / Significant negative
+- Overall determination: Significantly positive / Not significant / Significantly negative
 
 ## 3. Effect Analysis
 - Effect size interpretation (absolute/relative/business conversion)
-- Heterogeneous effects (segment drilldown table)
+- Heterogeneous effects (segment drill-down table)
 - Novelty effect assessment
 - Interaction effect check
 
 ## 4. Action Recommendations
 - Recommended action + rationale
-- Risk notes
-- Follow-up experiment suggestions
+- Risk alerts
+- Follow-up experiment recommendations
 
 ## 5. Appendix
 - Statistical method description
@@ -531,7 +525,7 @@ ab_test_result:
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | ab_test_result | object | Yes | Experiment result root object |
 | ab_test_result.experiment_id | string | Yes | Experiment ID |
 | ab_test_result.analyzed_at | string | Yes | Analysis time |
@@ -546,10 +540,10 @@ ab_test_result:
 | ab_test_result.guardrail_metrics | object | Yes | Guardrail metric results |
 | ab_test_result.heterogeneous_effects | object | No | Heterogeneous effects |
 | ab_test_result.novelty_check | object | Yes | Novelty effect detection |
-| ab_test_result.novelty_check.detected | boolean | Yes | Whether novelty effect detected |
+| ab_test_result.novelty_check.detected | boolean | Yes | Whether novelty effect was detected |
 | ab_test_result.decision_recommendation | object | Yes | Decision recommendation |
 | ab_test_result.decision_recommendation.action | string | Yes | Recommended action, enum: full_release/partial_release/no_release/continue_experiment |
-| ab_test_result.decision_recommendation.confidence | string | Yes | Confidence level |
+| ab_test_result.decision_recommendation.confidence | string | Yes | Confidence |
 | experiment_id | string | Yes | Experiment ID (report) |
 | experiment_name | string | Yes | Experiment name (report) |
 | report_date | string | Yes | Report date |
@@ -567,76 +561,74 @@ ab_test_result:
 | action_recommendation.decision | string | Yes | Decision |
 | action_recommendation.rationale | string | Yes | Rationale |
 | action_recommendation.risks | array | Yes | Risk list |
-| action_recommendation.next_experiments | array | No | Follow-up experiment suggestions |
+| action_recommendation.next_experiments | array | No | Follow-up experiment recommendations |
 
 ## Upstream Change Response
 
 When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
-| Experiment design change | Statistical test parameters and termination conditions | Update statistical test configuration, re-evaluate termination conditions |
-| Experiment data update | Statistical testing and drilldown analysis | Re-execute statistical testing, update heterogeneous effects |
-| Termination condition change | Experiment run monitoring | Update termination conditions, re-evaluate whether termination criteria met |
-| Product background change | Business relevance of action recommendations | Re-evaluate action recommendations, update risks and follow-up experiment suggestions |
+|----------|----------|----------|
+| Experiment design change | Statistical testing parameters and stop conditions | Update statistical testing configuration, re-evaluate stop conditions |
+| Experiment data update | Statistical testing and drill-down analysis | Re-execute statistical testing, update heterogeneous effects |
+| Stop condition change | Experiment run monitoring | Update stop conditions, re-evaluate whether stop criteria are met |
+| Product background change | Business relevance of action recommendations | Re-evaluate action recommendations, update risks and follow-up experiment recommendations |
 
-When experiment results/report itself changes, notification mechanism to downstream:
+When experiment results/reports themselves change, downstream notification mechanism:
 
 | Result/Report Change Type | Notification Scope | Notification Method |
-|--------------------------|-------------------|---------------------|
-| Conclusion change | decision-dace | Flag conclusion change, trigger DACE Analyze |
-| Guardrail metric alert triggered | decision-dace | Flag guardrail alert, trigger insight transformation |
-| Decision recommendation change | decision-dace | Flag recommendation change, trigger DACE Conclude |
-| Action recommendation change | decision-culture | Flag recommendation change, trigger report push |
+|-------------------|----------|----------|
+| Conclusion change | decision-dace | Mark conclusion change, trigger DACE Analyze |
+| Guardrail metric alert triggered | decision-dace | Mark guardrail alert, trigger insight transformation |
+| Decision recommendation change | decision-dace | Mark recommendation change, trigger DACE Conclude |
+| Action recommendation change | decision-culture | Mark recommendation change, trigger report push |
 
 ---
 
 ## Decision Rules
 
 | Condition Combination | Decision |
-|----------------------|----------|
-| Primary metric significant + meaningful, guardrails safe | Full release |
+|---------|------|
+| Primary metric significant + meaningful, guardrails safe | Full rollout |
 | Primary metric significant, guardrails problematic | Analyze guardrail causes, then decide |
 | Primary metric not significant | Continue experiment or terminate |
 | Novelty effect present | Extend experiment |
-| Heterogeneous effects significant | Segment-specific release |
+| Heterogeneity significant | Segment-by-segment rollout |
 
 ## Quality Checks
 
-### P0 Checks (must pass for quick/standard/deep)
-
-- [ ] Experiment group traffic allocation correct
-- [ ] Guardrail metrics not triggered
-
-### P1 Checks (must pass for standard/deep)
-
-- [ ] Experiment data collection complete
-- [ ] Statistical significance calculation correct
-- [ ] Statistical conclusions consistent with data
-- [ ] Action recommendations consistent with conclusions
-- [ ] Guardrail metrics fully covered
-- [ ] Heterogeneous effects analyzed (at least 3 segment dimensions)
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Experiment group traffic allocation correct (P0)
+- [ ] Guardrail metrics not triggered alerts (P0)
+- [ ] Experiment data collection complete (P0)
+- [ ] Statistical significance calculation correct (P0)
+- [ ] Statistical conclusions consistent with data (P1)
+- [ ] Action recommendations consistent with conclusions (P1)
+- [ ] Guardrail metrics fully covered (P1)
+- [ ] Heterogeneous effects analyzed (at least 3 segmentation dimensions) (P2)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|-----------------|---------------|----------|
-| Experiment configuration missing | Cannot auto-monitor, user must provide experiment result data | Cannot execute running monitoring | Request user to provide experiment configuration (traffic split, run time, metric definitions), or upload experiment-config.json |
-| Experiment data missing | User provides experiment result data -> direct analysis | Cannot perform trend analysis and novelty effect detection | Request user to provide experiment result data (sample size, metric mean, standard deviation per group) |
-| Experiment configuration + Experiment data both missing | User provides experiment result data -> direct analysis | Output analysis results based on user data, trend and novelty effect annotated as "to be supplemented" | Request user to provide treatment and control group data, or upload experiment-data.json |
-| No experiment design plan | Reverse-engineer experiment design elements from execution results, annotate as "design info missing" | Experiment overview chapter incomplete | Request user to describe experiment hypothesis and design, or upload experiment-design.json |
-| No product background | Focus on statistical conclusions themselves, action recommendations annotated as "need business context" | Action recommendations may lack business relevance | Request user to provide product stage, business goals, and historical experiments |
+| Missing Scope | Degradation Plan | Output Impact |
+|----------|----------|----------|
+| Experiment configuration missing | Cannot auto-monitor, user must provide experiment result data | Cannot execute in-run monitoring |
+| Experiment data missing | User provides experiment result data → Direct analysis | Cannot perform trend analysis and novelty effect detection |
+| Experiment configuration + experiment data both missing | User provides experiment result data → Direct analysis | Output based on user data analysis results, trends and novelty effects annotated "to be supplemented" |
+| No experiment design plan | Reverse-engineer experiment design elements from execution results, annotate "design information missing" | Experiment overview section incomplete |
+| No product background | Focus on statistical conclusions themselves, action recommendations annotated "need business context" | Action recommendations may lack business relevance |
+
+### Data Acquisition Instructions
+
+When upstream files are missing, users need to provide the following information to support degraded generation:
+- **Experiment result data**: Sample sizes, metric means, standard deviations, etc. for experiment and control groups
+- **Experiment configuration** (optional): Experiment traffic ratio, run duration, metric definitions
+- **Statistical significance requirements** (optional): Desired confidence level and statistical power
+- **Product background** (optional): Product stage, business objectives and historical experiments
 
 ### Execution Frequency
 
-- **Running monitoring**: Every 4 hours or daily
-- **Result analysis**: Triggered when termination condition reached
-- **Report generation**: Automatically triggered after result analysis completes
+- **In-run monitoring**: Every 4 hours or daily
+- **Result analysis**: Triggered when stop condition is reached
+- **Report generation**: Automatically triggered after result analysis is complete
 - **Auto-alert**: P0 issues triggered immediately

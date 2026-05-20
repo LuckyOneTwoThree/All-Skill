@@ -1,50 +1,52 @@
 ---
 name: validation-experiment
-description: "Use when designing validation experiment plans. Automatically designs validation experiments based on assumption maps and MVP scope, intelligently selecting validation methods and designing experiment plans including A/B test and usability test parameter design. Keywords: experiment design, A/B testing, sample size, validation methods, validation plan, test design."
+description: Used when designing validation experiment plans. Validation experiment auto-design tool, intelligently selecting validation methods and designing experiment plans based on assumption maps and MVP scope, including parameter design for A/B tests and usability tests. Keywords: experiment design, A/B test, sample size, validation method, validation plan, test design.
 metadata:
   module: "Product Ideation & Design"
   sub-module: "Solution Validation"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "How to validate this assumption"
     - "Help me design an A/B test"
     - "How to create an experiment plan"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output experiment plan and validation metrics"
-  deep_description: "Full plan + experiment design optimization + statistical power analysis + result interpretation framework"
+  quick_description: "Directly output experiment plan and validation metrics"
+  deep_description: "Complete plan + experiment design optimization + statistical power analysis + result interpretation framework"
 ---
 
 # Validation Experiment Auto-Design
 
 ## Core Principles
 
-1. **Experiments are the courtroom for assumptions** -- Every experiment must correspond to an assumption; experiments without assumptions are waste
-2. **Minimum cost for maximum confidence** -- Experiment design pursues cost minimization, not perfect data
-3. **Statistical significance is the baseline** -- Sample size and confidence level must be pre-set; post-hoc adjustment is cheating
-4. **Failed experiments are as valuable as successful ones** -- Falsifying an assumption is equivalent to confirming one; the key is what was learned
+1. **Experiments are the court for assumptions** — every experiment must correspond to an assumption; experiments without assumptions are waste
+2. **Minimum cost for maximum confidence** — experiment design pursues cost minimization, not perfect data
+3. **Statistical significance is the baseline** — sample size and confidence level must be preset; post-hoc adjustment is cheating
+4. **Failed experiments are as valuable as successful ones** — falsifying an assumption is equivalent to confirming one; the key is what was learned
 
 ### Basic Information
 
 | Attribute | Value |
-|-----------|-------|
+|------|-----|
 | Pipeline ID | 14 |
 | Name | Validation Experiment Auto-Design |
-| Execution Mode | AI->Human AI suggests, human approves |
+| Execution Mode | 🤖→👤 AI suggests, human approves |
 | Input | Assumption map + MVP scope + Available traffic/user data |
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Assumption Map | JSON | Yes | output/pm-design/validation-assumption-map/assumption_map.json | Assumption map from Pipeline 12 |
-| MVP Scope | JSON | Yes | output/pm-design/validation-mvp/mvp_definition.json | MVP scope from Pipeline 13 |
-| Available Traffic/User Data | JSON | O | User provided | Current user count, DAU, new users, etc. |
+|--------|------|------|------|------|
+| Assumption Map | JSON | Yes | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 12 output assumption map |
+| MVP Scope | JSON | Yes | output/pm-design/validation-mvp/mvp_definition.json | Pipeline 13 output MVP scope |
+| Available Traffic/User Data | JSON | ○ | User provided | Current user count, DAU, new users, etc. |
 
 ### Input Format
 ```json
@@ -62,40 +64,40 @@ AI->Human AI suggests, human approves
 
 ## Execution Steps
 
-### Step 1: Validation Method Selection [Conditional]
+### Step 1: Validation Method Selection [Core]
 
 **Decision Tree**:
 
 ```
 Start
-  v
+  ↓
 Is traffic sufficient for A/B testing?
-  v
-Yes -> Consider A/B testing
-No -> Consider usability testing
-  v
+  ↓
+Yes → Consider A/B testing
+No → Consider usability testing
+  ↓
 Cost consideration
-  v
+  ↓
 Wizard MVP / Prototype test / Landing page test
 ```
 
 **Validation Method Comparison**:
 
 | Method | Applicable Scenario | Cost | Reliability |
-|--------|-------------------|------|------------|
-| A/B testing | Sufficient traffic, needs quantitative validation | High | [STAR][STAR][STAR][STAR][STAR] |
-| Usability testing | Insufficient traffic, needs qualitative insights | Medium | [STAR][STAR][STAR][STAR] |
-| Landing page test | Value assumption validation | Low | [STAR][STAR][STAR] |
-| Wizard MVP | Feasibility validation | High | [STAR][STAR][STAR][STAR] |
-| Prototype test | Usability assumption validation | Low | [STAR][STAR][STAR][STAR] |
+|------|----------|------|--------|
+| A/B Test | Sufficient traffic, need quantitative validation | High | ⭐⭐⭐⭐⭐ |
+| Usability Test | Insufficient traffic, need qualitative insights | Medium | ⭐⭐⭐⭐ |
+| Landing Page Test | Value assumption validation | Low | ⭐⭐⭐ |
+| Wizard MVP | Feasibility validation | High | ⭐⭐⭐⭐ |
+| Prototype Test | Usability assumption validation | Low | ⭐⭐⭐⭐ |
 
 **Selection Rules**:
 
 | Condition | Recommended Method |
-|-----------|-------------------|
-| DAU > 5000, and assumption is quantifiable | A/B testing |
-| DAU < 5000 | Usability testing |
-| Need to quickly validate value assumption | Landing page test |
+|------|----------|
+| DAU > 5000, and assumption is quantifiable | A/B Test |
+| DAU < 5000 | Usability Test |
+| Need to quickly validate value assumption | Landing Page Test |
 | Need to validate technical feasibility | Wizard MVP |
 
 ### Step 2: Experiment Plan Design [Core]
@@ -126,7 +128,7 @@ Wizard MVP / Prototype test / Landing page test
 **Parameter Calculation Notes**:
 
 | Parameter | Description | Calculation Basis |
-|-----------|-------------|-------------------|
+|------|------|----------|
 | sample_size | Required sample size | Based on MDE, significance level, statistical power |
 | duration_days | Experiment duration | sample_size / daily average traffic |
 | split_ratio | Traffic split ratio | Commonly 50/50, adjustable |
@@ -166,11 +168,11 @@ Wizard MVP / Prototype test / Landing page test
 {
   "outcome_scenarios": {
     "optimistic": {
-      "condition": "Metric improvement >= MDE",
-      "action": "Proceed to development, continue monitoring"
+      "condition": "Metric improvement ≥ MDE",
+      "action": "Proceed with development, continue monitoring"
     },
     "neutral": {
-      "condition": "Metric improvement but not significant",
+      "condition": "Metric improvement exists but not significant",
       "action": "Extend experiment or adjust plan"
     },
     "pessimistic": {
@@ -181,18 +183,18 @@ Wizard MVP / Prototype test / Landing page test
 }
 ```
 
-### Output Depth Grading
+### Output Depth Levels
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | experiment plan and validation metrics | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full plan + experiment design optimization + statistical power analysis + result interpretation framework | Full deliverables + extended analysis + deep simulation |
+| quick | Experiment plan and validation metrics | Core conclusions + minimum viable output |
+| standard | Full output (current default) | Complete output, including all Step outputs |
+| deep | Complete plan + experiment design optimization + statistical power analysis + result interpretation framework | Complete output + extended analysis + deep inference |
 
 ## Output
 
 
-**Output Validation Rules**: See section below
+**Output Validation Rules**: See the section below
 **Storage Path**: `output/pm-design/validation-experiment/`
 **Output File**: experiment_plan.json
 
@@ -218,53 +220,53 @@ Wizard MVP / Prototype test / Landing page test
     "outcome_scenarios": {...}
   },
   "approval_status": "pending",
-  "ai_recommendation": "AI recommendation explanation"
+  "ai_recommendation": "AI recommendation description"
 }
 ```
 
-**Output Validation Rules**: See Output Validation Rules section below
+**Output Validation Rules**: See the Output Validation Rules section below
 
 ## Decision Rules
 
 | Rule | Condition | Action |
-|------|-----------|--------|
-| Human review | All experiment plans | Must be reviewed by human |
-| Insufficient sample size | sample_size > available traffic | Lower MDE or switch to usability testing |
+|------|------|------|
+| Human review | All experiment plans | Must have human review |
+| Insufficient sample size | sample_size > available traffic | Lower MDE or switch to usability test |
 | Duration too long | duration_days > 30 | Consider increasing traffic or lowering MDE |
 
-## Quality Checks
+## Quality Check
 
-### P0 Checks (must pass for quick/standard/deep)
+### P0 Check (must pass for quick/standard/deep)
 
-- [ ] Method selection justified (Decision tree result explained)
-- [ ] Experiment design complete (Contains all necessary parameters)
+- [ ] Method selection has basis (decision tree result has explanation)
+- [ ] Experiment design is complete (includes all necessary parameters)
 
-### P1 Checks (must pass for standard/deep)
+### P1 Check (must pass for standard/deep)
 
-- [ ] Success criteria clear (Has quantifiable metrics)
-- [ ] Scenario prediction complete (All three scenarios present)
-- [ ] Stopping criteria clear (Includes significance/power requirements)
+- [ ] Success criteria are clear (has quantifiable metrics)
+- [ ] Scenario prediction is complete (all three scenarios present)
+- [ ] Stopping criteria are clear (includes significance/power requirements)
 
-### P2 Checks (must pass for deep only)
+### P2 Check (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Extended analysis complete (deep inference and roadmap generated)
+- [ ] Decision records complete (key decisions have basis and alternatives)
 
 ---
 
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| Assumption map missing | User describes key assumptions, design experiment | Lacks structured assumption data, experiment may not align with assumptions | Request user to describe key assumptions to validate, or upload assumption-map.json |
-| Solution design data missing | User describes solution, design experiment | Lacks solution data, experiment design may be less precise | Request user to describe solution features and expected outcomes, or upload solution-design.json |
-| Both assumption map and solution design missing | User describes assumptions and solution, design experiment | Overall confidence reduced, experiment design may be less complete | Request user to describe assumptions and solution, or execute validation-assumption-map and ideation-workshop first |
-| All upstream files missing | Prompt user to execute prior stages first, or design experiment based on user description | Output is only basic experiment framework | Request user to describe hypothesis and expected effect, or execute validation-assumption-map first |
+|---------------|---------|----------|------------|
+| Assumption map missing | User provides assumption description, design experiment | Lacks structured assumption data, experiment design may be less precise | Ask user to provide assumption description and priority or upload assumption-map file |
+| MVP plan missing | User provides solution description, design experiment | Lacks MVP plan data, experiment variables may be less focused | Ask user to provide MVP solution description or upload validation-mvp output file |
+| Both assumption map and MVP plan missing | User provides assumption and solution description, design experiment | Overall confidence reduced, experiment design may be incomplete | Ask user to provide assumption description and solution overview |
+| All upstream files missing | Prompt user to execute prior stages first, or design experiment based on user description | Output is only a basic experiment framework | Ask user to provide core assumptions, solution description, and available resources |
 
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | experiments | array | Yes | Experiment list |
 | experiments[].id | string | Yes | Experiment unique identifier |
 | experiments[].assumption_id | string | Yes | Associated assumption ID |
@@ -280,7 +282,7 @@ Wizard MVP / Prototype test / Landing page test
 | experiments[].duration | string | Yes | Experiment duration |
 | experiments[].confidence_level | number | Yes | Confidence level |
 | experiments[].cost_estimate | object | Yes | Cost estimate |
-| experiments[].result | object | No | Experiment results (filled after experiment completion) |
+| experiments[].result | object | No | Experiment result (filled after experiment completion) |
 | experiments[].result.conclusion | string | No | Experiment conclusion |
 | experiments[].result.learnings | array | No | Key learnings |
 
@@ -289,7 +291,7 @@ Wizard MVP / Prototype test / Landing page test
 ### Upstream Change Impact
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | Assumption map change (assumption addition/removal/score change) | Experiment hypothesis, experiment priority | Mark affected experiments, suggest human confirmation on whether to redesign |
 | Solution design change | Experiment design details | Mark affected experiment design, suggest human confirmation on whether to adjust |
 | Resource constraint change | Experiment cost estimate, sample size | Mark affected cost and sample size, suggest human confirmation on whether to adjust |
@@ -297,9 +299,9 @@ Wizard MVP / Prototype test / Landing page test
 ### Downstream Notification Mechanism
 
 | Experiment Design Change Type | Notification Scope | Notification Method |
-|------------------------------|-------------------|---------------------|
-| Experiment addition/removal | validation-mvp | Mark experiment changes, trigger MVP scope adjustment |
-| Experiment priority change | validation-mvp | Mark priority changes, trigger MVP validation plan update |
+|-----------------|----------|----------|
+| Experiment addition/removal | validation-mvp | Mark experiment change, trigger MVP scope adjustment |
+| Experiment priority change | validation-mvp | Mark priority change, trigger MVP validation plan update |
 | Experiment result update | validation-mvp | Mark result update, trigger MVP assumption validation status update |
 
 ---
@@ -321,9 +323,9 @@ Wizard MVP / Prototype test / Landing page test
 
 **AI Analysis**:
 ```
-Traffic assessment: DAU 10000 > 5000, A/B testing feasible
+Traffic assessment: DAU 10000 > 5000, A/B testing is feasible
 Assumption type: Value assumption + Usability assumption
-Recommended method: A/B testing
+Recommended method: A/B Test
 
 Experiment design:
 - Split: 50/50

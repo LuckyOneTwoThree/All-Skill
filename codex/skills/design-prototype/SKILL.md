@@ -5,11 +5,13 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototyping"
   type: "pipeline"
-  version: "1.0"
+  version: "3.2"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "Help me generate a prototype"
     - "Quickly create a design mockup"
     - "How to make a low-fidelity prototype"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output prototype proposal and interaction notes"
@@ -38,7 +40,7 @@ AI->Human AI suggests, human approves
 | IA Proposal | JSON | Yes | output/pm-design/design-ia/ia_proposals.json | Information architecture proposal from Pipeline 9 |
 | User Flow | JSON | Yes | output/pm-design/design-userflow/userflow.json | User flow from Pipeline 10 |
 | PRD Document | Markdown | O | output/pm-design/design-prd/prd.md | Product requirements reference |
-| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing pages[]/features[] for prototype design alignment |
+| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing pages[]/features[], for prototype design alignment |
 
 ## Execution Steps
 
@@ -265,12 +267,12 @@ component_catalog.json is the machine-consumable component catalog from prototyp
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| IA proposal missing | User provides feature description, generate low-fidelity prototype | Lacks IA data, page structure may be less reasonable | Request user to describe page structure and navigation, or upload ia.json |
-| UserFlow missing | User provides feature description, generate low-fidelity prototype | Lacks UserFlow data, interaction flow may be less complete | Request user to describe user tasks and flow, or upload userflow.json |
-| PRD missing | Derive functional areas based on IA and UserFlow | Functional areas may be less complete | Request user to provide feature list and requirements, or upload prd.json |
+|------------------------|-----------------|---------------|-------------------------------|
+| IA proposal missing | User provides feature description, generate low-fidelity prototype | Lacks IA data, page structure may be less reasonable | Request user to describe page structure and navigation, or upload design-ia output file |
+| UserFlow missing | User provides feature description, generate low-fidelity prototype | Lacks UserFlow data, interaction flow may be less complete | Request user to describe user tasks and flow, or upload design-userflow output file |
+| PRD missing | Derive functional areas based on IA and UserFlow | Functional areas may be less complete | Request user to provide feature list and requirements, or upload prd.json file |
 | Both IA and UserFlow missing | Generate low-fidelity prototype based on user feature description | Overall confidence reduced, only low-fidelity output | Request user to describe features and page layout, or execute design-ia and design-userflow first |
-| All upstream files missing | Prompt user to execute prior stages first, or generate low-fidelity prototype based on user feature description | Output is only low-fidelity prototype description | Request user to describe features and expected pages, or execute design-prd, design-ia, and design-userflow first |
+| All upstream files missing | Prompt user to execute prior stages first, or generate low-fidelity prototype based on user feature description | Output is only low-fidelity prototype description | Request user to describe core features and page layout requirements |
 
 ## Output Validation Rules
 

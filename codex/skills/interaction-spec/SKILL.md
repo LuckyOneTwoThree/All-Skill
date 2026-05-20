@@ -5,11 +5,13 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototyping"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
+  domain_tags: ["Internet", "Software", "General"]
   trigger_examples:
     - "How to write interaction specifications"
     - "Help me write an interaction design document"
     - "How to define animations and gestures"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output interaction specifications and state design"
@@ -40,11 +42,11 @@ AI->Human AI suggests, human approves
 ### Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| User flow missing | Derive interaction flow from prototype | Flow pending confirmation, interaction state machine may be less complete | Request user to describe user tasks and flow, or upload userflow.json |
-| Prototype specification missing | Generate interaction spec framework based on user flow | Pending prototype validation, component interaction specs may be less precise | Request user to describe page layouts and components, or upload prototype.json |
-| Design handoff document missing | Interaction spec uses independent numbering | Subsequent alignment with handoff document needed, token references may be inconsistent | Request user to provide design tokens or upload handoff-spec.json |
-| Brand guidelines missing | Adopt neutral interaction style | Pending brand confirmation, animation style may need adjustment | Request user to provide brand guidelines (animation style, easing functions) or upload brand-guidelines.json |
+|------------------------|-----------------|---------------|-------------------------------|
+| User flow missing | Derive interaction flow from prototype | Flow pending confirmation, interaction state machine may be less complete | Request user to describe user tasks and flow, or upload design-userflow output file |
+| Prototype specification missing | Generate interaction spec framework based on user flow | Pending prototype validation, component interaction specs may be less precise | Request user to describe page layouts and components, or upload design-prototype output file |
+| Design handoff document missing | Interaction spec uses independent numbering | Subsequent alignment with handoff document needed, token references may be inconsistent | Request user to provide design tokens and component specs, or upload design-handoff-spec output file |
+| Brand guidelines missing | Adopt neutral interaction style | Pending brand confirmation, animation style may need adjustment | Request user to provide brand tone and animation style preferences |
 
 ## Execution Steps
 

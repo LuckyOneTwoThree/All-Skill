@@ -8,18 +8,44 @@ You are an orchestrator. Your responsibility is to **dispatch sub-Skills for exe
 
 ### Invocation Rules
 
-1. **Explicit Invocation**: Use the `Invoke` mechanism to call sub-Skills, pass input data, and receive output results
-2. **No Proxy Execution**: Do not read a sub-Skill's SKILL.md to substitute for execution; do not infer a sub-Skill's internal logic on your own
-3. **Contract-Driven**: Focus only on sub-Skill input contracts, output contracts, and validation conditions; do not concern yourself with internal implementation
-4. **State Passing**: Pass the current stage's output as the next stage's input, transmitting data via file paths
-5. **Validate Before Advancing**: Only advance to the next stage after the current stage's output has passed validation
+1. **Dual-Mode Invocation**: When the platform supports the Skill tool, explicitly invoke sub-Skills; when the platform does not support it, execute compatible dispatching based on sub-Skill's `name`, input contract, output contract, and stage gates.
+2. **No Proxy Expansion**: During compatible dispatching, do not copy sub-Skill internal methodology into orchestrator context, nor rewrite sub-Skill logic; only pass necessary input, output paths, and validation conditions.
+3. **Contract-Driven**: Focus only on sub-Skill input contracts, output contracts, and validation conditions; do not concern yourself with internal implementation details.
+4. **State Passing**: Pass the current stage's output as the next stage's input, transmitting data via file paths and artifact index.
+5. **Validate Before Advancing**: Only advance to the next stage after the current stage's output has passed validation.
 6. **Stage Summary (Mandatory)**: After all Pipeline stages have completed execution, you **must immediately** execute the stage summary action defined in `post_pipeline` to generate a summary document. This is not optional; if the stage summary is not generated, the orchestrator execution is considered incomplete.
+7. **Cross-Sub-Skill Validation**: When consistency constraints exist between outputs of multiple sub-Skills, the orchestrator may perform cross-validation between stages (reading multiple outputs to compare consistency). This is the orchestrator's coordination responsibility, not proxy-executing sub-Skill logic. Cross-validation rules are explicitly defined in the orchestrator SKILL.md.
 
 ### Context Management
 
 - After each sub-Skill invocation completes, retain only **output file paths** and **key conclusion summaries**
 - Write detailed output to the `output/{domain-path}/{skill-name}/` directory
 - If context approaches the limit, prioritize retaining current stage content and the names of sub-Skills in pending stages
+- Cross-domain orchestrators do not transport sub-Skill full text; only maintain artifact references in `artifact-index.json`, reading directly downstream files on demand.
+
+### Artifact Path and Index
+
+- Sub-Skills always write to their domain-native output paths, e.g., `output/pm-design/`, `output/ui-frontend/`, `output/backend-api-design/`.
+- Cross-domain orchestrators only generate summary artifacts: `output/cross-domain/artifact-index.json` and `output/phase-reports/cross-domain/{orchestrator-name}.md`.
+- `artifact-index.json` records stage, skill, real output path, summary, and validation status, serving as the sole index for cross-domain transfer; sub-Skills must not be required to write to `output/cross-domain/{skill-name}/`.
+
+### Human Approval Records
+
+Key human decision points should output lightweight approval records at `output/approvals/{orchestrator-name}/{stage-id}.approval.json`:
+
+```json
+{
+  "approval_id": "string",
+  "stage": "string",
+  "decision_required": "string",
+  "recommended_option": "approve",
+  "options": ["approve", "revise", "reject"],
+  "risks": [],
+  "status": "pending | approved | rejected",
+  "decided_by": "human",
+  "decided_at": "ISO8601"
+}
+```
 
 ### Stage Summary
 
@@ -75,6 +101,7 @@ Follows the [orchestrator-protocol.md](relative-path) stage summary protocol.
 |-----------|-------|
 | Sub-Skill output path | output/{domain-path}/ |
 | Summary output path | output/phase-reports/{module}/{orchestrator-name}.md |
+| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
 
 Downstream Handoff:
   primary: {target-orchestrator} ({reason})

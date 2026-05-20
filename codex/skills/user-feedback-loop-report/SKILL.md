@@ -1,363 +1,278 @@
 ---
 name: user-feedback-loop-report
-description: "Use when generating user feedback loop reports. User feedback loop report generation, collecting multi-channel feedback, categorizing and prioritizing, tracking closure rate and improvement effectiveness. Keywords: user feedback, feedback loop, feedback analysis, closure rate, improvement tracking, user voice, feedback report, user complaints, user suggestions."
+description: Use when consolidating user feedback processing into a complete deliverable loop report. User feedback loop report auto-generation, including feedback source analysis, processing progress tracking, closure rate statistics, unresolved issues, and improvement suggestions. Keywords: user feedback loop, feedback report, feedback tracking, closure rate, VOC closure, feedback processing, feedback processed yet, user opinions.
 metadata:
   module: "Product Monitoring & Iteration"
-  sub-module: "User Feedback"
+  sub-module: "Monitoring & Alerting"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
-    - "Help me analyze user feedback"
-    - "Generate user feedback report"
-    - "What are users complaining about recently"
-    - "Feedback closure rate how"
+    - "How is user feedback processing going"
+    - "Help me generate a feedback loop report"
+    - "How is the feedback closure rate"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output closure rate and P0 unresolved list"
+  quick_description: "Output closure rate and P0 unresolved list directly"
   deep_description: "Full report + feedback trend prediction + root cause deep analysis + improvement roadmap"
 ---
 
-# User Feedback Loop Report Generation AI->Human
+# User Feedback Loop Report Generation
 
 ## Core Principles
 
-1. **Feedback is a gift, not a burden**: Every piece of feedback is a user's expectation for the product; ignoring feedback = ignoring users
-2. **Closure rate is the core metric**: The value of feedback lies in resolution, not collection; unresolved feedback is debt
-3. **Categorization precedes prioritization**: Without categorization there's no focus; without focus there's no action
+**Every piece of user feedback deserves a response**
+
+The core value of the user feedback loop report lies in ensuring every piece of user feedback has a beginning and an end. Closure is not a formal "read" status, but a substantive "processed" or "decided" status. Unclosed feedback is a loss of user trust.
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI Suggests, Human Approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Voice Analysis | JSON | No | user-research-voice-analysis -> Voice analysis | User voice analysis results |
-| Anomaly Monitoring | JSON | No | monitoring-pipeline -> Anomaly data | Anomaly-related user feedback |
-| Feedback Data | JSON | Yes | User provided | Raw user feedback data |
+|--------|------|------|------|------|
+| User Voice Analysis | markdown | No | user-research-voice-analysis | Sentiment analysis, topic extraction, pain point list |
+| Anomaly Monitoring Data | markdown | No | monitoring-pipeline | Anomaly events, user impact scope |
+| Feedback Data | text | Yes | User input | Raw user feedback data from various channels |
+| Processing Records | text | No | User input | Records and results of processed feedback |
+
+### Degradation Strategy
+
+| Missing Input | Degradation Plan |
+|----------|----------|
+| No user voice analysis | Categorize and analyze based on raw feedback data independently, mark "Pending VOC deep analysis" |
+| No anomaly monitoring data | Skip anomaly correlation analysis, mark "Pending monitoring data supplementation" |
+| No processing records | Only count feedback sources and categories, closure rate marked "Pending processing record supplementation" |
+| No feedback data | If user does not provide feedback data, prompt user to provide or skip related input steps |
 
 ## Execution Steps
 
-### Step 1: Feedback Collection & Aggregation [Core]
+### Step 1: Feedback Source Analysis [Core]
 
-**Goal**: Collect and aggregate multi-channel user feedback
+Analyze and compile the distribution of feedback sources:
 
-**Feedback Channels**:
+1. **Channel Distribution**: In-app feedback / Customer service tickets / Social media / App stores / Community / Email
+2. **Sentiment Distribution**: Positive / Neutral / Negative and their proportions
+3. **Topic Distribution**: Feedback distribution categorized by functional module
+4. **Time Trend**: Time-based trend of feedback volume
 
-| Channel | Data Source | Collection Method |
-|---------|-------------|-------------------|
-| In-app Feedback | Feedback system | API |
-| App Store Reviews | App Store/Google Play | Crawler/API |
-| Social Media | Weibo/WeChat/Xiaohongshu | Crawler/API |
-| Customer Service | Customer service system | API/Export |
-| User Research | Research reports | File import |
-| Community | User community | API/Crawler |
+### Step 2: Processing Progress Tracking [Conditional]
 
-**Aggregation Output**:
+Track the processing status of each feedback item:
 
-```yaml
-feedback_aggregation:
-  period: {start} to {end}
-  total_feedback: {count}
-  by_channel:
-    in_app: {count}
-    app_store: {count}
-    social_media: {count}
-    customer_service: {count}
-    user_research: {count}
-    community: {count}
-  by_sentiment:
-    positive: {count}
-    neutral: {count}
-    negative: {count}
-```
+1. **Status Classification**:
+   - 🆕 New (unprocessed)
+   - 👀 Evaluating (confirming validity)
+   - 📋 Scheduled (included in iteration plan)
+   - 🔨 In Progress (development/fix in progress)
+   - ✅ Closed (issue resolved and verified)
+   - ❌ Dismissed (not processing, with reason)
+2. **Processing Timeliness**: Average dwell time per status
+3. **Bottleneck Identification**: Blockages in the processing workflow
 
-### Step 2: Feedback Categorization [Core]
+### Step 3: Closure Rate Statistics [Core]
 
-**Goal**: Categorize feedback by type and priority
+Calculate and track feedback closure rates:
 
-**Categorization System**:
+1. **Overall Closure Rate**: Closed + Dismissed / Total feedback
+2. **Closure Rate by Channel**: Closure rate comparison across channels
+3. **Closure Rate by Severity**: Closure rates for P0/P1/P2/P3
+4. **Closure Timeliness**: Average time from feedback to closure
+5. **Trend Comparison**: Closure rate comparison with previous period
 
-| Category | Subcategory | Example |
-|----------|-------------|---------|
-| Feature Request | New Feature | "Hope to add dark mode" |
-| Feature Request | Enhancement | "Search should support fuzzy matching" |
-| Bug Report | Functional | "Can't log in" |
-| Bug Report | Performance | "Page loads too slowly" |
-| Experience Issue | Interaction | "Button too hard to tap" |
-| Experience Issue | Visual | "Text too small" |
-| Content Issue | Accuracy | "Information is wrong" |
-| Content Issue | Completeness | "Missing key information" |
-| Service Issue | Response Speed | "Customer service too slow" |
-| Service Issue | Attitude | "Customer service unfriendly" |
-| Pricing Issue | Too Expensive | "Price too high" |
-| Pricing Issue | Payment | "Payment failed" |
+### Step 4: Unresolved Issue Analysis [Conditional]
 
-**Priority Assessment**:
+Analyze feedback that has not yet been closed:
 
-| Priority | Criteria | Handling |
-|----------|----------|----------|
-| P0 | Affects core functionality, large user impact | Immediate handling |
-| P1 | Affects experience, moderate user impact | Handle this week |
-| P2 | Optimization suggestion, small user impact | Plan handling |
-| P3 | Long-tail demand, minimal impact | Backlog |
+1. **P0/P1 Unresolved List**: High-priority unresolved issues
+2. **Long-standing Unresolved**: Feedback not closed for over 30 days
+3. **Repeated Feedback**: Similar issues reported multiple times
+4. **Root Cause Analysis**: Primary reasons categorized for unclosed feedback
 
-**Categorization Output**:
+### Step 5: Improvement Suggestions [Deep]
 
-```yaml
-feedback_categorization:
-  - category: feature_request
-    subcategory: new_feature
-    count: {count}
-    priority_distribution:
-      P0: {count}
-      P1: {count}
-      P2: {count}
-      P3: {count}
-    top_items:
-      - description: "Hope to add dark mode"
-        frequency: 45
-        priority: P1
-        source_channels: [in_app, social_media]
-  - category: bug_report
-    subcategory: functional
-    count: {count}
-    priority_distribution:
-      P0: {count}
-      P1: {count}
-      P2: {count}
-      P3: {count}
-    top_items:
-      - description: "Can't log in"
-        frequency: 120
-        priority: P0
-        source_channels: [customer_service, app_store]
-```
+Propose improvement suggestions based on closure analysis:
 
-### Step 3: Closure Rate Tracking [Conditional]
+1. **Process Improvement**: Workflow optimization to reduce processing time
+2. **Product Improvement**: Product optimization directions corresponding to high-frequency feedback
+3. **Communication Improvement**: Communication strategies for responding to user feedback
+4. **Preventive Measures**: Prevention plans to reduce similar feedback
 
-**Goal**: Track feedback closure rate and resolution effectiveness
+### Step 6: Report Assembly [Core]
 
-**Closure Rate Metrics**:
-
-| Metric | Definition | Target |
-|--------|------------|--------|
-| Overall Closure Rate | Resolved feedback / Total feedback | >= 80% |
-| P0 Closure Rate | Resolved P0 / Total P0 | 100% |
-| P1 Closure Rate | Resolved P1 / Total P1 | >= 90% |
-| Average Resolution Time | Average time from submission to resolution | P0: <4h, P1: <24h |
-| User Satisfaction Rate | User satisfied with resolution / Total resolved | >= 70% |
-
-**Tracking Output**:
-
-```yaml
-closure_tracking:
-  overall_closure_rate: {percentage}
-  by_priority:
-    P0:
-      total: {count}
-      resolved: {count}
-      closure_rate: {percentage}
-      avg_resolution_time: {hours}
-    P1:
-      total: {count}
-      resolved: {count}
-      closure_rate: {percentage}
-      avg_resolution_time: {hours}
-    P2:
-      total: {count}
-      resolved: {count}
-      closure_rate: {percentage}
-    P3:
-      total: {count}
-      resolved: {count}
-      closure_rate: {percentage}
-  unresolved_p0:
-    - id: {id}
-      description: {description}
-      submitted_at: {date}
-      days_open: {days}
-      assigned_to: {team}
-  user_satisfaction_rate: {percentage}
-```
-
-### Step 4: Improvement Effectiveness Assessment [Deep]
-
-**Goal**: Assess improvement effectiveness from feedback-driven changes
-
-**Assessment Dimensions**:
-
-| Dimension | Metric | Assessment Method |
-|-----------|--------|-------------------|
-| Feedback Volume Change | Related feedback before/after improvement | Volume reduction |
-| Sentiment Change | Related feedback sentiment before/after | Sentiment improvement |
-| Business Metric Change | Related business metric before/after | Metric improvement |
-| User Satisfaction Change | User satisfaction score before/after | Score improvement |
-
-**Assessment Output**:
-
-```yaml
-improvement_effectiveness:
-  - improvement_id: IMP-001
-    description: "Optimized payment flow"
-    related_feedback:
-      total_before: 85
-      total_after: 12
-      reduction_rate: 86%
-    sentiment_change:
-      negative_before: 72%
-      negative_after: 15%
-    business_impact:
-      conversion_rate_before: 3.2%
-      conversion_rate_after: 4.1%
-      improvement: +28%
-    user_satisfaction:
-      before: 3.2
-      after: 4.5
-```
-
-### Step 5: Report Generation [Core]
-
-**Goal**: Generate complete user feedback loop report
-
-**Report Structure**:
-
-```yaml
-feedback_loop_report:
-  report_id: {uuid}
-  generated_at: {ISO8601}
-  period: {start} to {end}
-  executive_summary:
-    total_feedback: {count}
-    closure_rate: {percentage}
-    top_issues: [{issue}]
-    key_improvements: [{improvement}]
-  aggregation: {...}
-  categorization: {...}
-  closure_tracking: {...}
-  improvement_effectiveness: {...}
-  action_items:
-    - action: {description}
-      priority: P0/P1/P2
-      owner: {team}
-      deadline: {date}
-```
+Assemble the above content into a complete loop report.
 
 ### Output Depth Grading
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | closure rate and P0 unresolved list | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
+| quick | Closure rate and P0 unresolved list | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (current default) | Complete deliverables including all Step outputs |
 | deep | Full report + feedback trend prediction + root cause deep analysis + improvement roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
+### Output Files
 
-**Output file path**: `output/pm-monitoring/user-feedback-loop-report/`
+| File | Path | Description |
+|------|------|------|
+| Feedback Loop Report | `output/pm-monitoring/user-feedback-loop-report/feedback-loop-report.md` | Human-readable complete report |
+| Structured Data | `output/pm-monitoring/user-feedback-loop-report/feedback-loop-report.json` | Machine-consumable structured data |
+
 **Output Schema**:
 
 ```json
 {
   "type": "object",
-  "required": ["report_id", "period", "aggregation", "categorization", "closure_tracking"],
+  "required": ["report_period", "summary", "closure_metrics"],
   "properties": {
-    "report_id": {"type": "string", "description": "Report unique identifier"},
-    "generated_at": {"type": "string", "description": "Generation time"},
-    "period": {"type": "object", "description": "Report period, including start and end times"},
-    "executive_summary": {"type": "object", "description": "Executive summary, including total feedback and closure rate"},
-    "aggregation": {"type": "object", "description": "Feedback aggregation data, including channel and sentiment distribution"},
-    "categorization": {"type": "array", "description": "Feedback categorization list, including category and priority distribution"},
-    "closure_tracking": {"type": "object", "description": "Closure rate tracking, including overall and by-priority closure rates"},
-    "improvement_effectiveness": {"type": "array", "description": "Improvement effectiveness list"},
-    "action_items": {"type": "array", "description": "Action item list"}
+    "report_period": {"type": "object", "description": "Report period, including start and end dates"},
+    "report_date": {"type": "string", "description": "Report date"},
+    "summary": {"type": "object", "description": "Executive summary, including total feedback count, closure rate, and P0 unresolved count"},
+    "source_analysis": {"type": "object", "description": "Feedback source analysis, including channel/sentiment/topic distribution"},
+    "processing_status": {"type": "object", "description": "Processing progress, including status distribution and bottlenecks"},
+    "closure_metrics": {"type": "object", "description": "Closure rate statistics, including overall and by-channel/by-severity closure rates"},
+    "unresolved": {"type": "object", "description": "Unresolved issues, including P0/P1 list and root cause analysis"},
+    "improvement_suggestions": {"type": "array", "description": "Improvement suggestions list"}
   }
 }
 ```
 
-```
-├── {date}/
-│   ├── aggregation.yaml
-│   ├── categorization.yaml
-│   ├── closure_tracking.yaml
-│   ├── improvement_effectiveness.yaml
-│   └── full_report.md
-└── latest/
-    └── feedback_loop_report.md
+### Markdown Report Structure
+
+```markdown
+# User Feedback Loop Report: {Report Period}
+
+## 1. Executive Summary
+- Total feedback / Closure rate / Average closure time / P0 unresolved count
+
+## 2. Feedback Source Analysis
+- Channel distribution
+- Sentiment distribution
+- Topic distribution
+- Time trend
+
+## 3. Processing Progress Tracking
+- Status distribution
+- Processing timeliness
+- Bottleneck identification
+
+## 4. Closure Rate Statistics
+- Overall closure rate
+- By-channel/by-severity closure rates
+- Closure timeliness
+- Trend comparison
+
+## 5. Unresolved Issues
+- P0/P1 unresolved list
+- Long-standing unresolved
+- Repeated feedback
+- Root cause analysis
+
+## 6. Improvement Suggestions
+- Process improvement
+- Product improvement
+- Communication improvement
+- Preventive measures
 ```
 
-## Decision Rules
+### JSON Structure
 
-| Scenario | Decision Rule |
-|----------|---------------|
-| P0 feedback unresolved | Mark red alert, include in emergency handling |
-| P0 closure rate < 100% | Mark warning, require explanation |
-| Overall closure rate < 60% | Mark warning, require improvement plan |
-| Same category feedback surge (>50%) | Auto-trigger root cause analysis |
-| User satisfaction rate < 50% | Mark warning, require service improvement |
+```json
+{
+  "report_period": { "start": "", "end": "" },
+  "report_date": "",
+  "summary": {
+    "total_feedback": 0,
+    "closure_rate": 0,
+    "avg_closure_time_days": 0,
+    "p0_unresolved": 0
+  },
+  "source_analysis": {
+    "channel_distribution": {},
+    "sentiment_distribution": {},
+    "topic_distribution": {},
+    "time_trend": []
+  },
+  "processing_status": {
+    "status_distribution": {},
+    "avg_time_by_status": {},
+    "bottlenecks": []
+  },
+  "closure_metrics": {
+    "overall_rate": 0,
+    "by_channel": {},
+    "by_severity": {},
+    "trend_comparison": {}
+  },
+  "unresolved": {
+    "p0_p1_list": [],
+    "long_standing": [],
+    "repeated": [],
+    "root_causes": []
+  },
+  "improvement_suggestions": []
+}
+```
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Feedback aggregation data complete
-- [ ] Categorization coverage >= 95%
+- [ ] Closure rate is calculable (has clear closure definition and calculation formula)
+- [ ] P0 unresolved items listed (all P0 unclosed feedback has a list)
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Priority assessment reasonable
-- [ ] Closure rate calculable
-- [ ] P0 unresolved listed
-- [ ] Improvement suggestions actionable
-- [ ] Report structure complete
+- [ ] Timeliness data complete (average processing time per status is calculable)
+- [ ] Improvement suggestions are actionable (each suggestion has a responsible party and timeline)
 
 ### P2 Checks (must pass for deep only)
 
 - [ ] Extended analysis complete (deep simulation and roadmap generated)
 - [ ] Decision records complete (key decisions have rationale and alternatives)
 
+## Decision Rules
+
+- When P0 feedback unresolved count > 0, the report must include a dedicated follow-up plan
+- When closure rate < 80%, automatically generate process improvement suggestions
+- When similar feedback appears ≥ 3 times, escalate to product improvement suggestion rather than case-by-case handling
+- Decision points requiring human confirmation: feedback priority determination, closure criteria definition, dismissal reasons for closed feedback
+
 ## Degradation Strategy
 
-### Upstream File Missing Degradation Plan
-
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
-| Voice analysis | Skip voice analysis dimension, categorize based solely on raw feedback data | Report lacking voice analysis dimension |
-| Anomaly monitoring | Skip anomaly correlation analysis, mark "cannot correlate with monitoring data" | Report lacking anomaly correlation |
-| Feedback data | User provides feedback summary (total count, main issues, etc.), AI generates report based on summary | Report based on user summary, lacking raw data support |
-
-### Data Acquisition Instructions
-
-When upstream files are missing, obtain necessary data through the following methods:
-
-1. **Voice analysis missing**: Skip voice analysis dimension, categorize based solely on raw feedback data, recommend supplementing voice analysis later to improve report quality
-2. **Anomaly monitoring missing**: Skip anomaly correlation analysis, mark "cannot correlate with monitoring data" in report, recommend supplementing monitoring data later
-3. **Feedback data missing**: Ask user to provide feedback summary, including: total feedback count, main issue categories, approximate priority distribution, AI will generate report based on summary
+|----------|----------|----------|
+| No user voice analysis | Analyze directly based on user-provided feedback data, mark "VOC analysis pending supplementation" | Feedback analysis lacks sentiment and topic dimensions |
+| No anomaly monitoring data | Skip anomaly correlation analysis, mark "Monitoring data pending supplementation" | Association between feedback and anomaly events is missing |
+| No processing records | Only count feedback volume and categories, closure rate marked "Cannot calculate" | Closure rate is not calculable |
 
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
-| report_id | string | Yes | Report unique identifier |
-| period | object | Yes | Report period, must contain start/end |
-| aggregation | object | Yes | Feedback aggregation, must contain total_feedback/by_channel/by_sentiment |
-| categorization | array | Yes | Categorization list, each must contain category/subcategory/count |
-| closure_tracking | object | Yes | Closure tracking, must contain overall_closure_rate/by_priority |
-| closure_tracking.overall_closure_rate | number | Yes | Overall closure rate, range 0-100 |
+|----------|------|------|------|
+| summary | object | Yes | Executive summary, must contain total_feedback/closed_rate |
+| source_analysis | object | Yes | Feedback source analysis |
+| progress_tracking | object | No | Processing progress tracking |
+| closed_rate | object | No | Closure rate statistics, must contain overall/by_category |
+| unresolved_p0 | array | No | P0 unresolved list |
+| improvement_suggestions | array | No | Improvement suggestions list |
 
 ## Upstream Change Response
 
 ### Upstream Change Impact Table
 
 | Upstream Source | Change Type | Impact Scope | Response Action |
-|-----------------|-------------|--------------|-----------------|
-| user-research-voice-analysis | Voice analysis data update | Feedback categorization and sentiment analysis | Update categorization and sentiment data |
-| monitoring-pipeline | Anomaly data update | Anomaly correlation analysis | Update anomaly correlation data |
+|----------|----------|----------|----------|
+| user-research-voice-analysis | VOC analysis results updated | Feedback source analysis and sentiment dimension | Update sentiment distribution and topic classification |
+| monitoring-pipeline | Anomaly events updated | Feedback and anomaly correlation analysis | Update associated events and impact scope |
 
 ### Downstream Notification Mechanism Table
 
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
-|---------------------|------------------------|---------------------|----------------------|
-| monitoring-orchestrator | Feedback loop report completed | Output file update | Report completion status and key findings |
-| iteration-decision | P0 feedback unresolved | Write to output file | Unresolved feedback details and handling suggestions |
+|------------|----------|----------|----------|
+| monitoring-orchestrator | Feedback loop report completed | Output file updated | Report completion status and key findings |
+| iteration-decision | P0 unresolved feedback | Write to output file | P0 feedback list and improvement suggestions |

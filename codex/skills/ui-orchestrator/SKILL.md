@@ -16,6 +16,17 @@ metadata:
 ---
 
 # UI Design & Frontend Development Orchestrator
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
+
 
 ## Core Principles
 
@@ -429,3 +440,47 @@ Follows the general stage gate standard in [orchestrator-protocol.md](../../code
 | stage-6 build failure | Fix and retry | -- |
 | stage-6 ext invocation failure | Mark as pending optimization, does not block | low |
 | Stage summary generation failed | Generate partial summary from completed outputs | |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through a parent orchestrator), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests capabilities within this orchestrator's domain
+- Triggered as an independent skill by external systems
+- Parent orchestrator not executed, but user only needs this orchestrator's capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Get from user conversation | Last Resort: AI knowledge base inference |
+|---------------|---------------------------|-------------------------------------|---------------------------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user for PRD document or verbal requirements | Infer requirements from user description (low confidence, mark "PRD is AI-inferred") |
+| project_dir | — | Ask user for project directory path | Cannot infer, user must provide |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest user execute upstream orchestrators in the following priority:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|--------------|-------------------------------|-------------|
+| PRD | pm-design related orchestrator | PRD is the business basis for ui-orchestrator, missing will result in execution without business foundation |
+| Sub-skill outputs | Sub-skill execution | Sub-skills (project-init, page-builder, production-ready...) produce domain-specific outputs |
+
+Backtracking suggestion output format:
+```
+Critical input missing detected, suggest executing upstream orchestrator first:
+1. [Priority] pm-design related orchestrator -> Produces PRD
+Continue with AI-inferred values? (Inferred values confidence <=0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, must pass the following additional checks before executing Pipeline:
+
+| Gate Item | Check Content | Failure Handling |
+|-----------|--------------|-----------------|
+| PRD existence | prd.md or equivalent requirements document available | Block execution, suggest user provide PRD |
+| project_dir validity | User provided valid project directory path | Block execution, user must provide valid project_dir |
+| Input confidence assessment | All required input acquisition methods determined, overall confidence >=0.5 | When confidence <0.5, force human confirmation whether to continue execution |
+
+Gate execution order: PRD existence -> project_dir validity -> Input confidence assessment

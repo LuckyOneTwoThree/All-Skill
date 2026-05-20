@@ -1,11 +1,11 @@
 ---
 name: backend-architecture-spec
-description: "Use when designing backend architecture. Produces backend architecture design specifications, automatically evaluating architecture patterns based on business scale, designing service division plans, executing architecture reviews, with built-in ADR and tech debt registration for decision traceability. Keywords: architecture pattern, microservices, monolithic, Serverless, service design, DDD, bounded context, architecture review, tech debt, architecture decision."
+description: "Use when designing backend architecture. Produces backend architecture design specifications, automatically evaluating architecture patterns based on business scale, designing service division plans, executing architecture reviews, with built-in ADR and tech debt registration for decision traceability. Architecture constraints first, producing service data ownership and tech stack decisions for downstream consumption. Keywords: architecture pattern, microservices, monolithic, Serverless, service design, DDD, bounded context, architecture review, tech debt, architecture decision."
 metadata:
   module: "Backend Architecture & Development"
   sub-module: "Backend Architecture"
   type: "pipeline"
-  version: "1.0"
+  version: "5.0"
   trigger_examples:
     - "Which architecture pattern to choose"
     - "Should we use microservices"
@@ -22,6 +22,7 @@ metadata:
 2. **Evolutionary Architecture**: Start simple, evolve as needed, not all at once
 3. **Traceable Decisions**: Every architecture decision has clear rationale and context, ADR auto-generated
 4. **Visible Tech Debt**: Technical debt explicitly registered and managed, not hidden
+5. **Architecture Constraints First**: Architecture decisions constrain subsequent data models and API design; service data ownership and tech stack decisions must be explicit
 
 ## Interaction Mode
 
@@ -33,12 +34,8 @@ AI->Human AI suggests, human approves
 |--------|------|------|------|------|
 | PRD | markdown | Yes | output/pm-design/design-prd/prd.md | Business domain and processes |
 | PRD Structured Data | JSON | Yes | output/pm-design/design-prd/prd.json | Machine-consumable PRD version for architecture review alignment check |
-| Data Model | JSON | Yes | output/backend-data-architecture/data-architecture-spec/er_model.json | Data entities and relationships |
-| Business Data Dictionary | JSON | O | output/backend-data-architecture/data-architecture-spec/data_dictionary.json | Business data standards and entity definitions, for service division and bounded context delineation reference |
-| API Contract | YAML/JSON | Yes | output/backend-api-design/api-design-spec/openapi.yaml | Interface definitions |
 | Business Scale | JSON | Yes | User provided | User count, QPS, data volume, team size |
 | Technical Constraints | JSON | O | User provided | Tech stack, ops capability, budget |
-| Cache Strategy | JSON | O | output/backend-data-architecture/data-architecture-spec/cache_strategy.json | Cache scheme |
 
 ## Execution Steps
 
@@ -186,9 +183,17 @@ Identify bounded contexts following the three rules below, in descending priorit
 
 **Stage Gate**: Each bounded context has clear entity ownership and communication pattern
 
+**New Outputs**:
+- **Service Data Ownership** (service_data_ownership.json): Explicitly defines data entities owned by each service/bounded context, for data-architecture-spec to partition data models by service boundaries
+- **Tech Stack Decision** (tech_stack_decision.json): Unified tech stack decision (language/framework/ORM/database/cache), for all impl Skills to consume uniformly, avoiding each defaulting to different tech stacks
+
+**Stage Gate**: No circular dependencies between services, data ownership explicit, tech stack decision complete
+
 ### Step 4: Backend Review [Core]
 
 Review performance, security, maintainability, and scalability, output issue list and fix recommendations.
+
+**Note**: This stage does not review API and data model alignment (they are not yet designed); focus on reviewing the reasonableness of architecture pattern selection and service boundary division.
 
 **Stage Gate**: P0 issues=0, architecture decision records complete
 
@@ -210,8 +215,51 @@ Identify and register technical debt:
 - architecture_decision.json -- Architecture plan + topology diagram
 - adr.json -- Architecture Decision Records
 - service_design.json -- Service division + context mapping
+- service_data_ownership.json -- Data entities owned by each service/bounded context, for data-architecture-spec consumption
+- tech_stack_decision.json -- Unified tech stack decision (language/framework/ORM/database/cache), for all impl Skills consumption
 - review_report.json -- Review issue list + fix recommendations
 - tech_debt_register.json -- Tech debt register
+
+**service_data_ownership.json Schema**:
+
+```json
+{
+  "type": "object",
+  "required": ["services"],
+  "properties": {
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "bounded_context", "owned_entities"],
+        "properties": {
+          "name": { "type": "string" },
+          "bounded_context": { "type": "string" },
+          "owned_entities": { "type": "array", "items": { "type": "string" } },
+          "database_strategy": { "type": "string", "enum": ["shared", "separate"] }
+        }
+      }
+    }
+  }
+}
+```
+
+**tech_stack_decision.json Schema**:
+
+```json
+{
+  "type": "object",
+  "required": ["language", "framework", "orm", "database", "cache"],
+  "properties": {
+    "language": { "type": "object", "required": ["name", "version"], "properties": { "name": { "type": "string" }, "version": { "type": "string" } } },
+    "framework": { "type": "object", "required": ["name", "version"], "properties": { "name": { "type": "string" }, "version": { "type": "string" } } },
+    "orm": { "type": "object", "required": ["name", "version"], "properties": { "name": { "type": "string" }, "version": { "type": "string" } } },
+    "database": { "type": "object", "required": ["name", "version"], "properties": { "name": { "type": "string" }, "version": { "type": "string" } } },
+    "cache": { "type": "object", "required": ["name", "version"], "properties": { "name": { "type": "string" }, "version": { "type": "string" } } },
+    "message_queue": { "type": "object", "properties": { "name": { "type": "string" }, "version": { "type": "string" } } }
+  }
+}
+```
 
 ## Decision Rules
 
@@ -253,5 +301,11 @@ Identify and register technical debt:
 | Upstream Change | Impact Scope | Response Strategy |
 |----------|----------|----------|
 | PRD business domain change | Service division | Mark affected service boundaries, assess whether re-division is needed |
-| Data model change | Service data ownership | Mark affected services, assess data migration needs |
-| API contract change | Review results | Re-evaluate affected interface security and performance |
+| PRD business scale change | Architecture pattern | Re-evaluate whether architecture pattern matches |
+
+| Change Type | Impact Scope | Notification Method |
+|----------|----------|----------|
+| Architecture plan change | data-architecture-spec, api-design-spec, all impl Skills | Mark affected downstream Skills, update architecture_decision.json |
+| Service design change | data-architecture-spec, api-design-spec, backend-architecture-impl | Mark affected service boundaries, update service_design.json |
+| Tech stack decision change | all impl Skills | Mark affected code generation, update tech_stack_decision.json |
+| Service data ownership change | data-architecture-spec | Mark affected data entity ownership, update service_data_ownership.json |

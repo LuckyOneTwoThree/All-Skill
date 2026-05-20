@@ -5,10 +5,12 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Business Model Design"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "General"]
   trigger_examples:
     - "Is our value proposition right"
     - "Do users really need this feature"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output value-market fit assessment"
@@ -30,7 +32,7 @@ execution_depth:
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
@@ -153,7 +155,7 @@ AI->Human AI suggests, human approves
 - Each pain point has clear coverage status
 - Omitted pain points include improvement recommendations
 
-### Step 2: Gain Creation Validation [Conditional]
+### Step 2: Gain Creation Validation [Core]
 
 **Task**: Evaluate the match between Gain Creators and users' expected gains.
 
@@ -392,11 +394,19 @@ Overall Fit Score = (Pain Alignment Score x 0.6) + (Gain Validation Score x 0.4)
 When upstream files do not exist, this Skill can still execute independently:
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|---------|---------|----------|
-| bmc.json | User provides value propositions and user pain points -> Directly evaluate fit | Lacks BMC structured data, value propositions may be incomplete | Request user to describe value propositions and pain points, or upload bmc.json |
-| User research data (voice-analysis / persona) | User provides value propositions and user pain points -> Directly evaluate fit | Lacks user research data, pain point frequency and severity lack empirical evidence | Request user to describe user pain points and frequency, or upload persona.json / voice-analysis.json |
+|---------------|---------|---------|------------|
+| bmc.json | User provides value propositions and user pain points -> Directly evaluate fit | Lacks BMC structured data, value propositions may be incomplete | Request user to provide product value proposition description, or upload bmc.json |
+| User research data (voice-analysis / persona) | User provides value propositions and user pain points -> Directly evaluate fit | Lacks user research data, pain point frequency and severity lack empirical evidence | Request user to describe user pain points, or upload persona.json / voice-analysis.json |
 | bmc.json + User research data | User provides value proposition and user pain point descriptions -> Directly evaluate fit | Overall confidence reduced, scoring lacks data anchoring | Request user to describe value propositions and pain points, or upload bmc.json / persona.json / voice-analysis.json |
-| All upstream files missing | Prompt user to execute prior phases first, or evaluate fit based on user-provided value propositions and pain points | Overall confidence significantly reduced, evaluation is assumption-based only | Request user to describe value propositions and pain points, or execute business-model-canvas and user-research skills first |
+| All upstream files missing | Prompt user to execute prior phases first, or evaluate fit based on user-provided value propositions and pain points | Overall confidence significantly reduced, evaluation is assumption-based only | Request user to provide product value propositions, target user pain points, and core feature descriptions |
+
+## Data Acquisition Instructions
+
+This Skill requires BMC and user research data, please provide through one of the following methods:
+  1. Directly describe value propositions and user pain points
+  2. Upload bmc.json / persona.json / voice-analysis.json files
+  3. Provide data file paths
+- AI is not responsible for external data collection, only for analysis
 
 ---
 

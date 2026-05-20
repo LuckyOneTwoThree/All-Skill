@@ -5,14 +5,37 @@ metadata:
   module: "UI Design & Frontend Development"
   sub-module: "Frontend Integration"
   type: "pipeline"
-  version: "1.0"
+  version: "2.0"
+  domain_tags: ["Internet", "General"]
   trigger_examples:
     - "Integrate with backend API"
     - "Generate request layer code"
     - "Call API"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # API Integration Auto-Generation
+
+## Engineering Delivery Boundary
+
+Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+
+1. Project first: inspect existing framework, router, state management, component library, styling, API client, and test stack before writing code; inherit by default.
+2. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
+3. Write scope: declare target directories and files before implementation; do not overwrite unrelated user code.
+4. Responsive acceptance: check desktop/mobile layout, text overflow, cramped controls, nested cards, accessibility basics, and design-token consistency.
+5. Verification record: report created/modified files, checks run, checks that could not run, and residual risks.
+
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+
+1. Scan first: identify existing HTTP client, API directory structure, authentication mechanism, and data fetching library before writing code; inherit by default.
+2. Target scope: declare target directories and files before implementation; generated code must stay inside {project_dir}/src/api/ unless integration files are explicitly required.
+3. No overwrite: preserve existing API functions, type definitions, and mock data unless the user explicitly asks for replacement; when replacing page-builder fallback, maintain function signatures.
+4. Type safety: all request parameters and responses must have TypeScript types derived from API contracts; zero any types.
+5. Fallback replacement: when replacing page-builder fallback data layer, preserve type definitions (types.ts), only replace data fetch functions and mock data.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
 ## Core Principles
 
@@ -24,7 +47,7 @@ metadata:
 
 ## Interaction Mode
 
-AI AI suggests, human confirms
+AI->Human AI suggests, human confirms
 
 ## Input
 
@@ -41,7 +64,7 @@ AI AI suggests, human confirms
 
 ## Execution Steps
 
-### Step 1: API Contract Parsing and Endpoint Planning [Core]
+### Step 1: API Contract Parsing and Endpoint Planning
 
 **1a. Contract Parsing**
 
@@ -79,7 +102,7 @@ Token refresh strategy:
 - Refresh failure -> redirect to login page
 - Concurrent requests queue while refresh is in progress
 
-### Step 2: API Client Code Generation [Core]
+### Step 2: API Client Code Generation
 
 **2a. Type Definition Generation**
 
@@ -135,7 +158,7 @@ Generation rules:
 | 429 Rate Limited | Wait then retry | "Too many requests, please try again later" |
 | 5xx Server Error | Retry 2 times -> prompt server exception | "Server error, please try again later" |
 
-### Step 3: Mock Data and Parallel Development [Core]
+### Step 3: Mock Data and Parallel Development
 
 **3a. Mock Data Generation**
 
@@ -166,7 +189,7 @@ Generate MSW (Mock Service Worker) handlers:
 - Support delay simulation (200-500ms random delay)
 - Support error scenario simulation (5% probability of returning 500 error)
 
-### Step 4: Data Layer Integration and Cache Strategy [Core]
+### Step 4: Data Layer Integration and Cache Strategy
 
 **4a. Data Preloading Configuration**
 

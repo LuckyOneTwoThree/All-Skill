@@ -5,11 +5,13 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototyping"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
+  domain_tags: ["Internet", "Content Platform", "General"]
   trigger_examples:
     - "How to organize website navigation"
     - "Help me structure the information architecture"
     - "How to design content classification and navigation"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output IA proposals and navigation requirements"
@@ -36,7 +38,7 @@ AI->Human AI suggests, human approves
 | Input Item | Type | Required | Source | Description |
 |------------|------|----------|--------|-------------|
 | PRD | markdown | Yes | output/pm-design/design-prd/prd.md | Product requirements document |
-| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing pages[] for IA design to align page routes |
+| PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version containing pages[], for IA design to align page routes |
 | Existing Product IA | JSON | O | User provided | Existing information architecture (if any) |
 | User Research Data | JSON | O | output/pm-discovery/user-research-voice-analysis / output/pm-discovery/user-research-behavior-analysis | User behavior patterns, content preferences |
 
@@ -78,7 +80,7 @@ Based on content characteristics and user scenarios, define navigation needs (do
 | Feature-oriented | Core feature entries need persistent visibility |
 | Content-rich | Needs browsing + search combination |
 
-### Step 4: Card Sorting Suggestions [Deep]
+### Step 4: Card Sorting Suggestions [Core]
 
 AI generates card sorting suggestions based on classification results:
 
@@ -181,11 +183,11 @@ Generate 2-3 candidate IA proposals, each containing:
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|------------------------|-----------------|---------------|----------|
-| PRD document missing | User provides feature list, design IA directly | Lacks PRD structured data, classification may be less complete | Request user to provide feature list and product description, or upload prd.json |
-| Existing IA data missing | Design IA from scratch, no reference baseline | Lacks existing IA reference, may miss established structures | Request user to describe current IA structure or upload existing ia.json |
-| User research data missing | Derive classification based on PRD features | Lacks user research data, classification may deviate from user mental model | Request user to describe user expectations and mental models, or upload persona.json / voice-analysis.json |
-| All upstream files missing | Prompt user to execute prior stages first, or design IA based on user-provided feature list | Overall confidence reduced | Request user to provide feature list and user characteristics, or execute design-prd and user-research skills first |
+|------------------------|-----------------|---------------|-------------------------------|
+| PRD document missing | User provides feature list, design IA directly | Lacks PRD structured data, classification may be less complete | Request user to provide feature list and product description, or upload prd.json file |
+| Existing IA data missing | Design IA from scratch, no reference baseline | Lacks existing IA reference, may miss established structures | Request user to describe current page structure or navigation hierarchy |
+| User research data missing | Derive classification based on PRD features | Lacks user research data, classification may deviate from user mental model | Request user to provide user research conclusions or upload persona.json file |
+| All upstream files missing | Prompt user to execute prior stages first, or design IA based on user-provided feature list | Overall confidence reduced | Request user to provide feature list, target users, and core usage scenarios |
 
 ## Output Validation Rules
 

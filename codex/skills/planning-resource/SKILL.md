@@ -1,18 +1,20 @@
 ---
 name: planning-resource
-description: "Use when planning project resource requirements. Automates resource planning based on project scope, technical solution, and team capability data, completing workload estimation, resource type identification, team capability matching, and resource conflict detection. Keywords: resource planning, resource allocation, workforce planning, resource requirements, capacity planning."
+description: Use when planning project resource requirements. Resource requirements auto-planning, based on project scope, technical solution, and team capability data, automatically completing workload estimation, resource type identification, team capability matching, and resource conflict detection, outputting a complete resource allocation plan. Keywords: resource planning, resource allocation, workforce planning, resource requirements, capacity planning, not enough people, how many people needed.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Project Planning"
   type: "pipeline"
-  version: "1.0"
+  version: "3.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "How many people does the project need"
     - "What to do when resources are insufficient"
     - "How to allocate workforce"
+  interaction_mode: "ai_auto"
 execution_depth:
   default: standard
-  quick_description: "Output resource allocation and bottleneck identification"
+  quick_description: "Output resource allocation and bottleneck identification directly"
   deep_description: "Full allocation + resource optimization simulation + bottleneck mitigation plan + multi-scenario resource planning"
 ---
 
@@ -26,7 +28,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI AI Auto-execution**
+**🤖 AI Auto-execution**
 
 - All steps are completed automatically by AI
 - Output is generated automatically, no real-time human participation required
@@ -41,7 +43,7 @@ execution_depth:
 |--------|------|------|------|------|
 | project_scope | object | Yes | output/pm-project/planning-project-charter/project_charter | Project scope (including in_scope/out_of_scope) |
 | technical_solution | object | Yes | User provided | Technical solution description |
-| team_capability_data | object | O | User provided | Team capability data (skill matrix, historical performance) |
+| team_capability_data | object | ○ | User provided | Team capability data (skill matrix, historical performance) |
 
 ---
 
@@ -221,8 +223,8 @@ execution_depth:
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | resource allocation and bottleneck identification | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
+| quick | Resource allocation and bottleneck identification | Core conclusions + minimum viable deliverable |
+| standard | Full deliverables (current default) | Complete deliverables including all Step outputs |
 | deep | Full allocation + resource optimization simulation + bottleneck mitigation plan + multi-scenario resource planning | Full deliverables + extended analysis + deep simulation |
 
 ## Output

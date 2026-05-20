@@ -5,10 +5,12 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Business Strategy"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["General"]
   trigger_examples:
     - "Help me write a business strategy plan"
     - "Produce a strategy report"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output strategic recommendations and priorities"
@@ -26,22 +28,22 @@ execution_depth:
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
-| Business Model Canvas | JSON | O | output/pm-strategy/business-model-canvas/bmc.json | 9-block business model |
-| SWOT Analysis | JSON | O | output/pm-strategy/strategic-analysis/strategic-analysis.json | Strengths/Weaknesses/Opportunities/Threats |
-| OKR | JSON | O | output/pm-strategy/planning-okr/okr.json | Objectives and Key Results |
-| Roadmap | JSON | O | output/pm-strategy/planning-roadmap/roadmap.json | Product roadmap |
-| Positioning Strategy | JSON | O | output/pm-strategy/positioning-strategy/positioning-strategy.json | Product positioning |
-| Value Curve | JSON | O | output/pm-strategy/positioning-strategy/positioning-strategy.json | Competitive value curve |
-| Differentiation Assessment | JSON | O | output/pm-strategy/positioning-strategy/positioning-strategy.json | Differentiation degree |
-| Stakeholders | JSON | O | output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json | Stakeholder map |
-| Pricing Strategy | JSON | O | output/pm-strategy/business-pricing/pricing_analysis.json | Pricing options |
-| North Star Metric | JSON | O | output/pm-strategy/planning-north-star/north_star.json | Core metric definition |
+| Business Model Canvas | JSON | ○ | output/pm-strategy/business-model-canvas/bmc.json | 9-block business model |
+| SWOT Analysis | JSON | ○ | output/pm-strategy/strategic-analysis/strategic-analysis.json | Strengths/Weaknesses/Opportunities/Threats |
+| OKR | JSON | ○ | output/pm-strategy/planning-okr/okr.json | Objectives and Key Results |
+| Roadmap | JSON | ○ | output/pm-strategy/planning-roadmap/roadmap.json | Product roadmap |
+| Positioning Strategy | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | Product positioning |
+| Value Curve | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | Competitive value curve |
+| Differentiation Assessment | JSON | ○ | output/pm-strategy/positioning-strategy/positioning-strategy.json | Differentiation degree |
+| Stakeholders | JSON | ○ | output/pm-strategy/stakeholder-analysis/stakeholder-analysis.json | Stakeholder map |
+| Pricing Strategy | JSON | ○ | output/pm-strategy/business-pricing/pricing_analysis.json | Pricing options |
+| North Star Metric | JSON | ○ | output/pm-strategy/planning-north-star/north_star.json | Core metric definition |
 | Product/Business Info | string | Yes | User provided | Product name, business model, current stage |
 
 ## Execution Steps
@@ -333,13 +335,13 @@ Identify key risks in strategy execution:
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|---------|---------|----------|
-| bmc missing | Derive business model from product information | Business model analysis may be incomplete, lacking 9-block canvas structured support | Request user to provide product description and business model info, or upload bmc.json |
-| swot missing | Derive posture from product information and AI knowledge | Posture assessment lacks structured basis, strategic directions may be subjective | Request user to describe strengths, weaknesses, opportunities, and threats, or upload strategic-analysis.json |
-| okr missing | Derive OKRs from strategic directions | OKRs need manual calibration, quantifiability may be insufficient | Request user to provide business objectives and key results, or upload okr.json |
-| roadmap missing | Derive milestones from OKRs | Timeline needs manual adjustment, milestone dependencies may be inaccurate | Request user to provide timeline expectations and milestones, or upload roadmap.json |
-| positioning missing | Strategic direction lacks positioning validation | Differentiation strategy needs supplementary validation, competitive positioning may be vague | Request user to describe product positioning and differentiation, or upload positioning-strategy.json |
-| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Report cannot generate core content | Prompt user to provide product name, business model, and current business status |
+|---------------|---------|---------|------------|
+| bmc missing | Derive business model from product information | Business model analysis may be incomplete, lacking 9-block canvas structured support | Request user to provide product features, revenue model, and cost structure description, or upload bmc.json |
+| swot missing | Derive posture from product information and AI knowledge | Posture assessment lacks structured basis, strategic directions may be subjective | Request user to describe product strengths, weaknesses, opportunities, and threats, or upload strategic-analysis.json |
+| okr missing | Derive OKRs from strategic directions | OKRs need manual calibration, quantifiability may be insufficient | Request user to provide business objectives and expected key results, or upload okr.json |
+| roadmap missing | Derive milestones from OKRs | Timeline needs manual adjustment, milestone dependencies may be inaccurate | Request user to provide feature priorities and time constraints, or upload roadmap.json |
+| positioning missing | Strategic direction lacks positioning validation | Differentiation strategy needs supplementary validation, competitive positioning may be vague | Request user to provide product differentiation description, or upload positioning-strategy output files |
+| Product/business info (user provided) | If user has not provided product/business info, prompt user to provide or skip related steps | Report cannot generate core content | Request user to provide product name, core features, target users, and business objectives |
 
 ---
 

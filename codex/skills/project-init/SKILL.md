@@ -5,15 +5,38 @@ metadata:
   module: "UI Design & Frontend Development"
   sub-module: "Design System"
   type: "pipeline"
-  version: "1.0"
+  version: "1.7"
+  domain_tags: ["Internet", "General"]
   trigger_examples:
     - "Initialize frontend project"
     - "Establish design system"
     - "Configure theme colors"
     - "Set up a project"
+  interaction_mode: "ai_suggest_human_approve"
 ---
 
 # Project Initialization and Visual Definition
+
+## Engineering Delivery Boundary
+
+Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+
+1. Project first: inspect existing framework, router, state management, component library, styling, API client, and test stack before writing code; inherit by default.
+2. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
+3. Write scope: declare target directories and files before implementation; do not overwrite unrelated user code.
+4. Responsive acceptance: check desktop/mobile layout, text overflow, cramped controls, nested cards, accessibility basics, and design-token consistency.
+5. Verification record: report created/modified files, checks run, checks that could not run, and residual risks.
+
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+
+1. Scan first: identify existing project structure, framework, component library, and design system before writing code; inherit by default.
+2. Target scope: declare target directories and files before implementation; generated code must stay inside {project_dir}/ unless context files are explicitly required.
+3. No overwrite: preserve existing project files, configurations, and customizations unless the user explicitly asks for replacement.
+4. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
+5. Token consistency: generated design tokens must be consistent with visual direction and brand specifications.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
 ## Core Principles
 
@@ -68,10 +91,11 @@ AI->Human AI suggests, human approves
 | Component Library Preference | string | O | User provided | shadcn/Ant Design/MUI/Element Plus/Custom (default recommended based on framework) |
 | PRD | markdown | O | output/pm-design/design-prd/prd.md | Product requirements document (including functional areas and component requirements) |
 | PRD Structured Data | JSON | O | output/pm-design/design-prd/prd.json | Machine-consumable PRD version, containing pages[]/user_flows[], for programmatic project initialization consumption |
+| visual_policy | string | O | User provided / Orchestrator default | Visual strategy: existing-design-system-first / balanced / differentiation-strict, default existing-design-system-first |
 
 ## Execution Steps
 
-### Step 1: Brand DNA Extraction and Color System Generation [Core]
+### Step 1: Brand DNA Extraction and Color System Generation
 
 Extract core design DNA from brand specifications:
 - Primary color: Brand primary color (1) + secondary colors (2-3)
@@ -94,7 +118,7 @@ Dark mode derivation (built-in capability): Primary hue unchanged with reduced l
 
 > ext enhancement results are output through visual_direction/tokens for downstream consumption, this step focuses on core logic
 
-### Step 2: Visual Style Definition [Core]
+### Step 2: Visual Style Definition
 
 **This is the most critical step** -- defining "what this product should look like", not just outputting token values.
 
@@ -102,6 +126,7 @@ Based on brand DNA extraction results, define complete visual style direction:
 
 | Dimension | Definition Content | Output Field |
 |------|---------|---------|
+| Visual Strategy | Existing design system first / balanced / strict differentiation | visual_policy |
 | Aesthetic Direction | Specific style description (e.g. "warm organic + generous whitespace + soft rounded corners") | aesthetic_direction |
 | Color Strategy | Restrained/Committed/Full palette/Drenched | color_strategy |
 | Theme Decision | Light/Dark + physical scenario sentence (e.g. "SRE looking at monitoring in a dimly lit room at 2am") | theme_decision |
@@ -112,6 +137,14 @@ Based on brand DNA extraction results, define complete visual style direction:
 | Reference Style | 1-2 referenceable products/design styles | reference_style |
 | Design Tension | Bold vs restrained degree (conservative/balanced/bold/extreme), determining whether design is "safe but boring" or "memorable" | tension_level |
 | Visual Narrative | How pages guide user eye flow (e.g. "Z-pattern reading -> focus CTA -> progressively reveal details"), defining narrative rhythm of information presentation | visual_narrative |
+
+**visual_policy Execution Rules**:
+
+| Strategy | Rules |
+|------|------|
+| existing-design-system-first | Default strategy. Existing projects prioritize inheriting current design system; differentiation rules must not override brand specifications and component library constraints |
+| balanced | Introduce moderate differentiation while respecting brand and component library constraints, suitable for most new projects |
+| differentiation-strict | Use for brand new projects or brand upgrades, forcibly avoiding homogenization patterns, allowing bolder visual anchors |
 
 **Visual Anchor Definition** (preventing AI understanding ambiguity from text descriptions):
 
@@ -190,7 +223,7 @@ Prompt construction rules:
 
 > ext enhancement results are output through visual_direction/tokens for downstream consumption, this step focuses on core logic
 
-### Step 3: Component Library Selection and Theme Customization [Core]
+### Step 3: Component Library Selection and Theme Customization
 
 **PRD Consumption Rules** (intent constraints):
 - PRD defines "what functionality the product needs" (functional requirements), project-init defines "what the technical implementation is" (code implementation)
@@ -225,7 +258,7 @@ Component reuse decision: Reuse >=3 pages -> high priority, 1-2 pages -> medium 
 
 > ext-impeccable extract enhancement is called by orchestrator in subsequent stages, this step focuses on core logic. Only when project contains existing code will orchestrator call extract (brand new projects have no content to extract, skip)
 
-### Step 4: Project Scaffold Initialization [Core]
+### Step 4: Project Scaffold Initialization
 
 Create project skeleton based on framework:
 
@@ -250,7 +283,7 @@ Install core dependencies:
 
 Verify project runs: `npm run dev` starts successfully.
 
-### Step 5: Context File Output [Core]
+### Step 5: Context File Output
 
 **Generate Context Files** (for ext-impeccable consumption):
 
@@ -306,6 +339,7 @@ Generate {project_dir}/DESIGN.md:
       "type": "object",
       "description": "Visual style direction definition (10 dimensions all defined = each field non-empty and non-placeholder, see validation standards below)",
       "properties": {
+        "visual_policy": {"type": "string", "enum": ["existing-design-system-first", "balanced", "differentiation-strict"], "description": "Visual strategy, default existing-design-system-first"},
         "aesthetic_direction": {"type": "string", "minLength": 10, "description": "Specific style description, e.g. 'warm organic + generous whitespace + soft rounded corners', 'TBD'/'pending' placeholders not allowed"},
         "color_strategy": {"type": "string", "enum": ["restrained", "committed", "full_palette", "drenched"]},
         "theme_decision": {"type": "string", "minLength": 15, "description": "Must include light/dark decision + physical scenario sentence, e.g. 'Light + daytime natural office light'"},
@@ -410,7 +444,7 @@ Generate {project_dir}/DESIGN.md:
 
 P0 (Must pass, blocks output if not):
 - [ ] WCAG AA contrast 100% compliant (body text >=4.5:1, large text >=3:1)
-- [ ] Visual direction contains no AI homogenization features (reviewed by orchestrator calling ext-frontend-design)
+- [ ] Visual direction compliant with visual_policy; under existing-design-system-first mode must not break existing design system to avoid homogenization
 - [ ] Design system recommendation has been data-driven reviewed (by orchestrator calling ext-ui-ux-pro-max)
 - [ ] npm run dev starts successfully
 

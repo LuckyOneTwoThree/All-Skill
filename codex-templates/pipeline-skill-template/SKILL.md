@@ -1,11 +1,13 @@
 ---
 name: {domain}-{methodology-name}
-description: "Use when {trigger scenario}. {One-line functional description}. Keywords: {keyword1}, {keyword2}, {keyword3}."
+description: "Use when {trigger scenario}. {One-line functional description}. Keywords: {keyword1}, {keyword2}, {keyword3}, {user-language keyword1}, {user-language keyword2}."
 metadata:
   module: "{Module Name in English}"
   sub-module: "{Sub-Module Name in English}"
   type: "pipeline"
   version: "1.0"
+  interaction_mode: "ai_suggest_human_approve"
+  domain_tags: ["{Industry Tag 1}", "General"]
   trigger_examples:
     - "{Natural language example users might say 1}"
     - "{Natural language example users might say 2}"
@@ -24,11 +26,16 @@ metadata:
 
 AI->Human AI suggests, human approves
 
+## Execution Depth Control
+
+Follow [Execution Depth Protocol](../execution-depth-protocol.md). Default `execution_depth=standard`; use `quick` for rapid drafts, `deep` for complete audits or high-risk decisions.
+
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| {Input name} | {JSON/markdown/string} | {Yes/No} | {Upstream Skill output path / User provided} | {Description} |
+|--------|------|------|------|------|
+| {Input Name} | {JSON/markdown/string} | {Yes/No} | {Upstream Skill output path / User provided} | {Description} |
+| execution_depth | enum | No | User provided / Orchestrator passed | quick / standard / deep, default standard |
 
 ### Input JSON Example Structure
 
@@ -86,7 +93,7 @@ Output file: `output/{domain-path}/{skill-name}/{output-filename}`
 ## Decision Rules
 
 | Condition | Decision |
-|-----------|----------|
+|------|------|
 | {Condition description} | {Decision action} |
 
 ## Quality Checks
@@ -98,18 +105,18 @@ Output file: `output/{domain-path}/{skill-name}/{output-filename}`
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
-|------------------------|------------------|---------------|
+|---------------|---------|---------|
 | {Upstream file} | {Degradation plan} | {Impact description} |
 
-Data acquisition notes:
-- This Skill requires {input description}; please provide via one of the following methods:
+Data Acquisition Instructions:
+- This Skill requires {Input description}, please provide through one of the following methods:
   1. {Method 1}
   2. {Method 2}
   3. {Method 3}
 
 ## Reference (Optional)
 
-When SKILL.md exceeds 500 lines, it is recommended to split the following content into the `Reference/` folder:
+When SKILL.md exceeds 500 lines, consider splitting the following content into a `Reference/` folder:
 
 - **Template Files**: Complete document structure templates, table templates -> `Reference/{template-name}.md`
 - **JSON Schemas**: Input/output data structure definitions -> `Reference/input-schema.md`, `Reference/output-schema.md`
@@ -117,7 +124,7 @@ When SKILL.md exceeds 500 lines, it is recommended to split the following conten
 
 After splitting, retain overview tables in the corresponding SKILL.md sections and reference via links:
 ```
-**Full {content}**: See [Reference/{file-name}.md](Reference/{file-name}.md)
+**Complete {content}**: See [Reference/{file-name}.md](Reference/{file-name}.md)
 ```
 
 ## Upstream Change Response
@@ -125,11 +132,11 @@ After splitting, retain overview tables in the corresponding SKILL.md sections a
 When upstream input changes occur, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | {Change type} | {Impact scope} | {Response strategy} |
 
-When this Skill itself changes, the notification mechanism to downstream:
+When this Skill itself changes, notification mechanism for downstream:
 
 | Change Type | Impact Scope | Notification Method |
-|-------------|-------------|---------------------|
+|----------|----------|----------|
 | {Change type} | {Downstream Skill} | {Notification method} |

@@ -5,15 +5,17 @@ metadata:
   module: "Product Metrics Design"
   sub-module: "Metric System"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "Help me organize the product's core metrics"
     - "We need to define a North Star metric"
     - "Build a metric system"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output metric hierarchy and key definitions only"
-  deep_description: "Full system + metric correlation analysis + data quality framework + metric evolution roadmap"
+  quick_description: "Output North Star metric validation results and L1 metric decomposition"
+  deep_description: "Full L1/L2 decomposition + actionable metric identification + vanity metric detection + metric health score + metric correlation analysis"
 ---
 
 # Metric System Auto-Construction
@@ -27,7 +29,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI->Human AI suggests, human approves**
+**🤖→👤 AI suggests, human approves**
 
 This Pipeline is automatically executed by AI for metric system construction, but key decision points require human approval:
 - **Must approve**: North Star metric selection
@@ -36,9 +38,9 @@ This Pipeline is automatically executed by AI for metric system construction, bu
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
+|--------|------|------|------|------|
 | product_context | JSON | Yes | output/pm-strategy/planning-okr/okr.json + output/pm-strategy/business-model-canvas/bmc.json / User provided | Product type, North Star metric, OKR, business model |
-| existing_metrics | JSON array | O | User provided | Existing metric list (including name, definition, calculation, data source, level) |
+| existing_metrics | JSON array | ○ | User provided | Existing metric list (including name, definition, calculation, data source, level) |
 
 ### product_context (required)
 
@@ -85,9 +87,9 @@ This Pipeline is automatically executed by AI for metric system construction, bu
 
 ## Execution Steps
 
-### Step 1: North Star Metric Validation [Conditional]
+### Step 1: North Star Metric Validation [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 #### Branch A: North Star Already Defined
 
@@ -180,7 +182,7 @@ Generate 3 North Star metric candidates
 
 ### Step 2: L1 Metric Auto-Decomposition [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Input**: North Star metric definition
 
@@ -190,7 +192,7 @@ Based on the AARRR model, decompose the North Star metric into 5 L1 dimensions (
 
 ```
 North Star Metric
-  v Decomposition
+  ↓ Decomposition
 L1 Dimensions (by AARRR)
   ├── Acquisition
   ├── Activation
@@ -236,9 +238,9 @@ FOR each L1 dimension:
 
 ---
 
-### Step 3: L2 Metric Auto-Decomposition [Core]
+### Step 3: L2 Metric Auto-Decomposition [Conditional]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Input**: L1 metric list
 
@@ -305,9 +307,9 @@ FOR each L1 metric:
 
 ---
 
-### Step 4: Actionable Metric Auto-Identification [Core]
+### Step 4: Actionable Metric Auto-Identification [Conditional]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Identification Logic**:
 
@@ -353,9 +355,9 @@ FOR each L2 metric:
 
 ---
 
-### Step 5: Vanity Metric Auto-Detection [Core]
+### Step 5: Vanity Metric Auto-Detection [Deep]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Detection Rules**:
 
@@ -369,9 +371,9 @@ THEN flag as "only-increases" vanity metric
 ```
 
 **Problem Metric Examples**:
-- [X] Cumulative users -> [OK] Daily Active Users
-- [X] Total registrations -> [OK] Daily new registrations
-- [X] Total page views -> [OK] Per capita page views
+- ❌ Cumulative users -> ✅ Daily Active Users
+- ❌ Total registrations -> ✅ Daily new registrations
+- ❌ Total page views -> ✅ Per capita page views
 
 ---
 
@@ -385,8 +387,8 @@ THEN flag as "no time constraint" vanity metric
 ```
 
 **Problem Metric Examples**:
-- [X] Total users -> [OK] DAU / MAU
-- [X] Total revenue -> [OK] Monthly MRR / Annual ARR
+- ❌ Total users -> ✅ DAU / MAU
+- ❌ Total revenue -> ✅ Monthly MRR / Annual ARR
 
 ---
 
@@ -417,9 +419,9 @@ THEN flag as "not actionable" vanity metric
 ```
 
 **Problem Metric Examples**:
-- [X] Brand awareness -> [OK] Brand keyword search volume
-- [X] User satisfaction -> [OK] NPS sub-metrics
-- [X] Market share -> [OK] Vertical market penetration rate
+- ❌ Brand awareness -> ✅ Brand keyword search volume
+- ❌ User satisfaction -> ✅ NPS sub-metrics
+- ❌ Market share -> ✅ Vertical market penetration rate
 
 ---
 
@@ -449,14 +451,6 @@ THEN flag as "not actionable" vanity metric
 ```
 
 ---
-
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | metric hierarchy and key definitions only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full system + metric correlation analysis + data quality framework + metric evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -515,7 +509,7 @@ THEN flag as "not actionable" vanity metric
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | metric_system | object | Yes | Metric system root object |
 | metric_system.north_star | object | Yes | North Star metric |
 | metric_system.north_star.name | string | Yes | North Star metric name |
@@ -558,11 +552,11 @@ THEN flag as "not actionable" vanity metric
 ```
 
 **Human Decision Factors**:
-- [OK] Whether it reflects core user value
-- [OK] Whether it can be directly influenced by the team
-- [OK] Whether it matches the business development stage
-- [OK] Whether data collection conditions exist
-- [OK] Whether it is easy for the entire company to understand
+- ✅ Whether it reflects core user value
+- ✅ Whether it can be directly influenced by the team
+- ✅ Whether it matches the business development stage
+- ✅ Whether data collection conditions exist
+- ✅ Whether it is easy for the entire company to understand
 
 ---
 
@@ -585,19 +579,12 @@ THEN flag as "not actionable" vanity metric
 
 ## Quality Checks
 
-### P0 Checks (must pass for quick/standard/deep)
-
-- [ ] North Star vanity metric detection (No "only-increases" characteristics, has time dimension, can be linked to business goals, can be influenced by team)
-- [ ] L1-L2 decomposition completeness (Each L1 layer (Acquisition/Activation/Retention/Revenue/Referral) has 3-5 L2 metrics)
-
-### P1 Checks (must pass for standard/deep)
-
-- [ ] Actionable metric trackability (Has clear data source, has executable optimization plan, can be verified through A/B testing)
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+| Check Item | Standard | Non-Compliance Handling |
+|--------|------|------------|
+| North Star vanity metric detection (P0) | No "only-increases" characteristics, has time dimension, can be linked to business goals, can be influenced by team | Flag specific issues, re-recommend North Star metric, trigger human decision flow |
+| L1-L2 decomposition completeness (P1) | Each L1 layer (Acquisition/Activation/Retention/Revenue/Referral) has 3-5 L2 metrics | Auto-supplement missing L2 metrics based on AARRR model, flag supplemented items for human confirmation |
+| Actionable metric trackability (P1) | Has clear data source, has executable optimization plan, can be verified through A/B testing | Flag non-trackable metrics, suggest supplementing data instrumentation, lower metric priority |
+| Vanity metric detection coverage (P2) | All metrics have passed vanity metric detection, flagging results complete | Supplement detection, flag undetected metrics |
 
 ---
 
@@ -605,18 +592,25 @@ THEN flag as "not actionable" vanity metric
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|-----------------|---------------|----------|
-| product_context missing | Prompt user to provide product type and business goals, execute based on user input | North Star recommendation based on user description rather than structured input | Prompt user to provide product type (Social/E-commerce/SaaS/etc.) and business goals |
-| existing_metrics missing | Skip existing metric validation, build metric system from scratch | No existing metric comparison, cannot detect redundancy | Request user to list current metrics being tracked, or upload existing_metrics.json |
-| product_context + existing_metrics both missing | User provides product type and business goals -> recommend metric system based on industry templates | Output metric system based on industry templates, annotated as "to be confirmed" | Prompt user to provide product type, business goals, and business model, or execute planning-north-star first |
+| Missing Scope | Degradation Plan | Output Impact |
+|----------|----------|----------|
+| product_context missing | Prompt user to provide product type and business goals, execute based on user input | North Star recommendation based on user description rather than structured input |
+| existing_metrics missing | Skip existing metric validation, build metric system from scratch | No existing metric comparison, cannot detect redundancy |
+| product_context + existing_metrics both missing | User provides product type and business goals -> recommend metric system based on industry templates | Output metric system based on industry templates, annotated as "to be confirmed" |
+
+### Data Acquisition Instructions
+
+When upstream files are missing, the user needs to provide the following information to support degraded generation:
+- **Product type**: Social/E-commerce/SaaS/Content/Gaming/Fintech/Online Education/Healthcare/Other
+- **Business goals**: Core business objectives at the current stage (e.g., increase GMV, improve retention rate, etc.)
+- **Business model**: Product business model description (optional, helps with more precise recommendations)
 
 ## Upstream Change Response
 
 When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | OKR adjustment | North Star metric, L1 metrics | Flag affected metric levels, suggest human confirmation on whether to update metric system |
 | Business model change | Revenue metric definitions | Flag affected metrics, suggest human confirmation on whether to update |
 | PRD feature change | Actionable metrics | Flag affected actionable metrics, suggest human confirmation on whether to update |
@@ -624,7 +618,7 @@ When upstream inputs change, this Skill's response strategy:
 When the metric system itself changes, notification mechanism to downstream:
 
 | Metric Change Type | Notification Scope | Notification Method |
-|-------------------|-------------------|---------------------|
+|-------------|----------|----------|
 | North Star metric change | tracking-plan, metrics-dashboard, monitoring-pipeline | Flag core metric change, trigger full-chain update |
 | L1/L2 metric addition/removal | tracking-plan, metrics-dashboard | Flag metric addition/removal, trigger tracking and dashboard update |
 | Actionable metric change | tracking-plan | Flag actionable metric change, trigger tracking update |

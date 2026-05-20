@@ -1,45 +1,48 @@
 ---
 name: risk-management
-description: "Use when continuously monitoring project risks or handling risk escalations. Step 1 monitors risk status, detects indicator changes and trigger conditions; Step 2 performs escalation handling for high-priority risks, initiates response processes and resource allocation. Keywords: risk monitoring, risk alert, risk tracking, risk indicators, risk escalation, issue escalation, escalation process, emergency escalation."
+description: Use when there is a need to continuously monitor project risks or handle risk escalation. Integrated risk monitoring and escalation handling. Step 1 continuously monitors risk status, detects risk indicator changes and trigger conditions. Step 2 performs escalation handling for high-priority risks, initiates response processes and resource allocation. Keywords: risk monitoring, risk early warning, risk tracking, risk status, risk indicators, risk escalation, issue escalation, escalation process, escalation notification, emergency escalation, issue reporting, watch risks, need to escalate.
 metadata:
   module: "Project Management & Execution"
   sub-module: "Risk Management"
   type: "pipeline"
-  version: "1.0"
+  version: "3.0"
+  domain_tags: ["Internet", "SaaS", "General"]
   trigger_examples:
     - "How to continuously monitor risks"
     - "What is the current risk status"
-    - "Are there any new risks emerging"
-    - "What to do when risk needs escalation"
-    - "The problem is too big, need to escalate"
+    - "Have any new risks emerged"
+    - "What to do when a risk needs escalation"
+    - "The issue is too big, need to report"
+    - "Who to contact for a major issue"
+  interaction_mode: "ai_auto"
 execution_depth:
   default: standard
-  quick_description: "Output risk register and mitigation priorities only"
-  deep_description: "Full management + risk simulation + mitigation effectiveness tracking + risk evolution roadmap"
+  quick_description: "Execute risk status monitoring and alert triggering, output current risk list and alert status"
+  deep_description: "Complete escalation process + risk trend analysis + root cause tracing + contingency plan generation + risk review report"
 ---
 
-# Risk Monitoring & Escalation Handling Automation
+# Automated Risk Monitoring and Escalation Handling
 
 ## Core Principles
 
-1. **Transparency Enables Collaboration**: Risk monitoring status, alert information, and escalation paths are visible to all, ensuring relevant parties are informed in a timely manner
-2. **Risk Early Identification**: Continuously monitor risk indicators, trigger alerts before risk escalation; escalation rules defined upfront, automatically triggered when conditions are met
-3. **Automated Tracking**: Risk status changes, response effectiveness, escalation notification delivery, processing status, and closed-loop confirmation are automatically tracked
-4. **Escalation Cannot Be Delayed**: When risk reaches escalation threshold, delay is dereliction of duty; escalation process automatically triggers within SLA
+1. **Transparency is Collaboration**: Risk monitoring status, alert information, and escalation paths are visible to all members, ensuring stakeholders are informed in a timely manner
+2. **Risk Proactivity**: Continuously monitor risk indicators, trigger alerts before risks escalate; escalation rules are defined in advance, automatically triggered when conditions are met
+3. **Automated Tracking**: Risk status changes, response effectiveness, escalation notification delivery, processing status, and closure confirmation are automatically tracked
+4. **Escalation Cannot Be Delayed**: When a risk reaches the escalation threshold, delay is dereliction of duty; the escalation process is automatically triggered within SLA
 
 ## Interaction Mode
 
-**AI AI Auto-execution**
+**🤖 AI Auto-Execution**
 
-- Monitoring and alerting executed automatically by AI
-- Indicator checks executed hourly
+- Monitoring and alerting are automatically executed by AI
+- Indicator checks executed every hour
 - Alerts triggered and notified in real-time
-- Escalation judgment and path determination completed automatically by AI
+- Escalation judgment and path determination automatically completed by AI
 - Notifications sent automatically
-- Human receives alert notifications and makes decisions
+- Humans receive alert notifications and make decisions
 - Response adjustments require human approval
 - Escalation results maintained by AI
-- Complex escalations require human intervention decisions
+- Complex escalations require human intervention for decision-making
 
 ---
 
@@ -48,19 +51,19 @@ execution_depth:
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
 | risk_register | object | Yes | output/pm-project/risk-identification/risk_register.json | Risk register |
-| project_data | object | Yes | Project management system -> Project data | Real-time project data |
+| project_data | object | Yes | Project management system → Project data | Real-time project data |
 | trigger_conditions | object | Yes | User provided | Configured trigger conditions |
-| mitigation_actions | object[] | O | output/pm-project/risk-management/response-tracking | Executed response measures |
+| mitigation_actions | object[] | ○ | output/pm-project/risk-management/Response Tracking | Executed mitigation actions |
 | issue_data | object | Yes | User provided | Issue data (used in Step 2) |
 | escalation_rules | object | Yes | User provided | Escalation rule configuration (used in Step 2) |
-| organizational_structure | object | Yes | User provided | Organizational structure for determining escalation paths (used in Step 2) |
-| pending_escalations | object[] | O | output/pm-project/risk-management/escalation-records | Pending escalation requests (used in Step 2) |
+| organizational_structure | object | Yes | User provided | Organizational structure, used to determine escalation paths (used in Step 2) |
+| pending_escalations | object[] | ○ | output/pm-project/risk-management/Escalation Records | Pending escalation requests (used in Step 2) |
 
 ## Execution Steps
 
 ### Step 1: Risk Monitoring (Continuously monitor risk status, detect risk indicator changes and trigger conditions) [Core]
 
-#### Step 1.1: Risk Indicator Auto-tracking
+#### Step 1.1: Automated Risk Indicator Tracking
 
 **Actions**:
 - Define tracking indicators for each active risk
@@ -87,10 +90,10 @@ execution_depth:
 }
 ```
 
-#### Step 1.2: Risk Status Auto-update
+#### Step 1.2: Automated Risk Status Update
 
 **Actions**:
-- Assess risk status based on indicator changes
+- Evaluate risk status based on indicator changes
 - Identify risk escalation or de-escalation
 - Update risk register
 - Record status change history
@@ -120,13 +123,13 @@ execution_depth:
 }
 ```
 
-#### Step 1.3: New Risk Auto-identification
+#### Step 1.3: Automated New Risk Identification
 
 **Actions**:
-- Scan risk indicator anomalies
+- Scan for risk indicator anomalies
 - Detect risk signals not in the register
 - Cross-validate new risks
-- Assess whether to add to register
+- Assess whether they need to be added to the register
 
 **Output**:
 ```json
@@ -144,7 +147,7 @@ execution_depth:
 }
 ```
 
-#### Step 1.4: Risk Alert Auto-trigger
+#### Step 1.4: Automated Risk Alert Triggering
 
 **Actions**:
 - Detect alert trigger conditions
@@ -180,13 +183,13 @@ execution_depth:
 }
 ```
 
-#### Step 1.5: Response Effectiveness Auto-tracking
+#### Step 1.5: Automated Mitigation Effectiveness Tracking
 
 **Actions**:
-- Check status of implemented response measures
-- Assess response effectiveness (whether indicators improved)
-- Identify response failures
-- Suggest response adjustments
+- Check status of implemented mitigation measures
+- Assess mitigation effectiveness (whether indicators have improved)
+- Identify mitigation failures
+- Suggest mitigation adjustments
 
 **Output**:
 ```json
@@ -214,17 +217,17 @@ execution_depth:
 
 ---
 
-### Step 2: Escalation Handling (High-priority risk escalation handling, initiate response process and resource allocation) [Core]
+### Step 2: Escalation Handling (High-priority risk escalation handling, initiate response processes and resource allocation) [Conditional]
 
-Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results), combined with issue data, escalation rules, and organizational structure, to execute escalation handling.
+Step 2 receives Step 1's output as input (risk data from Step 1's monitoring results), combined with issue data, escalation rules, and organizational structure, to execute escalation handling.
 
-#### Step 2.1: Escalation Necessity Auto-judgment
+#### Step 2.1: Automated Escalation Necessity Assessment
 
 **Actions**:
 - Apply configured escalation rules
 - AI-assisted judgment on whether escalation is needed
 - Assess escalation urgency
-- Annotate escalation reason
+- Annotate escalation reasons
 
 **Output**:
 ```json
@@ -252,7 +255,7 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 }
 ```
 
-#### Step 2.2: Escalation Path Auto-determination
+#### Step 2.2: Automated Escalation Path Determination
 
 **Actions**:
 - Determine escalation path based on organizational structure
@@ -282,12 +285,12 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 }
 ```
 
-#### Step 2.3: Escalation Notification Auto-sending
+#### Step 2.3: Automated Escalation Notification Delivery
 
 **Actions**:
 - Prepare escalation notification content
 - Select appropriate notification channels
-- Send notifications along escalation path
+- Send notifications along the escalation path
 - Track notification delivery status
 
 **Output**:
@@ -315,13 +318,13 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 }
 ```
 
-#### Step 2.4: Escalation Status Auto-tracking
+#### Step 2.4: Automated Escalation Status Tracking
 
 **Actions**:
 - Monitor escalation response status
 - Track escalation processing progress
-- Record escalation outcomes
-- Generate escalation report
+- Record escalation results
+- Generate escalation reports
 
 **Output**:
 ```json
@@ -356,14 +359,6 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 
 ---
 
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | risk register and mitigation priorities only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full management + risk simulation + mitigation effectiveness tracking + risk evolution roadmap | Full deliverables + extended analysis + deep simulation |
-
 ## Output
 
 **Storage Path**: `output/pm-project/risk-management/`
@@ -382,9 +377,9 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
   "type": "object",
   "required": ["risk_monitoring", "escalation", "metadata"],
   "properties": {
-    "risk_monitoring": {"type": "object", "description": "Risk monitoring data including tracked risks, alerts, and response effectiveness"},
-    "escalation": {"type": "object", "description": "Escalation handling data including issue list and escalation path templates"},
-    "metadata": {"type": "object", "description": "Metadata including monitoring cycle, processing count, and confidence"}
+    "risk_monitoring": {"type": "object", "description": "Risk monitoring data, containing tracked risks, alerts, and mitigation effectiveness"},
+    "escalation": {"type": "object", "description": "Escalation handling data, containing issue list and escalation path templates"},
+    "metadata": {"type": "object", "description": "Metadata, containing monitoring cycle, processing count, and confidence"}
   }
 }
 ```
@@ -393,7 +388,7 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
-| risk_monitoring.tracked_risks | array | Yes | Tracked risk list, each must contain id, status |
+| risk_monitoring.tracked_risks | array | Yes | Tracked risk list, each item must contain id, status |
 | risk_monitoring.tracked_risks[].id | string | Yes | Risk unique identifier, format RISK-NNN |
 | risk_monitoring.tracked_risks[].status | string | Yes | Risk status, enum values active/escalated/improving/resolved |
 | risk_monitoring.tracked_risks[].triggered_conditions | array | No | Trigger conditions list |
@@ -403,12 +398,12 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 | risk_monitoring.alerts_triggered[].id | string | Yes | Alert unique identifier |
 | risk_monitoring.alerts_triggered[].severity | string | Yes | Alert severity, enum values critical/high/medium/low |
 | risk_monitoring.alerts_triggered[].message | string | Yes | Alert message |
-| risk_monitoring.mitigation_effectiveness | object | No | Response effectiveness tracking data |
-| escalation.issues | array | Yes | Escalation issue list, each must contain id, description, escalation_needed |
+| risk_monitoring.mitigation_effectiveness | object | No | Mitigation effectiveness tracking data |
+| escalation.issues | array | Yes | Escalation issue list, each item must contain id, description, escalation_needed |
 | escalation.issues[].id | string | Yes | Issue unique identifier, format RISK-NNN or ISSUE-NNN |
 | escalation.issues[].escalation_needed | boolean | Yes | Whether escalation is needed |
 | escalation.issues[].escalation_level | number | Yes | Escalation level, 1-4 |
-| escalation.issues[].escalation_path | array | Yes | Escalation path, at least 1 recipient |
+| escalation.issues[].escalation_path | array | Yes | Escalation path, must contain at least 1 recipient |
 | escalation.issues[].notifications_sent | array | No | Sent notifications list |
 | escalation.issues[].notifications_sent[].channel | string | Yes | Notification channel, enum values email/sms/slack/phone |
 | escalation.issues[].notifications_sent[].status | string | Yes | Notification status, enum values sent/delivered/read/failed |
@@ -449,7 +444,7 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
   "escalation": {
     "issues": [{
       "id": "RISK-001",
-      "description": "Core service response time continuously degrading",
+      "description": "Core service response time continuously deteriorating",
       "escalation_needed": true,
       "escalation_level": 2,
       "escalation_path": ["Project Manager - Zhang Ming", "Technical Director - Li Qiang"],
@@ -463,7 +458,7 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
     "escalation_path_templates": [{
       "level": 1,
       "title": "Team-level Escalation",
-      "criteria": "Blockers that cannot be resolved within the team",
+      "criteria": "Obstacles that cannot be resolved within the team",
       "typical_owner": "Team Lead / SM",
       "expected_response_time": "24h"
     }]
@@ -491,11 +486,11 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 | Threshold breach | Indicator exceeds warning or critical threshold |
 | Trend worsening | Indicator worsening for 3 consecutive days |
 | New risk | Unregistered risk signal detected |
-| Response failure | Indicator not improving after response measure implementation |
+| Mitigation failure | Indicators not improving after mitigation measures implemented |
 
 ## Alert Notification Configuration
 
-| Severity | Notification Method | Recipients |
+| Severity | Notification Method | Notification Recipients |
 |--------|----------|----------|
 | Critical | Instant + SMS | Project Manager + Sponsor |
 | High | Instant notification | Project Manager |
@@ -506,10 +501,10 @@ Step 2 receives Step 1 output as input (risk data from Step 1 monitoring results
 
 | Level | Title | Applicable Scenario | Typical Owner | Response Time |
 |------|------|----------|------------|----------|
-| 1 | Team-level Escalation | Blockers that cannot be resolved within the team | Team Lead / SM | 24h |
-| 2 | Project-level Escalation | Risks affecting project objectives | Project Manager | 24h |
-| 3 | Department-level Escalation | Cross-team conflicts or resource issues | Department Head | 48h |
-| 4 | Executive-level Escalation | Major risks potentially affecting business | Director/VP | 24h |
+| 1 | Team-level escalation | Obstacles that cannot be resolved within the team | Team Lead / SM | 24h |
+| 2 | Project-level escalation | Risks affecting project objectives | Project Manager | 24h |
+| 3 | Department-level escalation | Cross-team conflicts or resource issues | Department Head | 48h |
+| 4 | Executive-level escalation | Major risks that may impact the business | Director/VP | 24h |
 
 ## Escalation Rule Configuration Example
 
@@ -543,40 +538,30 @@ escalation_rules:
 
 | Condition | Action |
 |------|------|
-| Critical alerts > 2 per day | Escalate to management |
-| Response measures consecutively failing | Trigger response redesign |
+| Critical alerts > 2/day | Escalate to management |
+| Mitigation measures consecutively failing | Trigger mitigation redesign |
 | New risk identification frequency surging | Trigger systematic risk review |
-| Alert ignored for > 48 hours | Auto-escalate |
-| Escalation request rejected | Return to initiator, explain reason, record rejection rationale |
-| P0 risk escalation timeout >= 15 minutes without response | Auto-escalate to next level (Director level) |
-| P1 risk escalation timeout >= 2 hours without response | Auto-escalate to next level |
-| P2 risk escalation timeout >= 24 hours without response | Auto-escalate to next level |
-| Same risk shelved >= 2 times consecutively | Escalate to higher level, mark "requires urgent attention" |
+| Alert ignored > 48 hours | Auto-escalate |
+| Escalation request rejected | Return to initiator, explain reasons, record rejection rationale |
+| P0 risk escalation timeout ≥ 15 minutes without response | Auto-escalate to next level (Director level) |
+| P1 risk escalation timeout ≥ 2 hours without response | Auto-escalate to next level |
+| P2 risk escalation timeout ≥ 24 hours without response | Auto-escalate to next level |
+| Same risk shelved consecutively ≥ 2 times | Escalate to higher level, mark "requires urgent attention" |
 | Escalation conflicts with existing decisions | Escalate to higher authority, attach conflict explanation |
-| Escalation involves >= 3 departments | Auto-CC PMO, mark "cross-department coordination" |
+| Escalation involves ≥ 3 departments | Auto-CC PMO, mark "cross-department coordination" |
 | No response 24 hours after escalation | Auto-escalate to CEO/CTO level |
 
 ## Quality Checks
 
-### P0 Checks (must pass for quick/standard/deep)
-
-- [ ] Risk status updates timely
-- [ ] Alert trigger conditions clear
-
-### P1 Checks (must pass for standard/deep)
-
-- [ ] Risk trend analysis covers at least 3 cycles
-- [ ] High-risk items have follow-up records
-- [ ] Escalation paths match risk levels (P0->Director level/P1->Manager level/P2->Lead level)
-- [ ] Escalation notifications sent within SLA corresponding to risk level (P0<=5 min/P1<=30 min/P2<=4 hours)
-- [ ] Escalation reason includes >= 3 elements (risk description + impact scope + urgency level)
-- [ ] Escalation timeout has automatic follow-up mechanism (P0 every 15 min/P1 every 2 hours/P2 every 24 hours)
-- [ ] 100% of escalation operations recorded and traceable
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Risk status updates are timely (P0)
+- [ ] Alert trigger conditions are clear (P0)
+- [ ] Risk trend analysis covers at least 3 cycles (P1)
+- [ ] High-risk items have follow-up records (P1)
+- [ ] Escalation path matches risk level (P0→Director level/P1→Manager level/P2→Team Lead level) (P0)
+- [ ] Escalation notifications sent within SLA corresponding to risk level (P0≤5 minutes/P1≤30 minutes/P2≤4 hours) (P0)
+- [ ] Escalation reason contains ≥ 3 elements (risk description + impact scope + urgency level) (P1)
+- [ ] Escalation timeout has automatic follow-up mechanism (P0 every 15 minutes/P1 every 2 hours/P2 every 24 hours) (P2)
+- [ ] 100% of escalation actions are recorded and traceable (P1)
 
 ## Degradation Strategy
 
@@ -585,24 +570,24 @@ escalation_rules:
 | Missing Upstream Input | Degradation Plan | Output Impact |
 |---------------|---------|---------|
 | Risk register | User provides risk list (risk description + priority), AI generates monitoring plan | Monitoring plan based on user input, lacking structured risk data support |
-| Project data | Skip automatic indicator collection, user manually provides key indicator values | Monitoring report based on manual data, lacking real-time automatic indicator collection |
-| Trigger conditions | Use default alert thresholds, mark for human confirmation | Alert configuration based on default thresholds, requires human confirmation of threshold reasonableness |
-| Response measures | Skip response effectiveness tracking, only monitor risk status changes | Monitoring without response effectiveness tracking, lacking response effectiveness assessment dimension |
-| Issue data | User describes issue symptoms and impact, AI generates escalation suggestions based on description | Escalation suggestions based on user description, lacking structured risk/issue data support |
-| Escalation rules | Use default escalation rule template, mark for human confirmation | Escalation judgment based on default rules, requires human confirmation of rule applicability |
-| Organizational structure | User provides key decision maker information, AI builds escalation chain accordingly | Escalation path based on user input, may be incomplete |
+| Project data | Skip automated indicator collection, user manually provides key indicator values | Monitoring report based on manual data, lacking real-time automated indicator collection |
+| Trigger conditions | Use default alert thresholds, annotate as needing manual confirmation | Alert configuration based on default thresholds, requires manual confirmation of threshold reasonableness |
+| Mitigation actions | Skip mitigation effectiveness tracking, only monitor risk status changes | Monitoring without mitigation effectiveness tracking, missing mitigation effectiveness assessment dimension |
+| Issue data | User describes issue symptoms and impact, AI generates escalation recommendations based on description | Escalation recommendations based on user description, lacking structured risk/issue data support |
+| Escalation rules | Use default escalation rule template, annotate as needing manual confirmation | Escalation judgment based on default rules, requires manual confirmation of rule applicability |
+| Organizational structure | User provides key decision-maker information, AI builds escalation chain accordingly | Escalation path based on user input, may be incomplete |
 | Pending escalations | Start recording escalation status from scratch, cannot link to historical escalations | Brand new escalation tracking record, cannot link to historical escalation context |
 
 ### Data Acquisition Instructions
 
 When upstream files are missing, obtain necessary data through the following methods:
 
-1. **Risk register missing**: Ask user to provide risk list, including risk description and priority; AI will generate monitoring indicator definitions and alert plan accordingly
-2. **Project data missing**: Skip automatic indicator collection; ask user to regularly manually provide key indicator values; AI will perform trend analysis and alert judgment based on manual data
-3. **Trigger conditions missing**: Adopt default alert threshold template (probability change > 20% triggers Warning, > 40% triggers Critical), mark in output that default thresholds require human review
-4. **Issue data missing**: Ask user to describe the issue, including: issue symptoms, impact scope, current processing status, urgency level; AI will generate escalation suggestions and notification content based on description
-5. **Escalation rules missing**: Adopt default escalation rule template (Critical->immediate escalation L2, High->escalation within 24h L1, Medium->assessment within 48h), mark in output that default rules require human review
-6. **Organizational structure missing**: Ask user to provide key decision maker names and contact information; AI will build escalation paths and notification chains accordingly
+1. **Risk register missing**: Ask the user to provide a risk list including risk descriptions and priorities; AI will generate monitoring indicator definitions and alert plans accordingly
+2. **Project data missing**: Skip automated indicator collection, ask the user to periodically provide key indicator values manually; AI will perform trend analysis and alert judgment based on manual data
+3. **Trigger conditions missing**: Use default alert threshold template (probability change > 20% triggers Warning, > 40% triggers Critical), annotate in output that default thresholds require manual review
+4. **Issue data missing**: Ask the user to describe the issue, including: issue symptoms, impact scope, current processing status, urgency level; AI will generate escalation recommendations and notification content based on the description
+5. **Escalation rules missing**: Use default escalation rule template (Critical→immediate escalation L2, High→escalation L1 within 24h, Medium→assessment within 48h), annotate in output that default rules require manual review
+6. **Organizational structure missing**: Ask the user to provide key decision-maker names and contact information; AI will build escalation paths and notification chains accordingly
 
 ## Upstream Change Response
 
@@ -610,23 +595,23 @@ When upstream files are missing, obtain necessary data through the following met
 
 | Upstream Change | Impact Scope | Response Strategy |
 |----------|----------|----------|
-| Risk register change (new/closed/priority adjustment) | Monitoring indicator definitions, alert thresholds, tracking scope | Update monitoring indicators and alert configuration, adjust tracking scope |
-| Project data change (progress/quality/resource changes) | Risk indicator values, trend analysis, alert triggering | Recollect indicator data, update trend analysis and alert judgment |
-| Trigger condition change (threshold adjustment/new conditions) | Alert trigger logic, alert notifications | Reapply trigger conditions, update alert assessment results |
-| Risk data change (priority adjustment/status change) | Escalation necessity judgment, escalation path determination | Re-assess escalation necessity, update escalation paths and notifications |
-| Issue data update (new issues/severity change) | Escalation judgment, notification content | Re-assess issue escalation needs, update notification content |
-| Escalation rule change (threshold adjustment/new rules) | Escalation judgment logic, automatic trigger conditions | Reapply escalation rules, update escalation assessment results |
-| Organizational structure change (personnel changes/role adjustments) | Escalation paths, notification recipients | Rebuild escalation paths, update notification recipients |
+| Risk register changes (new/closed/priority adjustments) | Monitoring indicator definitions, alert thresholds, tracking scope | Update monitoring indicators and alert configuration, adjust tracking scope |
+| Project data changes (progress/quality/resource changes) | Risk indicator values, trend analysis, alert triggering | Re-collect indicator data, update trend analysis and alert judgment |
+| Trigger condition changes (threshold adjustments/new conditions) | Alert trigger logic, alert notifications | Re-apply trigger conditions, update alert assessment results |
+| Risk data changes (priority adjustments/status changes) | Escalation necessity assessment, escalation path determination | Re-assess escalation necessity, update escalation paths and notifications |
+| Issue data updates (new issues/severity changes) | Escalation judgment, notification content | Re-assess issue escalation needs, update notification content |
+| Escalation rule changes (threshold adjustments/new rules) | Escalation judgment logic, automatic trigger conditions | Re-apply escalation rules, update escalation assessment results |
+| Organizational structure changes (personnel changes/role adjustments) | Escalation paths, notification recipients | Rebuild escalation paths, update notification recipients |
 
 ### Downstream Notification Mechanism Table
 
 | Change Type | Impact Scope | Notification Method |
 |----------|----------|----------|
-| Risk status change (escalation/de-escalation/resolution) | Project manager, stakeholders | Update risk-management.json, notify project manager and relevant decision makers |
+| Risk status change (escalation/de-escalation/resolution) | Project manager, stakeholders | Update risk-management.json, notify project manager and relevant decision-makers |
 | Alert triggered/cleared | Project manager, risk owner | Update risk-management.json, send notifications per alert notification configuration |
-| Response effectiveness assessment change | Risk owner, project manager | Update risk-management.json, notify risk owner and project manager |
-| Escalation status change (new escalation/responded/resolved) | Project manager, stakeholders | Update risk-management.json, notify relevant decision makers |
-| Escalation path change | Currently active escalations, subsequent escalation processes | Update risk-management.json, notify all recipients in current escalation chain |
+| Mitigation effectiveness assessment change | Risk owner, project manager | Update risk-management.json, notify risk owner and project manager |
+| Escalation status change (new escalation/responded/resolved) | Project manager, stakeholders | Update risk-management.json, notify relevant decision-makers |
+| Escalation path change | Current active escalations, subsequent escalation processes | Update risk-management.json, notify all recipients in current escalation chain |
 | Escalation rule change | All subsequent escalation judgments | Update risk-management.json, notify rule maintainers |
 
 ---

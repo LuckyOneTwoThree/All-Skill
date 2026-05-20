@@ -1,64 +1,66 @@
 ---
 name: revenue-upsell
-description: "Use when optimizing upgrade conversion strategy. Upgrade conversion automation pipeline that identifies upgrade signal users, auto-generates personalized upgrade content, optimizes outreach timing, and designs A/B tests. Keywords: upgrade conversion, upsell, upgrade strategy, cross-sell, premium upgrade, upgrade plan, upgrade package."
+description: Use when you need to optimize upgrade conversion strategy. Upgrade Conversion Automation Pipeline, identifies upgrade signal users, automatically generates personalized upgrade content, optimizes outreach timing, and designs A/B tests. Keywords: upgrade conversion, upsell, upsell, upgrade strategy, cross-sell, push higher-tier plans, get customers to buy more, upgrade plan.
 metadata:
   module: "Product Growth & Operations"
-  sub-module: "Revenue"
+  sub-module: "Monetization"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "Internet", "General"]
   trigger_examples:
     - "How to get users to upgrade their plan"
     - "Which users are suitable for upsell"
-    - "How to implement cross-selling"
+    - "How to do cross-selling"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output upsell strategies and opportunity list"
-  deep_description: "Full strategy + upsell trigger design + customer tiered upsell model + upsell experiment plan"
+  quick_description: "Directly output upsell strategy and opportunity list"
+  deep_description: "Complete strategy + upsell trigger design + customer-tiered upsell model + upsell experiment plan"
 ---
 
 # Upgrade Conversion Automation
 
 ## Core Principles
 
-1. **Upgrade is value extension not sales**: Upgrade recommendations must be based on users' genuine usage needs and scenarios, not sales targets
-2. **Signal strength determines timing**: Multiple strong signals trigger immediate guidance; weak signals require continuous nurturing; avoid too-early or too-late outreach
-3. **Personalization is conversion rate**: The more upgrade content matches users' current usage scenarios, the higher the conversion rate
+1. **Upgrade is value extension, not sales**: Upgrade recommendations must be based on users' genuine usage needs and scenarios, not sales targets
+2. **Signal strength determines timing**: Multiple strong signals trigger immediate guidance, weak signals require continuous nurturing; avoid reaching out too early or too late
+3. **Personalization equals conversion rate**: The more closely upgrade content matches the user's current usage scenario, the higher the conversion rate
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI suggests, human approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
-| User Behavior Data | object | Yes | User provided | Usage volume, feature usage, collaboration behavior |
-| Payment History Data | object | Yes | output/pm-growth/revenue-nrr/nrr_analysis.json | Historical plans, payment amounts, payment cycles |
-| Product Usage Data | object | No | User provided | Feature usage details, usage statistics |
+| User behavior data | object | Yes | User provided | Usage volume, feature usage, collaboration behavior |
+| Payment history data | object | Yes | output/pm-growth/revenue-nrr/nrr_analysis.json | Historical plans, payment amounts, payment cycles |
+| Product usage data | object | ○ | User provided | Feature usage details, usage statistics |
 
 ## Upgrade Signal Types
 
 ### Type 1: Usage Limit Signals
 | Signal | Description | Upgrade Potential |
 |------|------|---------|
-| Storage reaching limit | File storage approaching free tier limit | High |
+| Storage reaching limit | File storage approaching free version limit | High |
 | API call limit exceeded | API calls approaching quota | High |
-| Seat capacity full | Team size reaching free tier limit | High |
-| Feature usage limit | Some features have usage count limits | Medium |
+| Seat capacity full | Team size reaching free version limit | High |
+| Feature usage limit exceeded | Some features have usage count limits | Medium |
 
-### Type 2: Feature Need Signals
+### Type 2: Feature Demand Signals
 | Signal | Description | Upgrade Potential |
 |------|------|---------|
-| Premium feature access | Frequently accessing premium-only features | High |
+| Premium feature access | Frequently accessing paid-exclusive features | High |
 | Collaboration feature usage | Using team collaboration features | High |
-| API deep usage | Using advanced API features | High |
+| Advanced API usage | Using advanced API features | High |
 | Customization needs | Emerging customization requirements | Medium |
 
 ### Type 3: Behavioral Signals
 | Signal | Description | Upgrade Potential |
 |------|------|---------|
 | High-frequency usage | Usage frequency far exceeding average users | High |
-| Long-duration usage | Usage duration far exceeding average users | Medium |
+| Extended usage | Usage duration far exceeding average users | Medium |
 | Multi-project operations | Simultaneously operating multiple projects/workspaces | High |
 | Key feature usage | Using core business features | High |
 
@@ -67,8 +69,8 @@ AI->Human AI suggests, human approves
 |------|------|---------|
 | Pricing page visits | Frequently viewing paid pricing | High |
 | Comparison page visits | Viewing different plan comparisons | High |
-| Trial application | Applying for premium feature trial | High |
-| Customer service inquiry | Inquiring about upgrade-related questions | High |
+| Trial request | Requesting trial of paid features | High |
+| Customer support inquiry | Inquiring about upgrade-related questions | High |
 
 ## Execution Steps
 
@@ -82,11 +84,11 @@ signal_rules:
       weight: 0.9
     - condition: "storage_usage >= 0.6 * free_limit"
       weight: 0.6
-      
+
   feature_access:
     - condition: "premium_feature_access_count >= 5"
       weight: 0.8
-      
+
   behavioral:
     - condition: "daily_active_days >= 5 AND avg_session > 30min"
       weight: 0.7
@@ -111,10 +113,10 @@ upgrade_score = (
 )
 ```
 
-#### Priority Stratification
+#### Priority Tiering
 | Priority | Score Range | Characteristics | Response Strategy |
 |--------|---------|------|---------|
-| P0 | >=0.8 | Multiple strong signals | Immediate upgrade guidance |
+| P0 | ≥0.8 | Multiple strong signals | Immediate upgrade guidance |
 | P1 | 0.6-0.8 | Clear upgrade need | Proactive upgrade recommendation |
 | P2 | 0.4-0.6 | Some upgrade signals | Scenario-based upgrade guidance |
 | P3 | <0.4 | Potential upgrade need | Continuous nurturing |
@@ -124,39 +126,39 @@ upgrade_score = (
 #### Personalization Elements
 | Element | Content Source | Description |
 |------|---------|------|
-| Username | User profile | Personalized greeting |
+| User name | User profile | Personalized greeting |
 | Current usage | Product data | "You have used 80%" |
 | Usage limits | Product data | Specific limitation scenarios |
-| Upgrade benefits | Product info | What you get after upgrading |
+| Upgrade benefits | Product information | What you get after upgrading |
 | Recommended plan | Product pricing | Most suitable plan |
 
 #### Personalized Content Template
 ```
-Title: {Username}, you have reached {Product Name} {Limit Type} limit
+Title: {User name}, you have reached the {Product name} {Limit type} limit
 
-Body: 
-You have used {Current Usage}/{Free Limit} this month,
+Body:
+You have used {Current usage}/{Free limit} this month.
 When usage reaches 100%, some features will be restricted.
 
-Upgrade to {Recommended Plan}, you can:
-[OK] {Benefit 1}
-[OK] {Benefit 2}
-[OK] {Benefit 3}
+Upgrade to {Recommended plan}, you can:
+✓ {Benefit 1}
+✓ {Benefit 2}
+✓ {Benefit 3}
 
 {Incentive message}
 
 [Upgrade Now] [Learn More]
 ```
 
-### Step 3: Outreach Timing Optimization [Deep]
+### Step 3: Outreach Timing Optimization [Core]
 
 #### Optimal Outreach Timing
 | Timing | Trigger Condition | Effect |
 |------|---------|------|
-| Real-time trigger | When usage limit reached | Most relevant |
-| Activity peak | During user activity peak hours | High outreach rate |
-| After feature usage | After accessing/trying premium features | Clear need |
-| Periodic reminder | Month-start / weekends | Sufficient decision time |
+| Real-time trigger | When usage limit is reached | Most relevant |
+| Activity peak | During user activity peak hours | High reach rate |
+| After feature usage | After accessing/trying paid features | Clear need |
+| Periodic reminder | Beginning of month / weekends | Sufficient decision time |
 
 #### Outreach Channel Selection
 | User Type | Recommended Channel | Priority |
@@ -164,31 +166,31 @@ Upgrade to {Recommended Plan}, you can:
 | High-activity users | App popup + Push | Real-time |
 | Medium-activity users | Email + In-app message | Periodic |
 | Low-activity users | Email + SMS | Reinforced |
-| High-value users | Email + Phone | Full-channel |
+| High-value users | Email + Phone | Omnichannel |
 
 ### Step 4: A/B Test Design [Core]
 
 #### Test Types
-| Test Type | Test Content | Objective |
-|---------|---------|---------|
+| Test Type | Test Content | Goal |
+|---------|---------|------|
 | Timing test | Effect of different trigger timings | Find optimal trigger point |
 | Content test | Conversion effect of different copy | Optimize messaging |
-| Incentive test | Conversion at different discount levels | Balance conversion rate and profit |
+| Incentive test | Conversion with different discount levels | Balance conversion rate and profit |
 | Channel test | Effect of different outreach channels | Optimize outreach efficiency |
 
 #### A/B Test Template
 ```yaml
-test_id: "UPSELL_TEST_{sequence}"
+test_id: "UPSELL_TEST_{number}"
 test_name: "Test name"
 hypothesis: "If...then... hypothesis"
 
 variants:
   control:
     name: "Control group"
-    description: "Current plan"
+    description: "Current approach"
   treatment:
     name: "Treatment group"
-    description: "Test plan"
+    description: "Test approach"
 
 metrics:
   primary: "Upgrade conversion rate"
@@ -199,19 +201,19 @@ design:
   min_sample_per_variant: 500
   runtime_days: 14
   mde: 0.1
-  
+
 success_criteria:
   - primary_metric_lift: ">=10%"
   - guardrail_metrics: "No significant decline"
 ```
 
-### Output Depth Grading
+### Output Depth Classification
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | upsell strategies and opportunity list | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full strategy + upsell trigger design + customer tiered upsell model + upsell experiment plan | Full deliverables + extended analysis + deep simulation |
+| quick | Upsell strategy and opportunity list | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Complete output, including all Step outputs |
+| deep | Complete strategy + upsell trigger design + customer-tiered upsell model + upsell experiment plan | Complete output + extended analysis + deep inference |
 
 ## Output
 
@@ -227,9 +229,9 @@ success_criteria:
   "required": ["upgrade_signals", "personalized_offers"],
   "properties": {
     "upgrade_signals": {"type": "array", "description": "Upgrade signal user list, including signal type, score, and recommended plan"},
-    "personalized_offers": {"type": "array", "description": "Personalized upgrade offer list, including value proposition and incentive"},
-    "ab_tests": {"type": "array", "description": "A/B test design plans list"},
-    "tracking": {"type": "object", "description": "Upgrade effect tracking, including conversion rate, revenue impact, and ROI"}
+    "personalized_offers": {"type": "array", "description": "Personalized upgrade plan list, including value proposition and incentives"},
+    "ab_tests": {"type": "array", "description": "A/B test design plan list"},
+    "tracking": {"type": "object", "description": "Upgrade effectiveness tracking, including conversion rate, revenue impact, and ROI"}
   }
 }
 ```
@@ -244,7 +246,7 @@ success_criteria:
       "upgrade_signals": [
         {
           "signal_type": "usage_limit",
-          "description": "Usage reaching 80% of free tier limit",
+          "description": "Usage reached 80% of free version limit",
           "strength": 0.85
         },
         {
@@ -263,7 +265,7 @@ success_criteria:
       "offer_id": "OFFER_001",
       "target_segment": "free_user_usage_limit",
       "offer_type": "upgrade_cta",
-      "headline": "You have used 80% of free tier capacity",
+      "headline": "You have used 80% of free version capacity",
       "value_proposition": "Upgrade to Pro, unlock unlimited usage",
       "incentive": "20% off first year",
       "cta_text": "Upgrade Now",
@@ -275,7 +277,7 @@ success_criteria:
       "test_id": "UPSELL_TEST_001",
       "test_name": "Upgrade popup timing optimization",
       "hypothesis": "Showing upgrade popup at 70% usage is more effective than at 90%",
-      "target_segment": "Free tier users",
+      "target_segment": "Free version users",
       "variants": {
         "control": "Trigger at 90%",
         "treatment_a": "Trigger at 70%",
@@ -307,37 +309,37 @@ success_criteria:
 | upgrade_signals[].strength | string | No | Signal strength, enum: strong/medium/weak |
 | upgrade_signals[].description | string | No | Signal description |
 | upgrade_signals[].recommended_plan | string | Yes | Recommended plan, cannot be empty |
-| personalized_offers | array | Yes | Personalized offer list, at least 1 |
-| personalized_offers[].offer_type | string | No | Offer type, enum: upgrade/addon/trial_discount |
-| personalized_offers[].headline | string | No | Offer headline |
+| personalized_offers | array | Yes | Personalized plan list, at least 1 |
+| personalized_offers[].offer_type | string | No | Plan type, enum: upgrade/addon/trial_discount |
+| personalized_offers[].headline | string | No | Plan headline |
 | personalized_offers[].value_proposition | string | Yes | Value proposition, cannot be empty |
 | personalized_offers[].incentive | string | No | Incentive content |
-| personalized_offers[].cta_text | string | No | Call-to-action text |
-| ab_tests | array | No | A/B test list, each item must contain test_id/hypothesis |
+| personalized_offers[].cta_text | string | No | Call-to-action copy |
+| ab_tests | array | No | A/B test list, each item must include test_id/hypothesis |
 | ab_tests[].test_id | string | Yes | Test ID |
 | ab_tests[].test_name | string | No | Test name |
 | ab_tests[].hypothesis | string | Yes | Test hypothesis |
 | ab_tests[].variants | array | No | Variant list |
 | ab_tests[].primary_metric | string | No | Primary metric |
-| tracking | object | No | Effect tracking, must contain upgrade_conversion_rate/roi |
+| tracking | object | No | Effectiveness tracking, must include upgrade_conversion_rate/roi |
 | tracking.upgrade_conversion_rate | number | No | Upgrade conversion rate |
 | tracking.roi | number | No | Upgrade ROI |
 
 ## Decision Rules
 
-| Situation | Action |
+| Situation | Handling |
 |------|----------|
-| Upgrade score >=0.8 (P0) | Immediately trigger upgrade guidance |
-| Usage limit + feature need dual signals | Prioritize recommending matching plan |
+| Upgrade score ≥0.8 (P0) | Trigger upgrade guidance immediately |
+| Usage limit + Feature demand dual signals | Prioritize recommending matching plan |
 | Upgrade conversion rate below 5% | Outreach content or timing needs A/B test optimization |
-| Guardrail metrics (retention/NPS) declining | Pause upgrade push, investigate cause |
+| Guardrail metrics (retention/NPS) declining | Pause upgrade outreach, investigate cause |
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Upgrade signal identification covers 4 signal types (usage/feature/behavioral/intent)
-- [ ] Personalized content includes username, usage, benefits 3 elements
+- [ ] Upgrade signal identification covers 4 signal types (usage/feature/behavior/intent)
+- [ ] Personalized content includes 3 elements: user name, usage, benefits
 
 ### P1 Checks (must pass for standard/deep)
 
@@ -346,19 +348,26 @@ success_criteria:
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
+- [ ] Extended analysis complete (deep inference and roadmap generated)
 - [ ] Decision records complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
 ### Upstream File Missing Degradation Plan
 
-| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|----------|----------|----------|----------|
-| User behavior data missing | User describes paid user characteristics -> generate upgrade strategy | Upgrade signals based on user description, lacking behavioral data validation | Request user to describe paid user usage patterns and upgrade triggers, or upload behavior_data.json |
-| Payment history missing | Skip payment pattern analysis, use generic upgrade trigger rules | Upgrade timing judgment based on generic rules | Request user to provide payment history and upgrade patterns, or upload payment_history.json |
-| User behavior + payment history both missing | User describes paid user characteristics -> generate upgrade strategy | Output based on description upgrade strategy, marked "pending data validation" | Request user to describe paid user characteristics and product tiers, or execute revenue-nrr first |
-| Product usage data not provided | Prompt user to provide or skip steps related to that input | Cannot identify usage-based upgrade signals | Prompt user to provide product usage data for upgrade signal detection |
+| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Notes |
+|----------|----------|----------|------------|
+| User behavior data missing | User describes paying user characteristics → Generate upgrade strategy | Upgrade signals based on user description, lacking behavioral data validation | Request user to provide paying user usage behavior and feature usage frequency |
+| Payment history missing | Skip payment pattern analysis, use generic upgrade trigger rules | Upgrade timing judgment based on generic rules | Request user to provide historical plan distribution and payment cycle data |
+| Product usage data missing | Skip feature usage detail analysis, upgrade signals based on behavior and payment data only | Upgrade signals lack feature dimension, upgrade recommendation precision reduced | Request user to provide feature usage details and usage statistics |
+| User behavior + Payment history both missing | User describes paying user characteristics → Generate upgrade strategy | Output description-based upgrade strategy, marked "awaiting data validation" | Request user to provide paying user characteristic description, product tiers, and upgrade barriers |
+
+### Data Acquisition Notes
+
+When upstream files are missing, the user needs to provide the following information to support degraded generation:
+- **Paying user characteristics**: Current paying user usage behavior and payment patterns
+- **Product tiers** (optional): Pricing and feature differences across paid tiers
+- **Upgrade barriers** (optional): Known reasons why users don't upgrade
 
 ## Upstream Change Response
 
@@ -367,22 +376,22 @@ success_criteria:
 | Upstream Source | Change Type | Impact Scope | Response Action |
 |----------|----------|----------|----------|
 | revenue-nrr | Expansion opportunity change | Upgrade signal identification and recommended plan | Update expansion signals and upgrade recommendations |
-| User provided - behavior data | Usage metric change | Signal detection rules and scoring | Update signal weights and scoring formula |
-| User provided - payment history | Payment pattern change | Personalized content and outreach timing | Adjust content templates and trigger conditions |
+| User provided - Behavior data | Usage metric change | Signal detection rules and scoring | Update signal weights and scoring formula |
+| User provided - Payment history | Payment pattern change | Personalized content and outreach timing | Adjust content templates and trigger conditions |
 
 ### Downstream Notification Mechanism Table
 
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
 |------------|----------|----------|----------|
 | revenue-orchestrator | Upgrade strategy output complete | Output file update | Upgrade conversion completion status and key conclusions |
-| retention-management | High-value user upgrade signals | Write to output file | Upgrade signal user list |
+| retention-management | High-value user upgrade signal | Write to output file | Upgrade signal user list |
 
 ## Key Success Metrics
 
 | Metric | Definition | Target Value |
 |------|------|--------|
-| Upgrade conversion rate | Upgraded users / Upgrade opportunity users | >=8% |
+| Upgrade conversion rate | Upgraded users / Upgrade opportunity users | ≥8% |
 | Upgrade GMV | Monthly revenue increase from upgrades | Continuously growing |
-| Upgrade response rate | Proportion of users responding after outreach | >=15% |
-| Upgrade ROI | Upgrade GMV / Outreach cost | >=3 |
-| Post-upgrade retention rate | 12-month retention rate of upgraded users | >=85% |
+| Upgrade response rate | Proportion of users responding after outreach | ≥15% |
+| Upgrade ROI | Upgrade GMV / Outreach cost | ≥3 |
+| Post-upgrade retention rate | 12-month retention rate of upgraded users | ≥85% |

@@ -5,11 +5,13 @@ metadata:
   module: "Product Metrics Design"
   sub-module: "Tracking Plan"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["Internet", "E-commerce", "General"]
   trigger_examples:
     - "This feature needs tracking"
     - "Help me create a tracking plan"
     - "Organize what data needs to be collected"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "Output core event list and tracking checklist only"
@@ -27,7 +29,7 @@ execution_depth:
 
 ## Interaction Mode
 
-**AI->Human AI suggests, human approves**
+**🤖→👤 AI suggests, human approves**
 
 This Pipeline automatically generates tracking plans, but key decision points require human approval:
 - **Must approve**: Tracking business logic correctness
@@ -37,10 +39,10 @@ This Pipeline automatically generates tracking plans, but key decision points re
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
+|--------|------|------|------|------|
 | PRD | string/file | Yes | User provided | PRD document content (including feature descriptions, user flows, core paths, business rules) |
 | Metric system | JSON | Yes | output/pm-metrics-design/metrics-system/metric_system.json | North Star metric, L1/L2/actionable metrics |
-| Existing tracking list | JSON array | O | User provided | Existing tracking event list |
+| Existing tracking list | JSON array | ○ | User provided | Existing tracking event list |
 
 ### PRD (required)
 
@@ -96,9 +98,9 @@ This Pipeline automatically generates tracking plans, but key decision points re
 
 ## Execution Steps
 
-### Step 1: Reverse-Engineer Tracking Needs from Metric System [Conditional]
+### Step 1: Reverse-Engineer Tracking Needs from Metric System [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Processing Logic**:
 
@@ -113,7 +115,7 @@ FOR each metric in metric_system:
 **Reverse Engineering Mapping Table**:
 
 | Metric Type | Required Behavior Data | Tracking Event Example |
-|-------------|----------------------|----------------------|
+|---------|------------|-------------|
 | Conversion rate metric | Page/feature impression + click | page_view + button_click |
 | Frequency metric | Behavior occurrence count | feature_use |
 | Duration metric | Behavior start + end time | session_start + session_end |
@@ -140,9 +142,9 @@ FOR each metric in metric_system:
 
 ---
 
-### Step 2: Extract Feature Tracking Needs from PRD [Conditional]
+### Step 2: Extract Feature Tracking Needs from PRD [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Processing Logic**:
 
@@ -165,7 +167,7 @@ Identify feature modules in PRD -> Define module-level tracking
 **Example**:
 
 | PRD Feature Module | Tracking Namespace | Tracking Event Example |
-|-------------------|-------------------|----------------------|
+|-----------|------------|-------------|
 | User authentication | user_auth | login_success, logout, register_complete |
 | Product browsing | product_browse | product_view, product_list_view, search |
 | Shopping cart | cart | add_to_cart, remove_from_cart, cart_view |
@@ -216,7 +218,7 @@ Identify interaction details in PRD -> Define interaction tracking
 **Interaction Types**:
 
 | Interaction Type | Trigger Timing | Tracking Properties |
-|-----------------|---------------|-------------------|
+|---------|---------|---------|
 | Button click | When click action occurs | button_name, page_name, position |
 | Form submit | When form submission succeeds | form_name, submit_result, error_type |
 | Swipe gesture | When swipe ends | swipe_direction, swipe_distance |
@@ -227,7 +229,7 @@ Identify interaction details in PRD -> Define interaction tracking
 
 ### Step 3: Deduplicate with Existing Tracking [Conditional]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Deduplication Logic**:
 
@@ -271,11 +273,11 @@ Weight recommendations:
 
 ---
 
-### Step 4: Tracking Quality Check [Conditional]
+### Step 4: Tracking Quality Check [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
-#### 4.1 Naming Convention Check
+#### 4.1 Naming Convention Check [Core]
 
 **Naming Rules**:
 
@@ -290,7 +292,7 @@ Property naming: all lowercase + underscore separator
 **Check Items**:
 
 | Check Item | Rule | Pass Condition |
-|------------|------|----------------|
+|-------|------|---------|
 | Letter convention | Only a-z, 0-9, underscore allowed | No uppercase letters, no special characters |
 | Separator convention | Use underscore to separate semantic units | Not camelCase, not hyphenated |
 | Completeness | Includes subject_action_object | At least 3 semantic units |
@@ -317,12 +319,12 @@ Property naming: all lowercase + underscore separator
 
 ---
 
-#### 4.2 Property Completeness Check
+#### 4.2 Property Completeness Check [Core]
 
 **Core Property Definitions**:
 
 | Property Type | Property Name | Required | Description |
-|--------------|---------------|----------|-------------|
+|---------|-------|------|------|
 | Common property | user_id | Yes | User unique identifier |
 | Common property | session_id | Yes | Session unique identifier |
 | Common property | timestamp | Yes | Event occurrence time |
@@ -364,7 +366,7 @@ FOR each event:
 
 ---
 
-#### 4.3 Core Path Coverage Check
+#### 4.3 Core Path Coverage Check [Conditional]
 
 **Core Path Definition**:
 
@@ -412,12 +414,12 @@ def check_core_path_coverage():
 
 ---
 
-#### 4.4 Anomaly State Coverage Check
+#### 4.4 Anomaly State Coverage Check [Deep]
 
 **Anomaly State Definitions**:
 
 | Anomaly Type | Anomaly Scenario | Tracking Need |
-|-------------|-----------------|---------------|
+|---------|---------|---------|
 | Load anomaly | Page/API load failure | error_view, api_error |
 | Form anomaly | Form validation failure, submission failure | form_error, submit_failed |
 | Payment anomaly | Payment failure, payment cancelled | payment_failed, payment_cancelled |
@@ -454,7 +456,7 @@ FOR each core_flow:
 
 ---
 
-#### 4.5 Redundancy Detection
+#### 4.5 Redundancy Detection [Deep]
 
 **Redundancy Rules**:
 
@@ -487,7 +489,7 @@ IF any of the following conditions exist THEN flag as redundant tracking:
 
 ### Step 5: Generate Tracking Document [Core]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
 **Document Structure**:
 
@@ -535,9 +537,9 @@ IF any of the following conditions exist THEN flag as redundant tracking:
 
 ### Step 6: PRD Tracking Plan Consistency Validation [Conditional]
 
-**AI AI Processing**
+**🤖 AI Processing**
 
-#### 6.1 Bidirectional Validation Mechanism
+#### 6.1 Bidirectional Validation Mechanism [Conditional]
 
 **Forward Validation**: PRD features -> Tracking coverage
 
@@ -559,12 +561,12 @@ FOR each tracking_event:
 
 ---
 
-#### 6.2 PRD Feature Extraction
+#### 6.2 PRD Feature Extraction [Conditional]
 
 **Feature Types**:
 
 | Feature Type | Identification Keywords | Tracking Need |
-|-------------|------------------------|---------------|
+|---------|-----------|---------|
 | Page | Page, module, tab | page_view + page properties |
 | Button | Click, press, trigger | button_click + button properties |
 | Form | Fill, input, submit | input + form_submit |
@@ -575,18 +577,18 @@ FOR each tracking_event:
 
 ---
 
-#### 6.3 Consistency Scoring
+#### 6.3 Consistency Scoring [Conditional]
 
 **Scoring Rules**:
 
 ```python
 def calculate_prd_consistency_score():
-    forward_coverage = calculate_forward_coverage()
-    backward_coverage = calculate_backward_coverage()
+    forward_coverage = calculate_forward_coverage()  # PRD->Tracking
+    backward_coverage = calculate_backward_coverage()  # Tracking->PRD
 
     consistency_score = (
-        0.6 * forward_coverage +
-        0.4 * backward_coverage
+        0.6 * forward_coverage +  # Forward weight 60%
+        0.4 * backward_coverage   # Reverse weight 40%
     )
 
     return {
@@ -599,12 +601,12 @@ def calculate_prd_consistency_score():
 
 ---
 
-#### 6.4 Continuous Validation Mechanism
+#### 6.4 Continuous Validation Mechanism [Deep]
 
 **Trigger Timing**:
 
 | Trigger Type | Trigger Condition | Validation Content |
-|-------------|-------------------|-------------------|
+|---------|---------|---------|
 | PRD change trigger | PRD document updated | Whether new features have tracking |
 | Tracking change trigger | Tracking plan updated | Whether changes affect PRD coverage |
 | Periodic validation | Weekly/monthly | Full consistency check |
@@ -634,17 +636,17 @@ def calculate_prd_consistency_score():
 
 ---
 
+## Output
+
+**Storage Path**: `output/pm-metrics-design/tracking-plan/`
+
 ### Output Depth Grading
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | core event list and tracking checklist only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full plan + data governance specs + privacy compliance audit + long-term evolution roadmap | Full deliverables + extended analysis + deep simulation |
-
-## Output
-
-**Storage Path**: `output/pm-metrics-design/tracking-plan/`
+| quick | core event list + tracking checklist | Core conclusions + minimum viable deliverable, only output Step 1-2 core events and tracking checklist |
+| standard | Full tracking plan (default) | Complete output including Step 1-6 |
+| deep | Full plan + extended analysis | Full deliverables + data governance specs + privacy compliance audit + long-term evolution roadmap + decision records + risk assessment |
 
 **Output File**: `tracking_plan.json`
 
@@ -710,7 +712,7 @@ def calculate_prd_consistency_score():
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | tracking_plan | array | Yes | Tracking event list |
 | tracking_plan[].event_name | string | Yes | Event name, lowercase underscore format |
 | tracking_plan[].display_name | string | Yes | Event display name |
@@ -736,7 +738,7 @@ def calculate_prd_consistency_score():
 When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | North Star metric change | Tracking events linked to North Star | Update linked_metric references, re-evaluate tracking priority, flag for human confirmation |
 | L1/L2 metric addition/removal | Tracking events reverse-engineered from corresponding metrics | New metrics trigger new tracking recommendations, removed metrics flag associated tracking as "pending evaluation" |
 | Actionable metric change | Tracking linked to actionable metrics | Update priority and analysis purpose of tracking linked to actionable metrics |
@@ -746,7 +748,7 @@ When upstream inputs change, this Skill's response strategy:
 When the tracking plan itself changes, notification mechanism to downstream:
 
 | Tracking Change Type | Notification Scope | Notification Method |
-|---------------------|-------------------|---------------------|
+|-------------|----------|----------|
 | Tracking event addition/removal | metrics-dashboard | Flag event addition/removal, trigger Dashboard data source update |
 | Tracking property change | metrics-dashboard | Flag property change, trigger Widget configuration update |
 | Tracking priority change | Development team | Flag priority change, trigger development scheduling evaluation |
@@ -794,7 +796,7 @@ When the tracking plan itself changes, notification mechanism to downstream:
 **Review Checklist**:
 
 | Review Item | Description | Pass Condition |
-|-------------|-------------|----------------|
+|-------|------|---------|
 | Personal information identification | Whether tracking collects PII | Desensitized or anonymized |
 | Sensitive information | Whether bank card numbers, passwords, etc. are collected | Explicitly prohibited from collection |
 | Data retention | Data retention period | Complies with regulatory requirements |
@@ -808,52 +810,24 @@ When the tracking plan itself changes, notification mechanism to downstream:
 
 - [ ] All event names use lowercase + underscore
 - [ ] All property names use lowercase + underscore
+- [ ] Core user path coverage >=90%
 
 ### P1 Checks (must pass for standard/deep)
 
 - [ ] No camelCase naming
 - [ ] No special characters
 - [ ] Semantic units complete
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
-
----
-
-#### [OK] Core Path Coverage >=90%
-
-**Check Standards**:
-- [ ] Core user path coverage >=90%
 - [ ] Key conversion node coverage complete
-- [ ] Anomaly path coverage >=80%
-
-**Failure Handling**:
-```
-IF core path coverage insufficient:
-  1. Identify uncovered paths
-  2. Supplement recommended tracking plan
-  3. Adjust quality standards or supplement tracking
-```
-
----
-
-#### [OK] PRD Consistency >=90%
-
-**Check Standards**:
 - [ ] Forward coverage >=90% (PRD->Tracking)
 - [ ] Reverse coverage >=85% (Tracking->PRD)
 - [ ] Overall consistency >=90%
 
-**Failure Handling**:
-```
-IF PRD consistency insufficient:
-  1. List all inconsistent feature points
-  2. Evaluate inconsistency reasons
-  3. Supplement missing tracking or adjust PRD
-  4. Record discrepancy reasons
-```
+### P2 Checks (must pass for deep only)
+
+- [ ] Anomaly path coverage >=80%
+- [ ] Data governance specs outputted (data retention policy, data quality rules, data lineage tracking)
+- [ ] Privacy compliance audit completed (PII desensitization check, sensitive information collection review, user authorization compliance verification)
+- [ ] Long-term evolution roadmap generated (tracking version management, deprecated event migration plan, new metric onboarding specification)
 
 ---
 
@@ -862,11 +836,18 @@ IF PRD consistency insufficient:
 ### Upstream File Missing Degradation Plan
 
 | Missing Scope | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|-----------------|---------------|----------|
-| PRD missing | Prompt user to provide feature list, generate basic tracking plan based on feature list | Cannot extract user flows and interaction details, tracking coverage may be incomplete | Request user to provide feature list and core user paths, or upload prd.json |
+|----------|----------|----------|------------|
+| PRD missing | Prompt user to provide feature list, generate basic tracking plan based on feature list | Cannot extract user flows and interaction details, tracking coverage may be incomplete | Request user to provide feature list and core user paths, or upload PRD file |
 | Metric system missing | Skip metric reverse-engineering step, only extract tracking needs based on PRD features | Tracking-metric association missing, analysis purpose annotated as "to be supplemented" | Request user to provide core metric list, or upload metrics-system.json |
 | Existing tracking list missing | Skip deduplication step, all tracking marked as new | May produce redundant tracking, requires subsequent manual deduplication | Request user to provide existing tracking event list, or upload tracking-plan.json |
-| PRD + Metric system + Existing tracking list all missing | User provides feature list -> generate basic tracking plan based on features | Output basic tracking plan, annotated as "to be supplemented" and "to be confirmed" | Request user to provide feature list, core user paths, and key interaction nodes, or execute design-prd and metrics-system first |
+| PRD + Metric system + Existing tracking list all missing | User provides feature list -> generate basic tracking plan based on features | Output basic tracking plan, annotated as "to be supplemented" and "to be confirmed" | Request user to provide feature list, core user paths, and key interaction nodes |
+
+### Data Acquisition Instructions
+
+When upstream files are missing, the user needs to provide the following information to support degraded generation:
+- **Feature list**: Core feature modules and feature points included in the product
+- **Core user paths** (optional): Main process steps of product usage
+- **Key interaction nodes** (optional): User interaction behaviors that need to be tracked
 
 ---
 

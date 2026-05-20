@@ -1,59 +1,61 @@
 ---
 name: data-analysis-report
-description: "Use when producing a complete data analysis report. Data insight report auto-generation, integrating funnel analysis, retention analysis, anomaly detection and decision insight data, supplementing trend interpretation and action recommendations, outputting structured Markdown report. Keywords: Data analysis report, data insight report, operations report, data report, analysis report."
+description: Use when producing a complete data analysis report is needed. Automated data insight report generation, integrating funnel analysis, retention analysis, anomaly detection, and decision insight data, supplementing trend interpretation and action recommendations, outputting structured Markdown reports. Keywords: data analysis report, data insight report, operations report, data report, analysis report, generate a data report, help me write an operations analysis, summarize the data situation.
 metadata:
   module: "Product Metrics Operations"
   sub-module: "Data Analysis"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["General"]
   trigger_examples:
-    - "Help me produce this month's data analysis report"
+    - "Help me generate a data analysis report for this month"
     - "Summarize the recent data situation"
     - "Generate an operations weekly report"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output data insights and key findings"
-  deep_description: "Full report + multi-dimensional cross analysis + prediction model + decision recommendation roadmap"
+  quick_description: "Directly output data insights and key findings"
+  deep_description: "Complete report + multi-dimensional cross-analysis + prediction model + decision recommendation roadmap"
 ---
 
-# Data Insight Report Auto-Generation
+# Automated Data Insight Report Generation
 
 ## Core Principles
 
-1. **Data speaks, insights drive** -- Data is the starting point, insight is the endpoint, action is the purpose
-2. **Anomalies first** -- Anomalies are more noteworthy than normalcy; anomalies are signals for improvement
-3. **Deep attribution** -- Not just "what", but answering "why"
-4. **Actionable conclusions** -- Every insight must correspond to an actionable action
+1. **Data speaks, insights drive** — Data is the starting point, insight is the destination, action is the purpose
+2. **Anomalies first** — Anomalies are more noteworthy than normal states; anomalies are signals for improvement
+3. **Deep attribution** — Don't just say "what", also answer "why"
+4. **Actionable conclusions** — Every insight must correspond to an actionable action
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI Suggests, Human Approves
 
 ## Input
 
 | Input Item | Type | Required | Source | Description |
-|------------|------|----------|--------|-------------|
-| Funnel analysis | JSON | O | output/pm-metrics-ops/analysis-funnel/funnel_analysis.json | Funnel health, conversion rates, drop-off points |
-| Retention analysis | JSON | O | output/pm-metrics-ops/analysis-retention/retention_analysis.json | Retention curves, churn warnings, cohorts |
-| Anomaly detection | JSON | O | output/pm-metrics-ops/analysis-anomaly/ | Anomalous metrics, attribution, impact scope |
-| Decision insights | JSON | O | output/pm-metrics-ops/decision-dace/decision_insight.json | Data-driven decision recommendations |
-| Metrics system | JSON | O | output/pm-metrics-design/metrics-system/metrics_system.json | Metric definitions and baselines |
-| Analysis time range | string | Yes | User provided | E.g., "2025 Q1", "Last 30 days" |
-| Product/business info | string | O | User provided | Product name, core business metrics |
+|--------|------|------|------|------|
+| Funnel Analysis | JSON | ○ | output/pm-metrics-ops/analysis-funnel/funnel_analysis.json | Funnel health, conversion rates, drop-off points |
+| Retention Analysis | JSON | ○ | output/pm-metrics-ops/analysis-retention/retention_analysis.json | Retention curves, churn early warning, cohorts |
+| Anomaly Detection | JSON | ○ | output/pm-metrics-ops/analysis-anomaly/ | Anomalous metrics, attribution, impact scope |
+| Decision Insights | JSON | ○ | output/pm-metrics-ops/decision-dace/decision_insight.json | Data-driven decision recommendations |
+| Metrics System | JSON | ○ | output/pm-metrics-design/metrics-system/metrics_system.json | Metric definitions and baselines |
+| Analysis Time Range | string | Yes | User-provided | e.g., "Q1 2025" "Last 30 days" |
+| Product/Business Information | string | ○ | User-provided | Product name, core business metrics |
 
 ## Execution Steps
 
 ### Step 1: Data Overview and Core Metrics [Core]
 
-Integrate metrics system and analysis data to generate data overview:
+Integrate metrics system and analysis data to generate a data overview:
 
 **Core Metrics Dashboard**:
 
 | Metric | Current Value | MoM Change | YoY Change | Trend | Status |
-|--------|--------------|------------|------------|-------|--------|
-| North Star metric | | | | ^v-> | [GREEN][YELLOW][RED] |
-| Core conversion rate | | | | | |
-| Retention rate (D7/D30) | | | | | |
+|------|--------|---------|---------|------|------|
+| North Star Metric | | | | ↑↓→ | 🟢🟡🔴 |
+| Core Conversion Rate | | | | | |
+| Retention Rate (D7/D30) | | | | | |
 | DAU/MAU | | | | | |
 | ARPU | | | | | |
 
@@ -64,67 +66,67 @@ Integrate metrics system and analysis data to generate data overview:
 
 ### Step 2: Funnel Health Analysis [Core]
 
-Integrate funnel data to generate funnel analysis chapter:
+Integrate funnel data to generate the funnel analysis chapter:
 
 **Full-Funnel**:
 ```
-Impression -> Click -> Register -> Activate -> First Payment -> Repurchase
-  v        v       v        v         v           v
- 95%     45%     32%     68%      25%         40%
+Impression → Click → Register → Activate → First Payment → Repurchase
+  ↓      ↓      ↓      ↓       ↓         ↓
+ 95%   45%   32%   68%    25%      40%
 ```
 
 **Key Findings**:
 - Largest drop-off point (step with highest drop-off rate)
-- Largest improvement opportunity (step where conversion improvement has greatest overall impact)
-- Step with largest MoM change
+- Largest improvement potential (step where conversion improvement has the greatest overall impact)
+- Step with the largest MoM change
 - Anomalous fluctuation points
 
 **Each key finding includes**:
 - Data facts (precise numbers)
 - MoM/YoY comparison
 - Possible causes (at least 2 hypotheses)
-- Verification recommendations
+- Verification suggestions
 
 ### Step 3: Retention and Lifecycle Analysis [Core]
 
-Integrate retention data to generate retention analysis chapter:
+Integrate retention data to generate the retention analysis chapter:
 
 **Retention Curve Description**:
-- D1/D7/D30 retention rates
+- D+1/D+7/D+30 retention rates
 - Retention curve shape (L-shaped/declining/stable)
-- Cohort comparison (retention differences across user cohorts)
+- Cohort comparison (retention differences across user batches)
 
 **Lifecycle Stage Segmentation**:
 
-| Stage | Definition | Percentage | Characteristics |
-|-------|-----------|-----------|----------------|
+| Stage | Definition | Proportion | Characteristics |
+|------|------|------|------|
 | Newcomer | 0-3 days after registration | | High activity, high churn risk |
 | Growth | 4-14 days | | Feature exploration, habit formation |
-| Mature | 15-90 days | | Stable usage, value perception |
+| Maturity | 15-90 days | | Stable usage, value perception |
 | Decline | 90+ days with declining activity | | Decreasing usage frequency |
-| Churned | Inactive for N consecutive days | | Needs re-engagement strategy |
+| Churned | Inactive for N consecutive days | | Needs reactivation strategy |
 
-**Churn Warning**:
+**Churn Early Warning**:
 - High-risk user characteristics
-- Pre-churn behavior signals
-- Re-engagement window
+- Pre-churn behavioral signals
+- Reactivation window
 
 ### Step 4: Anomaly Attribution Analysis [Core]
 
-Integrate anomaly detection data to generate anomaly analysis chapter:
+Integrate anomaly detection data to generate the anomaly analysis chapter:
 
 **Anomaly Event List**:
 
-| Time | Metric | Anomaly Type | Deviation | Impact Scope | Attribution | Confidence |
-|------|--------|-------------|-----------|-------------|------------|------------|
-| | | Spike/Drop/Trend shift | +/-X% | User count/Revenue | Internal/External | High/Medium/Low |
+| Time | Metric | Anomaly Type | Degree of Deviation | Impact Scope | Attribution | Confidence |
+|------|------|---------|---------|---------|------|--------|
+| | | Spike/Drop/Trend shift | ±X% | User count/Revenue | Internal/External | High/Medium/Low |
 
 **Attribution Analysis Framework**:
-- Internal: Product changes, technical failures, marketing campaigns
-- External: Market changes, competitor actions, seasonal factors
-- Data: Statistical bias, missing data, metric definition changes
+- Internal causes: Product changes, technical failures, marketing campaigns
+- External causes: Market changes, competitor actions, seasonal factors
+- Data causes: Statistical bias, missing data, metric definition changes
 
-### Step 5: Insights and Action Recommendations [Deep]
+### Step 5: Insights and Action Recommendations [Core]
 
 Integrate all analysis data to extract insights and action recommendations:
 
@@ -134,8 +136,8 @@ Integrate all analysis data to extract insights and action recommendations:
 
 **Action Recommendation Template**:
 
-| Priority | Recommendation | Target Metric | Expected Lift | Implementation Difficulty | Validation Method |
-|----------|---------------|--------------|--------------|--------------------------|-------------------|
+| Priority | Recommendation | Target Metric | Expected Lift | Implementation Difficulty | Verification Method |
+|--------|------|---------|---------|---------|---------|
 | P0 | | | | Low/Medium/High | A/B test/Before-after comparison |
 | P1 | | | | | |
 | P2 | | | | | |
@@ -144,7 +146,7 @@ Integrate all analysis data to extract insights and action recommendations:
 - Quick Win: Low difficulty, high impact
 - Core Optimization: Medium difficulty, high impact
 - Long-term Investment: High difficulty, high impact
-- Watch Items: Need more data verification
+- Watch List: Needs more data verification
 
 ### Step 6: Report Assembly [Core]
 
@@ -163,14 +165,14 @@ Integrate all analysis data to extract insights and action recommendations:
 ### 1.2 Data Quality Statement
 
 ## 2. Funnel Analysis
-### 2.1 Full Funnel
+### 2.1 Full-Funnel
 ### 2.2 Key Drop-off Points
 ### 2.3 Improvement Opportunities
 
 ## 3. Retention Analysis
 ### 3.1 Retention Curve
 ### 3.2 Lifecycle Stages
-### 3.3 Churn Warning
+### 3.3 Churn Early Warning
 
 ## 4. Anomaly Analysis
 ### 4.1 Anomaly Event List
@@ -183,16 +185,16 @@ Integrate all analysis data to extract insights and action recommendations:
 ## Appendix
 - Data sources and definitions
 - Metric definitions
-- Statistical method descriptions
+- Statistical methods description
 ```
 
-### Output Depth Grading
+### Output Depth Levels
 
 | Depth Level | Output Scope | Description |
 |----------|----------|------|
-| quick | data insights and key findings | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full report + multi-dimensional cross analysis + prediction model + decision recommendation roadmap | Full deliverables + extended analysis + deep simulation |
+| quick | Data insights and key findings | Core conclusions + minimum viable output |
+| standard | Complete output (current default) | Complete output including all Step outputs |
+| deep | Complete report + multi-dimensional cross-analysis + prediction model + decision recommendation roadmap | Complete output + extended analysis + deep reasoning |
 
 ## Output
 
@@ -201,7 +203,7 @@ Integrate all analysis data to extract insights and action recommendations:
 **Output Files**:
 
 | File | Format | Description |
-|------|--------|-------------|
+|------|------|------|
 | data-analysis-report.md | Markdown | Complete data analysis report |
 | data-analysis-report.json | JSON | Structured data (for downstream Skill reference) |
 
@@ -218,7 +220,7 @@ Integrate all analysis data to extract insights and action recommendations:
     "retention_analysis": {"type": "object", "description": "Retention analysis, including key milestones and lifecycle stages"},
     "anomaly_analysis": {"type": "object", "description": "Anomaly analysis, including events and attribution"},
     "insights": {"type": "array", "description": "Insight list, including data facts, business implications, and action directions"},
-    "recommendations": {"type": "array", "description": "Recommendation list, including priority, expected lift, and validation method"}
+    "recommendations": {"type": "array", "description": "Recommendation list, including priority, expected lift, and verification method"}
   }
 }
 ```
@@ -228,7 +230,7 @@ Integrate all analysis data to extract insights and action recommendations:
 ```json
 {
   "report_metadata": {
-    "product": "Product Name", "time_range": "Analysis time range",
+    "product": "Product Name", "time_range": "Analysis Time Range",
     "generated_at": "Timestamp", "data_sources": [], "data_quality": ""
   },
   "executive_summary": {
@@ -249,8 +251,8 @@ Integrate all analysis data to extract insights and action recommendations:
   "recommendations": [
     { "id": "REC-001", "description": "Recommendation description", "target_metric": "Target metric",
       "expected_lift": "Expected lift", "difficulty": "Low/Medium/High",
-      "category": "Quick Win/Core Optimization/Long-term Investment/Watch Item", "priority": "P0/P1/P2",
-      "validation_method": "Validation method" }
+      "category": "Quick Win/Core Optimization/Long-term Investment/Watch List", "priority": "P0/P1/P2",
+      "validation_method": "Verification method" }
   ]
 }
 ```
@@ -258,7 +260,7 @@ Integrate all analysis data to extract insights and action recommendations:
 ## Output Validation Rules
 
 | Field Path | Type | Required | Description |
-|------------|------|----------|-------------|
+|----------|------|------|------|
 | report_metadata | object | Yes | Report metadata |
 | report_metadata.product | string | Yes | Product name |
 | report_metadata.time_range | string | Yes | Analysis time range |
@@ -278,68 +280,68 @@ Integrate all analysis data to extract insights and action recommendations:
 | recommendations | array | Yes | Recommendation list, at least 3 |
 | recommendations[].id | string | Yes | Recommendation ID |
 | recommendations[].priority | string | Yes | Priority, enum: P0/P1/P2 |
-| recommendations[].validation_method | string | Yes | Validation method |
+| recommendations[].validation_method | string | Yes | Verification method |
 
 ## Upstream Change Response
 
 When upstream inputs change, this Skill's response strategy:
 
 | Upstream Change | Impact Scope | Response Strategy |
-|-----------------|-------------|-------------------|
+|----------|----------|----------|
 | Funnel analysis data update | Funnel analysis chapter | Update funnel data, re-evaluate drop-off points and improvement opportunities |
-| Retention analysis data update | Retention analysis chapter | Update retention data, re-evaluate lifecycle and churn warning |
+| Retention analysis data update | Retention analysis chapter | Update retention data, re-evaluate lifecycle and churn early warning |
 | Anomaly detection data update | Anomaly analysis chapter | Update anomaly events and attribution, re-evaluate insights |
-| Decision insights update | Insights and recommendations chapter | Update insights and recommendations, flag for human confirmation |
+| Decision insight update | Insights and recommendations chapter | Update insights and recommendations, flag for human confirmation |
 | Metrics system change | Core metrics dashboard | Update metric definitions and baselines, re-evaluate data overview |
 
-When analysis report itself changes, notification mechanism to downstream:
+When the analysis report itself changes, notification mechanism for downstream:
 
 | Report Change Type | Notification Scope | Notification Method |
-|-------------------|-------------------|---------------------|
+|-------------|----------|----------|
 | P0 recommendation added | decision-dace | Flag P0 recommendation, trigger DACE Conclude |
-| Key finding changed | decision-culture | Flag finding change, trigger report push |
-| Data quality statement changed | All downstream | Flag quality change, trigger data source check |
+| Key finding change | decision-culture | Flag finding change, trigger report push |
+| Data quality statement change | All downstream | Flag quality change, trigger data source check |
 
 ---
 
 ## Decision Rules
 
 | Condition | Decision |
-|-----------|----------|
-| Only funnel data available | Focus on funnel analysis, retention and anomaly chapters annotated as "lacking data" |
-| Only retention data available | Focus on retention and lifecycle, funnel chapter annotated as "lacking data" |
-| No anomaly data | Skip anomaly analysis chapter, annotate as "no anomaly detection data" |
-| All analysis data missing | Generate framework report based on product info and AI knowledge, annotate as "lacking empirical data" |
-| Time range >1 year | Recommend splitting into quarterly reports |
+|------|------|
+| Only funnel data available | Focus on funnel analysis, retention and anomaly chapters marked as "lacking data" |
+| Only retention data available | Focus on retention and lifecycle, funnel chapter marked as "lacking data" |
+| No anomaly data | Skip anomaly analysis chapter, note "no anomaly detection data" |
+| All analysis data missing | Generate framework report based on product information and AI knowledge, marked as "lacking empirical data" |
+| Time range > 1 year | Recommend splitting into quarterly reports |
 
 ## Quality Checks
 
 ### P0 Checks (must pass for quick/standard/deep)
 
-- [ ] Executive summary contains 3 key findings + Top 1 recommendation
-- [ ] Core metrics dashboard complete
+- [ ] Executive summary includes 3 key findings + Top 1 recommendation
+- [ ] Core metrics dashboard is complete
 
 ### P1 Checks (must pass for standard/deep)
 
-- [ ] Funnel analysis includes largest drop-off point and improvement opportunity
+- [ ] Funnel analysis includes largest drop-off point and improvement opportunities
 - [ ] Retention analysis includes lifecycle stages
 - [ ] Each insight has data fact + business implication
-- [ ] At least 3 action recommendations, each with priority and validation method
-- [ ] Data scope and limitations documented
+- [ ] Action recommendations have at least 3 items, each with priority and verification method
+- [ ] Data definitions and limitations are stated
 
 ### P2 Checks (must pass for deep only)
 
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+- [ ] Extended analysis is complete (deep reasoning and roadmap generated)
+- [ ] Decision records are complete (key decisions have rationale and alternatives)
 
 ## Degradation Strategy
 
-| Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|----------------------|-----------------|---------------|----------|
-| funnel-analysis missing | Funnel chapter annotated as "lacking funnel data" | Missing conversion analysis | Request user to provide funnel conversion data, or upload funnel-analysis.json |
-| retention-analysis missing | Retention chapter annotated as "lacking retention data" | Missing lifecycle analysis | Request user to provide retention rate data, or upload retention-analysis.json |
-| anomaly-analysis missing | Skip anomaly analysis chapter | Missing anomaly attribution | Request user to describe observed anomalies, or upload anomaly-analysis.json |
-| decision-dace missing | Action recommendations derived from data analysis | Recommendations may lack depth | Request user to describe desired decision direction, or upload decision-dace.json |
-| metrics-system missing | Core metrics based on user-provided info | Metric definitions may be incomplete | Request user to provide core metric names and definitions, or upload metrics-system.json |
-| Analysis time range not provided | Prompt user to provide or skip related steps | Report time range defaults to last 30 days | Prompt user to specify analysis time range |
-| Product/business info not provided | Prompt user to provide or skip related steps | Report lacks business context | Prompt user to provide product name and business stage |
+| Missing Upstream Input | Degradation Plan | Output Impact |
+|---------------|---------|---------|
+| funnel-analysis missing | Funnel chapter marked as "lacking funnel data" | Missing conversion analysis |
+| retention-analysis missing | Retention chapter marked as "lacking retention data" | Missing lifecycle analysis |
+| anomaly-analysis missing | Skip anomaly analysis chapter | Missing anomaly attribution |
+| decision-dace missing | Action recommendations derived from data analysis | Recommendations may not be deep enough |
+| metrics-system missing | Core metrics based on user-provided information | Metric definitions may be incomplete |
+- If user does not provide analysis time range, prompt user to provide or skip steps related to this input
+- If user does not provide product/business information, prompt user to provide or skip steps related to this input

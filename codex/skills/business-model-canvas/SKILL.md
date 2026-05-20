@@ -1,36 +1,38 @@
 ---
 name: business-model-canvas
-description: "Use when designing or evaluating a product business model. Auto-generates a Business Model Canvas converting exploration insights into a 9-block canvas. Keywords: business model canvas, BMC, value proposition, revenue model, cost structure, monetization."
+description: Use when designing or evaluating a product business model. Auto-generates a Business Model Canvas converting exploration insights into a 9-block canvas. Keywords: business model canvas, BMC, value proposition, revenue model, cost structure, monetization, business model梳理.
 metadata:
   module: "Product Business & Strategy"
   sub-module: "Business Model Design"
   type: "pipeline"
-  version: "1.0"
+  version: "2.1"
+  domain_tags: ["SaaS", "E-commerce", "General"]
   trigger_examples:
-    - "Help me clarify our business model"
+    - "Help me clarify the business model"
     - "How does our business model make money"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
-  quick_description: "Output BMC and key assumptions only"
-  deep_description: "Full BMC + revenue model simulation + unit economics deep dive + business model evolution roadmap"
+  quick_description: "Generate 9-block canvas core elements (customer segments, value propositions, revenue streams, cost structure) and basic assumption list"
+  deep_description: "Additionally includes unit economics sensitivity analysis, assumption validation roadmap, cross-block consistency check, long-term business model evolution simulation"
 ---
 
 # Business Model Canvas Auto-Generation
 
 ## Core Principles
 
-1. **Nine-Block Interconnection** -- The 9 canvas elements must be logically consistent, forming a closed loop: Customer Segments -> Value Propositions -> Channels -> Revenue
-2. **Options Over Conclusions** -- Generate 2-3 comparable options for key decision points such as revenue models, with human selection
-3. **Explicit Assumption Labeling** -- All inferred content must be labeled as assumptions, including risk level and validation method
-4. **Automatic Financial Projection** -- Unit economics and sensitivity analysis are completed automatically by AI; humans only review conclusions
+1. **Nine-Block Interconnection** — The 9 canvas elements must be logically consistent, forming a closed loop: customer segments → value propositions → channels → revenue
+2. **Options Over Conclusions** — Generate 2-3 comparable options for key decision points such as revenue model, for human selection
+3. **Explicit Assumption Labeling** — All inferred content must be labeled as assumptions, including risk level and validation method
+4. **Automatic Financial Calculation** — Unit economics and sensitivity analysis are completed automatically by AI; humans only review conclusions
 
 **Execution Cycle**: Triggered after the product exploration phase is complete
 
-**Core Objective**: Transform user insights and market data collected during the exploration phase into a structured Business Model Canvas, clarifying the system architecture for value creation, delivery, and capture.
+**Core Objective**: Transform user insights and market data collected during the product exploration phase into a structured Business Model Canvas, clarifying the system architecture for value creation, delivery, and capture.
 
 ## Interaction Mode
 
-AI->Human AI suggests, human approves
+🤖→👤 AI Suggests, Human Approves
 
 ## Input
 
@@ -46,7 +48,7 @@ AI->Human AI suggests, human approves
 {
   "persona_summary": "Target user persona summary, including user characteristics, needs, pain points",
   "problem_statement": "User problem statement, clarifying the core problem to solve",
-  "opportunity_definition": "Business opportunity definition, including market size, opportunity description"
+  "opportunity_definition": "Business opportunity definition, including market size and opportunity description"
 }
 ```
 
@@ -72,7 +74,7 @@ AI->Human AI suggests, human approves
   "industry_benchmarks": {
     "typical_margin": "Industry typical profit margin",
     "typical_pricing": "Industry typical pricing range",
-    "customer_acquisition_cost": "Industry CAC benchmark"
+    "customer_acquisition_cost": "Industry customer acquisition cost benchmark"
   }
 }
 ```
@@ -85,7 +87,7 @@ AI->Human AI suggests, human approves
 
 **Execution Logic**:
 1. Extract key characteristics of user personas from the exploration phase
-2. Segment groups by need priority and accessibility
+2. Divide segment groups by need priority and accessibility
 3. Define core characteristics for each segment group
 
 **Output Format**:
@@ -94,9 +96,9 @@ AI->Human AI suggests, human approves
   "customer_segments": [
     {
       "segment_id": "segment-1",
-      "name": "Small and medium training institutions",
+      "name": "Small and Medium Training Institutions",
       "characteristics": ["Student scale 50-500", "Need for digital transformation"],
-      "primary_pains": ["Lack of technical capability to build online teaching platforms"],
+      "primary_pains": ["Lack of technical capability to build online teaching platform"],
       "priority": "high/medium/low"
     }
   ]
@@ -106,7 +108,7 @@ AI->Human AI suggests, human approves
 **Acceptance Criteria**:
 - At least 2 differentiated customer segment groups identified
 - Each group has clear characteristic descriptions
-- Priority ranking is data-supported
+- Priority ranking is supported by data
 
 ### Step 2: Value Propositions Population [Core]
 
@@ -114,7 +116,7 @@ AI->Human AI suggests, human approves
 
 **Execution Logic**:
 1. Extract core user pain points and high-priority needs
-2. Analyze competitor value proposition coverage and gaps
+2. Analyze coverage and gaps in competitor value propositions
 3. Design value propositions that address key pain points
 4. Define Pain Relievers and Gain Creators
 
@@ -124,23 +126,23 @@ AI->Human AI suggests, human approves
   "value_propositions": [
     {
       "proposition_id": "vp-1",
-      "headline": "AI-driven personalized teaching SaaS platform",
+      "headline": "AI-Driven Personalized Teaching SaaS Platform",
       "description": "Providing training institutions with an out-of-the-box online teaching solution through an AI adaptive learning engine",
       "target_segment": "segment-1",
       "pain_relievers": ["Lowering the technical barrier for training institutions to go online", "Improving student learning efficiency and completion rates"],
-      "gain_creators": ["Training institution operating costs reduced by 40%", "Student completion rate increased to 85%"],
-      "differentiation": "AI adaptive learning engine dynamically adjusts teaching paths, unlike static course platforms"
+      "gain_creators": ["Training institution operating costs reduced by 40%", "Student completion rate improved to 85%"],
+      "differentiation": "AI adaptive learning engine dynamically adjusts teaching paths, distinct from static course platforms"
     }
   ]
 }
 ```
 
 **Acceptance Criteria**:
-- At least 1 value proposition per customer segment group
+- At least 1 value proposition for each customer segment group
 - Value propositions directly address high-priority pain points
 - Includes specific descriptions of Pain Relievers and Gain Creators
 
-### Step 3a: Revenue Streams Population (Decision Tree Matching)
+### Step 3a: Revenue Streams Population (Decision Tree Matching) [Core]
 
 **Task**: Automatically match potential revenue model types based on product characteristics and market benchmarks.
 
@@ -150,32 +152,32 @@ AI->Human AI suggests, human approves
 Start
   │
   ├─ Product form = Physical goods?
-  │     └─ Yes -> Checkpoint: Subscription service needed?
-  │           ├─ Yes -> Revenue model = Subscription + One-time purchase
-  │           └─ No -> Revenue model = One-time sales
+  │     └─ Yes → Check: Is subscription service needed?
+  │           ├─ Yes → Revenue model = Subscription + One-time purchase
+  │           └─ No → Revenue model = One-time sale
   │
   ├─ Product form = Software/Digital service?
-  │     └─ Yes -> Checkpoint: User usage frequency?
-  │           ├─ High frequency (>1/week) -> Revenue model = Subscription
-  │           ├─ Medium frequency (1/month) -> Revenue model = Usage-based billing
-  │           └─ Low frequency (<1/month) -> Revenue model = Project-based/One-time
+  │     └─ Yes → Check: User usage frequency?
+  │           ├─ High frequency (>1x/week) → Revenue model = Subscription
+  │           ├─ Medium frequency (1x/month) → Revenue model = Usage-based billing
+  │           └─ Low frequency (<1x/month) → Revenue model = Project-based/One-time
   │
   ├─ Product form = Platform service?
-  │     └─ Yes -> Revenue model = Platform commission/take rate
+  │     └─ Yes → Revenue model = Platform commission/Revenue share
   │
-  └─ Multi-sided market?
-        ├─ Yes -> Revenue model = Subscription + Platform commission
-        └─ No -> Select based on product form
+  └─ Is there a multi-sided market?
+        ├─ Yes → Revenue model = Subscription + Platform commission
+        └─ No → Select based on product form
 ```
 
-**Step 3b: Multi-Option Revenue Model Generation**
+**Step 3b: Multi-Option Revenue Model Generation** [Conditional]
 
-**Task**: Based on Step 3a decision tree results, generate at least 2 comparable revenue model options.
+**Task**: Generate at least 2 comparable revenue model options based on the Step 3a decision tree results.
 
 **Execution Logic**:
 1. Determine the primary revenue model based on decision tree results
 2. Generate at least 1 alternative revenue model (considering hybrid models)
-3. Analyze pros and cons of each model
+3. Analyze the advantages and risks of each model
 
 **Output Format**:
 ```json
@@ -184,7 +186,7 @@ Start
     {
       "model_id": "rm-1",
       "type": "SaaS Subscription",
-      "description": "Tiered monthly/annual subscription priced by institution student count",
+      "description": "Monthly/annual subscription with tiered pricing based on institution student count",
       "pricing_structure": {
         "base_price": "2980",
         "unit": "CNY/institution/month",
@@ -197,7 +199,7 @@ Start
     {
       "model_id": "rm-2",
       "type": "Usage-based + Subscription Hybrid",
-      "description": "Base subscription + overage billing by AI usage volume",
+      "description": "Base subscription + overage billing based on AI API call volume",
       "pricing_structure": {...},
       "pros": [...],
       "cons": [...],
@@ -210,15 +212,15 @@ Start
 **Acceptance Criteria**:
 - At least 2 revenue model options generated
 - Each model includes a clear pricing structure
-- Pros/cons analysis and risk level labeled
+- Pros/cons analysis and risk level are labeled
 
-### Step 4: Cost Structure Population [Core]
+### Step 4: Cost Structure Population [Conditional]
 
 **Task**: Analyze and estimate the cost structure based on business model requirements.
 
 **Execution Logic**:
 1. Identify cost drivers based on key activities and resource allocation
-2. Distinguish fixed costs and variable costs
+2. Distinguish between fixed costs and variable costs
 3. Estimate the magnitude and proportion of each cost item
 4. Compare with industry benchmarks
 
@@ -235,9 +237,9 @@ Start
     ],
     "variable_costs": [
       {
-        "item": "AI compute usage fees",
+        "item": "AI compute API costs",
         "unit_cost": "0.5 CNY/inference call",
-        "driver": "Active students x Average AI interactions per student"
+        "driver": "Active students × Average AI interactions per student"
       }
     ],
     "unit_economics": {
@@ -252,7 +254,7 @@ Start
 **Acceptance Criteria**:
 - Major cost items identified
 - Fixed costs and variable costs classified
-- Unit economics metrics set
+- Unit economics metrics established
 
 ### Step 5: Channels Population [Conditional]
 
@@ -285,24 +287,24 @@ Start
 - Mix of direct and indirect channels
 - Reasonable priority ranking
 
-### Step 6: Key Activities/Resources/Partners Population [Core]
+### Step 6: Key Activities/Resources/Partners Population [Conditional]
 
 **Task**: Define the key activities, resources, and partnerships needed to realize the business model.
 
 **Execution Logic**:
 
-**Key Activities Identification**:
+**Key Activities Identification:**
 1. Value creation activities
 2. Platform/network building activities
 3. Customer acquisition activities
 
-**Key Resources Identification**:
+**Key Resources Identification:**
 1. Physical assets
 2. Intellectual property
 3. Human resources
 4. Financial resources
 
-**Key Partners Identification**:
+**Key Partners Identification:**
 1. Suppliers
 2. Strategic alliances
 3. Joint venture partners
@@ -321,7 +323,7 @@ Start
     {
       "resource": "Adaptive learning algorithm engine",
       "type": "physical/intellectual/human/financial",
-      "ownership": "in-house/outsourced/partnership"
+      "ownership": "In-house/Outsourced/Partnership"
     }
   ],
   "key_partners": [
@@ -340,14 +342,14 @@ Start
 - Resource requirements match capabilities
 - Partnership design is reasonable
 
-### Step 7: Customer Relationships Population [Core]
+### Step 7: Customer Relationships Population [Conditional]
 
 **Task**: Define relationship types with different customer segment groups.
 
 **Execution Logic**:
 1. Analyze relationship needs at each stage of the customer journey
 2. Determine the mix of self-service/assisted service/community service
-3. Plan the customer relationship evolution path
+3. Plan customer relationship evolution path
 
 **Output Format**:
 ```json
@@ -356,7 +358,7 @@ Start
     {
       "segment_id": "segment-1",
       "relationship_type": "personal_assistance/dedicated_assistance/self_service/automated_service/community",
-      "description": "Self-service + Customer Success Manager support",
+      "description": "Self-service + Customer Success Manager assistance",
       "touchpoints": ["Online help center and knowledge base", "Dedicated CSM monthly check-in"]
     }
   ]
@@ -367,14 +369,6 @@ Start
 - Each customer segment group has a corresponding relationship type
 - Relationship type matches product characteristics
 - Touchpoints are clear
-
-### Output Depth Grading
-
-| Depth Level | Output Scope | Description |
-|----------|----------|------|
-| quick | BMC and key assumptions only | Core conclusions + minimum viable deliverable |
-| standard | Full deliverables (default) | Complete output including all Steps |
-| deep | Full BMC + revenue model simulation + unit economics deep dive + business model evolution roadmap | Full deliverables + extended analysis + deep simulation |
 
 ## Output
 
@@ -387,43 +381,43 @@ Start
 | Field Path | Type | Required | Description |
 |----------|------|------|------|
 | bmc.customer_segments | array | Yes | Customer segments list, at least 2 |
-| bmc.customer_segments[].segment_name | string | Yes | Customer group name, must not be empty |
-| bmc.customer_segments[].characteristics | string[] | Yes | Group characteristics list, must not be empty |
+| bmc.customer_segments[].segment_name | string | Yes | Customer group name, cannot be empty |
+| bmc.customer_segments[].characteristics | string[] | Yes | Group characteristics list, cannot be empty |
 | bmc.value_propositions | array | Yes | Value propositions list, at least 1 |
-| bmc.value_propositions[].proposition | string | Yes | Value proposition description, must not be empty |
-| bmc.value_propositions[].pain_addressed | string | Yes | Pain point addressed, must not be empty |
+| bmc.value_propositions[].proposition | string | Yes | Value proposition description, cannot be empty |
+| bmc.value_propositions[].pain_addressed | string | Yes | Pain point addressed, cannot be empty |
 | bmc.value_propositions[].gain_created | string | No | Gain created |
-| bmc.channels | array | Yes | Covers all customer journey stages |
-| bmc.channels[].channel_name | string | Yes | Channel name, must not be empty |
+| bmc.channels | array | Yes | Covers all stages of customer journey |
+| bmc.channels[].channel_name | string | Yes | Channel name, cannot be empty |
 | bmc.channels[].type | string | Yes | Channel type, enum: direct/indirect/partner |
 | bmc.channels[].phase | string | Yes | Channel phase, enum: awareness/evaluation/purchase/delivery/after_sales |
-| bmc.customer_relationships | array | Yes | Each segment has a corresponding relationship type |
+| bmc.customer_relationships | array | Yes | Each segment group has a corresponding relationship type |
 | bmc.customer_relationships[].type | string | Yes | Relationship type, enum: personal/automated/community/self_service |
-| bmc.customer_relationships[].segment | string | Yes | Corresponding customer group, must not be empty |
+| bmc.customer_relationships[].segment | string | Yes | Corresponding customer group, cannot be empty |
 | bmc.revenue_streams | array | Yes | Revenue streams list, at least 1 |
-| bmc.revenue_streams[].stream_name | string | Yes | Revenue stream name, must not be empty |
+| bmc.revenue_streams[].stream_name | string | Yes | Revenue stream name, cannot be empty |
 | bmc.revenue_streams[].pricing_model | string | Yes | Pricing model, enum: subscription/transaction/freemium/advertising/licensing |
 | bmc.revenue_streams[].estimated_amount | string | No | Estimated amount range |
 | bmc.revenue_streams[].target_segment | string | No | Corresponding customer group |
 | bmc.key_resources | array | Yes | Covers physical/intellectual/human/financial |
-| bmc.key_resources[].resource | string | Yes | Key resource description, must not be empty |
+| bmc.key_resources[].resource | string | Yes | Core resource description, cannot be empty |
 | bmc.key_resources[].type | string | Yes | Resource type, enum: physical/intellectual/human/financial |
 | bmc.key_activities | array | Yes | Covers full value creation process |
-| bmc.key_activities[].activity | string | Yes | Key activity description, must not be empty |
+| bmc.key_activities[].activity | string | Yes | Core activity description, cannot be empty |
 | bmc.key_activities[].type | string | Yes | Activity type, enum: production/problem_solving/platform/network |
-| bmc.key_partnerships | array | Yes | Includes suppliers/strategic alliances/joint ventures |
-| bmc.key_partnerships[].partner | string | Yes | Partner name, must not be empty |
+| bmc.key_partnerships | array | Yes | Includes suppliers/strategic alliances/joint venture partners |
+| bmc.key_partnerships[].partner | string | Yes | Partner name, cannot be empty |
 | bmc.key_partnerships[].type | string | Yes | Partnership type, enum: strategic_alliance/joint_venture/buyer_supplier |
-| bmc.key_partnerships[].purpose | string | Yes | Partnership purpose, must not be empty |
+| bmc.key_partnerships[].purpose | string | Yes | Partnership purpose, cannot be empty |
 | bmc.cost_structure | array | Yes | Cost structure list, at least 1 |
-| bmc.cost_structure[].cost_item | string | Yes | Cost item name, must not be empty |
+| bmc.cost_structure[].cost_item | string | Yes | Cost item name, cannot be empty |
 | bmc.cost_structure[].type | string | Yes | Cost type, enum: fixed/variable |
 | bmc.cost_structure[].estimated_range | string | No | Estimated cost range |
 | bmc.cost_structure[].category | string | No | Cost category, enum: infrastructure/marketing/operations/personnel |
 | metadata.confidence | number | Yes | Between 0-1, overall confidence |
-| metadata.requires_human_review | boolean | Yes | Whether human review is needed |
+| metadata.requires_human_review | boolean | Yes | Whether human review is required |
 | assumptions[].assumption_id | string | Yes | Unique assumption identifier |
-| assumptions[].description | string | Yes | Assumption description, must not be empty |
+| assumptions[].description | string | Yes | Assumption description, cannot be empty |
 | assumptions[].related_bmc_element | string | Yes | Related canvas element path |
 | assumptions[].validation_method | string | No | Validation method |
 | assumptions[].priority | string | Yes | critical/high/medium/low |
@@ -507,7 +501,7 @@ Start
 }
 ```
 
-### Assumptions List
+### Assumption List
 
 ```json
 {
@@ -515,7 +509,7 @@ Start
     {
       "assumption_id": "string - Assumption ID",
       "description": "string - Assumption description",
-      "related_bmc_element": "string - Related canvas element (e.g. customer_segments.0)",
+      "related_bmc_element": "string - Related canvas element (e.g., customer_segments.0)",
       "validation_method": "string - Validation method",
       "priority": "critical|high|medium|low",
       "confidence": 0.0
@@ -534,37 +528,40 @@ Start
    - High-risk assumptions must be explicitly labeled in recommendations
    - When a high-risk assumption failure impacts >50% of revenue, mandatory escalation to human approval
 
-3. **Assumption Explicitness Rule**:
+3. **Explicit Assumption Rule**:
    - All revenue assumptions must be listed
-   - Each assumption must have a risk level labeled (low/medium/high)
+   - Each assumption must have a risk level (low/medium/high)
    - Assumption sources must be traceable
 
 ### Overall Decision Rules
 
 1. **Multi-Option Presentation**: Generate 2-3 comparable options for each key decision point
 
-2. **Data Support Labeling**: Each canvas element must have its data source and inference basis labeled
+2. **Data Support Labeling**: Each canvas element must have data source and inference basis labeled
 
-3. **Uncertainty Transparency**: All inferred content must have confidence levels labeled
+3. **Uncertainty Transparency**: All inferred content must have confidence level labeled
 
-## Quality Checks
+## Quality Check
 
-### P0 Checks (must pass for quick/standard/deep)
+### Self-Check List
 
-- [ ] All 9 elements of the Business Model Canvas are populated
-- [ ] Each element's content has data support or assumption labels
+- [ ] All 9 elements of the Business Model Canvas are populated (P0)
+- [ ] Each element's content has data support or assumption labeling (P0)
+- [ ] At least 2 revenue model options generated (P1)
+- [ ] Assumption list is complete, each assumption includes: (P1)
+  - Clear description
+  - Risk level labeled
+  - Validation status labeled
+  - Impact assessment provided
+- [ ] Validation methods suggested for core assumptions (P1)
+- [ ] Unit economics metrics established (P2)
 
-### P1 Checks (must pass for standard/deep)
+### Output Quality Standards
 
-- [ ] At least 2 revenue model options generated
-- [ ] Assumptions list is complete, each assumption includes:
-- [ ] Validation methods recommended for core assumptions
-- [ ] Unit economics metrics set
-
-### P2 Checks (must pass for deep only)
-
-- [ ] Extended analysis complete (deep simulation and roadmap generated)
-- [ ] Decision records complete (key decisions have rationale and alternatives)
+1. **Completeness (P0)**: Each of the 9 canvas blocks has at least 1 entry, and value_propositions correspond to customer_segments
+2. **Traceability (P0)**: Each block's content has data_source labeled (upstream skill/user description/AI inference)
+3. **Assumption Completeness (P1)**: assumptions list ≥3 items, each containing assumption+validation_method+priority
+4. **Revenue Verifiability (P2)**: revenue_streams contains ≥1 specific revenue source and pricing strategy has numerical range
 
 ---
 
@@ -573,10 +570,19 @@ Start
 When upstream files do not exist, this Skill can still execute independently:
 
 | Missing Upstream Input | Degradation Plan | Output Impact | Data Acquisition Instructions |
-|---------------|---------|---------|----------|
-| persona.json / opportunity-definition.json | User provides product description and target users -> Generate BMC based on description | Customer segments and value propositions lack exploration phase data support, overall confidence drops from 0.8 to 0.5, related canvas blocks confidence <=0.4, labeled needs_human_validation: true | Request user to provide product description and target users, or upload persona.json / opportunity-definition.json files |
-| exploration_outputs (multiple exploration phase files) | User provides product description and target users -> Generate BMC based on description | Overall confidence drops from 0.8 to 0.5 for each module, assumption entries increase, related canvas blocks confidence <=0.3, labeled auto_filled: true | Request user to describe product concept, target users, and value proposition, or upload exploration phase output files |
-| All upstream files missing | Prompt user to execute prior phases first, or generate BMC based on user-provided product description and target users | Overall confidence drops from 0.8 to 0.3, most content is assumption-based inference, related canvas blocks confidence <=0.3, labeled auto_filled: true | Request user to provide product concept, target users, and value proposition, or execute pm-01-discovery skills first |
+|---------------|---------|---------|------------|
+| product_context missing | User provides product description and target users → Generate BMC based on description | Customer segments and value propositions lack exploration phase data support, overall confidence drops from 0.8 to 0.5, related canvas blocks confidence ≤0.4, labeled needs_human_validation: true | Ask user to provide product concept, target user persona, and core pain point descriptions |
+| market_data missing | User provides competitor and industry information → Infer market size and competitor models based on description | Revenue model and cost structure lack market benchmark data, pricing references missing, related canvas blocks confidence ≤0.4 | Ask user to provide competitor business models, industry typical pricing, and market size data |
+| Both product_context and market_data missing | User provides product description and target users → Generate BMC based on description | Overall confidence for each module drops from 0.8 to 0.5, assumption items increase, related canvas blocks confidence ≤0.3, labeled auto_filled: true | Ask user to provide product description, target user persona, competitor information, and industry pricing references |
+| All upstream files missing | Prompt user to execute prior stages first, or generate BMC directly based on user-provided product description and target users | Overall confidence drops from 0.8 to 0.3, most content is assumption-based inference, related canvas blocks confidence ≤0.3, labeled auto_filled: true | Ask user to provide product concept, target users, value propositions, or upload persona.json/opportunity-definition.json files |
+
+## Data Acquisition Instructions
+
+This Skill requires exploration phase output data (Personas, Opportunity Briefs, etc.). Please provide via one of the following methods:
+  1. Directly describe the product concept, target users, and value propositions
+  2. Upload persona.json / opportunity-definition.json files
+  3. Provide data file paths
+- AI is not responsible for external data collection, only for analysis
 
 ---
 
@@ -586,9 +592,9 @@ When upstream files do not exist, this Skill can still execute independently:
 
 | Upstream Change | Impact Scope | Response Strategy |
 |----------|----------|----------|
-| persona.json user persona update | Customer segments and customer relationships modules need repopulation | Re-execute Step 1 and Step 7, label change source |
-| opportunity-definition opportunity definition update | Value propositions and revenue models may need adjustment | Re-evaluate value proposition priorities, check revenue model fit |
-| competitor-analysis competitor data update | Value proposition differentiation and revenue model pricing reference | Re-execute Step 2 and Step 3, update competitor benchmarking data |
+| persona.json user persona update | Customer segments and customer relationships modules need to be repopulated | Re-execute Step 1 and Step 7, label change source |
+| opportunity-definition opportunity definition update | Value propositions and revenue model may need adjustment | Re-evaluate value proposition priorities, check revenue model fit |
+| competitor-analysis competitor data update | Value proposition differentiation and revenue model pricing references | Re-execute Step 2 and Step 3, update competitor benchmark data |
 | Market size data change | Revenue expectations and cost structure | Recalculate unit economics metrics, update market size assumptions |
 
 ### Downstream Notification Mechanism Table

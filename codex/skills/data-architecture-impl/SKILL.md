@@ -5,7 +5,7 @@ metadata:
   module: "Backend Architecture & Development"
   sub-module: "Data Architecture"
   type: "pipeline"
-  version: "1.0"
+  version: "5.0"
   trigger_examples:
     - "Generate Model code"
     - "Generate Migration scripts"
@@ -15,6 +15,17 @@ metadata:
 ---
 
 # Data Layer Code Implementation
+
+## Code Write Boundary
+
+Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+
+1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
+2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
+3. No overwrite: preserve existing business logic, routes, models, migrations, configs, and tests unless the user explicitly asks for replacement.
+4. Consistency checks: verify OpenAPI, controller/service signatures, DTO/schema validation, ER model, migrations, repositories, and auth rules are aligned.
+5. Migration safety: generated migrations must be additive by default; destructive data changes require explicit human confirmation.
+6. Implementation report: list created/modified files, skipped files, checks run, failed checks, and residual risks.
 
 ## Core Principles
 
@@ -35,10 +46,10 @@ AI->Human AI suggests, human approves
 | ER Model | JSON | Yes | output/backend-data-architecture/data-architecture-spec/er_model.json | Entity relationships and DDL definitions |
 | Cache Strategy | JSON | Yes | output/backend-data-architecture/data-architecture-spec/cache_strategy.json | Cache scheme |
 | Migration Plan | JSON | O | output/backend-data-architecture/data-architecture-spec/migration_plan.json | Migration plan (incremental projects) |
-| API Contract | YAML | Yes | output/backend-api-design/api-design-spec/openapi.yaml | For API alignment check |
+| API Contract | YAML | O | output/backend-api-design/api-design-spec/openapi.yaml | For API alignment check (empty when API not yet implemented, normal case) |
+| Tech Stack Decision | JSON | Yes | output/backend-architecture/backend-architecture-spec/tech_stack_decision.json | Unified tech stack, including language/ORM/database type |
 | project_dir | string | Yes | User provided | Project root directory absolute path |
-| tech_stack | string | Yes | User provided | Backend technology stack (Node.js/Prisma, Node.js/TypeORM, Python/SQLAlchemy, Python/Django ORM, Go/GORM, Java/JPA) |
-| database_type | string | Yes | User provided | Database type |
+| tech_stack | string | O | User provided | Fallback when tech_stack_decision.json is not available |
 
 ## Execution Steps
 
@@ -103,9 +114,10 @@ Generate cache layer code based on cache strategy:
 
 ### Step 5: Alignment Check and Code Self-Review [Core]
 
-**API Alignment Check**:
+**API Alignment Check** (optional, executed when API contract exists):
 - Check each API contract request/response structure one by one, ensuring Model fields cover all API requirements
 - Missing fields are marked and automatically supplemented
+- When no API contract exists, skip this check, mark "API alignment pending api-design-impl completion, to be verified by backend-architecture-impl unified check"
 
 **Code Self-Review**:
 - Check Model field consistency with DDL
@@ -115,7 +127,7 @@ Generate cache layer code based on cache strategy:
 - Check index coverage for high-frequency query scenarios
 - Auto-fix discovered issues, P0 issues block output
 
-**Stage Gate**: API data requirements 100% have Model field coverage, code self-review P0 issues=0
+**Stage Gate**: Model fields consistent with DDL, code self-review P0 issues=0
 
 ### Step 6: Data Layer Test Code Generation [Core]
 
@@ -142,6 +154,75 @@ Adopts **dual output mode**:
 **Metadata Output Files**:
 - impl-report.json -- Code implementation report (generated file list + alignment check results + self-review results)
 
+**impl-report.json Schema**:
+
+```json
+{
+  "type": "object",
+  "required": ["skill_name", "version", "generated_files", "repositories", "alignment_check", "self_audit"],
+  "properties": {
+    "skill_name": { "type": "string" },
+    "version": { "type": "string" },
+    "generated_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "type", "description"],
+        "properties": {
+          "path": { "type": "string" },
+          "type": { "type": "string", "enum": ["model", "migration", "repository", "cache", "config", "seed", "test"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "description": "Repository list and method signatures, for api-design-impl consumption",
+      "items": {
+        "type": "object",
+        "required": ["name", "entity", "methods"],
+        "properties": {
+          "name": { "type": "string" },
+          "entity": { "type": "string" },
+          "file_path": { "type": "string" },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "return_type"],
+              "properties": {
+                "name": { "type": "string" },
+                "params": { "type": "array", "items": { "type": "object", "properties": { "name": { "type": "string" }, "type": { "type": "string" } } } },
+                "return_type": { "type": "string" },
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "alignment_check": {
+      "type": "object",
+      "required": ["passed", "issues"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "issues": { "type": "array", "items": { "type": "object", "properties": { "severity": { "type": "string", "enum": ["P0", "P1", "P2"] }, "category": { "type": "string" }, "message": { "type": "string" }, "resolution": { "type": "string" } } } }
+      }
+    },
+    "self_audit": {
+      "type": "object",
+      "required": ["p0_count", "p1_count", "passed", "items"],
+      "properties": {
+        "p0_count": { "type": "integer" },
+        "p1_count": { "type": "integer" },
+        "passed": { "type": "boolean" },
+        "items": { "type": "array", "items": { "type": "object", "properties": { "severity": { "type": "string", "enum": ["P0", "P1", "P2"] }, "check": { "type": "string" }, "result": { "type": "string", "enum": ["pass", "fail", "fixed"] }, "detail": { "type": "string" } } } }
+      }
+    }
+  }
+}
+```
+
 ## Decision Rules
 
 | Condition | Decision |
@@ -150,6 +231,7 @@ Adopts **dual output mode**:
 | Cache strategy conflicts with code implementation | Follow cache strategy, adjust code implementation |
 | Code self-review finds P0 issues | Block output, auto-fix then re-review |
 | Repository queries have N+1 issues | Switch to JOIN or batch queries |
+| Tech stack decision conflicts with user specification | Prefer tech_stack_decision.json (architecture design output), then tech_stack parameter (user direct input), default to Node.js/Prisma. Mark conflicts for human confirmation |
 
 ## Quality Checks
 
@@ -160,19 +242,19 @@ Adopts **dual output mode**:
 - [ ] Soft delete/pagination/sorting uniformly encapsulated
 - [ ] Cache layer aligned with cache strategy design
 - [ ] Models only define data layer structure, API types defined by api-design-impl's types/api.ts
-- [ ] API data requirements 100% have Model field coverage
 - [ ] Code self-review P0 issues=0
 - [ ] Every Model and Repository has a test skeleton
+- [ ] API field coverage (mandatory when API contract exists, mark pending verification when absent)
 
 ## Degradation Strategy
 
 | Missing Upstream Input | Degradation Plan | Output Impact |
 |---------------|---------|---------|
+| Tech stack decision missing | Use tech_stack parameter (user provided), default to Node.js/Prisma if absent | Code style may not match |
 | Cache strategy missing | Do not generate cache layer code | No cache layer, Services directly access Repository |
 | Migration plan missing | Do not generate migration scripts | No migration plan |
-| API contract missing | Generate code based on ER model only | Cannot perform API alignment check |
-| tech_stack not specified | Default Node.js/Prisma | Code style may not match |
-| database_type not specified | Default PostgreSQL | SQL dialect may be incompatible |
+| API contract missing | Normal case, generate code based on ER model only, API alignment check degraded to optional | API field coverage pending api-design-impl completion for verification |
+| tech_stack parameter missing | Default Node.js/Prisma | Code style may not match |
 
 ## Upstream Change Response
 
@@ -180,4 +262,11 @@ Adopts **dual output mode**:
 |----------|----------|----------|
 | ER model change | Model+Migration+Repository | Mark affected code files, assess modification scope |
 | Cache strategy change | Cache layer code | Update CacheRepository and cache configuration |
+| Tech stack decision change | Tech stack related configuration | Update ORM configuration and database connection code |
 | API contract change | Repository query methods | Assess whether new or modified query methods are needed |
+
+| Change Type | Impact Scope | Notification Method |
+|----------|----------|----------|
+| Repository method signature change | api-design-impl | Mark affected Service calls, update repositories field in impl-report.json |
+| Model field change | api-design-impl (mappers.ts) | Mark affected type conversions, update impl-report.json |
+| Cache layer interface change | api-design-impl, backend-architecture-impl | Mark affected cache calls, update impl-report.json |

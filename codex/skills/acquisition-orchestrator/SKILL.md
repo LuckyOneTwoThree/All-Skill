@@ -119,3 +119,47 @@ Downstream connections:
 | Sub-Skill output validation not passed | Roll back to current stage and re-execute, max 1 retry; if still fails, mark as exception and escalate to human |
 | Upstream/downstream data format incompatible | Map fields per downstream sub-Skill input Schema and fill default values, record mapping relationships |
 | Stage summary generation failed | Generate partial summary based on completed sub-Skill outputs, mark missing items as "data missing", do not block orchestration completion |
+
+## Standalone Usage Input Acquisition Strategy
+
+### Standalone Trigger Scenario Identification
+
+When this orchestrator is invoked directly (not through a parent orchestrator), it is considered a standalone trigger scenario. Typical trigger methods:
+- User directly requests capabilities within this orchestrator's domain
+- Triggered as an independent skill by external systems
+- Parent orchestrator not executed, but user only needs this orchestrator's capability
+
+### Required Input Acquisition Strategy
+
+| Required Input | Priority: Read from output/ | Fallback: Get from user conversation | Last Resort: AI knowledge base inference |
+|---------------|---------------------------|-------------------------------------|---------------------------------------|
+| PRD (prd.md) | Read output/pm-design/design-prd/prd.md | Ask user for PRD document or verbal requirements | Infer requirements from user description (low confidence, mark "PRD is AI-inferred") |
+| project_dir | — | Ask user for project directory path | Cannot infer, user must provide |
+
+### Upstream Orchestrator Auto-Backtracking
+
+When critical required inputs are missing, suggest user execute upstream orchestrators in the following priority:
+
+| Missing Input | Suggested Upstream Orchestrator | Description |
+|--------------|-------------------------------|-------------|
+| PRD | pm-design related orchestrator | PRD is the business basis for acquisition-orchestrator, missing will result in execution without business foundation |
+| Sub-skill outputs | Sub-skill execution | Sub-skills (acquisition-analysis...) produce domain-specific outputs |
+
+Backtracking suggestion output format:
+```
+Critical input missing detected, suggest executing upstream orchestrator first:
+1. [Priority] pm-design related orchestrator -> Produces PRD
+Continue with AI-inferred values? (Inferred values confidence <=0.3, outputs require additional human review)
+```
+
+### Standalone Usage Gate
+
+When triggered standalone, must pass the following additional checks before executing Pipeline:
+
+| Gate Item | Check Content | Failure Handling |
+|-----------|--------------|-----------------|
+| PRD existence | prd.md or equivalent requirements document available | Block execution, suggest user provide PRD |
+| project_dir validity | User provided valid project directory path | Block execution, user must provide valid project_dir |
+| Input confidence assessment | All required input acquisition methods determined, overall confidence >=0.5 | When confidence <0.5, force human confirmation whether to continue execution |
+
+Gate execution order: PRD existence -> project_dir validity -> Input confidence assessment
