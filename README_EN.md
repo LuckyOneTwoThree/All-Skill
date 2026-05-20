@@ -4,9 +4,9 @@ English | **[中文](README.md)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-122-orange.svg)](#four-domains-overview)
+[![Skill Count](https://img.shields.io/badge/Skills-123-orange.svg)](#four-domains-overview)
 
-> 🌟 **Recommended**: Visit [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) for an interactive visualization — a force-directed graph showing 122 Skill orchestration relationships, 12 cross-domain data contract flows, and a panoramic view of all four domain modules!
+> 🌟 **Recommended**: Visit [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) for an interactive visualization — a force-directed graph showing 123 source Skill orchestration relationships, 12 cross-domain data contract flows, and a panoramic view of all four domain modules!
 
 > ## ⚠ Declaration: AI is a Lever, Not a Replacement
 >
@@ -22,7 +22,7 @@ English | **[中文](README.md)**
 
 ## What Is This
 
-Extracting the full lifecycle methodology of software products from 0 to 1 into **122 AI Agent Skills**, covering four domains: **Product Methodology, UI Design & Frontend Development, Backend Architecture & Development, and Cross-Domain Coordination**, compatible with the Trae / Claude Code Agent Skills open standard.
+Extracting the full lifecycle methodology of software products from 0 to 1 into **123 AI Agent Skills**, covering four domains: **Product Methodology, UI Design & Frontend Development, Backend Architecture & Development, and Cross-Domain Coordination**, compatible with the Trae / Claude Code Agent Skills open standard. Source directory counts are based on `skills-manifest.json`; `codex/skills` serves as the subsequent sync target.
 
 Each Skill is an independently executable methodology Pipeline. Orchestrators manage the execution order and stage gates of sub-Skills. The four domains are tightly connected through **data contracts**, forming a complete closed loop from product exploration to launch operations.
 
@@ -41,7 +41,7 @@ In practice, all minimal Skill units need to be **flattened** into `.trae/skills
 ├── insight-analysis/SKILL.md
 ├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
-├── ... (122 Skills flattened)
+├── ... (123 Skills flattened)
 └── production-ready/SKILL.md
 ```
 
@@ -100,7 +100,7 @@ Please execute the insight analysis following the insight-orchestrator workflow
 |--------|---------|---------------|-----------------|------------|-------|------------------|
 | **pm-skill** Product Methodology | 8 | 27 | 74 | — | 1 | Do the right things: from discovery to growth operations |
 | **ui-skill** UI Design & Frontend | 3 | 1 | 4 | 4 | — | Do things right visually: design = implementation, token-driven |
-| **backend-skill** Backend Architecture | 3 | 3 | 6 | — | — | Build things right: design first, review before implementation |
+| **backend-skill** Backend Architecture | 3 | 4 | 6 | — | — | Build things right: design fully first, review before implementation |
 | **cross-domain** Cross-Domain Coordination | — | 2 | — | — | — | Global orchestration: product iteration & launch |
 
 ## Global Flow & Data Flow
@@ -121,15 +121,18 @@ The four domains are not isolated toolsets — they form a tightly connected pro
        ▼         ▼         ▼         ▼
 ┌──────────────────────────────┐  ┌──────────────────────────────────────┐
 │  UI Design & Frontend        │  │  Backend Architecture & Dev          │
-│  (Do Things Right Visually)  │  │  (Build Things Right)               │
+│  (Do Things Right Visually)  │  │  (Design Fully First, Then Implement)│
 │                              │  │                                      │
-│  Project Init → Page Build → │  │  API Design → Data Arch → Backend   │
-│  API Integration → Prod Ready│  │                                      │
-│                              │  │  api-design (security+auth+compliance)│
-│  project-init                │  │  data-architecture (cache+migration) │
-│  page-builder                │  │  backend-architecture (review+ADR)   │
-│  api-integration             │  │                                      │
-│  production-ready            │  │  Dual output: code→{project_dir}/src/│
+│  Project Init → Page Build → │  │  ┌─Design─ Arch→Data→API ──┐       │
+│  API Integration → Prod Ready│  │  │    Unified Design Review  │       │
+│                              │  │  └─Implement─ Data→API→Arch ─┘      │
+│  project-init                │  │                                      │
+│  page-builder                │  │  backend-orchestrator (top-level)    │
+│  api-integration             │  │  api-design (security+auth+compliance)│
+│  production-ready            │  │  data-architecture (cache+migration) │
+│                              │  │  backend-architecture (review+ADR)   │
+│                              │  │                                      │
+│                              │  │  Dual output: code→{project_dir}/src/│
 │                              │  │              metadata→output/        │
 └──────────────────────────────┘  └──────────────────────────────────────┘
 ```
@@ -151,7 +154,10 @@ The three domains are connected through the following core deliverables, ensurin
 | **Page Inventory** | ui-orchestrator stage-2 | ui page-builder | Pre-generated page structure list guiding component generation |
 | **Target Language** | User-specified (default zh-CN) | ui ui-orchestrator | Passed through entire pipeline, affects fonts/typesetting/copy/i18n |
 | **OpenAPI Contract** | backend api-design | ui api-integration | API contract is the bridge for frontend-backend integration |
-| **Data Model** | backend data-architecture | backend api-design (optional) | Data model is the foundation for API design |
+| **Architecture Plan + Topology** | backend backend-architecture-spec | backend data-architecture-spec / api-design-spec | Architecture decisions constrain data models and API design |
+| **Service Data Ownership** | backend backend-architecture-spec | backend data-architecture-spec | Defines data entities owned by each service, drives data modeling |
+| **Tech Stack Decision** | backend backend-architecture-spec | backend 3 impl Skills | Unifies tech stack across all implementation Skills |
+| **Data Model** | backend data-architecture-spec | backend api-design-spec | Data model is the foundation for API design (v5.0 required input) |
 | **Metrics System** | pm metrics-system | pm analysis / monitoring | Metrics system drives data analysis and monitoring |
 | **Tracking Plan** | pm tracking-plan | ui page-builder | Tracking plan guides frontend data collection |
 | **Backend Review Report** | backend backend-architecture | pm quality-acceptance | Backend review results as acceptance reference |
@@ -214,31 +220,42 @@ All-Skill/
 │   └── extensions/                        External Skills (ext-frontend-design / ext-impeccable / ext-interaction-design / ext-ui-ux-pro-max)
 │
 ├── backend-skill/                     ✅ Skill files — Backend Architecture & Development
-│   ├── backend-01-api-design/             Module 1: API Design (contract-driven, security built-in)
+│   ├── orchestrators/                     backend-orchestrator (top-level two-phase orchestrator)
+│   ├── backend-01-api-design/             Module 1: API Design (data-driven contracts, field-justified)
 │   │   ├── orchestrators/                     api-design-orchestrator
 │   │   └── skills/                            api-design-spec + api-design-impl
-│   ├── backend-02-data-architecture/       Module 2: Data Architecture (models set the ceiling, caching sets the floor)
+│   ├── backend-02-data-architecture/       Module 2: Data Architecture (architecture-constrained, models set the ceiling)
 │   │   ├── orchestrators/                     data-architecture-orchestrator
 │   │   └── skills/                            data-architecture-spec + data-architecture-impl
 │   └── backend-03-backend-architecture/    Module 3: Backend Architecture (appropriate architecture, evolve on demand)
 │       ├── orchestrators/                     backend-architecture-orchestrator
 │       └── skills/                            backend-architecture-spec + backend-architecture-impl
 │
-├── cross-domain/                      ✅ Skill files — Cross-Domain Coordination
+├── codex/                             🔄 Codex deployment target — flattened English Skill set
+│   └── skills/                            120 flattened Skills (English, with Codex runtime specialization)
+│
+├── codex-templates/                   🔄 Codex templates — authoring standards & protocols
+│   ├── orchestrator-protocol.md           Codex orchestrator protocol (dual-mode invocation + artifact-index)
+│   ├── orchestrator-skill-template/       Codex orchestrator Skill authoring template
+│   ├── pipeline-skill-template/           Codex Pipeline Skill authoring template
+│   ├── engineering-boundary-protocol.md   Engineering delivery boundary protocol
+│   └── execution-depth-protocol.md        Execution depth protocol
+│
+└── cross-domain/                      ✅ Skill files — Cross-Domain Coordination
 │   └── orchestrators/                     product-iteration-orchestrator / product-launch-orchestrator
 │
 └── skills/                            ✅ Skill files — Cross-cutting Skills
     └── skill-finder/                      Guide (Tier 0): Index-driven skill matching & recommendation
         ├── SKILL.md                           Skill definition
         └── index/                             CSV indexes (auto-generated)
-            ├── skill-index.csv                    122-skill compact index
+            ├── skill-index.csv                    123-skill compact index
             ├── synonym-map.csv                    Synonym expansion layer
             ├── skill-relationships.csv            Upstream/downstream relationships
             ├── execution-templates.csv            Scenario execution templates
             └── domain-lifecycle-map.csv           Domain-lifecycle mapping
 ```
 
-> **Skill Extraction Rule**: Only directories marked with ✅ contain deployable Skill files. The minimal unit of each Skill is `{skill-name}/SKILL.md`. When deploying, simply flatten-copy the innermost `{skill-name}/` folders into `.trae/skills/`. `templates/`, `scripts/`, `.github/` etc. are project infrastructure and do not need to be deployed.
+> **Skill Extraction Rule**: Only directories marked with ✅ contain deployable Skill files. The minimal unit of each Skill is `{skill-name}/SKILL.md`. When deploying, simply flatten-copy the innermost `{skill-name}/` folders into `.trae/skills/`. `templates/`, `scripts/`, `.github/` etc. are project infrastructure and do not need to be deployed. Directories marked with 🔄 (`codex/` and `codex-templates/`) are Codex deployment targets — already flattened with runtime specialization; simply copy folders from `codex/skills/`.
 
 ## Domain Module Details
 
@@ -378,40 +395,46 @@ Cross-domain orchestrators coordinate the complete product process across PM, UI
 
 ---
 
-### Backend Architecture & Development (9 Skills)
+### Backend Architecture & Development (10 Skills)
 
-> **Design First, Review Before Implementation**: Each Backend sub-domain is split into two phases: "Design Skill + Implementation Skill". Design outputs are reviewed and confirmed by humans before code generation. Orchestrators insert human review gates between design and implementation, ensuring design flaws are caught and fixed before code generation.
+> **Design Fully First, Then Implement**: The Backend module uses a two-phase approach — the Design phase produces design specs in Architecture→Data→API order, with cross-validation and unified review; the Implementation phase generates runnable code in Data→API→Architecture order. The top-level orchestrator (backend-orchestrator) coordinates the two-phase flow, while three sub-orchestrators can be invoked independently.
 
-#### Module 1: API Design
+#### Top-Level Orchestrator
 
-Contract-driven development, security built-in rather than bolted on.
+| Orchestrator | Purpose | Scheduling Strategy |
+|-------------|---------|---------------------|
+| backend-orchestrator | Backend full-pipeline two-phase orchestration | Phase A: Arch→Data→API design → Unified design review → Phase B: Data→API→Architecture implementation |
 
-| Skill | Purpose | Key Connections |
-|-------|---------|-----------------|
-| api-design-spec | Resource identification → Interface design → Security design → Authentication & authorization → Compliance check | **Input**: pm PRD + frontend page data requirements → **Output**: openapi.yaml + security policy + auth scheme → **Human review** |
-| api-design-impl | Code skeleton → Service implementation → Middleware → Alignment check → Test generation | **Input**: api-design-spec outputs → **Output**: Code written to {project_dir}/src/ ← core frontend-backend contract |
+#### Module 1: Backend Architecture (Design First)
 
-#### Module 2: Data Architecture
-
-Models set the ceiling, caching sets the floor, migrations are reversible.
+Architecture serves the business, simple solutions first, evolve on demand. Architecture decisions come first, constraining subsequent data models and API design.
 
 | Skill | Purpose | Key Connections |
 |-------|---------|-----------------|
-| data-architecture-spec | Data dictionary → ER modeling → Table structure & indexes → Caching strategy → Migration plan | **Input**: pm PRD + api-design-spec → **Output**: er_model.json + caching strategy + migration plan → **Human review** |
-| data-architecture-impl | Model → Migration → Repository → Cache layer → Alignment check → Test generation | **Input**: data-architecture-spec outputs → **Output**: Code written to {project_dir}/src/ |
+| backend-architecture-spec | Architecture pattern → ADR → Service design → Service data ownership → Tech stack decision → Backend review | **Input**: pm PRD → **Output**: Architecture plan + service_data_ownership.json + tech_stack_decision.json → **Human review** |
+| backend-architecture-impl | app.ts + config → Service layer → Infrastructure → Docker + CI → Unified alignment check → Test generation | **Input**: backend-architecture-spec outputs + api-design-impl + data-architecture-impl → **Output**: Code written to {project_dir}/ |
 
-#### Module 3: Backend Architecture
+#### Module 2: Data Architecture (Architecture-Constrained)
 
-Architecture serves the business, simple solutions first, evolve on demand.
+Architecture constraints first, models set the ceiling, caching sets the floor, migrations are reversible.
 
 | Skill | Purpose | Key Connections |
 |-------|---------|-----------------|
-| backend-architecture-spec | Architecture pattern → ADR → Service design → Backend review → Tech debt register | **Input**: pm PRD + api-design-spec + data-architecture-spec → **Output**: review_report.json → **Human review** |
-| backend-architecture-impl | app.ts + config → Service layer → Infrastructure → Docker + CI → Alignment check → Test generation | **Input**: backend-architecture-spec outputs + api-design-impl + data-architecture-impl → **Output**: Code written to {project_dir}/ |
+| data-architecture-spec | Data dictionary → ER modeling → Table structure & indexes → Caching strategy → Migration plan | **Input**: pm PRD + Architecture plan + Service data ownership + Tech stack decision → **Output**: er_model.json + caching strategy + migration plan → **Human review** |
+| data-architecture-impl | Model → Migration → Repository → Cache layer → Alignment check → Test generation | **Input**: data-architecture-spec outputs + Tech stack decision → **Output**: Code written to {project_dir}/src/ |
+
+#### Module 3: API Design (Data-Driven Contracts)
+
+Data-driven contracts, field-justified, security built-in rather than bolted on.
+
+| Skill | Purpose | Key Connections |
+|-------|---------|-----------------|
+| api-design-spec | Resource identification → Interface design → Security design → Authentication & authorization → Compliance check | **Input**: pm PRD + Architecture plan + Service design + Tech stack decision + ER model (required) → **Output**: openapi.yaml + security policy + auth scheme → **Human review** |
+| api-design-impl | Code skeleton → Service implementation → Middleware → Alignment check → Test generation | **Input**: api-design-spec outputs + Data model + Data layer implementation report → **Output**: Code written to {project_dir}/src/ ← core frontend-backend contract |
 
 ## Core Deliverable Documents
 
-Of the 74 Pipeline Skills in the PM domain, 18 produce Markdown deliverable documents, while the remaining 56 produce JSON data fragments consumed by downstream Skills. UI/Backend deliverables are primarily code and configuration. There are 122 Skills in total (including 33 orchestrators + 74 PM Pipeline + 4 UI Pipeline + 6 Backend Pipeline + 4 UI external extensions + 1 guide).
+Of the 74 Pipeline Skills in the PM domain, 18 produce Markdown deliverable documents, while the remaining 56 produce JSON data fragments consumed by downstream Skills. UI/Backend deliverables are primarily code and configuration. There are 123 source Skills in total (including 34 orchestrators + 74 PM Pipeline + 4 UI Pipeline + 6 Backend Pipeline + 4 UI external extensions + 1 guide).
 
 ### PM Core Deliverable Documents
 
@@ -445,9 +468,9 @@ Of the 74 Pipeline Skills in the PM domain, 18 produce Markdown deliverable docu
 ```
 PM Discovery → PM Strategy → PM Design (PRD) ──┬── UI Project Init → UI Page Build → UI API Integration → UI Production Ready
                                                  │                                                          ↑
-                                                 └── API Design → Data Architecture → Backend Architecture
+                                                 └── Arch Design→Data Design→API Design → Data Impl→API Impl→Arch Impl
                                                           ↑
-                                                    PRD + Data Model (optional)
+                                                    PRD + Architecture Plan + Data Model
 
 Cross-domain data flow:
   positioning-strategy → UI Project Init (project-init)
@@ -523,9 +546,10 @@ When external data is needed, users must provide it through pasting / uploading 
 | Need to establish a design system | UI project-init (includes design system setup) |
 | Need to generate frontend code | UI ui-orchestrator (unified orchestration) |
 | Need frontend-backend integration | UI api-integration ← Backend api-design |
-| Need to design APIs | Backend Module 1 api-design-orchestrator |
-| Need to design database | Backend Module 2 data-architecture-orchestrator |
-| Need to determine architecture pattern | Backend Module 3 backend-architecture |
+| Need to design APIs | Backend Module 3 api-design-orchestrator (data-driven contracts) |
+| Need to design database | Backend Module 2 data-architecture-orchestrator (architecture-constrained) |
+| Need to determine architecture pattern | Backend Module 1 backend-architecture-orchestrator |
+| Need full backend pipeline | Backend backend-orchestrator (top-level two-phase orchestration) |
 | Project management & collaboration | PM Module 8 project-planning-orchestrator |
 
 ## Human & AI Division of Labor
