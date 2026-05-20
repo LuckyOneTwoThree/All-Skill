@@ -5,7 +5,7 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Strategic Planning & Roadmap"
   type: "orchestrator"
-  version: "1.0"
+  version: "10.0"
   trigger_examples:
     - "Help me initiate a product project"
     - "Create a strategic plan"
@@ -26,14 +26,13 @@ Ensure doing the right things, not doing things right.
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline Definition
 
 ```yaml
 pipeline: planning-orchestrator
-version: 1.0
-
+version: 10.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-strategy/planning-orchestrator.md
@@ -163,7 +162,7 @@ This stage executes two sub-Skills sequentially: first invoke planning-north-sta
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

@@ -5,7 +5,7 @@ metadata:
   module: "Cross-Domain Coordination"
   sub-module: "Product Launch"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.0"
   trigger_examples:
     - "I want to build a trading marketplace system"
     - "We want to build a SaaS product from scratch"
@@ -20,7 +20,7 @@ metadata:
 # Product Launch Commander
 ## Code Write Boundary
 
-Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+Follow [Engineering Boundary Protocol](../../../codex-templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
 
 1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
 2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
@@ -45,14 +45,13 @@ The core challenge of product launch is not the lack of skills in any single dom
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: product-launch-orchestrator
-version: 1.0
-
+version: 8.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/cross-domain/product-launch-orchestrator.md
@@ -351,7 +350,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

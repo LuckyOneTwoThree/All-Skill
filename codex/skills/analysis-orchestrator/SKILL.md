@@ -5,7 +5,7 @@ metadata:
   module: "Product Metrics Operations"
   sub-module: "Data Analysis"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.1"
   trigger_examples:
     - "Help me analyze the data"
     - "Data has anomalies, investigate"
@@ -30,14 +30,13 @@ The value of data analysis lies not in producing reports, but in converting unce
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: analysis-orchestrator
-version: 1.0
-
+version: 7.1
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-metrics-ops/analysis-orchestrator.md
@@ -139,7 +138,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

@@ -5,7 +5,7 @@ metadata:
   module: "Product Growth & Operations"
   sub-module: "Activation"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.0"
   trigger_examples:
     - "Find the Aha Moment"
     - "Design onboarding flow"
@@ -28,14 +28,13 @@ The essence of user activation is helping users reach the Aha Moment as quickly 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: activation-orchestrator
-version: 1.0
-
+version: 7.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/activation-orchestrator.md
@@ -88,7 +87,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

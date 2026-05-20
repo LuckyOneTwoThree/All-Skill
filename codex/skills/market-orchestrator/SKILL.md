@@ -5,7 +5,7 @@ metadata:
   module: "Product Exploration & Discovery"
   sub-module: "Market & Competition"
   type: "orchestrator"
-  version: "1.0"
+  version: "9.0"
   trigger_examples:
     - "Help me analyze the market"
     - "See what competitors are doing"
@@ -25,14 +25,13 @@ metadata:
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline Definition
 
 ```yaml
 pipeline: market-orchestrator
-version: 1.0
-
+version: 9.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-discovery/market-orchestrator.md
@@ -109,7 +108,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

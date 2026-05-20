@@ -5,7 +5,7 @@ metadata:
   module: "Product Growth & Operations"
   sub-module: "Retention"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.0"
   trigger_examples:
     - "User churn is severe"
     - "Improve user retention rate"
@@ -39,14 +39,13 @@ If this sub-module needs to expand into a multi-stage Pipeline in the future, th
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: retention-orchestrator
-version: 1.0
-
+version: 7.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/retention-orchestrator.md
@@ -79,7 +78,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

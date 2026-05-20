@@ -5,7 +5,7 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Solution Validation"
   type: "orchestrator"
-  version: "1.0"
+  version: "6.1"
   trigger_examples:
     - "Validate the product solution"
     - "Design MVP scope"
@@ -81,14 +81,13 @@ Gate execution order: PRD existence -> project_dir validity -> Input confidence 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: validation-orchestrator
-version: 1.0
-
+version: 6.1
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-design/validation-orchestrator.md
@@ -184,7 +183,7 @@ Mode: Human->AI
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

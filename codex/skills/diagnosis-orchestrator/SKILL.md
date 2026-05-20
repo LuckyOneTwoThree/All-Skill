@@ -5,7 +5,7 @@ metadata:
   module: "Product Monitoring and Iteration"
   sub-module: "Problem Diagnosis"
   type: "orchestrator"
-  version: "1.0"
+  version: "10.0"
   trigger_examples:
     - "Diagnose product health"
     - "Track competitor dynamics"
@@ -28,14 +28,13 @@ The value of diagnosis lies not in producing reports but in shortening the time 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: diagnosis-orchestrator
-version: 1.0
-
+version: 10.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/diagnosis-orchestrator.md
@@ -136,7 +135,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

@@ -5,7 +5,7 @@ metadata:
   module: "UI Design & Frontend Development"
   sub-module: "UI Orchestrator"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.3"
   trigger_examples:
     - "Build UI"
     - "Write frontend code"
@@ -18,7 +18,7 @@ metadata:
 # UI Design & Frontend Development Orchestrator
 ## Code Write Boundary
 
-Follow [Engineering Boundary Protocol](../../templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+Follow [Engineering Boundary Protocol](../../../codex-templates/engineering-boundary-protocol.md) or the equivalent relative path from this skill.
 
 1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
 2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.
@@ -178,7 +178,7 @@ project-init -> ext-enhance -> page-builder -> ext-enhance+audit -> [api-int] ->
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ### Checkpoint Resume Execution
 
@@ -359,7 +359,7 @@ Output: Project information summary + Stage execution plan (determine which stag
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|
@@ -379,7 +379,7 @@ Downstream connections:
 
 ## Stage Gates
 
-Follows the general stage gate standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the general stage gate standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Gate | Condition | Action if Not Passed |
 |------|------|------------|

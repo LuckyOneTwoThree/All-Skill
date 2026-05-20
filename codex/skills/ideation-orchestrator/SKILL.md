@@ -5,7 +5,7 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Ideation & Solution Design"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.0"
   trigger_examples:
     - "Help me brainstorm ideas"
     - "Design solutions"
@@ -80,14 +80,13 @@ Gate execution order: PRD existence -> project_dir validity -> Input confidence 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: ideation-orchestrator
-version: 1.0
-
+version: 7.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-design/ideation-orchestrator.md
@@ -121,7 +120,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

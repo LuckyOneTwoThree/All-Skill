@@ -5,7 +5,7 @@ metadata:
   module: "Product Metrics Operations"
   sub-module: "Experiment Validation"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.0"
   trigger_examples:
     - "Design an A/B test"
     - "Validate solution effectiveness"
@@ -29,14 +29,13 @@ Every experiment is a controlled exploration. The goal is not to prove hypothese
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: experiment-orchestrator
-version: 1.0
-
+version: 8.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-metrics-ops/experiment-orchestrator.md
@@ -91,7 +90,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

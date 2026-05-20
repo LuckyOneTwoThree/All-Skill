@@ -28,14 +28,13 @@ metadata:
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: release-orchestrator
 version: 1.0
-
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/release-orchestrator.md
@@ -130,7 +129,7 @@ Mode: AI
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

@@ -5,7 +5,7 @@ metadata:
   module: "Product Metrics Operations"
   sub-module: "Decision Loop"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.0"
   trigger_examples:
     - "Make decisions based on data"
     - "Establish data-driven decision mechanism"
@@ -29,14 +29,13 @@ The role of data is to illuminate blind spots in decisions, not to replace decis
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: decision-orchestrator
-version: 1.0
-
+version: 7.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-metrics-ops/decision-orchestrator.md
@@ -92,7 +91,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

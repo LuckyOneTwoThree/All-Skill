@@ -5,7 +5,7 @@ metadata:
   module: "Product Monitoring and Iteration"
   sub-module: "Iteration Optimization"
   type: "orchestrator"
-  version: "1.0"
+  version: "10.0"
   trigger_examples:
     - "Plan the next iteration"
     - "Adjust priorities"
@@ -28,7 +28,7 @@ Iteration is not simply queuing requirements but making optimal trade-offs under
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 This is a pass-through orchestrator; its responsibility is to provide a unified entry point, stage summary, and exception handling. Upper-level orchestrators may directly invoke the iteration-decision sub-skill without going through this orchestrator.
 
@@ -36,8 +36,7 @@ This is a pass-through orchestrator; its responsibility is to provide a unified 
 
 ```yaml
 pipeline: iteration-orchestrator
-version: 1.0
-
+version: 10.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/iteration-orchestrator.md
@@ -78,7 +77,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

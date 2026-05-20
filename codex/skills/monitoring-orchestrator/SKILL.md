@@ -5,7 +5,7 @@ metadata:
   module: "Product Monitoring and Iteration"
   sub-module: "Monitoring Alerts"
   type: "orchestrator"
-  version: "1.0"
+  version: "9.0"
   trigger_examples:
     - "Build a product monitoring system"
     - "There are anomaly alerts in production"
@@ -28,14 +28,13 @@ The highest level of monitoring is not rapid response but advance prevention. Wh
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: monitoring-orchestrator
-version: 1.0
-
+version: 9.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/monitoring-orchestrator.md
@@ -92,7 +91,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

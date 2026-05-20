@@ -17,7 +17,7 @@ metadata:
 
 ## Code Write Boundary
 
-Follow [Engineering BoundaryProtocol](../engineering-boundary-protocol.md) or the equivalent relative path from this skill.
+Follow [Engineering Boundary Protocol](../engineering-boundary-protocol.md) or the equivalent relative path from this skill.
 
 1. Scan first: identify framework, package manager, module layout, ORM, migration tool, validation library, auth middleware, and test conventions before implementation.
 2. Target scope: declare exact files/directories to create or modify; generated code must stay inside the target module unless integration files are explicitly required.

@@ -5,7 +5,7 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Stakeholder Alignment"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.0"
   trigger_examples:
     - "Help me manage stakeholders"
     - "Write a strategic communication document"
@@ -36,14 +36,13 @@ If this sub-module needs to expand into a multi-stage Pipeline in the future, th
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: stakeholder-orchestrator
-version: 1.0
-
+version: 7.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-strategy/stakeholder-orchestrator.md
@@ -74,7 +73,7 @@ stages:
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

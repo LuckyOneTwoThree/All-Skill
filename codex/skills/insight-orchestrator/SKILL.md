@@ -5,7 +5,7 @@ metadata:
   module: "Product Exploration & Discovery"
   sub-module: "Requirement Insight"
   type: "orchestrator"
-  version: "1.0"
+  version: "9.0"
   trigger_examples:
     - "Help me analyze user requirements"
     - "Too many requirements, help me prioritize them"
@@ -35,7 +35,7 @@ If this sub-module needs to expand into a multi-stage Pipeline in the future, th
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 This orchestrator is a passthrough orchestrator, responsible for providing a unified entry point, stage summary, and exception handling. Upper-level orchestrators (e.g., product-launch-orchestrator) can directly call the insight-analysis sub-Skill without going through this orchestrator.
 
@@ -43,8 +43,7 @@ This orchestrator is a passthrough orchestrator, responsible for providing a uni
 
 ```yaml
 pipeline: insight-orchestrator
-version: 1.0
-
+version: 9.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-discovery/insight-orchestrator.md
@@ -78,7 +77,7 @@ Mode: AI->Human (priority weights require human confirmation)
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

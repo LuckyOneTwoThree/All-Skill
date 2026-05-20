@@ -5,7 +5,7 @@ metadata:
   module: "Product Metrics Design"
   sub-module: "Metrics Design"
   type: "orchestrator"
-  version: "1.0"
+  version: "6.1"
   trigger_examples:
     - "Help me design a metrics system"
     - "Plan data tracking"
@@ -27,14 +27,13 @@ Use data to reduce guesswork in decisions, not to justify decisions with data.
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: metrics-orchestrator
-version: 1.0
-
+version: 6.1
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-metrics-design/metrics-orchestrator.md
@@ -108,7 +107,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

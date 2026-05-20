@@ -5,7 +5,7 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Product Positioning & Differentiation"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.0"
   trigger_examples:
     - "Help me determine product positioning"
     - "Analyze differentiation advantages"
@@ -36,7 +36,7 @@ If this sub-module needs to expand into a multi-stage Pipeline in the future, th
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 This orchestrator is a passthrough orchestrator, responsible for providing a unified entry point, stage summary, and exception handling. Upper-level orchestrators (e.g., product-launch-orchestrator) can directly call the positioning-strategy sub-Skill without going through this orchestrator.
 
@@ -44,8 +44,7 @@ This orchestrator is a passthrough orchestrator, responsible for providing a uni
 
 ```yaml
 pipeline: positioning-orchestrator
-version: 1.0
-
+version: 8.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-strategy/positioning-orchestrator.md
@@ -76,7 +75,7 @@ stages:
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

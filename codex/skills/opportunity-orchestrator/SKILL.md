@@ -5,7 +5,7 @@ metadata:
   module: "Product Exploration & Discovery"
   sub-module: "Opportunity Identification"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.0"
   trigger_examples:
     - "Help me evaluate this product opportunity"
     - "Identify product opportunities"
@@ -35,14 +35,13 @@ If this sub-module needs to expand into a multi-stage Pipeline in the future, th
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline Definition
 
 ```yaml
 pipeline: opportunity-orchestrator
-version: 1.0
-
+version: 8.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-discovery/opportunity-orchestrator.md
@@ -83,7 +82,7 @@ Mode: AI->Human (strategic fit dimension Human judged by human, Brief final deci
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

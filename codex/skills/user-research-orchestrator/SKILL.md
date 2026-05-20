@@ -5,7 +5,7 @@ metadata:
   module: "Product Exploration & Discovery"
   sub-module: "User Research"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.2"
   trigger_examples:
     - "Help me do user research"
     - "Analyze user feedback"
@@ -25,14 +25,13 @@ metadata:
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline Definition
 
 ```yaml
 pipeline: user-research-orchestrator
-version: 1.0
-
+version: 8.2
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-discovery/user-research-orchestrator.md
@@ -168,7 +167,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

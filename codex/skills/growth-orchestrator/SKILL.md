@@ -5,7 +5,7 @@ metadata:
   module: "Product Growth & Operations"
   sub-module: "Growth Model"
   type: "orchestrator"
-  version: "1.0"
+  version: "8.0"
   trigger_examples:
     - "Help me formulate a growth strategy"
     - "User growth has hit a bottleneck"
@@ -30,14 +30,13 @@ Growth is not blindly stacking channels; it is first understanding which growth 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: growth-orchestrator
-version: 1.0
-
+version: 8.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-growth/growth-orchestrator.md
@@ -241,7 +240,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

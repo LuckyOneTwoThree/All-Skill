@@ -19,7 +19,7 @@ metadata:
 
 ## Engineering Delivery Boundary
 
-Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+Follow [Engineering Boundary Protocol](../../../codex-templates/engineering-boundary-protocol.md).
 
 1. Project first: inspect existing framework, router, state management, component library, styling, API client, and test stack before writing code; inherit by default.
 2. Design-system first: existing design system, component library, and brand rules override visual_policy unless the user explicitly asks to change them.
@@ -29,7 +29,7 @@ Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundar
 
 ## Code Write Boundary
 
-Follow [Engineering Boundary Protocol](../../codex-templates/engineering-boundary-protocol.md).
+Follow [Engineering Boundary Protocol](../../../codex-templates/engineering-boundary-protocol.md).
 
 1. Scan first: identify existing project structure, framework, component library, and design system before writing code; inherit by default.
 2. Target scope: declare target directories and files before implementation; generated code must stay inside {project_dir}/ unless context files are explicitly required.

@@ -5,7 +5,7 @@ metadata:
   module: "Product Business & Strategy"
   sub-module: "Business Model Design"
   type: "orchestrator"
-  version: "1.0"
+  version: "7.1"
   trigger_examples:
     - "Help me design a business model"
     - "How does the product make money"
@@ -26,14 +26,13 @@ Business models are validated, not designed.
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: business-orchestrator
-version: 1.0
-
+version: 7.1
 stages:
   - id: phase-1
     name: "Business Model Canvas"
@@ -126,7 +125,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

@@ -5,7 +5,7 @@ metadata:
   module: "Product Ideation & Design"
   sub-module: "Product Design & Prototype"
   type: "orchestrator"
-  version: "1.0"
+  version: "10.1"
   trigger_examples:
     - "Help me write a PRD"
     - "Generate product requirements document"
@@ -82,14 +82,13 @@ Gate execution order: PRD existence -> project_dir validity -> Input confidence 
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: design-orchestrator
-version: 1.0
-
+version: 10.1
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-design/design-orchestrator.md
@@ -293,7 +292,7 @@ Mode: AI->Human
 
 ### Stage Summary (post_pipeline)
 
-Follows the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follows the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|

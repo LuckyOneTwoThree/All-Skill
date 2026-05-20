@@ -5,7 +5,7 @@ metadata:
   module: "Project Management and Execution"
   sub-module: "Agile Execution"
   type: "orchestrator"
-  version: "1.0"
+  version: "9.0"
   trigger_examples:
     - "Plan a Sprint"
     - "Run a daily standup"
@@ -27,14 +27,13 @@ The value of Sprint lies not in completing more Stories but in establishing a su
 
 ## Orchestration Protocol
 
-The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 ## Pipeline
 
 ```yaml
 pipeline: agile-orchestrator
-version: 1.0
-
+version: 9.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-project/agile-orchestrator.md
@@ -114,7 +113,7 @@ Mode: AI
 
 ### Stage Summary (post_pipeline)
 
-Follow the stage summary protocol in [orchestrator-protocol.md](../../codex-templates/orchestrator-protocol.md).
+Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
 | Parameter | Value |
 |------|-----|
