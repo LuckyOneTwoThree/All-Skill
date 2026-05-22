@@ -120,15 +120,15 @@ For Phase 1 Top-3 recommendation results:
 ```
 [TARGET] Recommended Skills (Top-3):
 
-1. **{skill-name}** (Confidence: {score})
-   Type: {type} | Domain: {domain} | Stage: {lifecycle}
-   Description: {one-line description}
-   Recommendation Rationale: {matched dimensions}
+1. **<skill-name>** (Confidence: <score>)
+   Type: <type> | Domain: <domain> | Stage: <lifecycle>
+   Description: <one-line description>
+   Recommendation Rationale: <matched dimensions>
 
-2. **{skill-name}** (Confidence: {score})
+2. **<skill-name>** (Confidence: <score>)
    ...
 
-3. **{skill-name}** (Confidence: {score})
+3. **<skill-name>** (Confidence: <score>)
    ...
 
 [LIST] Execution Suggestions:

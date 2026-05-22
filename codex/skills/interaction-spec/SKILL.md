@@ -162,7 +162,7 @@ Assemble the above content into a complete interaction design specification docu
 ### Markdown Report Structure
 
 ```markdown
-# Interaction Design Specification: {Product Name}
+# Interaction Design Specification: <Product Name>
 
 **Output Validation Rules**: See Output Validation Rules section below
 

@@ -360,8 +360,8 @@ AI->Human AI suggests, human approves
 |------------|--------|------|
 | PRD Document | Markdown | `output/pm-design/design-prd/prd.md` |
 | PRD Structured Data | JSON | `output/pm-design/design-prd/prd.json` |
-| Quality Gate Check Report | JSON | `output/pm-design/design-prd/{PRD-ID}_quality_report_{timestamp}.json` |
-| Human Review Required List | Markdown | `output/pm-design/design-prd/{PRD-ID}_human_review_required.md` |
+| Quality Gate Check Report | JSON | `output/pm-design/design-prd/<prd-id>_quality_report_<timestamp>.json` |
+| Human Review Required List | Markdown | `output/pm-design/design-prd/<prd-id>_human_review_required.md` |
 
 **Complete Output Data Structure and Templates**: See [Reference/output-schema.md](Reference/output-schema.md)
 

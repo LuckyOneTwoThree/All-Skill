@@ -159,7 +159,7 @@ response_strategy:
           resource_needed: {story_points}
         - option: conservative
           description: "Continue observing, wait for more information"
-          timeline: tbd
+          timeline: pending further signal confirmation
           priority: P2
     selected_option: {option}
     tracking:

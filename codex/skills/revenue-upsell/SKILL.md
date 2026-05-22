@@ -134,18 +134,18 @@ upgrade_score = (
 
 #### Personalized Content Template
 ```
-Title: {User name}, you have reached the {Product name} {Limit type} limit
+Title: <User name>, you have reached the <Product name> <Limit type> limit
 
 Body:
-You have used {Current usage}/{Free limit} this month.
+You have used <Current usage>/<Free limit> this month.
 When usage reaches 100%, some features will be restricted.
 
-Upgrade to {Recommended plan}, you can:
-✓ {Benefit 1}
-✓ {Benefit 2}
-✓ {Benefit 3}
+Upgrade to <Recommended plan>, you can:
+✓ <Benefit 1>
+✓ <Benefit 2>
+✓ <Benefit 3>
 
-{Incentive message}
+<Incentive message>
 
 [Upgrade Now] [Learn More]
 ```

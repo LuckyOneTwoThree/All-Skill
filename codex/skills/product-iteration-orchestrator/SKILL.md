@@ -64,7 +64,7 @@ You are the orchestrator; your responsibility is to **schedule sub-Skill executi
 ### Context Management
 
 - After each sub-Skill invocation completes, only retain **output file paths** and **key conclusion summaries**
-- Detailed outputs are written to `output/{domain-path}/{skill-name}/` directory
+- Detailed outputs are written to each sub-Skill's domain-native output directory, such as `output/pm-design/design-prd/`
 - If context approaches the limit, prioritize retaining current stage content and pending stage sub-Skill names
 
 ### Stage Gate Standards
@@ -156,7 +156,7 @@ stages:
 
 ### Cross-Domain Artifact Index
 
-This orchestrator does not require sub-Skills to write artifacts to `output/cross-domain/{skill-name}/`. All sub-Skills still write to their respective domain native paths; this orchestrator records stage, skill, actual output path, summary, and validation status in `output/cross-domain/artifact-index.json`. Cross-domain paths appearing below represent index references only, not rewriting sub-Skill output directories.
+This orchestrator does not require sub-Skills to write artifacts to `output/cross-domain/<skill-name>/`. All sub-Skills still write to their respective domain native paths; this orchestrator records stage, skill, actual output path, summary, and validation status in `output/cross-domain/artifact-index.json`. Cross-domain paths appearing below represent index references only, not rewriting sub-Skill output directories.
 
 ### Stage 1: Requirements and Design
 
@@ -301,7 +301,7 @@ After all sub-Skills complete execution, a stage summary document must be genera
 |------|-----|
 | Sub-Skill output path | output/cross-domain/ |
 | Summary output path | output/phase-reports/cross-domain/product-iteration-orchestrator.md |
-| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
+| Approval record path | output/approvals/product-iteration-orchestrator/<stage-id>.approval.json |
 
 Downstream connections:
   primary: monitoring-orchestrator (enter continuous monitoring after iteration release)

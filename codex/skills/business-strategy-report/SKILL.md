@@ -149,7 +149,7 @@ Identify key risks in strategy execution:
 **Report Structure**:
 
 ```
-# {Product Name} Business Strategy Plan
+# <Product Name> Business Strategy Plan
 
 ## Executive Summary
 - Strategic posture one-sentence judgment

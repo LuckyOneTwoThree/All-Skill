@@ -157,9 +157,9 @@ Generate release notes in different styles based on target audience:
 **Version Information Header**:
 
 ```
-# {Product Name} v{Version} Release Notes
+# <Product Name> v<Version> Release Notes
 
-📅 Release Date: {Date}
+📅 Release Date: <Date>
 🏷️ Version Type: {major/minor/patch/hotfix}
 🔗 Upgrade Guide: {Link}
 📋 Full Changelog: {Link}
@@ -179,7 +179,7 @@ Generate release notes in different styles based on target audience:
 **Complete Release Notes Structure**:
 
 ```
-# {Product Name} v{Version} Release Notes
+# <Product Name> v<Version> Release Notes
 
 ## ⚠️ Important Changes (if breaking changes or required actions exist)
 - ...
@@ -229,10 +229,10 @@ Generate release notes in different styles based on target audience:
 
 | File | Format | Description |
 |------|------|------|
-| release-notes-v{version}.md | Markdown | Complete release notes (end user version) |
-| release-notes-v{version}-enterprise.md | Markdown | Enterprise customer version |
-| release-notes-v{version}-developer.md | Markdown | Developer version |
-| release-notes-v{version}.json | JSON | Structured data |
+| release-notes-v<version>.md | Markdown | Complete release notes (end user version) |
+| release-notes-v<version>-enterprise.md | Markdown | Enterprise customer version |
+| release-notes-v<version>-developer.md | Markdown | Developer version |
+| release-notes-v<version>.json | JSON | Structured data |
 
 **Output Schema**:
 

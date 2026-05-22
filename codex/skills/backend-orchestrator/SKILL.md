@@ -62,7 +62,7 @@ You are an orchestrator, responsible for **dispatching sub-Skills by stage**, no
 ### Context Management
 
 - After each sub-Skill invocation completes, only retain **output file paths** and **key conclusion summaries**
-- Detailed outputs written to `output/{domain-path}/{skill-name}/` directory
+- Detailed outputs written to each sub-Skill's domain-native output directory, such as `output/backend-architecture/backend-architecture-spec/`
 - If context approaches limits, prioritize retaining current stage content and pending stage sub-Skill names
 
 ### Stage Gate Standards
@@ -360,7 +360,7 @@ After all sub-Skills complete, must generate stage summary document, written to 
 |-----------|-------|
 | Sub-Skill output path | output/backend-architecture/ + output/backend-data-architecture/ + output/backend-api-design/ + output/backend-design-review/ |
 | Summary output path | output/phase-reports/backend/backend-orchestrator.md |
-| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
+| Approval record path | output/approvals/backend-orchestrator/<stage-id>.approval.json |
 
 Downstream handoff:
   primary: release-orchestrator (After backend full flow completes, enter quality acceptance and release flow)

@@ -127,7 +127,7 @@ Identify and assess key risks:
 **Proposal Structure**:
 
 ```
-# {Product Name} Product Proposal
+# <Product Name> Product Proposal
 
 ## Executive Summary (One Page)
 

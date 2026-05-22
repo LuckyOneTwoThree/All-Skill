@@ -172,13 +172,13 @@ execution_depth:
 - Team:
 
 ## Sprint Goal
-{Step 1 Output}
+<Step 1 output>
 
 ## Planned Stories
-{Step 2 & 3 Output}
+<Step 2 and Step 3 output>
 
 ## Capacity Validation
-{Step 4 Output}
+<Step 4 output>
 
 ## Risks & Recommendations
 - Identified risks:

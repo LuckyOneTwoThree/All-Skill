@@ -696,7 +696,7 @@ P1 (Recommended, mark as "pending fix" if not):
 | Missing Upstream Input | Degradation Plan | Output Impact |
 |---------------|---------|---------|
 | Visual direction missing | Infer visual direction from design tokens | Aesthetic direction may be less precise |
-| Design tokens missing | Use inline styles + TODO comments | Style values hardcoded, need subsequent replacement |
+| Design tokens missing | Use inline styles with explicit debt notes | Style values hardcoded, need subsequent replacement |
 | Component library missing | Create all new components | May have duplicate components |
 | Design brief missing | Fall back to token-driven mode, only consume visual_direction and design tokens for component generation | Color/typography/layout no strong constraint specifications, component visual consistency relies on token derivation |
 | Page manifest missing | Extract page list from PRD text or page requirement descriptions, no structured validation | Pages may be missing, routes may be incomplete, no page_coverage report |

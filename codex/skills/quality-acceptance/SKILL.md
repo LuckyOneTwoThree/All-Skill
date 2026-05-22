@@ -484,9 +484,9 @@ Perform defect analysis on failed and blocked test cases:
 ```
 Acceptance Conclusion: ✅ Pass / ⚠️ Conditional Pass / ❌ Fail
 
-Acceptance Scope: {version_number} {feature_scope}
-Acceptance Date: {date}
-Acceptance Party: {acceptance_party}
+Acceptance Scope: <version_number> <feature_scope>
+Acceptance Date: <date>
+Acceptance Party: <acceptance_party>
 
 Passed Items: {N} items ({X}%)
 Failed Items: {N} items ({X}%)
@@ -514,7 +514,7 @@ Acceptance Recommendation:
 **Report Structure**:
 
 ```
-# {Product Name} v{Version Number} Acceptance Test Report
+# <Product Name> v<Version Number> Acceptance Test Report
 
 ## 1. Acceptance Overview
 ### 1.1 Acceptance Scope

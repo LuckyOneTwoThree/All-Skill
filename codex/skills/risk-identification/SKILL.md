@@ -201,7 +201,7 @@ execution_depth:
 - Last updated:
 
 ## Risk List
-{Complete information for each risk}
+<Complete information for each risk>
 ```
 
 ---

@@ -153,7 +153,7 @@ Integrate all analysis data to extract insights and action recommendations:
 **Report Structure**:
 
 ```
-# {Product Name} Data Analysis Report ({Time Range})
+# <Product Name> Data Analysis Report (<Time Range>)
 
 ## Executive Summary
 - Core metrics overview

@@ -145,7 +145,7 @@ Reference UI Skill output paths, do not inline UI implementation details:
 **Handoff Document Structure**:
 
 ```
-# {Product Name} Development Handoff Summary
+# <Product Name> Development Handoff Summary
 
 ## 1. Overview
 ### 1.1 Project Information

@@ -144,7 +144,7 @@ Assemble the above content into a complete loop report.
 ### Markdown Report Structure
 
 ```markdown
-# User Feedback Loop Report: {Report Period}
+# User Feedback Loop Report: <Report Period>
 
 ## 1. Executive Summary
 - Total feedback / Closure rate / Average closure time / P0 unresolved count

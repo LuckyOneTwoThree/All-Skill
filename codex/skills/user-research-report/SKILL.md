@@ -135,7 +135,7 @@ Integrate all chapters into a complete Markdown report:
 **Report Structure**:
 
 ```
-# {Product Name} User Research Report
+# <Product Name> User Research Report
 
 ## Executive Summary
 - Research overview (one paragraph)

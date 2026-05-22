@@ -398,11 +398,11 @@ Integrate all analysis into a complete Markdown report:
 - Market concentration assessment
 
 ## 3. Competitor Deep Analysis
-### 3.1 {Competitor A Name}
+### 3.1 <Competitor A Name>
 - Product profile
 - SWOT analysis
 - Moat assessment
-### 3.2 {Competitor B Name}
+### 3.2 <Competitor B Name>
 - ...
 
 ## 4. Feature Matrix Comparison

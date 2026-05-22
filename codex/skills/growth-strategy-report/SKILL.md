@@ -121,7 +121,7 @@ Assemble the above content into a complete report.
 ### Markdown Report Structure
 
 ```markdown
-# Growth Strategy Report: {Product Name}
+# Growth Strategy Report: <Product Name>
 
 ## 1. Executive Summary
 - Growth model / Current stage / Core bottleneck / Top 3 actions

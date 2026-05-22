@@ -283,11 +283,11 @@ ALL/
 All Skill outputs are stored uniformly under `output/` in the **user's project root directory**, following this standard path format:
 
 ```
-output/pm-{module}/{skill-name}/
+output/pm-<module>/<skill-name>/
 ```
 
-- `pm-{module}`: Module-level directory (without sequence number, e.g., `pm-discovery`, `pm-design`)
-- `{skill-name}`: Skill-level subdirectory, matching the Skill's name field
+- `pm-<module>`: Module-level directory (without sequence number, e.g., `pm-discovery`, `pm-design`)
+- `<skill-name>`: Skill-level subdirectory, matching the Skill's name field
 - Each Skill's output files are stored in their own subdirectory to avoid filename conflicts
 - output follows the user's project, not the Skill definition directory
 
@@ -406,9 +406,9 @@ Examples:
 
 ### File Naming Conventions
 
-- JSON data files: `{skill-name}.json` or `{descriptive-name}.json`
-- Markdown documents: `{descriptive-name}.md`
-- Chart files: `charts/{chart-name}.png`
+- JSON data files: `<skill-name>.json` or `<descriptive-name>.json`
+- Markdown documents: `<descriptive-name>.md`
+- Chart files: `charts/<chart-name>.png`
 - Data files: `data/{data-name}.csv` or `data/{data-name}.json`
 
 ### Output Validation Rules
@@ -524,6 +524,6 @@ Each Pipeline Skill's "Degradation Strategy > Data Acquisition Instructions" sec
 1. **First use**: Start from Module 1, execute in sequence
 2. **As needed**: Directly call the corresponding orchestrator based on current stage
 3. **Standalone use**: Can also directly call any Pipeline Skill without going through an orchestrator
-4. **Data passing**: Upstream module output files are stored under `output/pm-{module}/{skill-name}/`, downstream Skills read per path convention
+4. **Data passing**: Upstream module output files are stored under `output/pm-<module>/<skill-name>/`, downstream Skills read per path convention
 5. **Human decision**: All key decision points require human confirmation; AI only provides recommendations
 6. **External data**: AI cannot access external systems; users must manually provide data (see "AI Capability Boundaries")

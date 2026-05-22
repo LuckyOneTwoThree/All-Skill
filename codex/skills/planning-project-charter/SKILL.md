@@ -183,25 +183,25 @@ execution_depth:
 - Charter Owner:
 
 ## 1. Project Background
-{Step 1 Output}
+<Step 1 output>
 
 ## 2. Objectives & Scope
-{Step 2 Output}
+<Step 2 output>
 
 ## 3. Success Criteria
-{Step 3 Output}
+<Step 3 output>
 
 ## 4. Stakeholders
-{Step 4 Output}
+<Step 4 output>
 
 ## 5. Preliminary Risk Assessment
-{Step 5 Output}
+<Step 5 output>
 
 ## 6. Resource Requirements Summary
-{Estimated based on available information}
+<Estimated based on available information>
 
 ## 7. Timeline Summary
-{Estimated based on available information}
+<Estimated based on available information>
 
 ## Approval Signatures
 - Project Sponsor:

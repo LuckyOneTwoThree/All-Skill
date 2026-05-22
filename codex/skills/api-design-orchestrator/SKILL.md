@@ -56,7 +56,7 @@ You are an orchestrator, responsible for **dispatching sub-Skills by stage**, no
 ### Context Management
 
 - After each sub-Skill invocation completes, only retain **output file paths** and **key conclusion summaries**
-- Detailed outputs written to `output/{domain-path}/{skill-name}/` directory
+- Detailed outputs written to each sub-Skill's domain-native output directory, such as `output/backend-api-design/api-design-spec/`
 - If context approaches limits, prioritize retaining current stage content and pending stage sub-Skill names
 
 ### Stage Gate Standards
@@ -187,7 +187,7 @@ After all sub-Skills complete, must generate stage summary document, written to 
 |-----------|-------|
 | Sub-Skill output path | output/backend-api-design/ |
 | Summary output path | output/phase-reports/backend/api-design-orchestrator.md |
-| Approval record path | output/approvals/{orchestrator-name}/{stage-id}.approval.json |
+| Approval record path | output/approvals/api-design-orchestrator/<stage-id>.approval.json |
 
 Downstream handoff:
   primary: backend-architecture-orchestrator (After API code implementation completes, enter architecture layer code integration and project assembly)
@@ -227,7 +227,7 @@ Downstream handoff:
 
 | Exception Type | Handling Strategy |
 |---------------|-------------------|
-| PRD feature points unclear | Mark "feature points pending confirmation", generate TODO interfaces, human supplements |
+| PRD feature points unclear | Mark "feature points pending confirmation", generate draft interfaces, human supplements |
 | Data model missing | Infer data entities from PRD, mark "data model pending confirmation" |
 | API style dispute | Provide RESTful and GraphQL dual-plan comparison, human decision |
 | Security policy conflict | Mark conflict items, human decision on trade-offs |

@@ -138,7 +138,7 @@ Assemble the above content into a complete monitoring report.
 ### Markdown Report Structure
 
 ```markdown
-# Competitor Dynamic Monitoring Report: {Monitoring Period}
+# Competitor Dynamic Monitoring Report: <Monitoring Period>
 
 ## 1. Executive Summary
 - Monitoring period / Number of monitored competitors / Number of major dynamics / Threat level

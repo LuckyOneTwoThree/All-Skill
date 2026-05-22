@@ -203,7 +203,7 @@ Identify risks in stakeholder management:
 **Document Structure**:
 
 ```
-# {Product Name} Stakeholder Strategy Document
+# <Product Name> Stakeholder Strategy Document
 
 ## 1. Background & Current Status
 ### 1.1 Strategic Background
@@ -275,7 +275,7 @@ Generate briefs by audience type:
 
 **Executive Brief Template**:
 ```
-# {Product Name} Strategic Brief
+# <Product Name> Strategic Brief
 
 ## Strategic Direction
 - [Direction 1]: [One-line description + Expected ROI]
@@ -301,7 +301,7 @@ Generate briefs by audience type:
 
 **Team Brief Template**:
 ```
-# {Product Name} Strategic Alignment Brief
+# <Product Name> Strategic Alignment Brief
 
 ## Our Direction
 - Strategic goals: [O1] / [O2]
@@ -323,7 +323,7 @@ Generate briefs by audience type:
 
 **External Brief Template**:
 ```
-# {Product Name} Collaboration Brief
+# <Product Name> Collaboration Brief
 
 ## Product Value
 - [Value Proposition 1]

@@ -458,7 +458,7 @@ ab_test_result:
 ### Markdown Report Structure
 
 ```markdown
-# A/B Test Report: {Experiment Name}
+# A/B Test Report: <Experiment Name>
 
 ## 1. Experiment Overview
 - Experiment ID / Run period / Sample size
