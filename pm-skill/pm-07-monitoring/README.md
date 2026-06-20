@@ -26,7 +26,8 @@
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| monitoring-pipeline | 监控预警全流程：建立核心路径监控体系、实时检测指标异常、构建可视化监控看板、告警分级与升级处理 | 产品架构、指标体系、SLA要求、用户角色、On-Call排班 | 监控配置方案、异常事件列表、监控看板、升级通知、值班报告 |
+| monitoring-alert-detection | 监控告警检测：建立核心路径监控体系、实时检测指标异常、构建可视化监控看板、告警分级与升级处理 | 产品架构、指标体系、SLA要求、用户角色、On-Call排班 | 监控配置方案、异常事件列表、监控看板、升级通知、值班报告 |
+| monitoring-attribution | 异常归因分析：根因定位、影响范围评估和修复建议 | 异常告警事件、告警分类、关联分析、版本发布信息、产品架构、指标体系 | 根因分析报告、影响评估、修复建议 |
 
 ### 智能诊断
 
@@ -39,7 +40,8 @@
 
 | Skill | 作用 | 输入 | 输出 |
 |-------|------|------|------|
-| iteration-decision | 迭代决策全流程：Backlog整理与优化、优先级评估与调整方案、迭代回顾与改进建议 | 问题列表、健康度报告、竞品分析、迭代数据 | 优化后Backlog、优先级排序、变更影响评估、调整方案、回顾报告、改进建议 |
+| iteration-backlog-grooming | Backlog整理与优先级评估：问题优先级评分、技术债务影响分析、关联分析、重组建议 | 需求池、技术债务、监控告警、用户反馈 | 优化后Backlog、优先级排序（prioritized_items）、技术债务评估、重组建议 |
+| iteration-retrospective | 迭代回顾与调整：变更影响评估、调整方案生成、完成情况分析、问题识别、改进建议 | 当前迭代计划、迭代完成情况、质量指标、团队反馈 | 变更影响评估、调整方案、回顾报告、改进建议 |
 
 ### 报告
 
@@ -69,8 +71,10 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                      监控预警（持续运行）                         │
 │                                                                 │
-│  monitoring-pipeline                                            │
+│  monitoring-alert-detection                                     │
 │  (监控体系建立 → 异常检测 → 看板配置 → 告警升级)                  │
+│  monitoring-attribution                                         │
+│  (告警归因 → 根因定位 → 影响评估 → 修复建议)                     │
 └─────────┬──────────────────────────────────────────────────────┘
           │
           ▼
@@ -87,8 +91,11 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                      迭代决策（周期执行）                         │
 │                                                                 │
-│  iteration-decision                                             │
-│  (Backlog整理 → 优先级评估 → 迭代回顾)                           │
+│  iteration-backlog-grooming (无跨模块依赖)                       │
+│  (Backlog整理 → 优先级评估 → 技术债务分析 → 重组建议)             │
+│                                                                 │
+│  iteration-retrospective (依赖 pm-08 输出)                       │
+│  (变更影响评估 → 调整方案 → 迭代回顾 → 改进建议)                  │
 │                                                                 │
 │  优化后Backlog + 优先级调整方案 + 回顾报告与改进建议              │
 └─────────────────────────────────────────────────────────────────┘
@@ -142,10 +149,12 @@
 
 ```
 output/pm-monitoring/
-├── monitoring-pipeline/          # 监控预警全流程输出
+├── monitoring-alert-detection/   # 监控告警检测输出
+├── monitoring-attribution/       # 异常归因分析输出
 ├── diagnosis-health/             # 健康度评分报告
 ├── diagnosis-competition/        # 竞品动态分析报告
-├── iteration-decision/           # 迭代决策全流程输出
+├── iteration-backlog-grooming/  # Backlog整理与优先级评估输出
+├── iteration-retrospective/     # 迭代回顾与调整输出
 ├── competitor-monitoring-report/ # 竞品动态监控报告
 ├── user-feedback-loop-report/    # 用户反馈闭环报告
 ├── quality-acceptance/           # 质量验收报告

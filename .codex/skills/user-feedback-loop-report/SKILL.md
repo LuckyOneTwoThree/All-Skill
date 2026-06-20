@@ -275,4 +275,4 @@ Assemble the above content into a complete loop report.
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
 |------------|----------|----------|----------|
 | monitoring-orchestrator | Feedback loop report completed | Output file updated | Report completion status and key findings |
-| iteration-decision | P0 unresolved feedback | Write to output file | P0 feedback list and improvement suggestions |
+| iteration-retrospective | P0 unresolved feedback | Write to output file | P0 feedback list and improvement suggestions |

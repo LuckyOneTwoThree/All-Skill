@@ -65,10 +65,10 @@ execution_depth:
 
 ```yaml
 raw_data:
-  collected_at: {ISO8601}
+  collected_at: 2026-06-15T10:00:00Z
   time_window:
-    start: {ISO8601}
-    end: {ISO8601}
+    start: 2026-06-08T00:00:00Z
+    end: 2026-06-15T00:00:00Z
   dimensions:
     performance:
       metrics: {...}
@@ -79,9 +79,9 @@ raw_data:
     business:
       metrics: {...}
   data_quality:
-    completeness: {percentage}
-    accuracy: {percentage}
-    freshness: {minutes}
+    completeness: 95%
+    accuracy: 98%
+    freshness: 5
 ```
 
 ### Step 2: 维度评分 [核心]
@@ -163,8 +163,8 @@ trend_analysis:
   prediction_horizon: 7d | 30d
   overall_trend:
     direction: up | down | stable
-    change_rate: {percentage}
-    confidence: {percentage}
+    change_rate: -2%
+    confidence: 88%
   dimension_trends:
     - dimension: performance
       current: 85
@@ -249,7 +249,7 @@ bottlenecks:
 ```
 
 ```
-├── {date}/
+├── 2026-06-15/
 │   ├── overall_score.md
 │   ├── dimension_scores.yaml
 │   ├── trend_analysis.yaml
@@ -263,11 +263,11 @@ bottlenecks:
 
 ```yaml
 health_diagnosis:
-  report_id: {uuid}
-  generated_at: {ISO8601}
+  report_id: b2c3d4e5-f6a7-8901-bcde-f12345678901
+  generated_at: 2026-06-15T10:00:00Z
   period:
-    start: {ISO8601}
-    end: {ISO8601}
+    start: 2026-06-08T00:00:00Z
+    end: 2026-06-15T00:00:00Z
   overall_score: 86
   score_trend: improving
   scores_by_dimension:
@@ -365,5 +365,5 @@ health_diagnosis:
 | 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
 |------------|----------|----------|----------|
 | diagnosis-orchestrator | 健康度诊断完成 | 输出文件更新 | 诊断完成状态和关键瓶颈 |
-| monitoring-pipeline | 健康度评分异常 | 写入输出文件 | 异常维度和瓶颈详情 |
-| iteration-decision | P0/P1瓶颈识别 | 写入输出文件 | 瓶颈描述和改进建议 |
+| monitoring-attribution | 健康度评分异常 | 写入输出文件 | 异常维度和瓶颈详情 |
+| iteration-retrospective | P0/P1瓶颈识别 | 写入输出文件 | 瓶颈描述和改进建议 |

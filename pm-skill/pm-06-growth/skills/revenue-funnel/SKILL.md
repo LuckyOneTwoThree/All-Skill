@@ -177,7 +177,7 @@ execution_depth:
 }
 ```
 
-`revenue_funnel`
+`revenue_funnel`（stages 数组按相同结构可扩展更多阶段）
 ```json
 {
   "funnel": {
@@ -187,7 +187,6 @@ execution_depth:
         "count": 100000,
         "percentage": 1.0
       }
-      // ... 同结构可扩展
     ],
     "overall_conversion_rate": 0.03,
     "avg_time_to_pay": 14.5

@@ -71,7 +71,7 @@ stages:
 ```
 Invoke: ${agile-sprint-planning}
 Input:
-  product_backlog: iteration-decision -> prioritized_items
+  product_backlog: iteration-backlog-grooming -> prioritized_items
   sprint_goal: User provided (optional)
   team_capacity: planning-resource -> resource_plan
   sprint_days: User provided

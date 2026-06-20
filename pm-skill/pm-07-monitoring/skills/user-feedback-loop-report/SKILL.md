@@ -35,7 +35,7 @@ execution_depth:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 用户声音分析 | markdown | 否 | user-research-voice-analysis | 情感分析、主题提取、痛点清单 |
-| 异常监控数据 | markdown | 否 | monitoring-pipeline | 异常事件、用户影响范围 |
+| 异常监控数据 | markdown | 否 | monitoring-attribution | 异常事件、用户影响范围 |
 | 反馈数据 | text | 是 | 用户输入 | 各渠道用户反馈原始数据 |
 | 处理记录 | text | 否 | 用户输入 | 已处理反馈的记录和结果 |
 
@@ -144,7 +144,7 @@ execution_depth:
 ### Markdown 报告结构
 
 ```markdown
-# 用户反馈闭环报告：{报告周期}
+# 用户反馈闭环报告：2026-06-W2
 
 ## 1. 执行摘要
 - 总反馈数 / 闭环率 / 平均闭环时间 / P0未解决数
@@ -268,11 +268,11 @@ execution_depth:
 | 上游来源 | 变更类型 | 影响范围 | 响应动作 |
 |----------|----------|----------|----------|
 | user-research-voice-analysis | VOC分析结果更新 | 反馈来源分析和情感维度 | 更新情感分布和主题分类 |
-| monitoring-pipeline | 异常事件更新 | 反馈与异常关联分析 | 更新关联事件和影响范围 |
+| monitoring-attribution | 异常事件更新 | 反馈与异常关联分析 | 更新关联事件和影响范围 |
 
 ### 下游通知机制表
 
 | 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
 |------------|----------|----------|----------|
 | monitoring-orchestrator | 反馈闭环报告完成 | 输出文件更新 | 报告完成状态和关键结论 |
-| iteration-decision | P0未解决反馈 | 写入输出文件 | P0反馈清单和改进建议 |
+| iteration-retrospective | P0未解决反馈 | 写入输出文件 | P0反馈清单和改进建议 |

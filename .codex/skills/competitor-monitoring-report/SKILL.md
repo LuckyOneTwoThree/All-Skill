@@ -270,4 +270,4 @@ Assemble the above content into a complete monitoring report.
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
 |------------|----------|----------|----------|
 | diagnosis-orchestrator | Monitoring report generation complete | Output file update | Report completion status and key threat level |
-| iteration-decision | Threat level is severe/high | Write to output file | Competitor threat and immediate response recommendations |
+| iteration-backlog-grooming | Threat level is severe/high | Write to output file | Competitor threat and immediate response recommendations |

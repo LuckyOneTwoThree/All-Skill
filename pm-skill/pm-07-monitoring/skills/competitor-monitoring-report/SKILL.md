@@ -138,7 +138,7 @@ execution_depth:
 ### Markdown 报告结构
 
 ```markdown
-# 竞品动态监控报告：{监控周期}
+# 竞品动态监控报告：2026-Q2
 
 ## 1. 执行摘要
 - 监控周期 / 监控竞品数 / 重大动态数 / 威胁等级
@@ -270,4 +270,4 @@ execution_depth:
 | 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
 |------------|----------|----------|----------|
 | diagnosis-orchestrator | 监控报告生成完成 | 输出文件更新 | 报告完成状态和关键威胁等级 |
-| iteration-decision | 威胁等级为severe/high | 写入输出文件 | 竞品威胁和即时应对建议 |
+| iteration-backlog-grooming | 威胁等级为severe/high | 写入输出文件 | 竞品威胁和即时应对建议 |

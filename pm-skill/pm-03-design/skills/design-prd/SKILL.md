@@ -131,15 +131,17 @@ execution_depth:
 **自动检查项**：
 - 模糊量词检测（"快速"、"大量"、"偶尔"等）
 - 悬空引用检测（引用不存在的图表、字段、接口）
-- 逻辑矛盾检测（前置条件与结果矛盾）
+- 逻辑矛盾检测：标注疑似矛盾项（如前置条件与结果矛盾、功能依赖循环），输出 suspected_contradictions 列表，标注 needs_human_review: true，不自动修正
 
 **人类复核项**：
 - 业务规则合理性
 - 用户场景真实性
 - 技术方案可行性
+- suspected_contradictions 中的疑似矛盾项
 
 **失败处理**：
-- 自动修正可识别歧义
+- 自动修正可识别歧义（模糊量词、悬空引用）
+- 逻辑矛盾类问题不自动修正，输出 suspected_contradictions 列表并标注 needs_human_review: true
 - 标记需人类确认项
 - 生成歧义澄清问题清单
 
@@ -149,6 +151,12 @@ execution_depth:
 - 每个功能点可追溯到上游输出
 - 每个验收标准可追溯到具体指标
 - 每个指标可追溯到业务目标
+
+**上游产物具体文件路径**：
+- insight_analysis: `output/pm-discovery/insight-analysis/insight-analysis.json`
+- opportunity_definition: `output/pm-discovery/opportunity-definition/opportunity-definition.json`
+- north_star_metric: `output/pm-strategy/planning-north-star/`
+- okr_candidates: `output/pm-strategy/planning-okr/okr.json`
 
 **失败处理**：
 - 生成追溯链断点报告
@@ -278,8 +286,9 @@ L2处理：
 - 上游数据更新
 
 **循环限制**：
-- 最大自校正轮次：3轮
-- 每轮超时时间：5分钟
+- 最大自校正轮次：2轮
+- 每轮超时时间：3分钟
+- 逻辑矛盾类问题不进入自校正循环，直接标注待人工复核
 - 超出限制后输出问题报告，人工介入
 
 **自校正流程**：
@@ -341,13 +350,13 @@ L2处理：
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | metadata | JSON/object | 是 | 系统生成 | 请求元信息 |
-| insight_analysis | JSON/object | ○ | output/pm-discovery/insight-analysis / 上游探索阶段 | 用户洞察分析产出，替代原 requirements-collection 输入，提供用户研究数据和需求收集 |
-| opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition / 上游探索阶段 | 机会定义产出，替代原 requirements-understanding/prioritization 输入，提供需求理解和优先级排序 |
+| insight_analysis | JSON/object | ○ | output/pm-discovery/insight-analysis | 用户洞察分析产出，替代原 requirements-collection 输入，提供用户研究数据和需求收集 |
+| opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition | 机会定义产出，替代原 requirements-understanding/prioritization 输入，提供需求理解和优先级排序 |
 | exploration_outputs | JSON/object | ○ | 上游探索阶段 | 用户洞察、问题陈述 |
 | strategy_outputs | JSON/object | ○ | 上游战略阶段 | OKR、路线图 |
-| north_star_metric | JSON/object | ○ | output/pm-strategy/planning-north-star/north_star.json | 北极星指标及驱动功能 |
-| okr_candidates | JSON/object | ○ | output/pm-strategy/planning-okr/okr.json | OKR候选及驱动功能 |
-| ideation_outputs | JSON/object | ○ | 上游构思阶段 | 解决方案、功能列表 |
+| north_star_metric | JSON/object | ○ | output/pm-strategy/planning-north-star | 北极星指标及驱动功能 |
+| okr_candidates | JSON/object | ○ | output/pm-strategy/planning-okr | OKR候选及驱动功能 |
+| ideation_outputs | JSON/object | ○ | output/pm-design/ideation-workshop/ideation-workshop.json | 解决方案、功能列表 |
 | design_outputs | JSON/object | ○ | 上游设计阶段 | 原型、用户流程 |
 | metrics_outputs | JSON/object | ○ | 上游度量阶段 | 指标体系、埋点方案 |
 | requirement | JSON/object | 是 | 用户提供 | 需求上下文及手动覆盖配置 |
@@ -365,206 +374,15 @@ L2处理：
 
 **完整输出数据结构与模板**：详见 [Reference/output-schema.md](Reference/output-schema.md)
 
-### prd.json 结构定义
+### prd.json 结构
 
-prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程式消费，确保功能点、页面、实体、用户流程等核心信息可被自动解析和对齐。
+prd.json 是 PRD 的机器可消费版本，供 Backend/UI 下游 Skill 编程式消费。
 
-```json
-{
-  "prd_id": "string",
-  "version": "string",
-  "level": "L | S | X",
-  "status": "draft | in_review | approved | released",
-  "meta": {
-    "title": "string",
-    "owner": "string",
-    "created_at": "ISO8601",
-    "updated_at": "ISO8601"
-  },
-  "goals": [
-    {
-      "goal_id": "string",
-      "description": "string",
-      "okr_alignment": "string",
-      "success_metrics": [
-        {
-          "metric_name": "string",
-          "target_value": "string",
-          "current_value": "string | null",
-          "unit": "string"
-        }
-      ]
-    }
-  ],
-  "features": [
-    {
-      "feature_id": "string",
-      "name": "string",
-      "description": "string",
-      "priority": "must | should | could | wont",
-      "status": "planned | in_progress | completed | cancelled",
-      "goal_id": "string",
-      "driven_by": {
-        "north_star_metric": "string | null",
-        "okr_objective": "string | null",
-        "kr_id": "string | null",
-        "expected_lift": "string"
-      },
-      "acceptance_criteria": [
-        {
-          "criterion_id": "string",
-          "given": "string",
-          "when": "string",
-          "then": "string"
-        }
-      ],
-      "dependencies": ["feature_id"],
-      "related_pages": ["page_id"],
-      "related_entities": ["entity_id"]
-    }
-  ],
-  "pages": [
-    {
-      "page_id": "string",
-      "name": "string",
-      "route": "string",
-      "description": "string",
-      "data_requirements": [
-        {
-          "data_name": "string",
-          "source": "api | local | cache",
-          "data_operations": ["read | create | update | delete"],
-          "related_entity": "entity_id | null",
-          "fields": ["string"],
-          "description": "string"
-        }
-      ],
-      "functional_areas": ["string"],
-      "user_flows": ["flow_id"],
-      "states": [
-        {
-          "state_name": "string",
-          "description": "string",
-          "triggers": ["string"]
-        }
-      ]
-    }
-  ],
-  "entities": [
-    {
-      "entity_id": "string",
-      "name": "string",
-      "description": "string",
-      "fields": [
-        {
-          "field_name": "string",
-          "type": "string",
-          "required": "boolean",
-          "description": "string",
-          "constraints": "string | null"
-        }
-      ],
-      "relationships": [
-        {
-          "target_entity_id": "string",
-          "type": "one_to_one | one_to_many | many_to_many",
-          "description": "string"
-        }
-      ],
-      "api_endpoints": [
-        {
-          "method": "GET | POST | PUT | PATCH | DELETE",
-          "path": "string",
-          "description": "string"
-        }
-      ]
-    }
-  ],
-  "user_flows": [
-    {
-      "flow_id": "string",
-      "name": "string",
-      "description": "string",
-      "entry_page": "page_id",
-      "steps": [
-        {
-          "step_id": "string",
-          "action": "string",
-          "page_id": "string",
-          "expected_outcome": "string",
-          "error_handling": "string | null"
-        }
-      ],
-      "alternative_paths": [
-        {
-          "condition": "string",
-          "steps": ["step_id"]
-        }
-      ]
-    }
-  ],
-  "non_functional_requirements": {
-    "performance": [
-      {
-        "requirement": "string",
-        "metric": "string",
-        "target": "string"
-      }
-    ],
-    "availability": [
-      {
-        "requirement": "string",
-        "metric": "string",
-        "target": "string",
-        "measurement": "string"
-      }
-    ],
-    "security": [
-      {
-        "category": "authentication | authorization | encryption | audit | compliance",
-        "requirement": "string",
-        "implementation": "string"
-      }
-    ],
-    "observability": [
-      {
-        "dimension": "metrics | logs | traces",
-        "indicator": "string",
-        "alert_threshold": "string"
-      }
-    ]
-  },
-  "tracking_plan": {
-    "events": [
-      {
-        "event_id": "string",
-        "event_name": "string",
-        "trigger": "string",
-        "properties": [
-          {
-            "property_name": "string",
-            "type": "string",
-            "required": "boolean"
-          }
-        ],
-        "related_metric": "string"
-      }
-    ],
-    "validation": {
-      "coverage_target": "number",
-      "data_delay_threshold": "string"
-    }
-  },
-  "traceability": [
-    {
-      "feature_id": "string",
-      "goal_id": "string",
-      "upstream_source": "string",
-      "upstream_artifact_id": "string"
-    }
-  ]
-}
-```
+完整 prd.json Schema 见 [Reference/output-schema.md](Reference/output-schema.md)
+
+> 完整示例见 [Reference/examples.md](Reference/examples.md)
+
+prd.json 包含 7 个顶层数组：features、pages、entities、user_flows、non_functional_requirements、tracking_plan、traceability。
 
 ### prd.json 与 prd.md 的关系
 

@@ -192,7 +192,7 @@ function buildRelationships(skillsData) {
     ["quality-acceptance", "release-gradual", "feed", "验收报告"],
     ["release-gradual", "release-notes", "feed", "发布记录"],
     ["planning-okr", "planning-roadmap", "feed", "OKR"],
-    ["diagnosis-health", "iteration-decision", "feed", "健康报告"],
+    ["diagnosis-health", "iteration-retrospective", "feed", "健康报告"],
     ["user-research-report", "insight-analysis", "feed", "研究报告"],
     ["opportunity-definition", "business-value-fit", "feed", "机会定义"],
   ];

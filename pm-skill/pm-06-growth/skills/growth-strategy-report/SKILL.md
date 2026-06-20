@@ -1,6 +1,6 @@
 ---
 name: growth-strategy-report
-description: 当需要将增长模式诊断和各环节优化方案汇总为完整可交付的增长策略报告时使用。增长策略报告自动生成，包含增长模式评估、AARRR漏斗诊断、杠杆策略、飞轮模型和执行路线图。关键词：增长策略报告、增长报告、AARRR报告、增长飞轮、增长路线图、增长瓶颈、怎么涨上去、增长计划。
+description: 当需要将增长模式诊断和各环节优化方案汇总为完整可交付的增长策略报告时使用。增长策略报告自动生成，包含增长模式评估、AARRR漏斗诊断、杠杆策略、飞轮模型和执行路线图。关键词：增长策略报告、增长报告、AARRR报告、增长飞轮、增长路线图、增长瓶颈、怎么涨上去、增长计划。本报告是面向用户的可交付策略文档，整合各增长子Skill的输出，生成完整的增长策略。
 metadata:
   module: "产品增长与运营"
   sub-module: "增长模式"
@@ -34,11 +34,11 @@ execution_depth:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 增长模式诊断 | markdown | 是 | growth-model | 增长模式、飞轮模型、瓶颈环节 |
-| 获客方案 | markdown | 否 | acquisition-analysis | 渠道评估、漏斗优化 |
-| 激活方案 | markdown | 否 | activation-onboarding | Aha Moment、Onboarding优化 |
-| 留存方案 | markdown | 否 | retention-management | 流失预警、分层运营 |
-| 变现方案 | markdown | 否 | revenue-funnel | 付费漏斗、NRR、增购 |
+| 增长模式诊断 | markdown | 是 | output/pm-growth/growth-model/ | 增长模式、飞轮模型、瓶颈环节 |
+| 获客方案 | markdown | 否 | output/pm-growth/acquisition-analysis/ | 渠道评估、漏斗优化 |
+| 激活方案 | markdown | 否 | output/pm-growth/activation-onboarding/ | Aha Moment、Onboarding优化 |
+| 留存方案 | markdown | 否 | output/pm-growth/retention-management/ | 流失预警、分层运营 |
+| 变现方案 | markdown | 否 | output/pm-growth/revenue-funnel/ | 付费漏斗、NRR、增购 |
 | 业务目标 | text | 否 | 用户输入 | 北极星指标、增长目标、预算约束 |
 
 ## 执行步骤

@@ -1,6 +1,6 @@
 ---
 name: validation-experiment
-description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法、验证方案、测试设计。
+description: 当需要设计验证实验方案时使用。验证实验自动设计工具，根据假设地图和MVP范围，智能选择验证方法并设计实验方案，包括A/B测试和可用性测试的参数设计。关键词：实验设计、A/B测试、样本量、验证方法、验证方案、测试设计。本Skill只负责选择验证方法和输出实验设计框架，不生成具体的可用性测试任务脚本（由 validation-usability 负责）。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
@@ -31,7 +31,7 @@ execution_depth:
 
 | 属性 | 值 |
 |------|-----|
-| Pipeline ID | 14 |
+| Pipeline ID | 12 |
 | 名称 | 验证实验自动设计 |
 | 执行模式 | 🤖→👤 AI建议，人类审批 |
 | 输入 | 假设地图 + MVP范围 + 可用流量/用户数据 |
@@ -44,8 +44,8 @@ execution_depth:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 12输出的假设地图 |
-| MVP范围 | JSON | 是 | output/pm-design/validation-mvp/mvp_definition.json | Pipeline 13输出的MVP范围 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 10输出的假设地图 |
+| MVP范围 | JSON | 是 | output/pm-design/validation-mvp/mvp_definition.json | Pipeline 11输出的MVP范围 |
 | 可用流量/用户数据 | JSON | ○ | 用户提供 | 当前用户量、日活、新增等数据 |
 
 ### 输入格式
@@ -133,32 +133,26 @@ execution_depth:
 | duration_days | 实验时长 | sample_size / 日均流量 |
 | split_ratio | 分流比例 | 常用50/50，可调整 |
 
-#### 可用性测试设计方案
+#### 可用性测试设计框架
+
+当方法=可用性测试时，本Skill只输出**方法选择 + 实验框架**，不生成具体的可用性测试任务脚本。
 
 ```json
 {
-  "experiment_design": {
-    "type": "USABILITY_TEST",
-    "objectives": ["测试目标"],
-    "task_script": [
-      {
-        "task_id": "T001",
-        "task_description": "任务描述",
-        "success_criteria": "成功标准"
-      }
-    ],
-    "recruitment_criteria": {
-      "user_count": 8,
-      "qualification_questions": ["筛选问题"]
-    },
-    "success_metrics": {
-      "task_completion_rate": ">90%",
-      "time_on_task": "<2分钟",
-      "error_rate": "<10%"
-    }
+  "method_selection": {
+    "selected_method": "USABILITY_TEST",
+    "reason": "流量不足或需定性洞察"
+  },
+  "experiment_framework": {
+    "hypothesis": "待验证的可用性假设",
+    "metrics": ["任务完成率", "任务耗时", "错误率"],
+    "sample_size": 8,
+    "duration_days": 7
   }
 }
 ```
+
+> ⚠️ **职责边界**：具体测试任务脚本（task_script）、招募筛选问卷（recruitment_criteria）等详细产物由 **validation-usability** Skill 负责生成，本Skill不输出这些字段。当 method=USABILITY_TEST 时，下游 validation-usability 消费本Skill的 method_selection 和 experiment_framework。
 
 ### Step 3: 结果预判 [核心]
 
@@ -200,25 +194,72 @@ execution_depth:
 
 ```json
 {
-  "validation_experiment": {
-    "method": "A_B_TEST|USABILITY_TEST|LANDING_PAGE|WIZARD_MVP",
-    "target_assumption": {
-      "id": "A001",
-      "assumption": "假设内容",
-      "risk_score": 16
-    },
-    "experiment_design": {
+  "experiments": [
+    {
+      "id": "EXP001",
+      "assumption_id": "A001",
       "type": "A_B_TEST",
-      "experiment_group": "...",
-      "control_group": "...",
-      "split_ratio": "50/50",
-      "primary_metric": "点击率",
-      "sample_size": 10000,
-      "duration_days": 14,
-      "stopping_criteria": {...}
+      "hypothesis": "假设内容",
+      "method": "A_B_TEST|USABILITY_TEST|LANDING_PAGE|WIZARD_MVP",
+      "metrics": [
+        {
+          "name": "点击率",
+          "type": "primary",
+          "target": "提升10%"
+        }
+      ],
+      "sample_size": {
+        "minimum": 10000,
+        "actual": 10000
+      },
+      "duration": "14天",
+      "confidence_level": 0.95,
+      "cost_estimate": {
+        "development": "...",
+        "operation": "..."
+      },
+      "experiment_design": {
+        "experiment_group": "...",
+        "control_group": "...",
+        "split_ratio": "50/50",
+        "primary_metric": "点击率",
+        "duration_days": 14,
+        "stopping_criteria": {}
+      },
+      "outcome_scenarios": {}
     },
-    "outcome_scenarios": {...}
-  },
+    {
+      "id": "EXP002",
+      "assumption_id": "A002",
+      "type": "USABILITY_TEST",
+      "hypothesis": "另一假设内容",
+      "method": "USABILITY_TEST",
+      "metrics": [
+        {
+          "name": "任务完成率",
+          "type": "primary",
+          "target": "提升15%"
+        }
+      ],
+      "sample_size": {
+        "minimum": 20,
+        "actual": 25
+      },
+      "duration": "7天",
+      "confidence_level": 0.9,
+      "cost_estimate": {
+        "development": "...",
+        "operation": "..."
+      },
+      "experiment_design": {
+        "primary_metric": "任务完成率",
+        "duration_days": 7,
+        "stopping_criteria": {},
+        "task_script_source": "由 validation-usability 生成"
+      },
+      "outcome_scenarios": {}
+    }
+  ],
   "approval_status": "pending",
   "ai_recommendation": "AI建议说明"
 }

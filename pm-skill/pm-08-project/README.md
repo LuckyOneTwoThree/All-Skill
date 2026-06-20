@@ -35,7 +35,9 @@
 |-------|------|------|------|
 | agile-sprint-planning | 制定Sprint计划，定义Sprint Goal、分配Story、确认容量 | 产品Backlog、团队容量、迭代目标 | Sprint Goal、Story分配方案、容量确认、Sprint Backlog |
 | agile-daily-sync | 每日进度同步，识别障碍并标记，重大障碍触发升级 | Sprint Backlog、团队成员状态更新 | 每日同步记录、障碍清单、升级标记 |
-| agile-review | Sprint评审与复盘报告一体化：Step 1完成Sprint评审（产出清单整理、Demo准备、反馈收集、数据收集、问题识别、改进建议），Step 2生成完整复盘报告（目标达成分析、交付质量评估、团队速率趋势、改进行动项、下一Sprint建议），Step 3自动回顾（合并自retrospective-auto：自动收集团队反馈、识别协作模式、生成回顾洞察与改进行动项） | Sprint执行数据、交付成果、障碍记录、每日同步记录、历史Sprint数据、团队反馈 | Sprint评审报告、Sprint回顾数据、复盘报告（含目标达成分析、交付质量、速率趋势、改进行动项）、回顾洞察与行动项 |
+| agile-sprint-review | Sprint评审会议辅助，整理Demo清单、Story验收结果和Sprint评分 | Sprint执行数据、交付成果、障碍记录、每日同步记录 | Sprint评审数据（交付物、Demo清单、反馈收集）、Sprint回顾数据（指标、问题识别、改进建议） |
+| agile-retrospective | 迭代复盘报告生成，整理Good/Better/Best、行动项和趋势分析 | Sprint评审数据、Sprint回顾数据、历史Sprint数据 | Sprint复盘报告（目标达成分析、交付质量、速率趋势、改进行动项、下一Sprint建议） |
+| agile-launch-review | 上线复盘，整理上线质量、指标对比和问题归因 | 发布数据、监控数据、Bug统计、发布过程数据 | 上线复盘报告（效果复盘、工程质量复盘、过程复盘、改进行动项） |
 
 ### 风险管理
 
@@ -72,12 +74,17 @@
 │  │     Sprint Goal确认         障碍识别与升级       │           │
 │  │                                 │               │           │
 │  │                                 ▼               │           │
-│  │                          agile-review ──────────┘           │
-│  │                    (评审+复盘报告一体化)                      │
+│  │                       agile-sprint-review ──────┘           │
+│  │                    (Sprint评审+评分)                          │
+│  │                                 │                            │
+│  │                      ┌──────────┴──────────┐                 │
+│  │                      ▼                     ▼                 │
+│  │           agile-retrospective    agile-launch-review         │
+│  │             (迭代复盘)             (上线复盘)                 │
 │  └─────────────────────────────────┘                           │
 │                                    │                            │
 │                                    ▼                            │
-│                     Sprint评审报告与复盘报告                     │
+│                  Sprint复盘报告 / 上线复盘报告                   │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
@@ -99,7 +106,9 @@ output/pm-project/
 ├── planning-kickoff/            # Kickoff会议记录与行动项
 ├── agile-sprint-planning/       # Sprint计划与Backlog
 ├── agile-daily-sync/            # 每日同步记录与障碍清单
-├── agile-review/                # Sprint评审报告、回顾数据与复盘报告
+├── agile-sprint-review/         # Sprint评审数据与回顾数据
+├── agile-retrospective/         # Sprint复盘报告
+├── agile-launch-review/         # 上线复盘报告
 ├── risk-identification/         # 风险登记册
 └── risk-management/             # 风险监控与升级处理数据
 ```

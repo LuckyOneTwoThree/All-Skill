@@ -266,7 +266,7 @@ ALL/
 │   └── skills/（11个Pipeline，含quality-acceptance、release-gradual、release-auto-checklist、release-notes）
 └── pm-08-project/                      ← 模块8：项目管理与执行
     ├── orchestrators/（3个编排器）
-    └── skills/（8个Pipeline，agile-review含迭代复盘）
+    └── skills/（10个Pipeline，含agile-sprint-review、agile-retrospective、agile-launch-review）
 ```
 
 ### 目录命名规则
@@ -357,12 +357,14 @@ output/
 │   ├── revenue-nrr/
 │   └── revenue-upsell/
 ├── pm-monitoring/                 ← 模块7：产品监控与迭代（含验收发布）
-│   ├── monitoring-pipeline/
+│   ├── monitoring-alert-detection/
+│   ├── monitoring-attribution/
 │   ├── diagnosis-health/
 │   ├── diagnosis-competition/
 │   ├── competitor-monitoring-report/
 │   ├── user-feedback-loop-report/
-│   ├── iteration-decision/
+│   ├── iteration-backlog-grooming/
+│   ├── iteration-retrospective/
 │   ├── quality-acceptance/
 │   ├── release-gradual/
 │   ├── release-auto-checklist/
@@ -374,7 +376,9 @@ output/
     ├── planning-kickoff/
     ├── agile-sprint-planning/
     ├── agile-daily-sync/
-    ├── agile-review/
+    ├── agile-sprint-review/
+    ├── agile-retrospective/
+    ├── agile-launch-review/
     ├── risk-identification/
     └── risk-management/
 └── phase-reports/                 ← 编排器阶段总结
@@ -468,7 +472,7 @@ output/pm-{源模块}/{源skill-name}/{文件名}
 | release-gradual | 发布计划 + 监控配置 | 阻断执行，要求人类提供发布计划 |
 | release-auto-checklist | 发布内容 + 环境配置 | 切换为 `ai_suggest_human_approve`，要求人类提供发布内容 |
 | risk-management | 风险登记册 + 升级规则 | 切换为 `ai_suggest_human_approve`，要求人类提供风险登记册 |
-| monitoring-pipeline | 指标体系 + SLA 要求 | 切换为 `ai_suggest_human_approve`，要求人类提供监控配置 |
+| monitoring-alert-detection | 指标体系 + SLA 要求 | 切换为 `ai_suggest_human_approve`，要求人类提供监控配置 |
 | agile-daily-sync | Sprint Backlog | 切换为 `ai_suggest_human_approve`，要求人类提供 Sprint 计划 |
 
 **预检规则**：

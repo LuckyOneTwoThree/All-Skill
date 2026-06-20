@@ -1,11 +1,11 @@
-﻿---
+---
 name: agile-orchestrator
-description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，调度 agile-sprint-planning、agile-daily-sync、agile-review 子Skill执行。agile-review 已合并 retrospective-auto 的自动回顾能力。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理、Sprint复盘、迭代复盘、敏捷开发、复盘报告、自动回顾。
+description: 当需要管理Sprint周期或追踪敏捷执行时使用。敏捷执行指挥官，调度 agile-sprint-planning、agile-daily-sync、agile-sprint-review、agile-retrospective、agile-launch-review 子Skill执行。关键词：敏捷执行、Sprint规划、每日站会、Sprint评审、敏捷管理、Sprint复盘、迭代复盘、敏捷开发、复盘报告、上线复盘、发布回顾。
 metadata:
   module: "项目管理与执行"
   sub-module: "敏捷执行"
   type: "orchestrator"
-  version: "9.0"
+  version: "10.0"
   domain_tags: ["通用"]
   trigger_examples:
     - "规划一下Sprint"
@@ -24,54 +24,17 @@ Sprint的价值不在于完成更多Story，而在于建立可持续的交付节
 
 1. **节奏驱动交付**——Sprint的核心价值在于建立可预测的交付节奏，而非追求单次Sprint的产出最大化。编排器应确保每个Sprint周期的完整性，避免跳过评审或复盘环节。
 2. **障碍即时暴露**——敏捷执行的编排重心是让问题在Daily Sync中浮出水面，而非在Review时才被发现。编排器应优先保障障碍信息的流动速度。
-3. **复盘闭环改进**——每个Sprint的复盘结论必须转化为下一Sprint的具体行动项，编排器应确保改进建议不被遗忘，而是成为下一轮规划的输入。agile-review 已合并 retrospective-auto 的自动回顾能力，可自动收集团队反馈、识别协作模式并生成回顾洞察。
+3. **复盘闭环改进**——每个Sprint的复盘结论必须转化为下一Sprint的具体行动项，编排器应确保改进建议不被遗忘，而是成为下一轮规划的输入。Sprint评审（agile-sprint-review）、迭代复盘（agile-retrospective）、上线复盘（agile-launch-review）三个子Skill分工协作，分别覆盖评审、复盘报告、上线回顾三个环节。
 
 ## 编排协议
 
-> 协议源头：[orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md)（仅供维护者追踪，本文件已内联完整协议内容，可独立使用）
-
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
-
-### 调用规则
-
-1. **显式调用**：使用 `Skill` 工具调用子Skill，传递输入数据，接收输出结果
-2. **不代理执行**：不读取子Skill的SKILL.md来替代执行，不自行推断子Skill的内部逻辑
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径传递数据
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
-7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
-
-### 上下文管理
-
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
-
-### 阶段卡口标准
-
-编排器的阶段卡口只校验以下3类条件，不深入子Skill内部字段：
-
-| 卡口类型 | 校验内容 | 示例 |
-|----------|----------|------|
-| 输出存在性 | 输出文件已生成且非空 | "api-design-spec输出文件已生成" |
-| 顶层结构完整性 | JSON顶层必填字段存在 | "prd.json包含features/pages/entities" |
-| 人类决策确认 | 关键决策点已获人类确认 | "设计审查人类确认通过" |
-
-### 通用异常处理
-
-| 异常类型 | 处理策略 |
-|----------|----------|
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-| 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
-| 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
-| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板，整体置信度设为0.3，强制人类确认是否继续 |
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 编排协议。
 
 ## Pipeline
 
 ```yaml
 pipeline: agile-orchestrator
-version: 9.0
+version: 10.0
 
 post_pipeline:
   - action: stage-summary
@@ -95,12 +58,28 @@ stages:
       fail_action: "加强障碍追踪和升级机制"
 
   - id: phase-3
-    name: "Sprint评审与复盘"
+    name: "Sprint评审"
     depends_on: [phase-1, phase-2]
-    skills: [agile-review]
+    skills: [agile-sprint-review]
     gate:
-      condition: "Sprint评审与复盘报告已完成"
+      condition: "Sprint评审数据已完成"
+      fail_action: "补充评审数据或修改改进建议"
+
+  - id: phase-4
+    name: "迭代复盘"
+    depends_on: [phase-3]
+    skills: [agile-retrospective]
+    gate:
+      condition: "Sprint复盘报告已完成"
       fail_action: "补充分析或修改行动项"
+
+  - id: phase-5
+    name: "上线复盘"
+    depends_on: [phase-3]
+    skills: [agile-launch-review]
+    gate:
+      condition: "上线复盘报告已完成（如适用）"
+      fail_action: "补充上线数据或修改行动项"
 ```
 
 ## 阶段执行计划
@@ -110,7 +89,7 @@ stages:
 ```
 Skill: agile-sprint-planning
 输入:
-  product_backlog: iteration-decision → prioritized_items
+  product_backlog: iteration-backlog-grooming → prioritized_items
   sprint_goal: 用户提供（可选）
   team_capacity: planning-resource → resource_plan
   sprint_days: 用户提供
@@ -133,21 +112,49 @@ Skill: agile-daily-sync
 模式: 🤖
 ```
 
-#### 调用 agile-review
+#### 调用 agile-sprint-review
 
 ```
-Skill: agile-review
+Skill: agile-sprint-review
 输入:
   sprint_backlog: agile-sprint-planning → sprint_plan.json
   completed_stories: 用户提供
   team_data: 用户提供（可选）
   stakeholder_feedback: 用户提供（可选）
   daily_sync_records: agile-daily-sync（可选）
+输出: output/pm-project/agile-sprint-review/
+验证: 评审覆盖所有已完成Story；演示内容与验收标准对应；反馈已分类；改进建议有明确负责人；目标达成与数据一致
+模式: 🤖→👤
+```
+
+#### 调用 agile-retrospective
+
+```
+Skill: agile-retrospective
+输入:
+  sprint_review: agile-sprint-review → sprint_review.json
+  sprint_retro: agile-sprint-review → sprint_retro.json
+  sprint_backlog: agile-sprint-planning → sprint_plan.json
   historical_sprint_data: 用户提供（可选）
-  team_feedback: 用户提供（团队反馈，用于自动回顾）
-输出: output/pm-project/agile-review/
-验证: 评审覆盖所有已完成Story；演示内容与验收标准对应；反馈已分类；改进建议有明确负责人；目标达成与数据一致；行动项可执行；复盘报告已生成；回顾洞察已生成且协作模式已识别
-模式: 🤖
+  team_data: 用户提供（可选）
+输出: output/pm-project/agile-retrospective/
+验证: 目标达成与数据一致；溢出根因已分类；速率趋势有依据；行动项可执行；复盘报告已生成
+模式: 🤖→👤
+```
+
+#### 调用 agile-launch-review
+
+```
+Skill: agile-launch-review
+输入:
+  release_data: 发布管理系统（上线复盘时必填）
+  monitoring_data: 监控系统（上线复盘时必填）
+  user_feedback_data: 客服系统/反馈平台（可选）
+  bug_statistics: Bug跟踪系统（可选）
+  release_process_data: 发布日志（可选）
+输出: output/pm-project/agile-launch-review/
+验证: 上线复盘数据来源已标注；目标vs实际对比清晰；归因分析有证据支撑；行动项有负责人和截止时间
+模式: 🤖→👤
 ```
 
 ### 阶段总结（post_pipeline）
@@ -186,7 +193,9 @@ Skill: agile-review
 |------|------|------------|
 | Sprint计划已确认 | agile-sprint-planning输出文件已生成且非空 | 暂停Sprint启动，补充规划 |
 | Daily Sync障碍已暴露 | agile-daily-sync输出文件已生成且非空 | 加强障碍追踪和升级机制 |
-| Sprint评审与复盘报告已完成 | agile-review输出文件已生成且人类审核确认 | 补充分析或修改行动项 |
+| Sprint评审数据已完成 | agile-sprint-review输出文件已生成且人类审核确认 | 补充评审数据或修改改进建议 |
+| Sprint复盘报告已完成 | agile-retrospective输出文件已生成且人类审核确认 | 补充分析或修改行动项 |
+| 上线复盘报告已完成 | agile-launch-review输出文件已生成（如适用）且人类审核确认 | 补充上线数据或修改行动项 |
 | 阶段总结已生成 | output/phase-reports/pm-project/agile-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

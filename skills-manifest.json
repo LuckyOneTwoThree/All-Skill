@@ -8,7 +8,7 @@
   ],
   "generated_at": "2026-05-19T18:27:19.982Z",
   "counts": {
-    "pm-skill": 102,
+    "pm-skill": 106,
     "ui-skill": 9,
     "backend-skill": 10,
     "cross-domain": 2
@@ -106,7 +106,7 @@
       "name": "agile-orchestrator",
       "domain": "pm-skill",
       "type": "orchestrator",
-      "version": "9.0",
+      "version": "10.0",
       "module": "项目管理与执行",
       "sub_module": "敏捷执行",
       "path": "pm-skill/pm-08-project/orchestrators/agile-orchestrator/SKILL.md",
@@ -117,18 +117,46 @@
       ],
       "dependencies": [
         "agile-daily-sync",
-        "agile-review",
-        "agile-sprint-planning"
+        "agile-launch-review",
+        "agile-retrospective",
+        "agile-sprint-planning",
+        "agile-sprint-review"
       ]
     },
     {
-      "name": "agile-review",
+      "name": "agile-launch-review",
       "domain": "pm-skill",
       "type": "pipeline",
-      "version": "3.1",
+      "version": "2.0",
       "module": "项目管理与执行",
       "sub_module": "敏捷执行",
-      "path": "pm-skill/pm-08-project/skills/agile-review/SKILL.md",
+      "path": "pm-skill/pm-08-project/skills/agile-launch-review/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "agile-retrospective",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/skills/agile-retrospective/SKILL.md",
+      "output_prefixes": [
+        "output/pm-project"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "agile-sprint-review",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "项目管理与执行",
+      "sub_module": "敏捷执行",
+      "path": "pm-skill/pm-08-project/skills/agile-sprint-review/SKILL.md",
       "output_prefixes": [
         "output/pm-project"
       ],
@@ -934,16 +962,15 @@
       "dependencies": []
     },
     {
-      "name": "iteration-decision",
+      "name": "iteration-backlog-grooming",
       "domain": "pm-skill",
       "type": "pipeline",
-      "version": "3.0",
+      "version": "2.0",
       "module": "产品监控与迭代",
       "sub_module": "迭代优化",
-      "path": "pm-skill/pm-07-monitoring/skills/iteration-decision/SKILL.md",
+      "path": "pm-skill/pm-07-monitoring/skills/iteration-backlog-grooming/SKILL.md",
       "output_prefixes": [
-        "output/pm-monitoring",
-        "output/pm-project"
+        "output/pm-monitoring"
       ],
       "dependencies": []
     },
@@ -951,7 +978,7 @@
       "name": "iteration-orchestrator",
       "domain": "pm-skill",
       "type": "orchestrator",
-      "version": "10.0",
+      "version": "11.0",
       "module": "产品监控与迭代",
       "sub_module": "迭代优化",
       "path": "pm-skill/pm-07-monitoring/orchestrators/iteration-orchestrator/SKILL.md",
@@ -961,7 +988,25 @@
         "output/pm-monitoring"
       ],
       "dependencies": [
-        "iteration-decision"
+        "iteration-backlog-grooming",
+        "iteration-retrospective"
+      ]
+    },
+    {
+      "name": "iteration-retrospective",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品监控与迭代",
+      "sub_module": "迭代优化",
+      "path": "pm-skill/pm-07-monitoring/skills/iteration-retrospective/SKILL.md",
+      "output_prefixes": [
+        "output/pm-monitoring"
+      ],
+      "dependencies": [
+        "agile-sprint-planning",
+        "planning-resource",
+        "agile-daily-sync"
       ]
     },
     {
@@ -1082,20 +1127,33 @@
         "output/pm-monitoring"
       ],
       "dependencies": [
-        "monitoring-pipeline",
+        "monitoring-alert-detection",
+        "monitoring-attribution",
         "user-feedback-loop-report"
       ]
     },
     {
-      "name": "monitoring-pipeline",
+      "name": "monitoring-alert-detection",
       "domain": "pm-skill",
       "type": "pipeline",
-      "version": "3.0",
+      "version": "2.0",
       "module": "产品监控与迭代",
       "sub_module": "监控预警",
-      "path": "pm-skill/pm-07-monitoring/skills/monitoring-pipeline/SKILL.md",
+      "path": "pm-skill/pm-07-monitoring/skills/monitoring-alert-detection/SKILL.md",
       "output_prefixes": [
-        "output/pm-metrics-design",
+        "output/pm-monitoring"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "monitoring-attribution",
+      "domain": "pm-skill",
+      "type": "pipeline",
+      "version": "2.0",
+      "module": "产品监控与迭代",
+      "sub_module": "监控预警",
+      "path": "pm-skill/pm-07-monitoring/skills/monitoring-attribution/SKILL.md",
+      "output_prefixes": [
         "output/pm-monitoring"
       ],
       "dependencies": []
@@ -1503,7 +1561,7 @@
       "name": "release-orchestrator",
       "domain": "pm-skill",
       "type": "orchestrator",
-      "version": "1.0",
+      "version": "9.0",
       "module": "产品监控与迭代",
       "sub_module": "发布交付",
       "path": "pm-skill/pm-07-monitoring/orchestrators/release-orchestrator/SKILL.md",

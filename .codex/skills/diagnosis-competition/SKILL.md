@@ -338,4 +338,4 @@ When upstream files are missing, obtain necessary data through the following met
 |------------|----------|----------|----------|
 | competitor-monitoring-report | Competitor tracking data update | Write to output file | Feature changes and advantage changes |
 | diagnosis-orchestrator | Competitor tracking complete | Output file update | Tracking completion status and key findings |
-| iteration-decision | P0-level competitor change | Write to output file | Urgent response strategy and priority |
+| iteration-backlog-grooming | P0-level competitor change | Write to output file | Urgent response strategy and priority |

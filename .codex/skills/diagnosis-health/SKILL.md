@@ -366,4 +366,4 @@ When upstream files are missing, obtain necessary data through the following met
 |------------|----------|----------|----------|
 | diagnosis-orchestrator | Health diagnosis completed | Output file updated | Diagnosis completion status and key bottlenecks |
 | monitoring-pipeline | Health score anomaly | Write to output file | Anomalous dimensions and bottleneck details |
-| iteration-decision | P0/P1 bottleneck identified | Write to output file | Bottleneck description and improvement recommendations |
+| iteration-retrospective | P0/P1 bottleneck identified | Write to output file | Bottleneck description and improvement recommendations |

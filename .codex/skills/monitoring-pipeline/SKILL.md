@@ -781,4 +781,4 @@ When upstream files are missing, obtain necessary data through the following met
 | Downstream Consumer | Notification Condition | Notification Method | Notification Content |
 |------------|----------|----------|----------|
 | monitoring-orchestrator | Monitoring & alerting pipeline completed | Output file update | Build completion status and key configuration |
-| iteration-decision | P0 alert triggered | Write to output file | Urgent alert and escalation details |
+| iteration-backlog-grooming | P0 alert triggered | Write to output file | Urgent alert and escalation details |

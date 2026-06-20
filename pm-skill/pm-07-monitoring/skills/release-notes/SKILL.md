@@ -239,17 +239,45 @@ execution_depth:
 ```json
 {
   "type": "object",
-  "required": ["version", "release_date", "release_type", "changes"],
+  "required": ["release_notes"],
   "properties": {
-    "version": {"type": "string", "description": "版本号"},
-    "release_date": {"type": "string", "description": "发布日期"},
-    "release_type": {"type": "string", "description": "发布类型：major/minor/patch/hotfix"},
-    "target_audience": {"type": "string", "description": "目标受众"},
-    "high_impact_changes": {"type": "array", "description": "高影响变更列表"},
-    "changes": {"type": "object", "description": "变更列表，按类别分类", "properties": {"new_features": {"type": "array"}, "improvements": {"type": "array"}, "bug_fixes": {"type": "array"}}},
-    "known_issues": {"type": "array", "description": "已知问题列表"},
-    "breaking_changes": {"type": "array", "description": "破坏性变更列表"},
-    "upgrade_guide": {"type": "object", "description": "升级指引"}
+    "release_notes": {
+      "type": "object",
+      "description": "发布说明根对象",
+      "required": ["version", "release_date", "highlights", "changes"],
+      "properties": {
+        "version": {"type": "string", "description": "版本号"},
+        "release_date": {"type": "string", "description": "发布日期"},
+        "highlights": {
+          "type": "array",
+          "description": "核心亮点列表，至少1项",
+          "items": {
+            "type": "object",
+            "required": ["title", "description", "target_audience"],
+            "properties": {
+              "title": {"type": "string", "description": "亮点标题"},
+              "description": {"type": "string", "description": "亮点描述"},
+              "target_audience": {"type": "string", "description": "目标受众"}
+            }
+          }
+        },
+        "changes": {
+          "type": "object",
+          "description": "变更分类",
+          "required": ["new_features", "improvements", "bug_fixes"],
+          "properties": {
+            "new_features": {"type": "array", "description": "新功能列表"},
+            "improvements": {"type": "array", "description": "改进列表"},
+            "bug_fixes": {"type": "array", "description": "修复列表"},
+            "breaking_changes": {"type": "array", "description": "破坏性变更列表"},
+            "deprecations": {"type": "array", "description": "废弃功能列表"}
+          }
+        },
+        "upgrade_guide": {"type": "object", "description": "升级指南，有breaking_changes时必填"},
+        "known_issues": {"type": "array", "description": "已知问题列表"},
+        "acknowledgments": {"type": "array", "description": "致谢列表"}
+      }
+    }
   }
 }
 ```
@@ -258,24 +286,27 @@ execution_depth:
 
 ```json
 {
-  "version": "2.3.0",
-  "release_date": "2025-03-15",
-  "release_type": "minor",
-  "target_audience": "终端用户",
-  "high_impact_changes": [],
-  "changes": [
-    {
-      "category": "新功能/改进/修复/安全/下线/破坏性变更",
-      "title": "变更标题",
-      "description": "变更描述",
-      "impact_level": "高/中/低",
-      "user_action": "必须操作/建议操作/无需操作",
-      "related_requirement": "FR-XXX"
-    }
-  ],
-  "known_issues": [],
-  "breaking_changes": [],
-  "upgrade_guide": {}
+  "release_notes": {
+    "version": "2.3.0",
+    "release_date": "2025-03-15",
+    "highlights": [
+      {
+        "title": "社交分享",
+        "description": "一键分享到微信/微博",
+        "target_audience": "终端用户"
+      }
+    ],
+    "changes": {
+      "new_features": [ { /* 见Step 1变更收集与分类 */ } ],
+      "improvements": [ { /* 见Step 1变更收集与分类 */ } ],
+      "bug_fixes": [ { /* 见Step 1变更收集与分类 */ } ],
+      "breaking_changes": [ { /* 见Step 1变更收集与分类 */ } ],
+      "deprecations": [ { /* 见Step 1变更收集与分类 */ } ]
+    },
+    "upgrade_guide": { /* 见Step 5文档组装，有breaking_changes时必填 */ },
+    "known_issues": [ { /* 见Step 1变更收集与分类 */ } ],
+    "acknowledgments": [ { /* 见Step 5文档组装 */ } ]
+  }
 }
 ```
 
@@ -316,7 +347,7 @@ execution_depth:
 | 说明变更类型 | 通知范围 | 通知方式 |
 |-------------|----------|----------|
 | 破坏性变更新增 | 全部下游 | 标记破坏性变更，触发影响评估 |
-| 已知问题新增 | agile-review | 标记已知问题，触发复盘输入 |
+| 已知问题新增 | agile-launch-review | 标记已知问题，触发复盘输入 |
 | 版本号变更 | release-gradual | 标记版本变更，触发灰度配置更新 |
 
 ---

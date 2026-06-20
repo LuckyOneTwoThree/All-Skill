@@ -1,6 +1,6 @@
 ---
 name: validation-usability
-description: 当需要辅助可用性测试时使用。可用性测试辅助工具，在测试前、中、后各阶段提供AI辅助支持：测试前生成任务脚本和招募问卷，测试后整理数据并生成洞察报告。注意：实际测试执行必须由人类研究员主持。关键词：可用性测试、任务脚本、招募筛选、问题聚类、洞察提炼、用户体验测试、测试任务。
+description: 当需要辅助可用性测试时使用。可用性测试辅助工具，在测试前、中、后各阶段提供AI辅助支持：测试前生成任务脚本和招募问卷，测试后整理数据并生成洞察报告。注意：实际测试执行必须由人类研究员主持。关键词：可用性测试、任务脚本、招募筛选、问题聚类、洞察提炼、用户体验测试、测试任务。本Skill消费 validation-experiment 的方法选择（当方法=可用性测试时），生成具体测试任务脚本、招募问卷、测试报告。
 metadata:
   module: "产品构思与设计"
   sub-module: "方案验证"
@@ -11,7 +11,7 @@ metadata:
     - "怎么做可用性测试"
     - "帮我设计测试任务"
     - "用户体验测试怎么做"
-  interaction_mode: "ai_suggest_human_approve"
+  interaction_mode: "human_ai_collaborate"
 execution_depth:
   default: standard
   quick_description: "直接输出可用性问题和改进建议"
@@ -31,14 +31,14 @@ execution_depth:
 
 | 属性 | 值 |
 |------|-----|
-| Pipeline ID | 15 |
+| Pipeline ID | 13 |
 | 名称 | 可用性测试辅助 |
 | 执行模式 | 👤→🤖 人类执行，AI辅助 |
 | 输入 | 假设地图 + MVP功能 + 测试目标 |
 
 ## 交互模式
 
-🤖→👤 AI建议人类审批
+👤→🤖 人类执行，AI辅助
 
 ## 输入
 
@@ -47,6 +47,7 @@ execution_depth:
 | 可用性测试计划 | object | 是 | output/pm-design/validation-assumption-map/assumption_map.json | 测试目标、假设地图、MVP功能 |
 | 测试参与者 | object | 是 | 用户提供 | 目标用户画像、招募筛选标准 |
 | 测试任务场景 | object | 是 | output/pm-design/design-prototype/prototype_spec.json | 待验证的可用性假设与任务脚本 |
+| 实验方法选择 | object | ○ | output/pm-design/validation-experiment/experiment_plan.json | 当方法=可用性测试时，消费 validation-experiment 的方法选择和实验框架 |
 
 ## 执行步骤
 
@@ -81,6 +82,8 @@ execution_depth:
 #### Step 2: 生成任务脚本
 
 **规则**: 每个任务对应一个待验证的可用性假设
+
+> 🔗 **上游消费**：当 experiment_method 输入存在且 selected_method=usability_test 时，基于 experiment_framework（假设、指标、样本量、时长）设计具体测试任务脚本；否则基于假设地图和测试目标独立设计。
 
 ```json
 {
@@ -392,3 +395,113 @@ execution_depth:
 **测试执行**: 人类研究员主持，8名用户参与
 
 **AI辅助输出**: 结构同上方输出 JSON，其中 `problems`/`insights`/`improvement_suggestions` 各数组按实际测试结果填充，字段含义与输出校验规则一致。
+
+### 完整示例：课程推荐功能可用性测试报告
+
+场景：对"课程推荐功能"进行 8 人可用性测试，验证学员能否快速找到适合的课程并理解推荐理由。以下为测试后 AI 整理产出的完整 `usability_report.json`。
+
+```json
+{
+  "usability_report": {
+    "test_summary": {
+      "test_date": "2025-06-18",
+      "participant_count": 8,
+      "test_duration_minutes": 75,
+      "test_goals": [
+        "验证学员能否在推荐首页快速找到感兴趣的课程",
+        "验证学员能否理解推荐课程与自身学习进度的关联",
+        "验证学员能否顺利完成从推荐首页到课程详情页的跳转"
+      ]
+    },
+    "problems": [
+      {
+        "problem_id": "P001",
+        "severity": "P1",
+        "frequency": "5/8",
+        "affected_element": "课程推荐列表",
+        "affected_users": 5,
+        "task_id": "T001",
+        "description": "学员无法理解推荐课程与自身学习进度的关联，推荐理由展示不清晰，导致学员对推荐内容信任度低",
+        "evidence": [
+          "5/8学员在访谈中表示「不确定为什么推荐这门课」",
+          "3/8学员在推荐列表停留超过15秒仍未点击",
+          "学员P003原话：「这些课程看起来和我学的没什么关系」"
+        ]
+      },
+      {
+        "problem_id": "P002",
+        "severity": "P2",
+        "frequency": "3/8",
+        "affected_element": "推荐首页「不感兴趣」反馈入口",
+        "affected_users": 3,
+        "task_id": "T002",
+        "description": "「不感兴趣」反馈按钮位置隐蔽，学员难以发现，导致反馈功能使用率低",
+        "evidence": [
+          "3/8学员在任务完成后才注意到反馈按钮",
+          "2/8学员表示「以为那个图标是收藏」",
+          "眼动数据显示反馈按钮注视率仅25%"
+        ]
+      }
+    ],
+    "insights": [
+      {
+        "type": "assumption_validation",
+        "assumption_id": "A001",
+        "result": "partial",
+        "description": "假设A001「学员能快速找到适合的课程」部分成立：学员能找到课程，但因推荐理由不清晰导致决策时间过长",
+        "insight_text": "推荐理由的可解释性比推荐准确性更影响学员的点击决策，学员需要明确知道「为什么推荐」才会产生信任",
+        "evidence": "5/8学员在看到推荐理由后点击率提升40%，但默认展示的推荐理由过于笼统（如「基于你的学习历史」）",
+        "confidence": 0.85
+      },
+      {
+        "type": "design_changes",
+        "assumption_id": "A002",
+        "result": "confirmed",
+        "description": "假设A002「学员希望看到学习路径推荐」成立，学员对结构化学习路径有明确需求",
+        "insight_text": "学员更倾向于按职业目标组织的学习路径，而非零散的单门课程推荐，路径推荐应作为推荐首页的核心模块",
+        "evidence": "6/8学员主动询问「有没有按方向的学习路径」，2/8学员表示愿意为路径推荐付费",
+        "confidence": 0.9
+      }
+    ],
+    "improvement_suggestions": [
+      {
+        "suggestion_id": "IS001",
+        "suggestion": "在课程推荐卡片显著位置增加具体推荐理由（如「因为你学完了《JS基础》，推荐进阶课程《React实战》」），替代笼统的「基于学习历史」",
+        "priority": "P1",
+        "problem_ref": "P001",
+        "effort": "中",
+        "estimated_effort": "3人天",
+        "impact": "高"
+      },
+      {
+        "suggestion_id": "IS002",
+        "suggestion": "将「不感兴趣」反馈按钮从卡片右下角移至卡片右上角，并增加文字标签和悬停提示，提升可发现性",
+        "priority": "P2",
+        "problem_ref": "P002",
+        "effort": "低",
+        "estimated_effort": "1人天",
+        "impact": "中"
+      },
+      {
+        "suggestion_id": "IS003",
+        "suggestion": "在推荐首页顶部增加「学习路径」独立模块，按学员职业目标展示结构化路径，每条路径展示阶段进度",
+        "priority": "P1",
+        "problem_ref": "P001",
+        "effort": "高",
+        "estimated_effort": "8人天",
+        "impact": "高"
+      }
+    ]
+  }
+}
+```
+
+### 示例说明
+
+| 字段类别 | 示例数量 | 关键字段 |
+|----------|----------|----------|
+| problems | 2 | severity（P1/P2）、description、affected_users、task_id、evidence |
+| insights | 2 | insight_text、evidence、confidence（0.85/0.9）、type（assumption_validation/design_changes） |
+| improvement_suggestions | 3 | suggestion、priority（P1/P2）、estimated_effort（人天）、problem_ref |
+
+**优先级处理**：P1 问题（P001）对应 2 条改进建议（IS001、IS003），其中 IS003 为高投入高收益项，建议排入下个迭代；P2 问题（P002）对应低投入建议（IS002），可快速修复。

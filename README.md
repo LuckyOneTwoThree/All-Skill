@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-123-orange?style=flat-square)](#-四大领域总览)
+[![Skill Count](https://img.shields.io/badge/Skills-127-orange?style=flat-square)](#-四大领域总览)
 
 </div>
 
@@ -16,7 +16,7 @@
 
 <div align="center">
 
-**[🌌 All-Skill Galaxy 交互式可视化](https://luckyonetwothree.github.io/all-skill-html/)** — 力导向图谱呈现 123 个 Skill 编排关系，12 条跨域数据契约流一目了然
+**[🌌 All-Skill Galaxy 交互式可视化](https://luckyonetwothree.github.io/all-skill-html/)** — 力导向图谱呈现 127 个 Skill 编排关系，12 条跨域数据契约流一目了然
 
 </div>
 
@@ -38,11 +38,11 @@
 
 ## 📌 这是什么
 
-将软件产品从 **0 到 1 的全生命周期方法论**，提取为 **123 个源 AI Agent Skill**，覆盖四大领域：
+将软件产品从 **0 到 1 的全生命周期方法论**，提取为 **127 个源 AI Agent Skill**，覆盖四大领域：
 
 | 领域 | 定位 | 数量 |
 |:-----|:-----|:----:|
-| 🎯 **PM** 产品方法论 | 做正确的事 | 102 |
+| 🎯 **PM** 产品方法论 | 做正确的事 | 106 |
 | 🎨 **UI** 设计与前端 | 正确地呈现 | 9 |
 | ⚙️ **Backend** 后端架构 | 正确地构建 | 10 |
 | 🔗 **Cross-Domain** 跨领域协调 | 全局编排 | 2 |
@@ -68,7 +68,7 @@
 ├── insight-analysis/SKILL.md
 ├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
-├── ...（123个源Skill扁平平铺）
+├── ...（127个源Skill扁平平铺）
 └── production-ready/SKILL.md
 ```
 
@@ -127,7 +127,7 @@
 
 | 领域 | 模块数 | 编排器 | Pipeline | Extension | 导航 | 核心定位 |
 |:-----|:------:|:------:|:--------:|:---------:|:----:|:---------|
-| **pm-skill** 🎯 | 8 | 27 | 74 | — | 1 | 做正确的事：从探索发现到增长运营 |
+| **pm-skill** 🎯 | 8 | 27 | 78 | — | 1 | 做正确的事：从探索发现到增长运营 |
 | **ui-skill** 🎨 | 3 | 1 | 4 | 4 | — | 正确地呈现：设计即实现，令牌驱动 |
 | **backend-skill** ⚙️ | 3 | 4 | 6 | — | — | 正确地构建：先全量设计，审查后实现 |
 | **cross-domain** 🔗 | — | 2 | — | — | — | 全局编排：产品迭代与产品启动 |
@@ -234,10 +234,10 @@ All-Skill/
 │   │   └── skills/                            11个Pipeline Skill
 │   ├── pm-07-monitoring/                  模块7：产品监控与迭代
 │   │   ├── orchestrators/                     monitoring / diagnosis / iteration / release
-│   │   └── skills/                            11个Pipeline Skill
+│   │   └── skills/                            13个Pipeline Skill
 │   └── pm-08-project/                     模块8：项目管理与执行
 │       ├── orchestrators/                     agile / project-planning / risk
-│       └── skills/                            8个Pipeline Skill
+│       └── skills/                            10个Pipeline Skill
 │
 ├── ui-skill/                         ✅ Skill 文件 —— UI设计与前端开发
 │   ├── ui-01-design-system/               模块1：设计系统（项目初始化+视觉风格）
@@ -282,7 +282,7 @@ All-Skill/
 
 ## 📚 各领域模块详解
 
-### 🎯 PM 产品方法论（102个Skill）
+### 🎯 PM 产品方法论（106个Skill）
 
 #### 模块1：产品探索与发现
 
@@ -354,9 +354,9 @@ All-Skill/
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |:-------|:-------|:---------------|:---------|
-| 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | 监控体系+异常归因+反馈闭环 |
+| 监控预警 | monitoring-orchestrator | monitoring-alert-detection / monitoring-attribution / user-feedback-loop-report | 异常检测+异常归因+反馈闭环 |
 | 智能诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
-| 迭代决策 | iteration-orchestrator | iteration-decision | Backlog优化 |
+| 迭代决策 | iteration-orchestrator | iteration-backlog-grooming / iteration-retrospective | Backlog优化 |
 | 发布编排 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 质量验收+灰度发布+检查清单+发布说明 |
 
 #### 模块8：项目管理与执行
@@ -366,7 +366,7 @@ All-Skill/
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |:-------|:-------|:---------------|:---------|
 | 项目规划 | project-planning-orchestrator | planning-project-charter / planning-resource / planning-kickoff | 项目宪章+资源计划 |
-| 敏捷执行 | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-review（含迭代复盘） | Sprint规划+每日同步+迭代复盘 |
+| 敏捷执行 | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-sprint-review / agile-retrospective / agile-launch-review | Sprint规划+每日同步+Sprint评审+迭代复盘+上线复盘 |
 | 风险管理 | risk-orchestrator | risk-identification / risk-management | 风险登记册+监控+升级 |
 
 ---
@@ -459,7 +459,7 @@ All-Skill/
 
 ## 📄 核心产出文档
 
-PM 领域的 74 个 Pipeline Skill 中，18 个产出包含 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 123 个源 Skill（含 34 个编排器 + 74 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
+PM 领域的 78 个 Pipeline Skill 中，18 个产出包含 Markdown 可交付文档，其余 60 个产出 JSON 数据片段供下游 Skill 消费。UI/Backend 以代码和配置为交付物。全局共 127 个源 Skill（含 34 个编排器 + 78 个 PM Pipeline + 4 个 UI Pipeline + 6 个 Backend Pipeline + 4 个 UI 外部扩展 + 1 个导航）。
 
 ### PM 核心产出文档一览
 

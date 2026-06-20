@@ -234,16 +234,82 @@ execution_depth:
     ]
   },
   "economic": {
-    "trends": [],
-    "key_signals": []
+    "trends": [
+      {
+        "trend": "GDP增速放缓，居民可支配收入增长承压",
+        "direction": "下降",
+        "strength": "中",
+        "impact_path": "居民教育支出意愿下降→在线教育付费转化率降低"
+      }
+    ],
+    "key_signals": [
+      {
+        "signal": "2026年Q1 GDP增速降至4.5%",
+        "type": "指标突变",
+        "timing": "已发生",
+        "source": "国家统计局季度公报",
+        "impact": {
+          "direction": "负面",
+          "degree": 3,
+          "time_window": "中期",
+          "scope": "行业",
+          "recommendation": "优化定价策略，推出轻量化平价产品应对消费降级"
+        },
+        "alert": false
+      }
+    ]
   },
   "social": {
-    "trends": [],
-    "key_signals": []
+    "trends": [
+      {
+        "trend": "Z世代消费习惯变化，碎片化学习偏好增强",
+        "direction": "上升",
+        "strength": "强",
+        "impact_path": "学习场景碎片化→课程产品设计需适配短时高频模式"
+      }
+    ],
+    "key_signals": [
+      {
+        "signal": "短视频学习类应用月活同比增长45%",
+        "type": "趋势转折",
+        "timing": "正在发生",
+        "source": "QuestMobile年度报告",
+        "impact": {
+          "direction": "正面",
+          "degree": 4,
+          "time_window": "短期",
+          "scope": "行业",
+          "recommendation": "开发短视频微课产品形态，抢占碎片化学习场景"
+        },
+        "alert": true
+      }
+    ]
   },
   "technological": {
-    "trends": [],
-    "key_signals": []
+    "trends": [
+      {
+        "trend": "AI技术普及，大模型教育应用成本快速下降",
+        "direction": "上升",
+        "strength": "强",
+        "impact_path": "AI辅导成本下降→个性化教学产品规模化落地成为可能"
+      }
+    ],
+    "key_signals": [
+      {
+        "signal": "教育大模型API调用成本同比下降60%",
+        "type": "技术突破",
+        "timing": "正在发生",
+        "source": "Gartner技术成熟度报告",
+        "impact": {
+          "direction": "正面",
+          "degree": 4,
+          "time_window": "中期",
+          "scope": "跨行业",
+          "recommendation": "加大AI个性化辅导产品研发投入，构建数据飞轮"
+        },
+        "alert": true
+      }
+    ]
   },
   "alerts": [
     {
@@ -252,6 +318,22 @@ execution_depth:
       "impact_degree": 5,
       "impact_direction": "负面",
       "recommendation": "加速合规体系建设，建立数据隐私保护机制",
+      "timestamp": "2026-05-10T08:00:00Z"
+    },
+    {
+      "signal": "短视频学习类应用月活同比增长45%",
+      "dimension": "社会趋势",
+      "impact_degree": 4,
+      "impact_direction": "正面",
+      "recommendation": "开发短视频微课产品形态，抢占碎片化学习场景",
+      "timestamp": "2026-05-10T08:00:00Z"
+    },
+    {
+      "signal": "教育大模型API调用成本同比下降60%",
+      "dimension": "技术动态",
+      "impact_degree": 4,
+      "impact_direction": "正面",
+      "recommendation": "加大AI个性化辅导产品研发投入，构建数据飞轮",
       "timestamp": "2026-05-10T08:00:00Z"
     }
   ]

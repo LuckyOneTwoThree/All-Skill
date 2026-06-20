@@ -237,7 +237,7 @@ AI需要从以下6个维度为每个核心问题生成HMW陈述：
 
 ##### SCAMPER生成要求
 
-- 每个HMW在每个维度至少生成2个方案
+- 每个HMW在每个维度至少生成3个方案
 - 方案应直接回应HMW陈述中的问题
 - 体现对应SCAMPER维度的核心思想
 - 具有一定的新颖性和差异化
@@ -663,13 +663,13 @@ Markdown格式的创意工作坊报告，包含：
 | inversion_ideas.inversion_analysis[].design_constraints[].verification_method | string | 是 | 验证方法 |
 | inversion_ideas.summary | object | 是 | 反转思维统计摘要 |
 | converged_ideas | object | 是 | 收敛产出 |
-| converged_ideas.converged_solutions | array | 是 | 收敛后的方案列表，至少3个 |
+| converged_ideas.converged_solutions | array | 是 | 收敛后的方案列表，至少5个 |
 | converged_ideas.converged_solutions[].id | string | 是 | 方案唯一标识 |
 | converged_ideas.converged_solutions[].title | string | 是 | 方案标题 |
 | converged_ideas.converged_solutions[].detailed_description | object | 是 | 详细方案描述 |
 | converged_ideas.converged_solutions[].interaction_flow | object | 是 | 交互流程设计 |
-| converged_ideas.converged_solutions[].assumption | object | 是 | 关键假设 |
-| converged_ideas.converged_solutions[].risk | object | 是 | 风险识别 |
+| converged_ideas.converged_solutions[].assumptions | object | 是 | 关键假设 |
+| converged_ideas.converged_solutions[].risks | object | 是 | 风险识别 |
 | converged_ideas.converged_solutions[].mvp_scope | object | 是 | MVP范围定义 |
 | converged_ideas.converged_solutions[].success_metrics | object | 是 | 成功指标 |
 | converged_ideas.comparison_matrix | object | 是 | 对比矩阵 |

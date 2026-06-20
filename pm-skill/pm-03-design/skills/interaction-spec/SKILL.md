@@ -54,7 +54,7 @@ execution_depth:
 
 为每个核心组件和页面定义交互状态机：
 
-1. **状态枚举**：Default / Hover / Active / Focus / Disabled / Loading / Error / Empty / Success
+1. **状态枚举**：8种基础状态（Hover / Active / Focus / Disabled / Loading / Error / Empty / Success）+ Default默认状态
 2. **状态转换表**：触发条件、转换动作、过渡意图
 3. **状态优先级**：多状态叠加时的优先级规则（如 Disabled + Error）
 4. **状态持久性**：瞬时状态 vs 持续状态的保持规则

@@ -333,15 +333,14 @@ execution_depth:
       { "item": "互联网巨头以免费策略切入市场", "confidence": 0.70, "evidence": "竞品B 2024Q3推出免费基础版" }
     ],
     "strategies": [
-      { "type": "SO", "strategy": "AI引擎+企业培训市场渗透", "key_actions": ["与50家中大型企业签订培训平台试点协议" // ... 同结构可扩展], "expected_outcome": "6个月内企业客户数增长40%" }
-      // ... 同结构可扩展
+      { "type": "SO", "strategy": "AI引擎+企业培训市场渗透", "key_actions": ["与50家中大型企业签订培训平台试点协议"], "expected_outcome": "6个月内企业客户数增长40%" }
     ]
   },
   "ansoff": {
     "current_position": {
       "quadrant": "市场渗透",
       "description": "当前定位于现有市场中的现有产品",
-      "rationale": ["产品成熟稳定" // ... 同结构可扩展]
+      "rationale": ["产品成熟稳定"]
     },
     "growth_paths": [
       {
@@ -352,10 +351,9 @@ execution_depth:
         "expected_return": "medium",
         "timeline": "6-12个月",
         "feasibility": { "overall": 0.70, "market_attractiveness": 0.75, "capability_match": 0.80, "resource_availability": 0.65, "risk_controllability": 0.60 },
-        "key_actions": ["识别目标新市场细分" // ... 同结构可扩展],
-        "risks": [{ "risk": "市场认知不足", "mitigation": "品牌联合推广" } // ... 同结构可扩展]
+        "key_actions": ["识别目标新市场细分"],
+        "risks": [{ "risk": "市场认知不足", "mitigation": "品牌联合推广" }]
       }
-      // ... 同结构可扩展
     ],
     "recommendations": {
       "primary": "市场开发",
@@ -366,15 +364,12 @@ execution_depth:
   "strategic_conclusions": {
     "integrated_recommendations": [
       { "recommendation": "优先执行市场开发策略，利用AI引擎优势开拓企业培训新市场", "priority": "high", "supporting_frameworks": ["swot", "ansoff"], "evidence": "SO策略与Ansoff市场开发路径一致，可行性评分0.70" }
-      // ... 同结构可扩展
     ],
     "cross_validation_notes": [
       "SWOT SO策略与Ansoff市场开发路径方向一致，相互验证"
-      // ... 同结构可扩展
     ],
     "human_decisions_needed": [
       { "item": "战略方向选择", "context": "SO策略（市场渗透）vs WO策略（内容补强）vs 市场开发路径，需人类决策最终方向", "urgency": "高" }
-      // ... 同结构可扩展
     ]
   },
   "metadata": {
@@ -382,7 +377,6 @@ execution_depth:
     "generated_at": "2026-05-14T21:00:00Z",
     "source_files": [
       "output/pm-discovery/market-competitor-analysis/competitor-analysis.json"
-      // ... 同结构可扩展
     ]
   }
 }

@@ -247,12 +247,12 @@ success_criteria:
         {
           "signal_type": "usage_limit",
           "description": "使用量达到免费版上限80%",
-          "strength": 0.85
+          "strength": "strong"
         },
         {
           "signal_type": "feature_access",
           "description": "频繁访问高级功能",
-          "strength": 0.72
+          "strength": "medium"
         }
       ],
       "overall_score": 0.8,

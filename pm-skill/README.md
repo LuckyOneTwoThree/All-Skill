@@ -2,7 +2,7 @@
 
 ## 这是什么
 
-将完整的产品方法论闭环提取为 102 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
+将完整的产品方法论闭环提取为 106 个 AI Agent Skill，兼容 Trae / Claude Code 的 Agent Skills 开放标准。每个 Skill 是一个可独立执行的方法论 Pipeline，编排器负责调度子 Skill 的执行顺序。
 
 ## 快速开始
 
@@ -24,7 +24,7 @@ ALL/pm-01-discovery/skills/user-research-voice-analysis/SKILL.md
 ├── user-research-voice-analysis/SKILL.md
 ├── insight-orchestrator/SKILL.md
 ├── insight-analysis/SKILL.md
-├── ...（102个Skill扁平平铺）
+├── ...（106个Skill扁平平铺）
 └── risk-management/SKILL.md
 ```
 
@@ -116,7 +116,7 @@ ALL/
 
 ### ~~模块5：产品开发与上线~~（已移除）
 
-> ⚠️ **pm-05-development 模块已移除**。开发交付相关能力（任务分解、PRD同步、ADR、数据字典、安全合规、技术债务登记）已由 Backend 模块内建覆盖；quality-auto-test 由 UI/Backend 覆盖；验收与发布技能迁至模块8（监控与迭代）；迭代复盘能力合并至模块9 agile-review。
+> ⚠️ **pm-05-development 模块已移除**。开发交付相关能力（任务分解、PRD同步、ADR、数据字典、安全合规、技术债务登记）已由 Backend 模块内建覆盖；quality-auto-test 由 UI/Backend 覆盖；验收与发布技能迁至模块8（监控与迭代）；迭代复盘能力拆分为 agile-sprint-review、agile-retrospective、agile-launch-review 三个独立Skill。
 
 ### 模块5：产品度量运营（上线后）
 
@@ -146,9 +146,9 @@ ALL/
 
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
-| 监控预警 | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | 监控体系+异常归因+反馈闭环 |
+| 监控预警 | monitoring-orchestrator | monitoring-alert-detection / monitoring-attribution / user-feedback-loop-report | 异常检测+异常归因+反馈闭环 |
 | 智能诊断 | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | 健康度评分+竞品监控报告+下线方案 |
-| 迭代决策 | iteration-orchestrator | iteration-decision | Backlog优化+迭代复盘 |
+| 迭代决策 | iteration-orchestrator | iteration-backlog-grooming / iteration-retrospective | Backlog优化+迭代复盘 |
 | 发布编排 | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | 验收报告+灰度发布+检查清单+发布说明 |
 
 ### 模块8：项目管理与执行
@@ -158,7 +158,7 @@ ALL/
 | 子模块 | 编排器 | Pipeline Skill | 核心产出 |
 |--------|--------|---------------|----------|
 | 项目规划 | project-planning-orchestrator | planning-project-charter / planning-resource / planning-kickoff | 项目宪章+资源计划 |
-| 敏捷执行 | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-review（含迭代复盘） | Sprint规划+每日同步+迭代复盘 |
+| 敏捷执行 | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-sprint-review / agile-retrospective / agile-launch-review | Sprint规划+每日同步+Sprint评审+迭代复盘+上线复盘 |
 | 风险管理 | risk-orchestrator | risk-identification / risk-management | 风险登记册+监控+升级 |
 
 ## Skill 类型
@@ -166,7 +166,7 @@ ALL/
 | 类型 | 数量 | 作用 | 使用方式 |
 |------|------|------|----------|
 | 编排器 Orchestrator | 27 | 调度子 Skill 的执行顺序和阶段卡口 | 按子模块流程使用 |
-| Pipeline Skill | 74 | 单个方法论 Pipeline，可独立执行 | 按需单独调用 |
+| Pipeline Skill | 78 | 单个方法论 Pipeline，可独立执行 | 按需单独调用 |
 | 导航 Guide | 1 | 全流程导航，根据场景推荐模块 | 入口指引 |
 
 ## 输出路径
@@ -212,7 +212,7 @@ output 跟着用户项目走，不跟着 Skill 定义目录走。多项目时各
 
 ## 核心产出文档
 
-74 个 Pipeline Skill 中，18 个产出人类可读的 Markdown 可交付文档，其余 56 个产出 JSON 数据片段供下游 Skill 消费。
+78 个 Pipeline Skill 中，18 个产出人类可读的 Markdown 可交付文档，其余 60 个产出 JSON 数据片段供下游 Skill 消费。
 
 | 生命周期 | 产出文档 | Skill |
 |----------|---------|-------|

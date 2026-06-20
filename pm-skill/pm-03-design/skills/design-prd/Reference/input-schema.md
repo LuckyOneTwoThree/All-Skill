@@ -8,10 +8,12 @@
 | insight_analysis | JSON/object | ○ | output/pm-discovery/insight-analysis | 洞察分析产出：用户洞察、痛点、行为模式，替代原 requirements-collection 输入 |
 | opportunity_definition | JSON/object | ○ | output/pm-discovery/opportunity-definition | 机会定义产出：机会列表、优先级排序、问题陈述，替代原 requirements-understanding/prioritization 输入 |
 | exploration_outputs | JSON/object | ○ | 上游探索阶段 | 探索阶段输出：用户洞察、问题陈述 |
-| strategy_outputs | JSON/object | ○ | 用户提供 | 战略阶段输出：OKR、路线图 |
+| strategy_outputs | JSON/object | ○ | 上游战略阶段 | 战略阶段输出：OKR、路线图 |
+| north_star_metric | JSON/object | ○ | output/pm-strategy/planning-north-star | 北极星指标及驱动功能 |
+| okr_candidates | JSON/object | ○ | output/pm-strategy/planning-okr | OKR候选及驱动功能 |
 | ideation_outputs | JSON/object | ○ | output/pm-design/ideation-workshop/ideation-workshop.json | 构思阶段输出：解决方案、功能列表 |
-| design_outputs | JSON/object | ○ | 用户提供 | 设计阶段输出：原型、用户流程、信息架构 |
-| metrics_outputs | JSON/object | ○ | 用户提供 | 度量阶段输出：指标体系、埋点方案 |
+| design_outputs | JSON/object | ○ | 上游设计阶段 | 设计阶段输出：原型、用户流程、信息架构 |
+| metrics_outputs | JSON/object | ○ | 上游度量阶段 | 度量阶段输出：指标体系、埋点方案 |
 | requirement | JSON/object | 是 | 用户提供 | 需求上下文（product_name必填）及手动覆盖配置 |
 
 ### 7.1 输入数据结构

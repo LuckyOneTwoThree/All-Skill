@@ -256,7 +256,7 @@ expansion_score = (
 | current_nrr | number | 是 | 当前NRR，须>0 |
 | nrr_breakdown | object | 是 | NRR分解，须含expansion_revenue_ratio/contraction_revenue_ratio/churned_revenue_ratio |
 | nrr_breakdown.expansion_revenue_ratio | number | 是 | 扩张收入占比，须≥0 |
-| nrr_breakdown.contraction_revenue_ratio | number | 否 | 收缩收入占比 |
+| nrr_breakdown.contraction_revenue_ratio | number | 是 | 收缩收入占比 |
 | nrr_breakdown.churned_revenue_ratio | number | 是 | 流失收入占比，须≥0 |
 | trend | array | 否 | NRR趋势数据，每项须含month/nrr |
 | trend[].month | string | 是 | 月份标识 |

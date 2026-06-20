@@ -578,83 +578,9 @@ execution_depth:
 
 **输出文件**：`release_checklist.json`
 
-**输出Schema**：
+## 输出 Schema
 
-```json
-{
-  "type": "object",
-  "required": ["output_id", "release_id", "checklist", "completion_status"],
-  "properties": {
-    "output_id": {"type": "string", "description": "输出唯一标识"},
-    "release_id": {"type": "string", "description": "发布ID"},
-    "generated_at": {"type": "string", "description": "生成时间"},
-    "checklist": {"type": "object", "description": "各阶段完整Checklist，包含T-7/T-1/T-0/T+24h/T+72h"},
-    "completion_status": {"type": "object", "description": "完成状态汇总，包含当前阶段和完成率"},
-    "pending_alerts": {"type": "array", "description": "待处理告警列表"},
-    "risk_assessment": {"type": "object", "description": "风险评估，包含风险等级和阻断项"}
-  }
-}
-```
-
-### 最终输出结构
-
-```json
-{
-  "output_id": "checklist_report_xxx",
-  "release_id": "release_2024_0125_001",
-  "generated_at": "ISO8601",
-  "checklist": {
-    "T-7": {...},
-    "T-1": {...},
-    "T-0": {...},
-    "T+24h": {...},
-    "T+72h": {...}
-  },
-  "completion_status": {
-    "current_phase": "T-1",
-    "overall_completion_rate": 0.75,
-    "p0_completion_rate": 0.875
-  },
-  "pending_alerts": [...],
-  "risk_assessment": {
-    "risk_level": "medium",
-    "blocking_items": [
-      {
-        "item_id": "T-1_C002",
-        "title": "发布通知未发送",
-        "owner": "dev_zhang"
-      }
-    ]
-  }
-}
-```
-
-### 输出字段说明
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| checklist | JSON | 各阶段完整Checklist |
-| completion_status | JSON | 完成状态汇总 |
-| pending_alerts | JSON | 待处理告警 |
-| risk_assessment | JSON | 风险评估 |
-
-## 输出校验规则
-
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| release_checklist | object | 是 | 发布检查清单根对象 |
-| release_checklist.version | string | 是 | 发布版本号 |
-| release_checklist.items | array | 是 | 检查项列表 |
-| release_checklist.items[].id | string | 是 | 检查项编号 |
-| release_checklist.items[].category | string | 是 | 检查类别，枚举值：code_quality/testing/security/compliance/infrastructure/monitoring |
-| release_checklist.items[].description | string | 是 | 检查描述 |
-| release_checklist.items[].status | string | 是 | 状态，枚举值：pass/fail/pending/waived |
-| release_checklist.items[].severity | string | 是 | 严重级别，枚举值：blocker/warning/info |
-| release_checklist.items[].evidence | string | 否 | 证据链接 |
-| release_checklist.items[].assignee | string | 否 | 负责人 |
-| release_checklist.gate_result | string | 是 | 门禁结果，枚举值：go/no_go/conditional |
-| release_checklist.blockers | array | 是 | 阻断项列表 |
-| release_checklist.risk_summary | object | 是 | 风险摘要 |
+完整 Schema 和校验规则见 [Reference/schema.md](./Reference/schema.md)
 
 ## 上游变更响应
 

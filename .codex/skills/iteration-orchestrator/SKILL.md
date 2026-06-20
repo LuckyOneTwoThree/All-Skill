@@ -1,11 +1,11 @@
 ---
 name: iteration-orchestrator
-description: "Use when planning iteration cycles or adjusting product priorities. Iteration decision commander orchestrating iteration-decision sub-skill. Keywords: iteration decision, Backlog optimization, priority adjustment, iteration retrospective, iteration planning, requirement restructuring, RICE scoring, iteration management. This is a pass-through orchestrator dispatching only 1 sub-skill (iteration-decision); upper-level orchestrators may also invoke iteration-decision directly."
+description: "Use when planning iteration cycles or adjusting product priorities. Iteration decision commander orchestrating iteration-backlog-grooming and iteration-retrospective sub-skills. Keywords: iteration decision, Backlog optimization, priority adjustment, iteration retrospective, iteration planning, requirement restructuring, RICE scoring, iteration management. This orchestrator dispatches 2 sub-skills: Backlog grooming (no cross-module dependencies) and iteration retrospective (depends on pm-08 output)."
 metadata:
   module: "Product Monitoring and Iteration"
   sub-module: "Iteration Optimization"
   type: "orchestrator"
-  version: "10.0"
+  version: "11.0"
   trigger_examples:
     - "Plan the next iteration"
     - "Adjust priorities"
@@ -30,49 +30,72 @@ Iteration is not simply queuing requirements but making optimal trade-offs under
 
 The orchestration protocol follows the unified standard in [orchestrator-protocol.md](../../../codex-templates/orchestrator-protocol.md).
 
-This is a pass-through orchestrator; its responsibility is to provide a unified entry point, stage summary, and exception handling. Upper-level orchestrators may directly invoke the iteration-decision sub-skill without going through this orchestrator.
+This orchestrator dispatches 2 sub-skills: iteration-backlog-grooming (Backlog grooming, no cross-module dependencies) and iteration-retrospective (iteration retrospective, depends on pm-08 output). The two sub-skills form a clear unidirectional data flow: Backlog grooming -> agile-sprint-planning -> iteration retrospective, completely eliminating circular dependencies.
 
 ## Pipeline
 
 ```yaml
 pipeline: iteration-orchestrator
-version: 10.0
+version: 11.0
 post_pipeline:
   - action: stage-summary
     output: output/phase-reports/pm-monitoring/iteration-orchestrator.md
 
 stages:
   - id: phase-1
-    name: "Iteration Decision"
+    name: "Backlog Grooming"
     depends_on: []
-    skills: [iteration-decision]
+    skills: [iteration-backlog-grooming]
     gate:
-      condition: "iteration-decision output files generated"
+      condition: "iteration-backlog-grooming output files generated and prioritized_items non-empty"
+      fail_action: "Handle per sub-skill failure reason, escalate to human if necessary"
+  - id: phase-2
+    name: "Iteration Retrospective"
+    depends_on: [phase-1]
+    skills: [iteration-retrospective]
+    gate:
+      condition: "iteration-retrospective output files generated"
       fail_action: "Handle per sub-skill failure reason, escalate to human if necessary"
 ```
 
 ## Stage Execution Plan
 
-#### Invoke iteration-decision
+#### Invoke iteration-backlog-grooming (phase-1)
 
 ```
-Invoke: ${iteration-decision}
+Invoke: ${iteration-backlog-grooming}
 Input:
   requirement_pool: Project management system (requirement pool)
   tech_debt: Code quality platform (technical debt)
   monitoring_alerts: monitoring-pipeline -> alert data (optional)
   user_feedback: Feedback system (optional)
+  resource_constraints: User provided (optional)
+  quality_metrics: Testing platform/CI/CD (optional)
+  monitoring_data: monitoring-pipeline (optional)
+Output: output/pm-monitoring/iteration-backlog-grooming/
+Validation: Output files generated and prioritized_items non-empty
+Mode: AI->Human
+Note: No cross-module dependencies, can execute independently. Outputs prioritized_items for agile-sprint-planning consumption.
+```
+
+#### Invoke iteration-retrospective (phase-2)
+
+```
+Invoke: ${iteration-retrospective}
+Input:
   current_sprint_plan: agile-sprint-planning -> sprint_plan
-  trigger_event: Monitoring system/feedback system
-  resource_constraints: planning-resource -> resource_plan
-  change_request: User provided
   iteration_completion: agile-daily-sync -> daily_sync
+  resource_constraints: planning-resource -> resource_plan (optional)
+  trigger_event: Monitoring system/feedback system (optional)
+  change_request: User provided (optional)
   quality_metrics: Testing platform/CI/CD
   team_feedback: Retro tools (optional)
   monitoring_data: monitoring-pipeline (optional)
-Output: output/pm-monitoring/iteration-decision/
+  monitoring_alerts: monitoring-pipeline (optional)
+Output: output/pm-monitoring/iteration-retrospective/
 Validation: Output files generated and content complete
-Mode: AI->Human
+Mode: Human<->AI
+Note: Depends on pm-08 output (agile-sprint-planning/sprint_plan, agile-daily-sync/daily_sync), unidirectional dependency does not constitute a cycle.
 ```
 
 ### Stage Summary (post_pipeline)
@@ -85,8 +108,11 @@ Follow the stage summary protocol in [orchestrator-protocol.md](../../../codex-t
 | Summary output path | output/phase-reports/pm-monitoring/iteration-orchestrator.md |
 
 Downstream connections:
-  primary: design-orchestrator (iteration decision completed, implement iteration requirement changes)
+  primary: design-orchestrator (iteration retrospective completed, implement iteration requirement changes)
   alternatives:
+    - target: agile-sprint-planning
+      reason: Backlog grooming completed, proceed with Sprint planning
+      condition: After phase-1 iteration-backlog-grooming completes, prioritized_items generated
     - target: release-orchestrator
       reason: Iteration decision is to release directly
       condition: When iteration decision is for emergency fix or minor version release
@@ -99,12 +125,14 @@ Downstream connections:
 
 | Gate | Condition | Failure Handling |
 |------|------|------------|
-| Output files generated | iteration-decision output generated | Handle per sub-skill failure reason, escalate to human if necessary |
+| phase-1 output files generated | iteration-backlog-grooming output generated and prioritized_items non-empty | Handle per sub-skill failure reason, escalate to human if necessary |
+| phase-2 output files generated | iteration-retrospective output generated | Handle per sub-skill failure reason, escalate to human if necessary |
 | Stage summary generated | output/phase-reports/pm-monitoring/iteration-orchestrator.md generated and all 6 structural items non-empty | Supplement missing structural items and regenerate |
 
 ## Downstream Connections
 
-- Iteration decision completed -> design-orchestrator (implement requirement changes)
+- Backlog grooming completed -> agile-sprint-planning (consume prioritized_items for Sprint planning)
+- Iteration retrospective completed -> design-orchestrator (implement requirement changes)
 - Emergency fix/minor version -> release-orchestrator
 - Core feature changes need monitoring -> monitoring-orchestrator
 
@@ -112,7 +140,8 @@ Downstream connections:
 
 | Decision Point | Trigger Condition | Decision Content |
 |--------|----------|----------|
-| Iteration plan adjustment confirmation | iteration-decision priority adjustment plan generated | Confirm adjustment plan, resource reallocation, and risk acceptance |
+| Backlog grooming result confirmation | iteration-backlog-grooming priority sorting completed | Confirm priority sorting, whether to adopt reorganization suggestions |
+| Iteration adjustment plan confirmation | iteration-retrospective priority adjustment plan generated | Confirm adjustment plan, resource reallocation, and risk acceptance |
 
 ## Exception Handling
 
@@ -145,7 +174,7 @@ When critical required inputs are missing, suggest user execute upstream orchest
 | Missing Input | Suggested Upstream Orchestrator | Description |
 |--------------|-------------------------------|-------------|
 | PRD | pm-design related orchestrator | PRD is the business basis for iteration-orchestrator, missing will result in execution without business foundation |
-| Sub-skill outputs | Sub-skill execution | Sub-skills (iteration-decision...) produce domain-specific outputs |
+| Sub-skill outputs | Sub-skill execution | Sub-skills (iteration-backlog-grooming, iteration-retrospective...) produce domain-specific outputs |
 
 Backtracking suggestion output format:
 ```

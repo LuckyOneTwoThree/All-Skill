@@ -115,6 +115,8 @@ AI基于分类结果生成卡片分类建议：
 
 **输出文件**：`ia_proposals.json`
 
+以下为完整示例，展示 batch_generation（AI 批量生成 3 个候选方案）+ human_filter（人类筛选最终方案）原则的实际应用。场景：在线学习平台信息架构设计，AI 生成 3 个候选方案并标注评分，人类筛选后选定方案B。
+
 ```json
 {
   "ia_proposals": [
@@ -122,29 +124,183 @@ AI基于分类结果生成卡片分类建议：
       "name": "方案A：功能导向型",
       "structure": {
         "root": {
-          "label": "string - 根节点名称",
+          "label": "在线学习平台",
           "children": [
             {
-              "label": "string - 一级分类名称",
+              "label": "学习",
               "children": [
-                { "label": "string - 二级分类名称", "items": ["string - 功能/内容项"] }
+                { "label": "我的课程", "items": ["进行中课程", "已完成课程", "收藏课程"] },
+                { "label": "课程市场", "items": ["全部课程", "分类浏览", "搜索"] }
+              ]
+            },
+            {
+              "label": "推荐",
+              "children": [
+                { "label": "个性化推荐", "items": ["为你推荐", "不感兴趣反馈"] },
+                { "label": "学习路径", "items": ["前端路径", "后端路径", "产品路径"] }
+              ]
+            },
+            {
+              "label": "个人中心",
+              "children": [
+                { "label": "账户", "items": ["基本信息", "学习偏好", "职业目标"] },
+                { "label": "成就", "items": ["学习证书", "学习统计"] }
               ]
             }
           ]
         }
       },
-      "navigation_needs": "4个同级模块需快速切换，层级深度≤2",
+      "navigation_needs": "3个同级模块需快速切换，层级深度≤2，核心功能2次点击可达",
       "routes": [
-        { "path": "/dashboard", "page": "仪表盘", "depth": 1 },
-        { "path": "/courses", "page": "课程列表", "depth": 1 },
+        { "path": "/dashboard", "page": "学习首页", "depth": 1 },
+        { "path": "/recommend", "page": "推荐首页", "depth": 1 },
+        { "path": "/courses", "page": "课程市场", "depth": 1 },
         { "path": "/courses/:id", "page": "课程详情", "depth": 2 },
-        { "path": "/courses/:id/lessons/:lid", "page": "课时学习", "depth": 3 }
+        { "path": "/paths", "page": "学习路径", "depth": 2 },
+        { "path": "/profile", "page": "个人中心", "depth": 1 }
       ],
-      "avg_clicks_to_core": 2.3,
+      "avg_clicks_to_core": 2.0,
+      "alignment_with_user_model": "medium",
+      "needs_user_validation": ["「学习」与「推荐」模块的边界划分", "「课程市场」是否独立为一级入口"],
+      "rationale": "按功能类型组织，结构清晰易于维护。但「推荐」与「学习」分离可能导致学员在两个模块间频繁切换，增加认知负荷。",
+      "pros": ["结构清晰，开发实现简单", "功能边界明确，便于团队分工"],
+      "cons": ["推荐与学习割裂，用户心智模型对齐度低", "推荐入口层级较深，影响推荐曝光"],
+      "score": {
+        "user_alignment": 6,
+        "development_cost": 8,
+        "scalability": 7,
+        "total": 21
+      }
+    },
+    {
+      "name": "方案B：用户目标导向型",
+      "structure": {
+        "root": {
+          "label": "在线学习平台",
+          "children": [
+            {
+              "label": "继续学习",
+              "children": [
+                { "label": "最近学习", "items": ["上次学习课程", "进行中课程"] },
+                { "label": "学习路径", "items": ["我的路径", "推荐路径"] }
+              ]
+            },
+            {
+              "label": "发现课程",
+              "children": [
+                { "label": "为你推荐", "items": ["个性化推荐", "学习路径推荐"] },
+                { "label": "浏览全部", "items": ["分类浏览", "搜索", "排行榜"] }
+              ]
+            },
+            {
+              "label": "我的成长",
+              "children": [
+                { "label": "学习记录", "items": ["学习统计", "完课证书"] },
+                { "label": "账户设置", "items": ["基本信息", "学习偏好"] }
+              ]
+            }
+          ]
+        }
+      },
+      "navigation_needs": "3个同级模块按学员旅程组织，层级深度≤2，推荐内容与学习入口紧邻",
+      "routes": [
+        { "path": "/dashboard", "page": "继续学习", "depth": 1 },
+        { "path": "/recommend", "page": "为你推荐", "depth": 2 },
+        { "path": "/courses", "page": "浏览全部", "depth": 2 },
+        { "path": "/courses/:id", "page": "课程详情", "depth": 2 },
+        { "path": "/paths", "page": "学习路径", "depth": 2 },
+        { "path": "/profile", "page": "我的成长", "depth": 1 }
+      ],
+      "avg_clicks_to_core": 1.8,
       "alignment_with_user_model": "high",
-      "needs_user_validation": ["分类节点X", "分类节点Y"]
+      "needs_user_validation": ["「继续学习」作为一级入口的命名", "「发现课程」与「继续学习」的优先级排序"],
+      "rationale": "按学员学习旅程组织，从「继续学习」到「发现课程」形成自然流转。推荐内容与学习入口紧邻，降低切换成本，符合学员「学习-发现-再学习」的心智模型。",
+      "pros": ["与学员心智模型高度对齐", "推荐内容曝光度高，核心功能点击次数少", "支持学员旅程自然流转"],
+      "cons": ["结构对运营内容组织要求较高", "「发现课程」命名需用户验证"],
+      "score": {
+        "user_alignment": 9,
+        "development_cost": 6,
+        "scalability": 8,
+        "total": 23
+      }
+    },
+    {
+      "name": "方案C：内容类型导向型",
+      "structure": {
+        "root": {
+          "label": "在线学习平台",
+          "children": [
+            {
+              "label": "课程",
+              "children": [
+                { "label": "全部课程", "items": ["分类浏览", "搜索", "排行榜"] },
+                { "label": "我的课程", "items": ["进行中", "已完成", "收藏"] }
+              ]
+            },
+            {
+              "label": "路径",
+              "children": [
+                { "label": "推荐路径", "items": ["按职业方向", "按技能方向"] },
+                { "label": "我的路径", "items": ["进行中路径", "已完成路径"] }
+              ]
+            },
+            {
+              "label": "推荐",
+              "children": [
+                { "label": "课程推荐", "items": ["个性化推荐", "相似课程"] },
+                { "label": "路径推荐", "items": ["进阶路径", "关联路径"] }
+              ]
+            },
+            {
+              "label": "我的",
+              "children": [
+                { "label": "学习数据", "items": ["学习统计", "完课证书"] },
+                { "label": "设置", "items": ["账户", "偏好"] }
+              ]
+            }
+          ]
+        }
+      },
+      "navigation_needs": "4个同级模块需快速切换，层级深度≤2，但4个入口可能超出米勒定律舒适区",
+      "routes": [
+        { "path": "/courses", "page": "课程", "depth": 1 },
+        { "path": "/courses/:id", "page": "课程详情", "depth": 2 },
+        { "path": "/paths", "page": "路径", "depth": 1 },
+        { "path": "/recommend", "page": "推荐", "depth": 1 },
+        { "path": "/profile", "page": "我的", "depth": 1 }
+      ],
+      "avg_clicks_to_core": 2.2,
+      "alignment_with_user_model": "medium",
+      "needs_user_validation": ["4个一级入口是否过多", "「路径」与「课程」是否需要合并"],
+      "rationale": "按内容类型组织，课程与路径分离便于内容管理。但4个一级入口可能超出米勒定律（3-7项舒适区下限），且「推荐」独立成模块可能降低与学习的联动性。",
+      "pros": ["内容类型边界清晰，便于内容运营", "路径与课程分离，支持精细化运营"],
+      "cons": ["4个一级入口认知负荷较高", "推荐与学习场景割裂", "核心功能点击次数偏多"],
+      "score": {
+        "user_alignment": 5,
+        "development_cost": 7,
+        "scalability": 9,
+        "total": 21
+      }
     }
-  ]
+  ],
+  "human_filter": {
+    "selected_proposal": "方案B：用户目标导向型",
+    "selection_rationale": "方案B 与学员心智模型对齐度最高（9分），核心功能平均点击次数最少（1.8次），推荐内容曝光度高。虽然开发成本略高于方案A，但用户体验优势明显，符合「信息找路而非路找信息」的核心原则。",
+    "rejected_proposals": [
+      {
+        "name": "方案A：功能导向型",
+        "reject_reason": "推荐与学习割裂，用户心智模型对齐度仅 medium"
+      },
+      {
+        "name": "方案C：内容类型导向型",
+        "reject_reason": "4个一级入口认知负荷过高，违反米勒定律舒适区原则"
+      }
+    ],
+    "validation_actions": [
+      "对「继续学习」「发现课程」命名进行卡片分类验证",
+      "对推荐内容在「发现课程」下的层级进行 A/B 测试"
+    ]
+  }
 }
 ```
 

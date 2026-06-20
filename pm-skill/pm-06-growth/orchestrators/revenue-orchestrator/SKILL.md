@@ -1,4 +1,4 @@
-﻿---
+---
 name: revenue-orchestrator
 description: 当需要优化付费转化或提升收入时使用。商业化指挥官，调度 revenue-funnel（付费漏斗分析）、revenue-nrr（NRR追踪预警）、revenue-upsell（升级转化），实现从付费漏斗分析到增购策略的闭环。关键词：商业化、付费漏斗、NRR、增购策略、收入优化、revenue-funnel、revenue-nrr、revenue-upsell、赚钱、变现、付费转化。
 metadata:
@@ -30,44 +30,7 @@ metadata:
 
 ## 编排协议
 
-> 协议源头：[orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md)（仅供维护者追踪，本文件已内联完整协议内容，可独立使用）
-
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
-
-### 调用规则
-
-1. **双模式调用**：平台支持 Skill 工具时，显式调用子Skill；平台不支持时，按子Skill的 `name`、输入契约、输出契约和阶段卡口执行兼容调度。
-2. **不代理扩写**：兼容调度时不得把子Skill内部方法论复制进编排器上下文，也不得改写子Skill逻辑；只传递必要输入、输出路径和验证条件。
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现细节。
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径和 artifact index 传递数据。
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段。
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
-7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
-
-### 上下文管理
-
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
-
-### 阶段卡口标准
-
-编排器的阶段卡口只校验以下3类条件，不深入子Skill内部字段：
-
-| 卡口类型 | 校验内容 | 示例 |
-|----------|----------|------|
-| 输出存在性 | 输出文件已生成且非空 | "api-design-spec输出文件已生成" |
-| 顶层结构完整性 | JSON顶层必填字段存在 | "prd.json包含features/pages/entities" |
-| 人类决策确认 | 关键决策点已获人类确认 | "设计审查人类确认通过" |
-
-### 通用异常处理
-
-| 异常类型 | 处理策略 |
-|----------|----------|
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-| 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
-| 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
-| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板，整体置信度设为0.3，强制人类确认是否继续 |
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 编排协议。
 
 ## Pipeline
 
@@ -81,20 +44,20 @@ post_pipeline:
 
 stages:
   - id: phase-1
-    name: "付费漏斗"
-    depends_on: []
-    skills: [revenue-funnel]
-    gate:
-      condition: "注册到付费全链路转化分析完成，瓶颈已识别"
-      fail_action: "补充漏斗步骤定义或数据"
-
-  - id: phase-2
     name: "NRR追踪"
-    depends_on: [phase-1]
+    depends_on: []
     skills: [revenue-nrr]
     gate:
       condition: "NRR计算和趋势追踪正常运行，流失预警和扩张机会已识别"
       fail_action: "完善收入数据采集"
+
+  - id: phase-2
+    name: "付费漏斗"
+    depends_on: [phase-1]
+    skills: [revenue-funnel]
+    gate:
+      condition: "注册到付费全链路转化分析完成，瓶颈已识别"
+      fail_action: "补充漏斗步骤定义或数据"
 
   - id: phase-3
     name: "升级转化"
@@ -107,19 +70,6 @@ stages:
 
 ## 阶段执行计划
 
-#### 调用 revenue-funnel
-
-```
-Skill: revenue-funnel
-输入:
-  payment_funnel_data: 用户提供（注册到付费全链路数据）
-  conversion_data: revenue-nrr → nrr_analysis.json（可选）
-  user_profile_data: 用户提供（可选）
-输出: output/pm-growth/revenue-funnel/
-验证: 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据
-模式: 🤖→👤
-```
-
 #### 调用 revenue-nrr
 
 ```
@@ -130,6 +80,19 @@ Skill: revenue-nrr
   user_behavior_data: 用户提供（可选）
 输出: output/pm-growth/revenue-nrr/
 验证: NRR计算包含扩张、收缩、流失三部分；流失预警覆盖活跃度、功能、财务、组织4类信号；扩张机会识别有评分和推荐策略；分维度NRR计算覆盖用户分群和产品线
+模式: 🤖→👤
+```
+
+#### 调用 revenue-funnel
+
+```
+Skill: revenue-funnel
+输入:
+  payment_funnel_data: 用户提供（注册到付费全链路数据）
+  conversion_data: output/pm-growth/revenue-nrr/nrr_analysis.json
+  user_profile_data: 用户提供（可选）
+输出: output/pm-growth/revenue-funnel/
+验证: 付费漏斗覆盖注册到复购全链路；障碍识别区分定性和定量分析；优化建议按影响系数×实施难度排序；付费墙时机建议基于用户行为数据
 模式: 🤖→👤
 ```
 
@@ -178,9 +141,9 @@ Skill: revenue-upsell
 
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
-| 付费漏斗分析完成 | revenue-funnel输出文件已生成且非空 | 补充漏斗步骤定义或数据 |
 | NRR追踪已建立 | revenue-nrr输出文件已生成且非空 | 完善收入数据采集 |
-| 升级转化策略已生成 | revenue-upgrade输出文件已生成且非空 | 优化升级信号识别或补充用户行为数据 |
+| 付费漏斗分析完成 | revenue-funnel输出文件已生成且非空 | 补充漏斗步骤定义或数据 |
+| 升级转化策略已生成 | revenue-upsell输出文件已生成且非空 | 优化升级信号识别或补充用户行为数据 |
 | 阶段总结已生成 | output/phase-reports/pm-growth/revenue-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

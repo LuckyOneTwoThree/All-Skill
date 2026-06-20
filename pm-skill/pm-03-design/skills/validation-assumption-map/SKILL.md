@@ -31,9 +31,9 @@ execution_depth:
 
 | 属性 | 值 |
 |------|-----|
-| Pipeline ID | 12 |
+| Pipeline ID | 10 |
 | 名称 | 假设地图自动生成 |
-| 执行模式 | 🤖 AI自动执行 |
+| 执行模式 | 🤖→👤 AI建议人类审批 |
 | 输入 | 方案设计输出 + PRD |
 
 ## 交互模式
@@ -259,7 +259,7 @@ PRD核心价值: 帮助用户快速发现感兴趣的内容
       "uncertainty": 4,
       "risk_score": 16,
       "is_max_risk": true,
-      "validation_method": "可用性测试",
+      "validation_method": "用户访谈",
       "validation_metric": "推荐内容点击率>15%"
     },
     {

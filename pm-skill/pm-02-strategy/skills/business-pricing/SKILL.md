@@ -569,13 +569,13 @@ execution_depth:
 
 ### 输入目录
 ```
-input/
-├── bmc/
-│   └── business_model_canvas.json
-├── competitor/
-│   └── competitor_pricing.json
-└── research/
-    └── willingness_to_pay.json
+output/
+├── pm-strategy/business-model-canvas/
+│   └── bmc.json
+├── pm-discovery/market-competitor-analysis/
+│   └── competitor-analysis.json
+└── pm-discovery/user-research-user-modeling/
+    └── user_modeling.json
 ```
 
 ### 输出目录

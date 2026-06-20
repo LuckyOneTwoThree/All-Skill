@@ -357,5 +357,5 @@ execution_depth:
 
 | 下游消费者 | 通知条件 | 通知方式 | 通知内容 |
 |------------|----------|----------|----------|
-| agile-review | Daily Sync完成 | 写入输出文件 | 进展汇总和障碍清单 |
+| agile-sprint-review | Daily Sync完成 | 写入输出文件 | 进展汇总和障碍清单 |
 | agile-orchestrator | Sync材料生成完成 | 输出文件更新 | 完成状态和关键阻塞 |

@@ -4,9 +4,9 @@ English | **[中文](README.md)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Skill Count](https://img.shields.io/badge/Skills-123-orange.svg)](#four-domains-overview)
+[![Skill Count](https://img.shields.io/badge/Skills-127-orange.svg)](#four-domains-overview)
 
-> 🌟 **Recommended**: Visit [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) for an interactive visualization — a force-directed graph showing 123 source Skill orchestration relationships, 12 cross-domain data contract flows, and a panoramic view of all four domain modules!
+> 🌟 **Recommended**: Visit [All-Skill Galaxy](https://luckyonetwothree.github.io/all-skill-html/) for an interactive visualization — a force-directed graph showing 127 source Skill orchestration relationships, 12 cross-domain data contract flows, and a panoramic view of all four domain modules!
 
 > ## ⚠ Declaration: AI is a Lever, Not a Replacement
 >
@@ -22,7 +22,7 @@ English | **[中文](README.md)**
 
 ## What Is This
 
-Extracting the full lifecycle methodology of software products from 0 to 1 into **123 AI Agent Skills**, covering four domains: **Product Methodology, UI Design & Frontend Development, Backend Architecture & Development, and Cross-Domain Coordination**, compatible with the Trae / Claude Code Agent Skills open standard. Source directory counts are based on `skills-manifest.json`; `codex/skills` serves as the subsequent sync target.
+Extracting the full lifecycle methodology of software products from 0 to 1 into **127 AI Agent Skills**, covering four domains: **Product Methodology, UI Design & Frontend Development, Backend Architecture & Development, and Cross-Domain Coordination**, compatible with the Trae / Claude Code Agent Skills open standard. Source directory counts are based on `skills-manifest.json`; `codex/skills` serves as the subsequent sync target.
 
 Each Skill is an independently executable methodology Pipeline. Orchestrators manage the execution order and stage gates of sub-Skills. The four domains are tightly connected through **data contracts**, forming a complete closed loop from product exploration to launch operations.
 
@@ -41,7 +41,7 @@ In practice, all minimal Skill units need to be **flattened** into `.trae/skills
 ├── insight-analysis/SKILL.md
 ├── api-design-spec/SKILL.md
 ├── project-init/SKILL.md
-├── ... (123 Skills flattened)
+├── ... (127 Skills flattened)
 └── production-ready/SKILL.md
 ```
 
@@ -98,7 +98,7 @@ Please execute the insight analysis following the insight-orchestrator workflow
 
 | Domain | Modules | Orchestrators | Pipeline Skills | Extensions | Guide | Core Positioning |
 |--------|---------|---------------|-----------------|------------|-------|------------------|
-| **pm-skill** Product Methodology | 8 | 27 | 74 | — | 1 | Do the right things: from discovery to growth operations |
+| **pm-skill** Product Methodology | 8 | 27 | 78 | — | 1 | Do the right things: from discovery to growth operations |
 | **ui-skill** UI Design & Frontend | 3 | 1 | 4 | 4 | — | Do things right visually: design = implementation, token-driven |
 | **backend-skill** Backend Architecture | 3 | 4 | 6 | — | — | Build things right: design fully first, review before implementation |
 | **cross-domain** Cross-Domain Coordination | — | 2 | — | — | — | Global orchestration: product iteration & launch |
@@ -203,10 +203,10 @@ All-Skill/
 │   │   └── skills/                            11 Pipeline Skills
 │   ├── pm-07-monitoring/                  Module 7: Monitoring & Iteration
 │   │   ├── orchestrators/                     monitoring / diagnosis / iteration / release
-│   │   └── skills/                            11 Pipeline Skills
+│   │   └── skills/                            13 Pipeline Skills
 │   └── pm-08-project/                     Module 8: Project Management
 │       ├── orchestrators/                     agile / project-planning / risk
-│       └── skills/                            8 Pipeline Skills
+│       └── skills/                            10 Pipeline Skills
 │
 ├── ui-skill/                         ✅ Skill files — UI Design & Frontend
 │   ├── ui-01-design-system/               Module 1: Design System (project init + visual style)
@@ -248,7 +248,7 @@ All-Skill/
     └── skill-finder/                      Guide (Tier 0): Index-driven skill matching & recommendation
         ├── SKILL.md                           Skill definition
         └── index/                             CSV indexes (auto-generated)
-            ├── skill-index.csv                    123-skill compact index
+            ├── skill-index.csv                    127-skill compact index
             ├── synonym-map.csv                    Synonym expansion layer
             ├── skill-relationships.csv            Upstream/downstream relationships
             ├── execution-templates.csv            Scenario execution templates
@@ -259,7 +259,7 @@ All-Skill/
 
 ## Domain Module Details
 
-### PM Product Methodology (102 Skills)
+### PM Product Methodology (106 Skills)
 
 #### Module 1: Product Discovery
 
@@ -331,9 +331,9 @@ Form a continuous improvement loop through monitoring alerts, problem diagnosis,
 
 | Sub-module | Orchestrator | Pipeline Skills | Core Output |
 |------------|-------------|-----------------|-------------|
-| Monitoring Alerts | monitoring-orchestrator | monitoring-pipeline / user-feedback-loop-report | Monitoring system + anomaly attribution + feedback loop |
+| Monitoring Alerts | monitoring-orchestrator | monitoring-alert-detection / monitoring-attribution / user-feedback-loop-report | Anomaly detection + anomaly attribution + feedback loop |
 | Intelligent Diagnosis | diagnosis-orchestrator | diagnosis-health / diagnosis-competition / competitor-monitoring-report / product-sunset-plan | Health score + competitor monitoring report + sunset plan |
-| Iteration Decision | iteration-orchestrator | iteration-decision | Backlog optimization |
+| Iteration Decision | iteration-orchestrator | iteration-backlog-grooming / iteration-retrospective | Backlog optimization |
 | Release Orchestration | release-orchestrator | quality-acceptance / release-gradual / release-auto-checklist / release-notes | Quality acceptance + gradual rollout + checklist + release notes |
 
 #### Module 8: Project Management
@@ -343,7 +343,7 @@ Full-lifecycle project planning, agile execution, and risk management.
 | Sub-module | Orchestrator | Pipeline Skills | Core Output |
 |------------|-------------|-----------------|-------------|
 | Project Planning | project-planning-orchestrator | planning-project-charter / planning-resource / planning-kickoff | Project charter + resource plan |
-| Agile Execution | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-review (includes iteration retrospective) | Sprint planning + daily sync + iteration retrospective |
+| Agile Execution | agile-orchestrator | agile-sprint-planning / agile-daily-sync / agile-sprint-review / agile-retrospective / agile-launch-review | Sprint planning + daily sync + sprint review + iteration retrospective + launch review |
 | Risk Management | risk-orchestrator | risk-identification / risk-management | Risk register + monitoring + escalation |
 
 ---
@@ -434,7 +434,7 @@ Data-driven contracts, field-justified, security built-in rather than bolted on.
 
 ## Core Deliverable Documents
 
-Of the 74 Pipeline Skills in the PM domain, 18 produce Markdown deliverable documents, while the remaining 56 produce JSON data fragments consumed by downstream Skills. UI/Backend deliverables are primarily code and configuration. There are 123 source Skills in total (including 34 orchestrators + 74 PM Pipeline + 4 UI Pipeline + 6 Backend Pipeline + 4 UI external extensions + 1 guide).
+Of the 78 Pipeline Skills in the PM domain, 18 produce Markdown deliverable documents, while the remaining 60 produce JSON data fragments consumed by downstream Skills. UI/Backend deliverables are primarily code and configuration. There are 127 source Skills in total (including 34 orchestrators + 78 PM Pipeline + 4 UI Pipeline + 6 Backend Pipeline + 4 UI external extensions + 1 guide).
 
 ### PM Core Deliverable Documents
 

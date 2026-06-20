@@ -1,6 +1,6 @@
 ---
 name: risk-management
-description: 当需要持续监控项目风险或处理风险升级时使用。风险监控与升级处理一体化，Step 1持续监控风险状态、检测风险指标变化与触发条件，Step 2对高优先级风险进行升级处理、启动应对流程与资源调配。关键词：风险监控、风险预警、风险追踪、风险状态、风险指标、风险升级、问题升级、升级流程、升级通知、应急升级、问题上报、盯风险、要升级了。
+description: 当需要持续监控项目风险或处理风险升级时使用。风险监控与升级处理一体化，Step 1持续监控风险状态、检测风险指标变化与触发条件，Step 2对高优先级风险进行升级处理、启动应对流程与资源调配。关键词：风险监控、风险预警、风险追踪、风险状态、风险指标、风险升级、问题升级、升级流程、升级通知、应急升级、问题上报、盯风险、要升级了。消费 identified_risks，输出 tracked_risks（跟踪监控、升级、缓解）。
 metadata:
   module: "项目管理与执行"
   sub-module: "风险管理"
@@ -51,6 +51,7 @@ execution_depth:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | risk_register | object | 是 | output/pm-project/risk-identification/risk_register.json | 风险登记册 |
+| 风险识别清单 | object | 是 | output/pm-project/risk-identification/identified_risks.json | 已识别的风险列表 |
 | project_data | object | 是 | 项目管理系统 → 项目数据 | 项目实时数据 |
 | trigger_conditions | object | 是 | 用户提供 | 配置的触发条件 |
 | mitigation_actions | object[] | ○ | output/pm-project/risk-management/应对追踪 | 已执行的应对措施 |
@@ -377,9 +378,104 @@ Step 2接收Step 1的输出作为输入（风险数据来自Step 1的监控结�
   "type": "object",
   "required": ["risk_monitoring", "escalation", "metadata"],
   "properties": {
-    "risk_monitoring": {"type": "object", "description": "风险监控数据，包含追踪风险、预警和应对效果"},
-    "escalation": {"type": "object", "description": "升级处理数据，包含问题列表和升级路径模板"},
-    "metadata": {"type": "object", "description": "元数据，包含监控周期、处理数和置信度"}
+    "risk_monitoring": {
+      "type": "object",
+      "description": "风险监控数据",
+      "required": ["tracked_risks", "new_risks_identified"],
+      "properties": {
+        "tracked_risks": {
+          "type": "array",
+          "description": "追踪风险列表，每项须含id、status",
+          "items": {
+            "type": "object",
+            "required": ["id", "status", "latest_update"],
+            "properties": {
+              "id": {"type": "string", "description": "风险唯一标识，格式RISK-NNN"},
+              "status": {"type": "string", "description": "风险状态，枚举值active/escalated/improving/resolved"},
+              "triggered_conditions": {"type": "array", "description": "触发条件列表"},
+              "latest_update": {"type": "string", "description": "最近更新时间，ISO 8601格式"}
+            }
+          }
+        },
+        "new_risks_identified": {"type": "number", "description": "新识别风险数"},
+        "alerts_triggered": {
+          "type": "array",
+          "description": "触发预警列表",
+          "items": {
+            "type": "object",
+            "required": ["id", "severity", "message"],
+            "properties": {
+              "id": {"type": "string", "description": "预警唯一标识"},
+              "severity": {"type": "string", "description": "预警严重度，枚举值critical/high/medium/low"},
+              "message": {"type": "string", "description": "预警消息"}
+            }
+          }
+        },
+        "mitigation_effectiveness": {"type": "object", "description": "应对效果追踪数据"}
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "description": "升级处理数据",
+      "required": ["issues"],
+      "properties": {
+        "issues": {
+          "type": "array",
+          "description": "升级问题列表，每项须含id、description、escalation_needed",
+          "items": {
+            "type": "object",
+            "required": ["id", "escalation_needed", "escalation_level", "escalation_path", "status"],
+            "properties": {
+              "id": {"type": "string", "description": "问题唯一标识，格式RISK-NNN或ISSUE-NNN"},
+              "escalation_needed": {"type": "boolean", "description": "是否需要升级"},
+              "escalation_level": {"type": "number", "description": "升级级别，1-4"},
+              "escalation_path": {"type": "array", "description": "升级路径，至少含1个接收人"},
+              "notifications_sent": {
+                "type": "array",
+                "description": "已发送通知列表",
+                "items": {
+                  "type": "object",
+                  "required": ["channel", "status"],
+                  "properties": {
+                    "channel": {"type": "string", "description": "通知渠道，枚举值email/sms/slack/phone"},
+                    "status": {"type": "string", "description": "通知状态，枚举值sent/delivered/read/failed"}
+                  }
+                }
+              },
+              "status": {"type": "string", "description": "升级状态，枚举值pending/in_progress/resolved/closed"}
+            }
+          }
+        },
+        "escalation_path_templates": {
+          "type": "array",
+          "description": "升级路径模板列表",
+          "items": {
+            "type": "object",
+            "required": ["level", "expected_response_time"],
+            "properties": {
+              "level": {"type": "number", "description": "升级级别"},
+              "expected_response_time": {"type": "string", "description": "预期响应时间"}
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "元数据",
+      "required": ["monitoring_cycle", "monitoring_duration", "risks_monitored", "alerts_generated", "escalations_processed", "pending_escalations", "avg_escalation_time_hours", "resolution_rate", "confidence"],
+      "properties": {
+        "monitoring_cycle": {"type": "string", "description": "监控周期，ISO 8601格式"},
+        "monitoring_duration": {"type": "string", "description": "监控持续时间"},
+        "risks_monitored": {"type": "number", "description": "监控风险数"},
+        "alerts_generated": {"type": "number", "description": "生成预警数"},
+        "escalations_processed": {"type": "number", "description": "已处理升级数"},
+        "pending_escalations": {"type": "number", "description": "待处理升级数"},
+        "avg_escalation_time_hours": {"type": "number", "description": "平均升级耗时（小时）"},
+        "resolution_rate": {"type": "number", "description": "解决率，范围0.0-1.0"},
+        "confidence": {"type": "number", "description": "整体置信度，范围0.0-1.0"}
+      }
+    }
   }
 }
 ```

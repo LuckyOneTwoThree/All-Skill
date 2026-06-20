@@ -66,16 +66,16 @@ execution_depth:
 
 ```yaml
 feature_changes:
-  - competitor: {name}
+  - competitor: 竞品A
     change_type: new_feature | enhancement | deprecation | pricing | ecosystem
-    feature_name: {name}
-    change_date: {date}
-    description: {description}
+    feature_name: 数据分析
+    change_date: 2026-06-15
+    description: 核心功能相似，定位差异化
     user_reaction:
       sentiment: positive | negative | neutral
-      volume: {count}
-      key_themes: [themes]
-    source: {source_url}
+      volume: 128
+      key_themes: [体验提升, 响应更快]
+    source: https://example.com/changelog
     priority: P0 | P1 | P2
 ```
 
@@ -102,21 +102,21 @@ feature_changes:
 
 ```yaml
 advantage_changes:
-  period: {start} to {end}
+  period: 2026-05-01 to 2026-06-15
   dimensions:
     - dimension: feature_leadership
       previous_status: leading | parity | lagging
       current_status: leading | parity | lagging
       change: improved | unchanged | declined
-      delta: {description}
+      delta: 独有功能数从8增至10
     - dimension: user_experience
       previous_status: leading | parity | lagging
       current_status: leading | parity | lagging
       change: improved | unchanged | declined
-      delta: {description}
+      delta: App Store评分从4.5降至4.4
   overall_trend:
     direction: gaining | holding | losing
-    confidence: {percentage}
+    confidence: 85%
   critical_changes:
     - description: "竞品 X 推出 Y 功能，缩小功能差距"
       impact_level: high | medium | low
@@ -140,28 +140,28 @@ advantage_changes:
 ```yaml
 response_strategy:
   - competitor_change:
-      feature: {feature_name}
+      feature: 数据分析
       change_type: new_feature
     recommended_approach: accelerate | differentiate | defend | monitor
     action:
-      title: {action_title}
-      description: {description}
+      title: 推出差异化数据分析模块
+      description: 在竞品基础上增加自定义看板能力
       options:
         - option: aggressive
           description: "快速跟进，功能优先"
           timeline: 2-4 weeks
           priority: P0
-          resource_needed: {story_points}
+          resource_needed: 13
         - option: balanced
           description: "差异化实现"
           timeline: 4-8 weeks
           priority: P1
-          resource_needed: {story_points}
+          resource_needed: 8
         - option: conservative
           description: "持续观察，等待更多信息"
           timeline: tbd
           priority: P2
-    selected_option: {option}
+    selected_option: balanced
     tracking:
       status: planned | in_progress | completed | dismissed
       milestones: [...]
@@ -181,18 +181,18 @@ response_strategy:
 
 ```yaml
 effect_tracking:
-  strategy_id: {id}
+  strategy_id: STR-001
   execution:
-    planned_date: {date}
-    actual_date: {date}
+    planned_date: 2026-06-20
+    actual_date: 2026-06-22
     completed: true | false
   outcome:
     user_feedback:
-      sentiment_change: {delta}
-      volume: {count}
+      sentiment_change: +0.3
+      volume: 256
     market_impact:
-      share_change: {delta}
-      new_users: {count}
+      share_change: +1.5%
+      new_users: 1200
     competitive_position:
       status_change: improved | unchanged | declined
 ```
@@ -227,7 +227,7 @@ effect_tracking:
 ```
 
 ```
-├── {date}/
+├── 2026-06-15/
 │   ├── feature_changes.yaml
 │   ├── advantage_changes.yaml
 │   ├── response_strategy.yaml
@@ -240,24 +240,24 @@ effect_tracking:
 
 ```yaml
 competition_response:
-  report_id: {uuid}
-  generated_at: {ISO8601}
-  period: {start} to {end}
+  report_id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+  generated_at: 2026-06-15T10:00:00Z
+  period: 2026-05-01 to 2026-06-15
   feature_changes:
-    total: {count}
-    p0_count: {count}
-    p1_count: {count}
+    total: 12
+    p0_count: 2
+    p1_count: 5
   advantage_changes:
-    gaining: [{dimensions}]
-    holding: [{dimensions}]
-    losing: [{dimensions}]
+    gaining: [feature_leadership, ecosystem]
+    holding: [user_experience]
+    losing: [pricing]
   response_strategy:
     - id: STR-001
-      competitor: {name}
-      feature: {feature}
+      competitor: 竞品A
+      feature: 数据分析
       approach: accelerate
-      action: {description}
-      timeline: {weeks}
+      action: 推出差异化数据分析模块
+      timeline: 4
       priority: P0
       tracking:
         status: planned
@@ -338,4 +338,4 @@ competition_response:
 |------------|----------|----------|----------|
 | competitor-monitoring-report | 竞品追踪数据更新 | 写入输出文件 | 功能变更和优势变化 |
 | diagnosis-orchestrator | 竞品追踪完成 | 输出文件更新 | 追踪完成状态和关键发现 |
-| iteration-decision | P0级别竞品变更 | 写入输出文件 | 紧急应对策略和优先级 |
+| iteration-backlog-grooming | P0级别竞品变更 | 写入输出文件 | 紧急应对策略和优先级 |

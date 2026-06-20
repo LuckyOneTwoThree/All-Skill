@@ -538,96 +538,9 @@ execution_depth:
 
 **输出文件**：`release_status.json`
 
-**输出Schema**：
+## 输出 Schema
 
-```json
-{
-  "type": "object",
-  "required": ["output_id", "release_id", "release_status"],
-  "properties": {
-    "output_id": {"type": "string", "description": "输出唯一标识"},
-    "release_id": {"type": "string", "description": "发布ID"},
-    "generated_at": {"type": "string", "description": "生成时间"},
-    "release_status": {"type": "object", "description": "当前发布状态，包含阶段、流量比例和进度"},
-    "phase_transitions": {"type": "array", "description": "阶段转换历史记录"},
-    "rollback_history": {"type": "array", "description": "回滚历史记录"},
-    "monitoring_metrics": {"type": "object", "description": "监控数据汇总，包含当前和历史指标"},
-    "canary_plan": {"type": "object", "description": "灰度发布计划"}
-  }
-}
-```
-
-### 最终输出结构
-
-```json
-{
-  "output_id": "release_status_xxx",
-  "release_id": "release_2024_0125_001",
-  "generated_at": "ISO8601",
-  "release_status": {
-    "current_phase": "phase_3",
-    "traffic_percentage": 50,
-    "start_time": "ISO8601",
-    "elapsed_minutes": 180,
-    "status": "in_progress"
-  },
-  "phase_transitions": [
-    {
-      "phase_id": "phase_1",
-      "traffic_percentage": 1,
-      "started_at": "ISO8601",
-      "completed_at": "ISO8601",
-      "duration_minutes": 32,
-      "outcome": "promoted",
-      "metrics_at_completion": {...}
-    },
-    {
-      "phase_id": "phase_2",
-      "traffic_percentage": 10,
-      "started_at": "ISO8601",
-      "completed_at": "ISO8601",
-      "duration_minutes": 125,
-      "outcome": "promoted",
-      "metrics_at_completion": {...}
-    }
-  ],
-  "rollback_history": [],
-  "monitoring_metrics": {
-    "current": {...},
-    "historical": [...]
-  },
-  "canary_plan": {...}
-}
-```
-
-### 输出字段说明
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| release_status | JSON | 当前发布状态 |
-| phase_transitions | JSON | 阶段转换历史 |
-| rollback_history | JSON | 回滚历史 |
-| monitoring_metrics | JSON | 监控数据汇总 |
-
-## 输出校验规则
-
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| gradual_release | object | 是 | 灰度发布根对象 |
-| gradual_release.strategy | object | 是 | 灰度策略 |
-| gradual_release.strategy.type | string | 是 | 策略类型，枚举值：canary/blue_green/rolling/feature_flag |
-| gradual_release.strategy.stages | array | 是 | 灰度阶段列表，至少2个 |
-| gradual_release.strategy.stages[].name | string | 是 | 阶段名称 |
-| gradual_release.strategy.stages[].traffic_percentage | number | 是 | 流量百分比，0-100 |
-| gradual_release.strategy.stages[].duration | string | 是 | 持续时间 |
-| gradual_release.strategy.stages[].success_criteria | object | 是 | 成功标准 |
-| gradual_release.strategy.stages[].rollback_criteria | object | 是 | 回滚标准 |
-| gradual_release.monitoring | object | 是 | 监控配置 |
-| gradual_release.monitoring.metrics | array | 是 | 监控指标列表 |
-| gradual_release.monitoring.alert_rules | array | 是 | 告警规则列表 |
-| gradual_release.rollback_plan | object | 是 | 回滚计划 |
-| gradual_release.rollback_plan.trigger_conditions | array | 是 | 触发条件 |
-| gradual_release.rollback_plan.steps | array | 是 | 回滚步骤 |
+完整 Schema 和校验规则见 [Reference/schema.md](./Reference/schema.md)
 
 ## 上游变更响应
 

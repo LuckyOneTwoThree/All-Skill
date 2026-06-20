@@ -573,86 +573,9 @@ Must需求通过率：{X}%
 | acceptance-report.md | Markdown | 完整验收测试报告（含验收执行计划和签收确认） |
 | acceptance-report.json | JSON | 结构化数据 |
 
-**输出Schema**：
+## 输出 Schema
 
-```json
-{
-  "type": "object",
-  "required": ["output_id", "story_id", "acceptance_report", "gate_decision", "version", "acceptance_date", "conclusion"],
-  "properties": {
-    "output_id": {"type": "string", "description": "输出唯一标识"},
-    "story_id": {"type": "string", "description": "Story ID"},
-    "build_ref": {"type": "string", "description": "构建版本引用"},
-    "version": {"type": "string", "description": "验收版本号"},
-    "acceptance_date": {"type": "string", "description": "验收日期"},
-    "acceptance_scope": {"type": "string", "description": "验收功能范围"},
-    "acceptance_party": {"type": "string", "description": "验收方"},
-    "executed_at": {"type": "string", "description": "执行时间"},
-    "acceptance_report": {"type": "object", "description": "验收报告主体，包含汇总和逐项结果"},
-    "failed_cases_analysis": {"type": "array", "description": "失败用例分析，包含根因和修复建议"},
-    "gate_decision": {"type": "object", "description": "质量门禁判定结果，包含是否通过和阻断项"},
-    "criteria_results": {"type": "array", "description": "验收标准逐项结果"},
-    "defects": {"type": "array", "description": "缺陷清单"},
-    "open_issues": {"type": "array", "description": "遗留问题清单"},
-    "conclusion": {"type": "object", "description": "验收结论，包含结果和签收确认"}
-  }
-}
-```
-
-### 最终输出结构
-
-```json
-{
-  "output_id": "acceptance_report_xxx",
-  "story_id": "story_001",
-  "version": "2.3.0",
-  "acceptance_report": { /* 见输出校验规则 */ },
-  "failed_cases_analysis": [ { /* 见Step 1.7失败分析 */ } ],
-  "gate_decision": { /* 见Step 1.6门禁输出 */ },
-  "defects": [ { /* 见Step 2.3缺陷分析 */ } ],
-  "open_issues": [],
-  "conclusion": { /* 见Step 2.5验收结论 */ }
-}
-```
-
-### 输出字段说明
-
-见输出Schema及输出校验规则。
-
-## 输出校验规则
-
-| 字段路径 | 类型 | 必填 | 说明 |
-|----------|------|------|------|
-| auto_acceptance | object | 是 | 自动验收根对象 |
-| auto_acceptance.execution_summary | object | 是 | 执行摘要 |
-| auto_acceptance.execution_summary.total_checks | number | 是 | 检查项总数 |
-| auto_acceptance.execution_summary.auto_passed | number | 是 | 自动通过数 |
-| auto_acceptance.execution_summary.auto_failed | number | 是 | 自动失败数 |
-| auto_acceptance.execution_summary.manual_required | number | 是 | 需人工验证数 |
-| auto_acceptance.checks | array | 是 | 检查项列表 |
-| auto_acceptance.checks[].id | string | 是 | 检查项编号 |
-| auto_acceptance.checks[].type | string | 是 | 检查类型，枚举值：functional/performance/security/compatibility |
-| auto_acceptance.checks[].method | string | 是 | 验收方法，枚举值：automated/semi_auto/manual |
-| auto_acceptance.checks[].result | string | 是 | 结果，枚举值：pass/fail/pending |
-| auto_acceptance.checks[].evidence | object | 否 | 验收证据 |
-| auto_acceptance.checks[].confidence | number | 是 | 置信度，0-1 |
-| auto_acceptance.gate_result | string | 是 | 门禁结果，枚举值：pass/fail/conditional_pass |
-| acceptance_report | object | 是 | 验收报告根对象 |
-| acceptance_report.summary | object | 是 | 验收摘要 |
-| acceptance_report.summary.total_items | number | 是 | 验收项总数 |
-| acceptance_report.summary.passed | number | 是 | 通过项数 |
-| acceptance_report.summary.failed | number | 是 | 失败项数 |
-| acceptance_report.summary.blocked | number | 是 | 阻断项数 |
-| acceptance_report.items | array | 是 | 验收项列表 |
-| acceptance_report.items[].id | string | 是 | 验收项编号 |
-| acceptance_report.items[].category | string | 是 | 验收类别 |
-| acceptance_report.items[].description | string | 是 | 验收描述 |
-| acceptance_report.items[].result | string | 是 | 结果，枚举值：pass/fail/blocked/waived |
-| acceptance_report.items[].evidence | string | 否 | 证据链接 |
-| acceptance_report.items[].severity | string | 是 | 严重级别，枚举值：P0/P1/P2/P3 |
-| acceptance_report.risk_assessment | object | 是 | 风险评估 |
-| acceptance_report.sign_off | object | 是 | 签收记录 |
-| acceptance_report.sign_off.status | string | 是 | 签收状态，枚举值：pending/signed/rejected |
+完整 Schema 和校验规则见 [Reference/schema.md](./Reference/schema.md)
 
 ## 上游变更响应
 

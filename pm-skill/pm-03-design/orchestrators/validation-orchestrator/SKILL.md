@@ -1,4 +1,4 @@
-﻿---
+---
 name: validation-orchestrator
 description: 当需要验证产品方案时使用。方案验证子模块指挥官，调度子Skill：validation-assumption-map、validation-mvp、validation-experiment、validation-usability。关键词：方案验证、假设验证、MVP、可用性测试、实验设计、假设地图、风险评估、验证想法、最小可行产品。
 metadata:
@@ -37,46 +37,7 @@ metadata:
 
 ## 编排协议
 
-## 编排协议
-
-> 协议源头：[orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md)（仅供维护者追踪，本文件已内联完整协议内容，可独立使用）
-
-你是编排器，职责是**按阶段调度子Skill执行**，而非代理执行子Skill逻辑。严格遵循以下协议：
-
-### 调用规则
-
-1. **双模式调用**：平台支持 Skill 工具时，显式调用子Skill；平台不支持时，按子Skill的 `name`、输入契约、输出契约和阶段卡口执行兼容调度。
-2. **不代理扩写**：兼容调度时不得把子Skill内部方法论复制进编排器上下文，也不得改写子Skill逻辑；只传递必要输入、输出路径和验证条件。
-3. **契约驱动**：只关注子Skill的输入契约、输出契约和验证条件，不关注内部实现细节。
-4. **状态传递**：将当前阶段的输出作为下一阶段的输入，通过文件路径和 artifact index 传递数据。
-5. **验证后推进**：每个阶段输出验证通过后，才推进到下一阶段。
-6. **阶段总结（强制）**：Pipeline 所有 stages 执行完成后，**必须立即**执行 `post_pipeline` 中定义的阶段总结动作，生成总结文档。这不是可选步骤，若未生成阶段总结，编排器执行视为未完成。
-7. **跨子Skill交叉验证**：当多个子Skill的产出之间存在一致性约束时，编排器可在阶段间执行交叉验证（读取多份产出比对一致性），这属于编排器的协调职责而非代理执行子Skill逻辑。交叉验证规则在编排器SKILL.md中显式定义。
-
-### 上下文管理
-
-- 每个子Skill调用完成后，只保留**输出文件路径**和**关键结论摘要**
-- 详细输出写入 `output/{领域路径}/{skill-name}/` 目录
-- 若上下文接近上限，优先保留当前阶段内容和待执行阶段的子Skill名称
-
-### 阶段卡口标准
-
-编排器的阶段卡口只校验以下3类条件，不深入子Skill内部字段：
-
-| 卡口类型 | 校验内容 | 示例 |
-|----------|----------|------|
-| 输出存在性 | 输出文件已生成且非空 | "api-design-spec输出文件已生成" |
-| 顶层结构完整性 | JSON顶层必填字段存在 | "prd.json包含features/pages/entities" |
-| 人类决策确认 | 关键决策点已获人类确认 | "设计审查人类确认通过" |
-
-### 通用异常处理
-
-| 异常类型 | 处理策略 |
-|----------|----------|
-| 阶段总结生成失败 | 基于已完成的子Skill输出生成部分总结，缺失项标注"数据缺失"，不阻塞编排完成 |
-| 关键决策点未获人类确认 | 暂停编排，输出待确认事项清单，等待人类确认后继续 |
-| 上游数据缺失 | 标注缺失数据项，使用合理假设填充（标注置信度≤0.3），继续执行并在输出中高亮标注 |
-| 所有上游数据全部缺失 | 标注"全数据缺失"状态，输出最小化模板，整体置信度设为0.3，强制人类确认是否继续 |
+遵循 [orchestrator-protocol.md](../../../../templates/orchestrator-protocol.md) 编排协议。
 
 ## Pipeline
 
@@ -108,7 +69,6 @@ stages:
   - id: phase-3
     name: "实验设计"
     depends_on: [phase-1, phase-2]
-    parallel_with: [phase-4]
     skills: [validation-experiment]
     gate:
       condition: "实验方案人类已审核，含验证方法、样本量、时长、终止条件"
@@ -116,8 +76,7 @@ stages:
 
   - id: phase-4
     name: "可用性测试"
-    depends_on: [phase-1, phase-2]
-    parallel_with: [phase-3]
+    depends_on: [phase-1, phase-2, phase-3]  # phase-3 为条件依赖：当 phase-3 选择可用性测试时，phase-4 消费 phase-3 的方法选择
     skills: [validation-usability]
     gate:
       condition: "问题严重程度分级合理（P0/P1/P2/P3），洞察与假设地图有对应关系"
@@ -159,7 +118,7 @@ Skill: validation-experiment
   assumption_map: output/pm-design/validation-assumption-map/assumption_map.json
   mvp_scope: output/pm-design/validation-mvp/mvp_definition.json
   traffic_data: 可选（可用流量/用户数据）
-输出: output/pm-design/validation-experiment/experiment_design.json
+输出: output/pm-design/validation-experiment/experiment_plan.json
 验证: 实验方案人类已审核，含验证方法、样本量、时长、终止条件
 模式: 🤖→👤
 ```
@@ -172,6 +131,7 @@ Skill: validation-usability
   test_plan: output/pm-design/validation-assumption-map/assumption_map.json
   participants: 用户提供
   test_scenarios: output/pm-design/design-prototype/prototype_spec.json
+  experiment_method: output/pm-design/validation-experiment/experiment_plan.json（可选，当方法=可用性测试时）
 输出: output/pm-design/validation-usability/usability_report.json
 验证: 问题严重程度分级合理（P0/P1/P2/P3），洞察与假设地图有对应关系
 模式: 👤→🤖
@@ -215,9 +175,9 @@ Skill: validation-usability
 | 卡口 | 条件 | 未通过处理 |
 |------|------|------------|
 | 假设地图完成 | validation-assumption-map输出文件已生成且非空 | 每个功能点至少1个假设，最大风险假设必须有验证计划 |
-| MVP范围完成 | validation-mvp-scope输出文件已生成且非空 | MVP占比>60%升级人类判断，确认是否调整 |
+| MVP范围完成 | validation-mvp输出文件已生成且非空 | MVP占比>60%升级人类判断，确认是否调整 |
 | 实验设计完成 | 实验方案人类已审核 | 所有实验方案必须人类审核 |
-| 可用性测试完成 | validation-usability-test输出文件已生成且非空 | 测试执行必须由人类研究员主持 |
+| 可用性测试完成 | validation-usability输出文件已生成且非空 | 测试执行必须由人类研究员主持 |
 | 阶段总结已生成 | output/phase-reports/pm-design/validation-orchestrator.md 已生成且6项结构均非空 | 补充缺失结构项后重新生成 |
 
 ## 人类决策点

@@ -38,7 +38,8 @@ growth-orchestrator,gtm-strategy,orch,GTM Strategy
 growth-orchestrator,product-operations-manual,orch,Operations Manual
 ideation-orchestrator,ideation-workshop,orch,Ideation Workshop
 insight-orchestrator,insight-analysis,orch,Requirement Insight Analysis
-iteration-orchestrator,iteration-decision,orch,Iteration Decision
+iteration-orchestrator,iteration-backlog-grooming,orch,Backlog Grooming
+iteration-orchestrator,iteration-retrospective,orch,Iteration Retrospective
 market-orchestrator,market-competitor-analysis,orch,Parallel Collection
 metrics-orchestrator,metrics-system,orch,Metrics System
 metrics-orchestrator,tracking-plan,orch,Tracking Plan
@@ -124,6 +125,6 @@ risk-identification,risk-management,feed,Risk Register
 quality-acceptance,release-gradual,feed,Acceptance Report
 release-gradual,release-notes,feed,Release Record
 planning-okr,planning-roadmap,feed,OKR
-diagnosis-health,iteration-decision,feed,Health Report
+diagnosis-health,iteration-retrospective,feed,Health Report
 user-research-report,insight-analysis,feed,Research Report
 opportunity-definition,business-value-fit,feed,Opportunity Definition

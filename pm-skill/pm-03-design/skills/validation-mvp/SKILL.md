@@ -31,7 +31,7 @@ execution_depth:
 
 | 属性 | 值 |
 |------|-----|
-| Pipeline ID | 13 |
+| Pipeline ID | 11 |
 | 名称 | MVP范围自动界定 |
 | 执行模式 | 🤖→👤 AI建议，人类审批 |
 | 输入 | 方案设计 + 假设地图 + 资源约束 |
@@ -45,7 +45,7 @@ execution_depth:
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
 | 方案设计 | JSON | 是 | output/pm-design/design-prototype / output/pm-design/design-userflow | 完整功能列表及描述 |
-| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 12输出的假设地图 |
+| 假设地图 | JSON | 是 | output/pm-design/validation-assumption-map/assumption_map.json | Pipeline 10输出的假设地图 |
 | 资源约束 | JSON | ○ | 用户提供 | 时间、人力、预算限制 |
 
 ### 输入格式
@@ -350,7 +350,7 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 - [ ] 排除理由（cut_features功能都有充分理由）
 - [ ] 占比计算（MVP占比已计算）
 - [ ] 优先级完整（Nice to Have都有优先级）
-- [ ] 时间红线（timeline.total_weeks ≤ 2）
+- [ ] 时间红线（timeline.total_weeks ≤ 2，超过时 human_override 必须为 true）
 - [ ] 成功标准可量化（success_criteria包含量化指标和目标值）
 - [ ] Go/No-Go完整（go_no_go包含至少2个metrics和对应thresholds）
 
@@ -381,7 +381,7 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 | mvp_scope.nice_to_have | array | 是 | Nice to Have功能列表 |
 | mvp_scope.cut_features | array | 是 | 裁剪功能列表 |
 | mvp_scope.timeline | object | 是 | 时间规划 |
-| mvp_scope.timeline.total_weeks | number | 是 | 总周数（≤2） |
+| mvp_scope.timeline.total_weeks | number | 是 | 总周数（≤2，超过时需 human_override: true） |
 | mvp_scope.timeline.milestones | array | 是 | 里程碑列表 |
 | mvp_scope.resource_estimate | object | 是 | 资源估算 |
 | mvp_scope.effort_summary | object | 是 | 工作量汇总 |
@@ -393,6 +393,7 @@ MVP占比 = Must Have工作量 / 完整方案工作量 × 100%
 | mvp_scope.go_no_go | object | 是 | Go/No-Go决策框架 |
 | mvp_scope.go_no_go.metrics | array | 是 | 决策指标 |
 | mvp_scope.go_no_go.thresholds | object | 是 | 阈值定义 |
+| human_override | boolean | 是 | 人类覆盖标记（默认 false，当 total_weeks > 2 时必须为 true） |
 
 ## 上游变更响应
 

@@ -41,7 +41,7 @@ execution_depth:
 
 | Input Item | Type | Required | Source | Description |
 |--------|------|------|------|------|
-| product_backlog | object[] | Yes | output/pm-monitoring/iteration-decision/prioritized_items | Product backlog |
+| product_backlog | object[] | Yes | output/pm-monitoring/iteration-backlog-grooming/prioritized_items | Product backlog |
 | sprint_goal | string | ○ | User provided | Sprint goal description |
 | team_capacity | object | Yes | output/pm-project/planning-resource/resource_plan | Team capacity data |
 | sprint_duration_days | number | Yes | User provided | Sprint duration in days |

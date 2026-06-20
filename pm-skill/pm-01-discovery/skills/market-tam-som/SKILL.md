@@ -240,16 +240,45 @@ execution_depth:
     "data_sources": []
   },
   "confidence": {
-    "overall_score": 0.0,
-    "data_source_reliability": [],
-    "sensitivity_analysis": [],
+    "overall_score": 0.65,
+    "data_source_reliability": [
+      {
+        "source": "教育部教育统计年鉴",
+        "type": "官方统计",
+        "reliability_score": 0.85
+      },
+      {
+        "source": "中国互联网络发展状况统计报告（CNNIC）",
+        "type": "官方统计",
+        "reliability_score": 0.80
+      },
+      {
+        "source": "艾瑞咨询在线教育行业研究报告",
+        "type": "第三方研报",
+        "reliability_score": 0.70
+      }
+    ],
+    "sensitivity_analysis": [
+      {
+        "assumption": "K12在线教育渗透率将持续增长",
+        "variation": "±20%",
+        "impact_on_result": "TAM中性值波动范围±24亿，SOM中性值波动范围±1.4亿",
+        "sensitivity": "高"
+      },
+      {
+        "assumption": "ARPU维持在3000元/年",
+        "variation": "±20%",
+        "impact_on_result": "bottom_up路径TAM中性值波动±56亿",
+        "sensitivity": "中"
+      }
+    ],
     "key_assumptions": [
       {
         "assumption": "K12在线教育渗透率将持续增长",
         "basis": "教育部推进教育数字化政策",
         "impact_direction": "正向",
         "sensitivity": "高",
-        "needs_human_validation": false
+        "needs_human_validation": true
       }
     ]
   }

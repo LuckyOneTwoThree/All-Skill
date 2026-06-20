@@ -1,6 +1,6 @@
 ---
 name: change-impact-analysis
-description: 当需要分析PRD变更、设计变更或需求变更影响范围时使用。变更影响自动分析，分析需求变更对功能、技术、测试等维度的影响范围，生成变更影响报告和重评审建议。关键词：变更影响、需求变更、影响分析、变更评审、PRD变更。
+description: 当需要分析PRD变更、设计变更或需求变更影响范围时使用。变更影响自动分析，分析需求变更对功能、IA、用户流程、原型、交互规范等维度的影响范围，生成变更影响报告和重评审建议。关键词：变更影响、需求变更、影响分析、变更评审、PRD变更。
 metadata:
   module: "产品构思与设计"
   sub-module: "设计评审"
@@ -11,38 +11,38 @@ metadata:
     - "需求改了，看看影响范围"
     - "分析一下这个变更会影响哪些模块"
     - "改需求了帮我评估一下影响"
-  interaction_mode: "ai_auto"
+  interaction_mode: "ai_suggest_human_approve"
 execution_depth:
   default: standard
   quick_description: "执行变更分类（L1-L4）和功能影响分析，输出变更级别与重评审必要性判断"
-  deep_description: "额外包含技术/测试/运营三维度影响分析、版本联动更新建议、数据迁移回滚方案、第三方服务降级方案"
+  deep_description: "额外包含原型/交互规范两维度影响分析、版本联动更新建议、设计规范一致性评估、设计重做清单"
 ---
 
 # 需求变更影响分析自动化
 
 ## 核心原则
 
-1. **触发器驱动**：由变更请求系统新增事件自动触发，而非人工发起
+1. **PRD变更驱动**：由 design-orchestrator 在 PRD 变更时触发，而非人工发起
 2. **自动化验收**：变更分类、影响传播分析、重评审判断全流程自动化
-3. **持续部署**：变更影响分析结果自动同步到版本规划，保持发布节奏
+3. **结果同步**：分析结果同步到下游设计Skill（IA/用户流程/原型/交互规范），保持发布节奏
 4. **实时复盘**：变更影响分析完成后即时生成版本联动建议
 
 ## 交互模式
 
-🤖 **AI自动执行**
+🤖→👤 **AI建议人类审批**
 
-触发条件：变更请求系统新增变更请求。
+触发条件：design-orchestrator 在 PRD 变更时触发。
 
 ## 输入
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| 变更请求 | JSON | 是 | 变更管理系统 | 待分析的变更内容 |
-| 当前PRD | JSON | 是 | PRD管理系统 | 当前生效的PRD版本 |
-| 当前技术方案 | JSON | 是 | 技术方案库 | 已评审的技术方案 |
-| 开发进度 | JSON | 是 | 开发跟踪系统 | 当前各任务的开发状态 |
-| API契约 | YAML/JSON | ○ | output/backend-api-design/api-design-spec/openapi.yaml | 后端API设计，评估变更对后端接口的影响 |
-| 后端审查报告 | JSON | ○ | output/backend-architecture/backend-architecture-spec/review_report.json | 后端架构审查结果，评估变更对后端架构的影响 |
+| 变更请求 | JSON | 是 | 用户提供（PRD变更内容） | 待分析的变更内容 |
+| 当前PRD | JSON | 是 | output/pm-design/design-prd/prd.json | 当前生效的PRD版本 |
+| 当前IA | JSON | 是 | output/pm-design/design-ia/ia_proposals.json | 当前信息架构方案 |
+| 当前用户流程 | JSON | 是 | output/pm-design/design-userflow/userflow.json | 当前用户流程设计 |
+| 当前原型 | JSON | 是 | output/pm-design/design-prototype/prototype_spec.json | 当前原型设计规范 |
+| 当前交互规范 | JSON | ○ | output/pm-design/interaction-spec/interaction-spec.json | 当前交互设计规范，评估变更对交互状态机的影响 |
 
 ### 变更请求结构示例
 
@@ -71,7 +71,7 @@ execution_depth:
 |------|----------|----------|----------|
 | L1 轻微 | 文字修正、样式调整、文案优化 | 单个小功能 | 开发者自决策 |
 | L2 一般 | 功能细节调整、交互优化、非核心逻辑变更 | 单个功能模块 | 产品经理审批 |
-| L3 重大 | 核心功能变更、API接口变更、数据库结构变更 | 多个功能模块 | 多角色评审 |
+| L3 重大 | 核心功能变更、IA结构变更、用户流程重构 | 多个功能模块 | 多角色评审 |
 | L4 战略 | 架构变更、商业模式变更、跨系统影响 | 全局或跨系统 | 战略级评审 |
 
 #### 分类决策树
@@ -81,9 +81,9 @@ execution_depth:
     │
     ├─ 是否影响核心业务流程？ ──是──→ L3
     │
-    ├─ 是否改变API接口契约？ ──是──→ L3
+    ├─ 是否改变IA结构？ ──是──→ L3
     │
-    ├─ 是否影响数据模型？ ──是──→ L3
+    ├─ 是否影响用户流程？ ──是──→ L3
     │
     ├─ 是否影响多个功能模块？ ──是──→ L2
     │
@@ -137,91 +137,114 @@ execution_depth:
 }
 ```
 
-#### 2.2 技术影响分析 [条件]
+#### 2.2 IA影响分析 [条件]
 
 **分析内容**：
 
 | 分析项 | 输出 |
 |--------|------|
-| 代码变更范围 | 需要修改的代码文件和函数 |
-| 数据库变更 | 需要修改的表结构和数据迁移 |
-| API变更 | 新增/修改/废弃的接口 |
-| 第三方依赖 | 新增/升级的依赖 |
+| 直接影响IA节点 | 受变更直接影响的IA节点 |
+| IA结构变更 | 需要新增/修改/删除的IA节点 |
+| 导航路径影响 | 受影响的导航路径 |
 
-**技术影响矩阵**：
+**IA影响矩阵**：
 
 ```json
 {
-  "technical_impact": {
-    "code_changes": [
-      {"file": "auth/login.ts", "change_type": "modify", "change_lines": 150}
+  "ia_impact": {
+    "directly_affected_nodes": [
+      {"node_id": "IA001", "node_name": "用户中心", "impact_type": "modified"}
     ],
-    "database_changes": [
-      {"table": "user_bindings", "change_type": "add_column", "column": "wechat_openid"}
+    "structure_changes": [
+      {"node_id": "IA002", "node_name": "登录方式", "change_type": "add", "parent": "用户中心"}
     ],
-    "api_changes": [
-      {"endpoint": "/api/auth/wechat", "method": "POST", "change_type": "new"}
-    ],
-    "external_dependencies": [
-      {"service": "微信开放平台API", "change_type": "new", "risk": "medium"}
+    "navigation_path_impact": [
+      {"path": "首页→登录→微信授权", "change_type": "new"}
     ]
   }
 }
 ```
 
-#### 2.3 测试影响分析 [条件]
+#### 2.3 用户流程影响分析 [条件]
 
 **分析内容**：
 
 | 分析项 | 输出 |
 |--------|------|
-| 需回归测试的功能 | 受影响功能的测试用例 |
-| 需新增测试用例 | 针对新功能的测试 |
-| 测试环境需求 | 测试所需的特殊环境 |
+| 直接影响流程 | 受变更直接影响的用户流程 |
+| 流程节点变更 | 需要新增/修改/删除的流程节点 |
+| 死胡同风险 | 变更是否引入新的死胡同 |
 
-**测试影响矩阵**：
+**用户流程影响矩阵**：
 
 ```json
 {
-  "test_impact": {
-    "regression_cases": [
-      {"case_id": "TC001", "case_name": "手机号登录正常流程", "priority": "P0"},
-      {"case_id": "TC002", "case_name": "验证码错误处理", "priority": "P1"}
+  "userflow_impact": {
+    "directly_affected_flows": [
+      {"flow_id": "UF001", "flow_name": "登录流程", "impact_type": "modified"}
     ],
-    "new_cases_needed": [
-      {"case_id": "TC_NEW_001", "case_name": "微信授权登录流程", "priority": "P0"},
-      {"case_id": "TC_NEW_002", "case_name": "微信未绑定处理", "priority": "P1"}
+    "node_changes": [
+      {"node_id": "UF001_N3", "node_name": "微信授权", "change_type": "add"}
     ],
-    "test_environment": {
-      "needs_mock_wechat": true,
-      "special_config": "微信沙箱环境"
+    "dead_end_risks": [
+      {"risk": "微信未绑定用户无退出路径", "severity": "high"}
+    ]
+  }
+}
+```
+
+#### 2.4 原型影响分析 [深度]
+
+**分析内容**：
+
+| 分析项 | 输出 |
+|--------|------|
+| 受影响页面 | 需要修改的原型页面 |
+| 组件变更 | 需要新增/修改的组件 |
+| 设计规范一致性 | 变更对设计规范一致性的影响 |
+
+**原型影响矩阵**：
+
+```json
+{
+  "prototype_impact": {
+    "affected_pages": [
+      {"page_id": "P001", "page_name": "登录页", "change_type": "modify"}
+    ],
+    "component_changes": [
+      {"component": "WechatLoginButton", "change_type": "new"}
+    ],
+    "design_consistency": {
+      "consistency_score_before": 0.92,
+      "consistency_score_after": 0.85,
+      "violations": ["新增按钮未遵循设计令牌规范"]
     }
   }
 }
 ```
 
-#### 2.4 运营影响分析 [深度]
+#### 2.5 交互规范影响分析 [深度]
 
 **分析内容**：
 
 | 分析项 | 输出 |
 |--------|------|
-| 运营配置变更 | 运营后台是否需要调整 |
-| 数据统计影响 | 是否影响埋点和统计 |
-| 客服话术影响 | 客服知识库是否需要更新 |
+| 受影响交互状态 | 需要修改的交互状态机 |
+| 动效变更 | 需要新增/修改的动效 |
+| 手势规范变更 | 需要新增/修改的手势规范 |
 
-**运营影响矩阵**：
+**交互规范影响矩阵**：
 
 ```json
 {
-  "operation_impact": {
-    "config_changes": [],
-    "data_tracking": [
-      {"event": "wechat_login_success", "change_type": "new", "need_verify": true}
+  "interaction_spec_impact": {
+    "affected_states": [
+      {"state": "loading", "scenario": "微信授权中", "change_type": "add"}
     ],
-    "customer_service": [
-      {"topic": "微信登录问题", "update_needed": true, "priority": "medium"}
-    ]
+    "animation_changes": [
+      {"animation": "wechat_auth_loading", "change_type": "new"}
+    ],
+    "gesture_changes": []
   }
 }
 ```
@@ -248,8 +271,8 @@ execution_depth:
 |------|----------|
 | 产品经理 | 需求变更涉及产品功能 |
 | 设计师 | UI/UX相关变更 |
-| 后端开发 | API/数据模型变更 |
-| 前端开发 | 界面/交互变更 |
+| IA设计师 | IA结构变更 |
+| 交互设计师 | 交互规范变更 |
 | 测试负责人 | 任何变更 |
 | 运营 | 运营相关变更 |
 
@@ -302,53 +325,54 @@ execution_depth:
 }
 ```
 
-#### 4.2 代码版本规划
+#### 4.2 IA版本更新
 
 **分析内容**：
 
 | 分析项 | 输出 |
 |--------|------|
-| 所属版本 | 变更计划纳入的版本 |
-| 代码分支策略 | 如何组织代码变更 |
-| 发布节奏 | 与哪个Sprint一起发布 |
+| 需要更新的IA节点 | 变更涉及的IA节点 |
+| 变更类型 | 新增/修改/删除 |
+| 更新建议 | 具体的IA结构调整建议 |
 
-**代码版本规划**：
+**IA版本更新**：
 
 ```json
 {
-  "code_version_plan": {
-    "target_release": "v2.1.0",
-    "branch_strategy": "feature/wechat_login",
-    "merge_target": "release/2.1.0",
-    "sprint_plan": "Sprint 8",
-    "code_freeze_date": "ISO8601"
+  "ia_version_update": {
+    "current_version": "1.2.0",
+    "new_version": "1.3.0",
+    "nodes_to_update": [
+      {"node_id": "IA001", "node_name": "用户中心", "change_type": "modify", "suggestion": "增加微信登录子节点"}
+    ],
+    "update_proposal": "详见附件IA更新建议"
   }
 }
 ```
 
-#### 4.3 测试用例版本更新
+#### 4.3 用户流程版本更新
 
 **分析内容**：
 
 | 分析项 | 输出 |
 |--------|------|
-| 需要新增的测试用例 | 针对新功能 |
-| 需要修改的测试用例 | 针对变更内容 |
-| 需要删除的测试用例 | 已废弃功能 |
+| 需要新增的流程 | 针对新功能 |
+| 需要修改的流程 | 针对变更内容 |
+| 需要删除的流程 | 已废弃功能 |
 
-**测试用例版本更新**：
+**用户流程版本更新**：
 
 ```json
 {
-  "test_case_version_update": {
-    "cases_to_add": [
-      {"case_id": "NEW_001", "case_name": "微信登录成功", "priority": "P0"}
+  "userflow_version_update": {
+    "flows_to_add": [
+      {"flow_id": "NEW_001", "flow_name": "微信登录流程", "priority": "P0"}
     ],
-    "cases_to_modify": [
-      {"case_id": "TC_001", "case_name": "登录页面UI", "change": "增加微信登录入口"}
+    "flows_to_modify": [
+      {"flow_id": "UF_001", "flow_name": "登录流程", "change": "增加微信登录分支"}
     ],
-    "cases_to_delete": [],
-    "estimated_test_effort_hours": 16
+    "flows_to_delete": [],
+    "estimated_redesign_effort_hours": 16
   }
 }
 ```
@@ -370,7 +394,7 @@ execution_depth:
     "change_id": {"type": "string", "description": "变更请求ID"},
     "generated_at": {"type": "string", "description": "生成时间"},
     "classification": {"type": "object", "description": "变更分类，包含级别和原因"},
-    "impact_analysis": {"type": "object", "description": "影响分析，包含功能/技术/测试/运营四维度"},
+    "impact_analysis": {"type": "object", "description": "影响分析，包含功能/IA/用户流程/原型/交互规范多维度"},
     "review_needed": {"type": "boolean", "description": "是否需要重评审"},
     "review_decision": {"type": "object", "description": "评审决策，包含评审范围和内容"},
     "version_updates": {"type": "object", "description": "版本联动更新建议"},
@@ -393,16 +417,17 @@ execution_depth:
   },
   "impact_analysis": {
     "functional": {...},
-    "technical": {...},
-    "test": {...},
-    "operation": {...}
+    "ia": {...},
+    "userflow": {...},
+    "prototype": {...},
+    "interaction_spec": {...}
   },
   "review_needed": true,
   "review_decision": {...},
   "version_updates": {
     "prd": {...},
-    "code": {...},
-    "test_cases": {...}
+    "ia": {...},
+    "userflow": {...}
   },
   "summary": {
     "impact_scope": "多个功能模块",
@@ -417,7 +442,7 @@ execution_depth:
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | classification | JSON | 变更级别及原因 |
-| impact_analysis | JSON | 四维度影响分析详情 |
+| impact_analysis | JSON | 多维度影响分析详情 |
 | review_needed | boolean | 是否需要重评审 |
 | review_decision | JSON | 评审范围和内容 |
 | version_updates | JSON | 版本联动更新建议 |
@@ -437,18 +462,18 @@ execution_depth:
 | impact_analysis | object | 是 | 影响分析 |
 | impact_analysis.functional | object | 是 | 功能影响分析，含directly_affected/indirectly_affected/dependent_features |
 | impact_analysis.functional.directly_affected | array | 是 | 直接受影响功能列表，每项含feature_id/feature_name/impact_type |
-| impact_analysis.technical | object | 是 | 技术影响分析，含code_changes/database_changes/api_changes/external_dependencies |
-| impact_analysis.technical.api_changes | array | 是 | API变更列表，每项含endpoint/method/change_type |
-| impact_analysis.test | object | 是 | 测试影响分析，含regression_cases/new_cases_needed/test_environment |
-| impact_analysis.operation | object | 是 | 运营影响分析，含config_changes/data_tracking/customer_service |
+| impact_analysis.ia | object | 是 | IA影响分析，含directly_affected_nodes/structure_changes/navigation_path_impact |
+| impact_analysis.userflow | object | 是 | 用户流程影响分析，含directly_affected_flows/node_changes/dead_end_risks |
+| impact_analysis.prototype | object | 否 | 原型影响分析，含affected_pages/component_changes/design_consistency |
+| impact_analysis.interaction_spec | object | 否 | 交互规范影响分析，含affected_states/animation_changes/gesture_changes |
 | review_needed | boolean | 是 | 是否需要重评审 |
 | review_decision | object | 否 | 评审决策（review_needed为true时必填），含level/review_scope/review_content/review_deadline |
 | review_decision.level | string | 否 | 评审级别，枚举值：L1_optional/L2_suggested/L3_mandatory/L4_strategic |
 | review_decision.review_scope | array | 否 | 评审角色列表，每项含role/reason |
-| version_updates | object | 否 | 版本联动更新建议，含prd/code/test_cases |
+| version_updates | object | 否 | 版本联动更新建议，含prd/ia/userflow |
 | version_updates.prd | object | 否 | PRD版本更新建议，含current_version/new_version/sections_to_update |
-| version_updates.code | object | 否 | 代码版本规划，含target_release/branch_strategy/sprint_plan |
-| version_updates.test_cases | object | 否 | 测试用例版本更新，含cases_to_add/cases_to_modify/cases_to_delete |
+| version_updates.ia | object | 否 | IA版本更新建议，含current_version/new_version/nodes_to_update |
+| version_updates.userflow | object | 否 | 用户流程版本更新建议，含flows_to_add/flows_to_modify/flows_to_delete |
 | summary | object | 是 | 变更影响摘要 |
 | summary.impact_scope | string | 是 | 影响范围描述 |
 | summary.estimated_effort_days | number | 是 | 预估影响人天，须≥0 |
@@ -461,15 +486,16 @@ execution_depth:
 | 上游变更 | 影响范围 | 响应策略 |
 |----------|----------|----------|
 | PRD需求变更 | 功能影响分析、版本联动 | 更新功能影响矩阵，重新评估变更级别和重评审必要性 |
-| API契约变更 | 技术影响分析 | 更新API变更列表，重新评估技术影响范围 |
-| 后端架构审查结果变更 | 技术影响分析 | 更新技术影响评估，重新评估架构风险 |
-| 开发进度变更 | 测试影响分析 | 更新回归测试范围，调整版本规划 |
+| IA方案变更 | IA影响分析 | 更新IA影响矩阵，重新评估IA结构变更范围 |
+| 用户流程变更 | 用户流程影响分析 | 更新用户流程影响矩阵，重新评估死胡同风险 |
+| 原型变更 | 原型影响分析 | 更新原型影响矩阵，重新评估设计规范一致性 |
+| 交互规范变更 | 交互规范影响分析 | 更新交互规范影响矩阵，重新评估状态机覆盖 |
 
 当变更影响分析结果自身变更时，对下游的通知机制：
 
 | 变更影响分析变更类型 | 通知范围 | 通知方式 |
 |---------------------|----------|----------|
-| 变更级别升级 | agile-review | 标记变更级别变化，触发复盘评估 |
+| 变更级别升级 | agile-retrospective | 标记变更级别变化，触发复盘评估 |
 | 影响范围扩大 | design-prd | 标记影响范围变化，触发PRD更新评估 |
 | 重评审必要性变化 | quality-acceptance | 标记评审需求变化，触发验收标准更新 |
 | 版本规划调整 | agile-sprint-planning | 标记版本规划变化，触发Sprint计划调整 |
@@ -491,8 +517,8 @@ execution_depth:
 
 | 条件 | 处理方式 |
 |------|----------|
-| 变更涉及数据迁移 | 必须包含数据回滚方案 |
-| 变更涉及第三方服务 | 必须包含服务降级方案 |
+| 变更涉及IA结构重构 | 必须包含IA回滚方案 |
+| 变更涉及设计系统/令牌变更 | 必须包含设计规范降级方案 |
 | 变更影响P0功能 | 必须产品负责人签字确认 |
 
 ## 质量检查
@@ -501,16 +527,17 @@ execution_depth:
 
 | 检查项 | 标准 | 未达标处理 |
 |--------|------|------------|
-| 影响范围穷举（P0） | 功能/技术/测试/运营四维度全覆盖 | 返回补充 |
+| 影响范围穷举（P0） | 功能/IA/用户流程/原型/交互规范多维度全覆盖 | 返回补充 |
 | 重评审判断依据（P0） | 每个判断都有对应证据 | 返回补充 |
-| 版本联动完整性（P1） | PRD/代码/测试用例版本同步 | 告警+人工确认 |
+| 版本联动完整性（P1） | PRD/IA/用户流程版本同步 | 告警+人工确认 |
 
 ### 影响范围穷举检查清单
 
 - [ ] 功能影响：直接/间接/依赖功能已识别（P0）
-- [ ] 技术影响：代码/数据库/API/依赖已识别（P1）
-- [ ] 测试影响：回归/新增测试用例已识别（P1）
-- [ ] 运营影响：配置/数据/客服已识别（P2）
+- [ ] IA影响：IA节点/结构/导航路径已识别（P1）
+- [ ] 用户流程影响：流程/节点/死胡同已识别（P1）
+- [ ] 原型影响：页面/组件/设计一致性已识别（P2）
+- [ ] 交互规范影响：状态/动效/手势已识别（P2）
 
 ## 降级策略
 
@@ -520,10 +547,11 @@ execution_depth:
 |----------|----------|----------|------------|
 | 变更请求缺失 | 无法执行，需用户描述变更内容 | - | 要求用户提供变更内容描述（变更了什么、涉及哪些功能模块） |
 | 当前PRD缺失 | 用户描述变更内容 → 直接分析影响，无PRD基准对比 | 无法精确定位受影响章节，影响范围基于推断 | 要求用户提供当前PRD文档或功能需求描述 |
-| 技术方案缺失 | 跳过技术影响分析中的代码变更范围评估 | 技术影响分析不完整 | 要求用户提供技术方案文档或技术架构描述 |
-| API契约缺失 | 仅评估对前端和设计的影响 | 后端影响可能被低估 | 要求用户提供API接口文档或接口变更描述 |
-| 后端审查报告缺失 | 仅基于PRD和设计评估 | 后端架构风险可能被遗漏 | 要求用户提供后端架构审查结果或技术风险评估 |
-| 变更请求 + 当前PRD + 技术方案均缺失 | 用户描述变更内容 → 直接分析影响 | 输出简化影响分析，各维度标注"待补充" | 要求用户提供变更描述、当前功能需求和技术架构信息 |
+| 当前IA缺失 | 跳过IA影响分析 | IA影响分析不完整 | 要求用户提供IA方案或信息架构描述 |
+| 当前用户流程缺失 | 跳过用户流程影响分析 | 用户流程影响分析不完整 | 要求用户提供用户流程图或流程描述 |
+| 当前原型缺失 | 跳过原型影响分析 | 原型影响分析不完整 | 要求用户提供原型设计或页面描述 |
+| 当前交互规范缺失 | 跳过交互规范影响分析 | 交互规范影响分析不完整 | 要求用户提供交互规范或交互描述 |
+| 变更请求 + 当前PRD + 当前IA均缺失 | 用户描述变更内容 → 直接分析影响 | 输出简化影响分析，各维度标注"待补充" | 要求用户提供变更描述、当前PRD和IA方案 |
 
 ### 数据获取说明
 

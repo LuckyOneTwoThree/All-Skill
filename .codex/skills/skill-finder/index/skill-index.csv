@@ -73,7 +73,8 @@ gtm-strategy,pipeline,pm,growth,New product launching how to promote it|Help me 
 ideation-workshop,pipeline,pm,design,Help me brainstorm ideas|Innovate using SCAMPER method,Divergent Thinking|Convergent Thinking|HMW|SCAMPER|Reverse Thinking
 insight-analysis,pipeline,pm,discovery,Help me analyze user needs|Too many requirements help me prioritize,Requirement Insight|JTBD|5Whys|KANO|Priority Scoring
 interaction-spec,pipeline,pm,design,How to write interaction specifications|Help me write interaction design documentation,Interaction Design Specification|Interaction Specification|State Machine|Animation Specification|Gesture Interaction
-iteration-decision,pipeline,pm,monitoring,Requirement pool is too messy how to organize|How to prioritize the backlog,Backlog Optimization|Requirement Pool Management|Requirement Linking|Backlog Grooming|Requirement Reorganization
+iteration-backlog-grooming,pipeline,pm,monitoring,Requirement pool is too messy how to organize|How to prioritize the backlog,Backlog Optimization|Requirement Pool Management|Requirement Linking|Backlog Grooming|Requirement Reorganization
+iteration-retrospective,pipeline,pm,monitoring,This iteration needs retrospective|How to summarize sprint end|How was the iteration,Iteration Retrospective|Completion Analysis|Problem Identification|Improvement Suggestions|Retro
 market-competitor-analysis,pipeline,pm,discovery,Help me do competitor analysis|How to conduct competitor research,Competitor Analysis|Competitor Research|Competitive Intelligence|Four-Quadrant Matrix|Competitors
 market-pest,pipeline,pm,discovery,What changes in the market environment|How do policies affect us,PEST Analysis|Policy & Regulation|Economic Indicators|Social Trends|Technology Trends
 market-tam-som,pipeline,pm,discovery,How big is this market|Help me calculate market size,Market Size|TAM|SAM|SOM|Market Capacity

@@ -41,7 +41,7 @@ execution_depth:
 
 | 输入项 | 类型 | 必填 | 来源 | 说明 |
 |--------|------|------|------|------|
-| product_backlog | object[] | 是 | output/pm-monitoring/iteration-decision/prioritized_items | 产品待办列表 |
+| product_backlog | object[] | 是 | output/pm-monitoring/iteration-backlog-grooming/prioritized_items（来自 iteration-backlog-grooming 输出，或用户直接提供） | 产品待办列表，已按优先级排序 |
 | sprint_goal | string | ○ | 用户提供 | Sprint目标描述 |
 | team_capacity | object | 是 | output/pm-project/planning-resource/resource_plan | 团队容量数据 |
 | sprint_duration_days | number | 是 | 用户提供 | Sprint天数 |
@@ -340,6 +340,6 @@ execution_depth:
 
 | 变更类型 | 影响范围 | 通知方式 |
 |----------|----------|----------|
-| Sprint计划变更（Story增减/Goal调整） | 每日同步、Sprint评审、风险管理 | 更新sprint_plan.json，通知agile-daily-sync、agile-review、risk-management |
+| Sprint计划变更（Story增减/Goal调整） | 每日同步、Sprint评审、风险管理 | 更新sprint_plan.json，通知agile-daily-sync、agile-sprint-review、risk-management |
 | 容量验证结果变更 | 资源规划、团队排期 | 更新sprint_plan.json，通知planning-resource |
 | 审批状态变更 | 所有下游依赖Sprint计划的Pipeline | 更新metadata.json，通知所有下游消费者 |
